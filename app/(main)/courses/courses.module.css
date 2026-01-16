@@ -195,7 +195,7 @@
 }
 
 .cohortItem:hover .enrollButton {
-  background: var(--color-primary-dark);
+  background: var(--color-primary-600);
 }
 
 /* Enroll Page Styles */

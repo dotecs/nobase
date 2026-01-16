@@ -69,7 +69,17 @@ export default function CourseForm({ initialData }: CourseFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // 슬러그는 자동으로 소문자, 공백->하이픈 변환
+    if (name === 'slug') {
+      const sanitizedSlug = value
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+      setFormData((prev) => ({ ...prev, [name]: sanitizedSlug }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
     setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
@@ -184,27 +194,42 @@ export default function CourseForm({ initialData }: CourseFormProps) {
   // 폼 제출
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSubmit 호출됨');
+    console.log('현재 formData:', formData);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      console.log('유효성 검사 실패:', errors);
+      return;
+    }
 
+    console.log('유효성 검사 통과');
     setIsSubmitting(true);
 
     try {
+      const courseData = {
+        title: formData.title,
+        slug: formData.slug,
+        description: formData.description || null,
+        thumbnail_url: formData.thumbnail_url || null,
+        is_published: formData.is_published,
+      };
+
+      console.log('저장할 데이터:', courseData);
+
       if (isEditMode) {
         // 수정
         const { error } = await supabase
           .from('courses')
           .update({
-            title: formData.title,
-            slug: formData.slug,
-            description: formData.description || null,
-            thumbnail_url: formData.thumbnail_url || null,
-            is_published: formData.is_published,
+            ...courseData,
             updated_at: new Date().toISOString(),
           })
           .eq('id', initialData.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('수정 오류:', error);
+          throw error;
+        }
 
         await alert({
           title: '수정 완료',
@@ -215,17 +240,16 @@ export default function CourseForm({ initialData }: CourseFormProps) {
         // 생성
         const { data, error } = await supabase
           .from('courses')
-          .insert({
-            title: formData.title,
-            slug: formData.slug,
-            description: formData.description || null,
-            thumbnail_url: formData.thumbnail_url || null,
-            is_published: formData.is_published,
-          })
+          .insert(courseData)
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('생성 오류:', error);
+          throw error;
+        }
+
+        console.log('생성된 강좌:', data);
 
         await alert({
           title: '생성 완료',

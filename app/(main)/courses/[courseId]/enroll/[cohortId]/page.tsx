@@ -3,11 +3,10 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/Header/Header'
-import Footer from '@/components/Footer'
 import { Button } from '@/components'
-import { Course, Cohort, Profile } from '@/lib/database.types'
-import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaCheckCircle } from 'react-icons/fa'
-import styles from '../../../../courses/courses.module.css'
+import { Course, Cohort, Profile, Lesson } from '@/lib/database.types'
+import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaCheckCircle, FaLock, FaPlay, FaList } from 'react-icons/fa'
+import styles from './enroll.module.css'
 
 interface PageProps {
   params: Promise<{
@@ -73,12 +72,15 @@ export default async function EnrollPage({ params }: PageProps) {
     .eq('cohort_id', cohortId)
     .single()
 
-  // 해당 기수의 레슨 수 조회
-  const { count: lessonCount } = await supabase
+  // 해당 기수의 레슨 목록 조회
+  const { data: lessonsData } = await supabase
     .from('lessons')
-    .select('*', { count: 'exact', head: true })
+    .select('id, title, sort_order, is_published')
     .eq('cohort_id', cohortId)
     .eq('is_published', true)
+    .order('sort_order', { ascending: true })
+
+  const lessons = (lessonsData || []) as Lesson[]
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '미정'
@@ -131,109 +133,172 @@ export default async function EnrollPage({ params }: PageProps) {
     redirect(`/courses/${courseId}/cohorts/${cohortId}`)
   }
 
+  // 총 강의 시간 계산 (임시: 레슨당 평균 30분으로 가정)
+  const totalDuration = lessons.length * 30
+
   return (
     <div className={styles.enrollPage}>
-      <Header isLoggedIn={true} userRole={profile?.role} />
+      <Header isLoggedIn={true} userName={profile?.name || user.email} userRole={profile?.role} />
+      
       <main className={styles.enrollMain}>
         <Link href="/courses" className={styles.backLink}>
           <FaArrowLeft />
           <span>강좌 목록으로 돌아가기</span>
         </Link>
 
-        <div className={styles.enrollCard}>
-          {/* 썸네일 */}
-          <div className={styles.enrollThumbnail}>
-            {course.thumbnail_url ? (
-              <Image
-                src={course.thumbnail_url}
-                alt={course.title}
-                fill
-                className={styles.enrollThumbnailImage}
-              />
-            ) : (
-              <div className={styles.enrollThumbnailPlaceholder}>
-                <FaBook />
-              </div>
-            )}
-          </div>
-
+        <div className={styles.enrollLayout}>
+          {/* 왼쪽: 강좌 정보 및 커리큘럼 */}
           <div className={styles.enrollContent}>
-            {/* 기수 뱃지 */}
-            <span className={styles.enrollCohortBadge}>
-              <FaUsers />
-              {cohort.title}
-            </span>
-
-            {/* 강좌 제목 */}
-            <h1 className={styles.enrollTitle}>{course.title}</h1>
-
-            {/* 강좌 설명 */}
-            {course.description && (
-              <p className={styles.enrollDescription}>{course.description}</p>
-            )}
-
-            {/* 강좌 정보 */}
-            <div className={styles.enrollInfo}>
-              <div className={styles.enrollInfoItem}>
-                <span className={styles.enrollInfoLabel}>시작일</span>
-                <span className={styles.enrollInfoValue}>
-                  <FaCalendarAlt />
-                  {formatDate(cohort.starts_at)}
-                </span>
-              </div>
-              <div className={styles.enrollInfoItem}>
-                <span className={styles.enrollInfoLabel}>종료일</span>
-                <span className={styles.enrollInfoValue}>
-                  <FaCalendarAlt />
-                  {formatDate(cohort.ends_at)}
-                </span>
-              </div>
-              <div className={styles.enrollInfoItem}>
-                <span className={styles.enrollInfoLabel}>총 레슨</span>
-                <span className={styles.enrollInfoValue}>
-                  <FaBook />
-                  {lessonCount ?? 0}개
-                </span>
-              </div>
-              <div className={styles.enrollInfoItem}>
-                <span className={styles.enrollInfoLabel}>진행 상태</span>
-                <span className={styles.enrollInfoValue}>
-                  <FaClock />
-                  {cohort.is_active ? '진행중' : '마감'}
-                </span>
-              </div>
-            </div>
-
-            {/* 액션 영역 */}
-            <div className={styles.enrollActions}>
-              {existingEnrollment ? (
-                <>
-                  <div className={styles.alreadyEnrolledBadge}>
-                    <FaCheckCircle />
-                    이미 수강 신청된 강좌입니다
-                  </div>
-                  <Link href={`/courses/${courseId}/cohorts/${cohortId}`}>
-                    <Button variant="primary" size="lg" fullWidth>
-                      강좌 바로가기
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <form action={handleEnroll}>
-                  <Button type="submit" variant="primary" size="lg" fullWidth>
-                    수강 신청하기
-                  </Button>
-                </form>
+            {/* 강좌 헤더 */}
+            <div className={styles.courseHeader}>
+              <span className={styles.cohortBadge}>
+                <FaUsers />
+                {cohort.title}
+              </span>
+              <h1 className={styles.courseTitle}>{course.title}</h1>
+              {course.description && (
+                <p className={styles.courseDescription}>{course.description}</p>
               )}
             </div>
 
-            <p className={styles.enrollNote}>
-              수강 신청 후 대시보드에서 강좌를 확인할 수 있습니다.
-            </p>
+            {/* 강좌 통계 */}
+            <div className={styles.courseStats}>
+              <div className={styles.statItem}>
+                <FaBook />
+                <span>{lessons.length}개 레슨</span>
+              </div>
+              <div className={styles.statItem}>
+                <FaClock />
+                <span>총 {Math.floor(totalDuration / 60)}시간 {totalDuration % 60}분</span>
+              </div>
+              <div className={styles.statItem}>
+                <FaCalendarAlt />
+                <span>{formatDate(cohort.starts_at)} 시작</span>
+              </div>
+            </div>
+
+            {/* 커리큘럼 섹션 */}
+            <div className={styles.curriculumSection}>
+              <h2 className={styles.sectionTitle}>
+                <FaList />
+                커리큘럼
+              </h2>
+              
+              <div className={styles.lessonList}>
+                {lessons.length > 0 ? (
+                  lessons.map((lesson, index) => (
+                    <div key={lesson.id} className={styles.lessonItem}>
+                      <div className={styles.lessonNumber}>{index + 1}</div>
+                      <div className={styles.lessonInfo}>
+                        <span className={styles.lessonTitle}>{lesson.title}</span>
+                      </div>
+                      <div className={styles.lessonStatus}>
+                        {existingEnrollment ? (
+                          <FaPlay className={styles.playIcon} />
+                        ) : (
+                          index < 1 ? (
+                            <span className={styles.previewBadge}>미리보기</span>
+                          ) : (
+                            <FaLock className={styles.lockIcon} />
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.emptyLessons}>
+                    <p>아직 등록된 레슨이 없습니다.</p>
+                    <p>곧 커리큘럼이 업데이트될 예정입니다.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 오른쪽: 결제 카드 */}
+          <div className={styles.enrollSidebar}>
+            <div className={styles.enrollCard}>
+              {/* 썸네일 */}
+              <div className={styles.cardThumbnail}>
+                {course.thumbnail_url ? (
+                  <Image
+                    src={course.thumbnail_url}
+                    alt={course.title}
+                    fill
+                    className={styles.thumbnailImage}
+                  />
+                ) : (
+                  <div className={styles.thumbnailPlaceholder}>
+                    <FaBook />
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.cardContent}>
+                {/* 가격 정보 */}
+                <div className={styles.priceSection}>
+                  <span className={styles.currentPrice}>무료</span>
+                  {/* <span className={styles.originalPrice}>₩99,000</span> */}
+                </div>
+
+                {/* 수강신청 버튼 */}
+                <div className={styles.enrollActions}>
+                  {existingEnrollment ? (
+                    <>
+                      <div className={styles.enrolledBadge}>
+                        <FaCheckCircle />
+                        수강 중
+                      </div>
+                      <Link href={`/courses/${courseId}/cohorts/${cohortId}`} className={styles.fullWidth}>
+                        <Button variant="primary" size="lg" fullWidth>
+                          강좌 바로가기
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <form action={handleEnroll} className={styles.fullWidth}>
+                      <Button type="submit" variant="primary" size="lg" fullWidth>
+                        무료로 수강 신청하기
+                      </Button>
+                    </form>
+                  )}
+                </div>
+
+                {/* 강좌 포함 내용 */}
+                <div className={styles.includesList}>
+                  <h4 className={styles.includesTitle}>이 강좌에 포함된 내용</h4>
+                  <ul>
+                    <li>
+                      <FaBook />
+                      <span>{lessons.length}개의 레슨</span>
+                    </li>
+                    <li>
+                      <FaClock />
+                      <span>평생 무제한 접근</span>
+                    </li>
+                    <li>
+                      <FaUsers />
+                      <span>커뮤니티 지원</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* 기간 정보 */}
+                <div className={styles.periodInfo}>
+                  <div className={styles.periodItem}>
+                    <span className={styles.periodLabel}>시작일</span>
+                    <span className={styles.periodValue}>{formatDate(cohort.starts_at)}</span>
+                  </div>
+                  <div className={styles.periodItem}>
+                    <span className={styles.periodLabel}>종료일</span>
+                    <span className={styles.periodValue}>{formatDate(cohort.ends_at)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

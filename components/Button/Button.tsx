@@ -20,6 +20,7 @@ export default function Button({
   children,
   className = '',
   disabled,
+  type = 'button',
   ...props
 }: ButtonProps) {
   const classNames = [
@@ -41,6 +42,7 @@ export default function Button({
 
   return (
     <button 
+      type={type}
       className={classNames} 
       disabled={disabled || loading}
       {...props}

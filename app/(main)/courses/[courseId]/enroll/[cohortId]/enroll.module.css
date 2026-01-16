@@ -1,0 +1,398 @@
+.enrollPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-secondary);
+}
+
+.enrollMain {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  width: 100%;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-6);
+  transition: color var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+/* 레이아웃 */
+.enrollLayout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* 왼쪽: 강좌 정보 및 커리큘럼 */
+.enrollContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.courseHeader {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+}
+
+.cohortBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+
+.courseTitle {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  line-height: var(--leading-tight);
+}
+
+.courseDescription {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  white-space: pre-line;
+}
+
+/* 강좌 통계 */
+.courseStats {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.statItem svg {
+  color: var(--color-primary);
+}
+
+/* 커리큘럼 섹션 */
+.curriculumSection {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle svg {
+  color: var(--color-primary);
+}
+
+.lessonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lessonItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.lessonItem:hover {
+  background: var(--color-bg-secondary);
+}
+
+.lessonNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.lessonInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.lessonTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lessonStatus {
+  flex-shrink: 0;
+}
+
+.playIcon {
+  color: var(--color-primary);
+  font-size: var(--text-base);
+}
+
+.lockIcon {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.previewBadge {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-md);
+}
+
+.emptyLessons {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+}
+
+.emptyLessons p {
+  margin-bottom: var(--space-2);
+}
+
+/* 오른쪽: 결제 카드 */
+.enrollSidebar {
+  position: sticky;
+  top: var(--space-8);
+}
+
+.enrollCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.cardThumbnail {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: var(--color-bg-secondary);
+}
+
+.thumbnailImage {
+  object-fit: cover;
+}
+
+.thumbnailPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-4xl);
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-200) 100%);
+  color: var(--color-primary);
+}
+
+.cardContent {
+  padding: var(--space-6);
+}
+
+/* 가격 섹션 */
+.priceSection {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.currentPrice {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+}
+
+.originalPrice {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+/* 수강신청 버튼 */
+.enrollActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.enrolledBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-lg);
+}
+
+/* 포함 내용 */
+.includesList {
+  padding: var(--space-5);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.includesTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.includesList ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.includesList li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.includesList li svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+/* 기간 정보 */
+.periodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.periodItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.periodLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.periodValue {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .enrollLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .enrollSidebar {
+    position: static;
+    order: -1;
+  }
+
+  .cardThumbnail {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .enrollMain {
+    padding: var(--space-4);
+  }
+
+  .courseHeader {
+    padding: var(--space-6);
+  }
+
+  .courseTitle {
+    font-size: var(--text-2xl);
+  }
+
+  .courseStats {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .statItem {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .courseStats {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .statItem {
+    min-width: unset;
+  }
+}
