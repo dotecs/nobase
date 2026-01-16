@@ -1,8 +1,18 @@
+import { ReactNode } from 'react';
+import { FaSadTear, FaLink, FaBook, FaCalendarAlt, FaLock } from 'react-icons/fa';
 import Button from '@/components/Button/Button';
 import styles from './ErrorPage.module.css';
 
+const iconMap: Record<string, ReactNode> = {
+  'sad': <FaSadTear />,
+  'link': <FaLink />,
+  'book': <FaBook />,
+  'calendar': <FaCalendarAlt />,
+  'lock': <FaLock />,
+};
+
 interface ErrorPageProps {
-  icon?: string;
+  icon?: string | ReactNode;
   title: string;
   description: string;
   primaryAction?: {
@@ -16,15 +26,22 @@ interface ErrorPageProps {
 }
 
 export default function ErrorPage({
-  icon = '😢',
+  icon = 'sad',
   title,
   description,
   primaryAction,
   secondaryAction,
 }: ErrorPageProps) {
+  const renderIcon = () => {
+    if (typeof icon === 'string') {
+      return iconMap[icon] || <FaSadTear />;
+    }
+    return icon;
+  };
+
   return (
     <div className={styles.errorPage}>
-      <div className={styles.icon}>{icon}</div>
+      <div className={styles.icon}>{renderIcon()}</div>
       <h1 className={styles.title}>{title}</h1>
       <p className={styles.description}>{description}</p>
       

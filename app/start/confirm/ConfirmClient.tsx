@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { Button } from '@/components';
 import { Course, Cohort } from '@/lib/database.types';
+import { FaGraduationCap, FaCalendarAlt, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import styles from '../start.module.css';
 
 interface ConfirmClientProps {
@@ -70,7 +71,7 @@ export default function ConfirmClient({
         <div className={styles.container}>
           <div className={styles.card}>
             <div className={styles.alreadyEnrolled}>
-              <div className={styles.alreadyEnrolledIcon}>✅</div>
+              <div className={styles.alreadyEnrolledIcon}><FaCheckCircle /></div>
               <h1 className={styles.alreadyEnrolledTitle}>이미 수강 중입니다</h1>
               <p className={styles.alreadyEnrolledText}>
                 <strong>{course.title}</strong>의 <strong>{cohort.title}</strong>에 
@@ -100,7 +101,7 @@ export default function ConfirmClient({
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.header}>
-            <div className={styles.icon}>🎓</div>
+            <div className={styles.icon}><FaGraduationCap /></div>
             <h1 className={styles.title}>수강 등록 확인</h1>
             <p className={styles.subtitle}>
               아래 정보를 확인하고 수강을 시작하세요
@@ -109,7 +110,7 @@ export default function ConfirmClient({
 
           <div className={styles.courseInfo}>
             <div className={styles.courseTitle}>{course.title}</div>
-            <span className={styles.cohortBadge}>📅 {cohort.title}</span>
+            <span className={styles.cohortBadge}><FaCalendarAlt /> {cohort.title}</span>
           </div>
 
           <div className={styles.userInfo}>
@@ -124,7 +125,7 @@ export default function ConfirmClient({
           </div>
 
           <div className={styles.warningBox}>
-            <span className={styles.warningIcon}>⚠️</span>
+            <span className={styles.warningIcon}><FaExclamationTriangle /></span>
             <p className={styles.warningText}>
               위 계정으로 수강이 등록됩니다. 다른 계정으로 수강하시려면 
               로그아웃 후 해당 계정으로 다시 로그인해 주세요.

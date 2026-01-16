@@ -5,6 +5,7 @@ import { Header, ErrorPage } from '@/components';
 import LessonClient from './LessonClient';
 import styles from './lesson.module.css';
 import { Resource, Profile, Lesson, LessonProgress } from '@/lib/database.types';
+import { FaVideo, FaPaperclip, FaFilePdf, FaExternalLinkAlt, FaFolder } from 'react-icons/fa';
 
 interface LessonPageProps {
   params: Promise<{
@@ -58,9 +59,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
   if (!enrollment) {
     return (
       <div className={styles.page}>
-        <Header userName={profile?.name || user.email} isLoggedIn={true} />
+        <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
         <ErrorPage
-          icon="🔒"
+          icon="lock"
           title="접근 권한이 없습니다"
           description="이 레슨에 대한 수강 등록이 필요합니다."
           primaryAction={{
@@ -111,7 +112,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <div className={styles.page}>
-      <Header userName={profile?.name || user.email} isLoggedIn={true} />
+      <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
 
       <main className={styles.main}>
         <nav className={styles.breadcrumb}>
@@ -158,7 +159,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </div>
           ) : (
             <div className={styles.noVideo}>
-              <div className={styles.noVideoIcon}>🎬</div>
+              <div className={styles.noVideoIcon}><FaVideo /></div>
               <p>영상이 준비 중입니다</p>
             </div>
           )}
@@ -173,7 +174,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         {resources.length > 0 && (
           <div className={styles.resourcesCard}>
             <h2 className={styles.sectionTitle}>
-              <span className={styles.sectionIcon}>📎</span>
+              <span className={styles.sectionIcon}><FaPaperclip /></span>
               학습 자료
             </h2>
             <div className={styles.resourceList}>
@@ -186,7 +187,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                   className={styles.resourceItem}
                 >
                   <span className={styles.resourceIcon}>
-                    {resource.type === 'pdf' ? '📄' : resource.type === 'link' ? '🔗' : '📁'}
+                    {resource.type === 'pdf' ? <FaFilePdf /> : resource.type === 'link' ? <FaExternalLinkAlt /> : <FaFolder />}
                   </span>
                   <span className={styles.resourceTitle}>{resource.title}</span>
                   <span className={styles.resourceArrow}>→</span>

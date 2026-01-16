@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { FaLifeRing } from 'react-icons/fa';
 import LoginForm from './LoginForm';
 import styles from '../auth.module.css';
 
@@ -8,7 +9,7 @@ function LoginLoading() {
       <div className={styles.authContainer}>
         <div className={styles.authCard}>
           <div className={styles.logoSection}>
-            <div className={styles.logo}>🛟</div>
+            <div className={styles.logo}><FaLifeRing /></div>
             <div className={styles.logoText}>노베이스구조대</div>
           </div>
           <h1 className={styles.title}>로그인</h1>

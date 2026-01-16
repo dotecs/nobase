@@ -41,14 +41,14 @@ export default function CourseCard({
               className={styles.thumbnailImage}
             />
           ) : (
-            '📚'
+            <FaBook className={styles.thumbnailIcon} />
           )}
         </div>
       </Link>
 
       <div className={styles.content}>
         <span className={styles.cohortBadge}>
-          📅 {cohortTitle}
+          <FaCalendarAlt /> {cohortTitle}
         </span>
         <Link href={courseUrl}>
           <h3 className={styles.title}>{courseTitle}</h3>

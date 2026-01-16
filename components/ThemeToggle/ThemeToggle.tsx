@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaSun, FaMoon, FaDesktop } from 'react-icons/fa';
 import styles from './ThemeToggle.module.css';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -40,7 +41,7 @@ export default function ThemeToggle() {
   if (!mounted) {
     return (
       <button className={styles.toggle} aria-label="테마 변경">
-        <span className={styles.icon}>🌙</span>
+        <span className={styles.icon}><FaMoon /></span>
       </button>
     );
   }
@@ -48,11 +49,11 @@ export default function ThemeToggle() {
   const getIcon = () => {
     switch (theme) {
       case 'light':
-        return '☀️';
+        return <FaSun />;
       case 'dark':
-        return '🌙';
+        return <FaMoon />;
       case 'system':
-        return '💻';
+        return <FaDesktop />;
     }
   };
 

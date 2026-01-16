@@ -2,7 +2,9 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, CourseCard } from '@/components';
-import { Profile, Enrollment, Lesson, LessonProgress, Announcement } from '@/lib/database.types';
+import { Profile } from '@/lib/database.types';
+import { FaBook, FaInbox } from 'react-icons/fa';
+import { HiHand } from 'react-icons/hi';
 import styles from './dashboard.module.css';
 
 export default async function DashboardPage() {
@@ -75,35 +77,18 @@ export default async function DashboardPage() {
     })
   );
 
-  // 공지사항 조회 (내 enrollment가 있는 cohort의 공지)
-  const cohortIds = enrollments.map(e => e.cohorts?.id).filter(Boolean);
-  
-  const { data: announcementsData } = cohortIds.length > 0 
-    ? await supabase
-        .from('announcements')
-        .select(`
-          *,
-          cohorts (title)
-        `)
-        .in('cohort_id', cohortIds)
-        .order('is_pinned', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(5)
-    : { data: [] };
-
-  const announcements = (announcementsData || []) as any[];
-
   return (
     <div className={styles.page}>
       <Header 
         userName={profile?.name || user.email} 
-        isLoggedIn={true} 
+        isLoggedIn={true}
+        userRole={profile?.role}
       />
       
       <main className={styles.main}>
         <div className={styles.welcomeSection}>
           <h1 className={styles.welcomeTitle}>
-            안녕하세요, {profile?.name || '학습자'}님! 👋
+            안녕하세요, {profile?.name || '학습자'}님! <HiHand className={styles.waveIcon} />
           </h1>
           <p className={styles.welcomeSubtitle}>
             오늘도 함께 성장해볼까요?
@@ -115,7 +100,7 @@ export default async function DashboardPage() {
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>
-                  <span className={styles.sectionIcon}>📚</span>
+                  <span className={styles.sectionIcon}><FaBook /></span>
                   내 강좌
                 </h2>
               </div>
@@ -139,57 +124,18 @@ export default async function DashboardPage() {
                 </div>
               ) : (
                 <div className={styles.emptyState}>
-                  <div className={styles.emptyIcon}>📭</div>
+                  <div className={styles.emptyIcon}><FaInbox /></div>
                   <h3 className={styles.emptyTitle}>수강 중인 강좌가 없습니다</h3>
                   <p className={styles.emptyDescription}>
-                    강좌를 구매하신 후, 이메일로 받은 수강 시작 링크를 클릭하시면
-                    자동으로 강좌가 등록됩니다.
+                    새로운 강좌를 찾아보세요!
                   </p>
+                  <Link href="/courses" className={styles.browseCoursesLink}>
+                    강좌 둘러보기
+                  </Link>
                 </div>
               )}
             </section>
           </div>
-
-          <aside className={styles.sidebar}>
-            <div className={styles.announcementsCard}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <span className={styles.sectionIcon}>📢</span>
-                  공지사항
-                </h2>
-                {announcements.length > 0 && (
-                  <Link href="/announcements" className={styles.sectionLink}>
-                    전체보기
-                  </Link>
-                )}
-              </div>
-
-              {announcements.length > 0 ? (
-                <div>
-                  {announcements.map((announcement) => (
-                    <div key={announcement.id} className={styles.announcementItem}>
-                      <div className={styles.announcementBadge}>
-                        {announcement.is_pinned && (
-                          <span className={styles.announcementPinned}>📌</span>
-                        )}
-                        <span>{announcement.cohorts?.title}</span>
-                      </div>
-                      <Link 
-                        href={`/announcements/${announcement.id}`}
-                        className={styles.announcementTitle}
-                      >
-                        {announcement.title}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={styles.emptyAnnouncements}>
-                  공지사항이 없습니다
-                </div>
-              )}
-            </div>
-          </aside>
         </div>
       </main>
     </div>

@@ -17,7 +17,7 @@ export default async function StartPage({ searchParams }: StartPageProps) {
   if (!courseSlug || !cohortIdOrSlug) {
     return (
       <ErrorPage
-        icon="🔗"
+        icon="link"
         title="잘못된 링크입니다"
         description="수강 시작 링크가 올바르지 않습니다. 이메일 또는 카카오톡으로 받은 링크를 다시 확인해 주세요."
         primaryAction={{
@@ -50,7 +50,7 @@ export default async function StartPage({ searchParams }: StartPageProps) {
   if (!course) {
     return (
       <ErrorPage
-        icon="📚"
+        icon="book"
         title="강좌를 찾을 수 없습니다"
         description="요청하신 강좌가 존재하지 않거나 현재 운영 중이 아닙니다."
         primaryAction={{
@@ -90,7 +90,7 @@ export default async function StartPage({ searchParams }: StartPageProps) {
   if (!cohort) {
     return (
       <ErrorPage
-        icon="📅"
+        icon="calendar"
         title="기수를 찾을 수 없습니다"
         description="요청하신 기수가 존재하지 않거나 현재 모집 중이 아닙니다."
         primaryAction={{

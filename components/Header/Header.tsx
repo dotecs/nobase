@@ -10,9 +10,10 @@ import styles from './Header.module.css';
 interface HeaderProps {
   userName?: string | null;
   isLoggedIn?: boolean;
+  userRole?: 'student' | 'admin';
 }
 
-export default function Header({ userName, isLoggedIn }: HeaderProps) {
+export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClientSupabaseClient();
@@ -55,11 +56,25 @@ export default function Header({ userName, isLoggedIn }: HeaderProps) {
             대시보드
           </Link>
           <Link 
+            href="/courses" 
+            className={`${styles.navLink} ${isActive('/courses') ? styles.navLinkActive : ''}`}
+          >
+            수강신청
+          </Link>
+          <Link 
             href="/announcements" 
             className={`${styles.navLink} ${isActive('/announcements') ? styles.navLinkActive : ''}`}
           >
             공지사항
           </Link>
+          {userRole === 'admin' && (
+            <Link 
+              href="/admin" 
+              className={`${styles.navLink} ${isActive('/admin') ? styles.navLinkActive : ''}`}
+            >
+              관리자
+            </Link>
+          )}
         </nav>
       )}
 

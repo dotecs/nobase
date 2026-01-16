@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
 import { Profile, Enrollment } from '@/lib/database.types';
+import { FaBullhorn, FaInbox, FaThumbtack } from 'react-icons/fa';
 import styles from './announcements.module.css';
 
 function formatDate(dateString: string) {
@@ -85,11 +86,11 @@ export default async function AnnouncementsPage() {
 
   return (
     <div className={styles.page}>
-      <Header userName={profile?.name || user.email} isLoggedIn={true} />
+      <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
 
       <main className={styles.main}>
         <div className={styles.header}>
-          <h1 className={styles.title}>📢 공지사항</h1>
+          <h1 className={styles.title}><FaBullhorn /> 공지사항</h1>
           <p className={styles.subtitle}>
             내 강좌의 중요한 소식을 확인하세요
           </p>
@@ -97,7 +98,7 @@ export default async function AnnouncementsPage() {
 
         {announcements.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📭</div>
+            <div className={styles.emptyIcon}><FaInbox /></div>
             <h2 className={styles.emptyTitle}>공지사항이 없습니다</h2>
             <p className={styles.emptyDescription}>
               아직 등록된 공지사항이 없거나, 수강 중인 강좌가 없습니다.
@@ -115,7 +116,7 @@ export default async function AnnouncementsPage() {
                     <div className={styles.cardMeta}>
                       {announcement.is_pinned && (
                         <span className={styles.pinnedBadge}>
-                          📌 고정됨
+                          <FaThumbtack /> 고정됨
                         </span>
                       )}
                       <span className={styles.cohortBadge}>

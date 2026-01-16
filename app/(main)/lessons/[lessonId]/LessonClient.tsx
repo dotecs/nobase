@@ -56,7 +56,7 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
     <div className={styles.completeSection}>
       {completed ? (
         <div className={styles.completedBadge}>
-          <span className={styles.completedIcon}>✓</span>
+          <span className={styles.completedIcon}><FaCheck /></span>
           <span>학습 완료</span>
         </div>
       ) : (
@@ -65,7 +65,7 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
           loading={loading}
           size="lg"
         >
-          ✓ 레슨 완료하기
+          <FaCheck /> 레슨 완료하기
         </Button>
       )}
     </div>

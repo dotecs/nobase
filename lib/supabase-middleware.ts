@@ -57,6 +57,14 @@ export async function updateSession(request: NextRequest) {
   // 세션 갱신
   const { data: { user } } = await supabase.auth.getUser()
 
+  // 루트 경로에서 code 파라미터가 있으면 /auth/callback으로 리다이렉트
+  if (request.nextUrl.pathname === '/' && request.nextUrl.searchParams.has('code')) {
+    const code = request.nextUrl.searchParams.get('code')
+    const callbackUrl = new URL('/auth/callback', request.url)
+    callbackUrl.searchParams.set('code', code!)
+    return NextResponse.redirect(callbackUrl)
+  }
+
   // 보호된 경로 체크
   const protectedPaths = ['/dashboard', '/courses', '/lessons', '/announcements', '/start/confirm', '/start/done']
   const isProtectedPath = protectedPaths.some(path => 

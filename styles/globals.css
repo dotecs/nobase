@@ -175,6 +175,12 @@ ol {
   --color-error-light: var(--color-error-100);
   --color-info-light: var(--color-info-100);
 
+  /* Subtle backgrounds for badges */
+  --color-success-subtle: var(--color-success-50);
+  --color-warning-subtle: var(--color-warning-50);
+  --color-error-subtle: var(--color-error-50);
+  --color-info-subtle: var(--color-info-50);
+
   /* Interactive states */
   --color-primary-hover: var(--color-primary-600);
   --color-primary-active: var(--color-primary-700);
@@ -386,6 +392,12 @@ ol {
 
     --shadow-primary: 0 4px 14px 0 rgba(51, 159, 223, 0.3);
     --shadow-secondary: 0 4px 14px 0 rgba(51, 191, 191, 0.3);
+
+    /* Subtle backgrounds for badges (dark mode) */
+    --color-success-subtle: rgba(16, 185, 129, 0.15);
+    --color-warning-subtle: rgba(245, 158, 11, 0.15);
+    --color-error-subtle: rgba(239, 68, 68, 0.15);
+    --color-info-subtle: rgba(59, 130, 246, 0.15);
   }
 }
 
@@ -427,6 +439,12 @@ ol {
 
   --shadow-primary: 0 4px 14px 0 rgba(51, 159, 223, 0.3);
   --shadow-secondary: 0 4px 14px 0 rgba(51, 191, 191, 0.3);
+
+  /* Subtle backgrounds for badges (dark mode) */
+  --color-success-subtle: rgba(16, 185, 129, 0.15);
+  --color-warning-subtle: rgba(245, 158, 11, 0.15);
+  --color-error-subtle: rgba(239, 68, 68, 0.15);
+  --color-info-subtle: rgba(59, 130, 246, 0.15);
 }
 
 /* 수동 라이트 모드 강제 */

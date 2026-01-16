@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient, getUser } from '@/lib/supabase-server';
 import { Button, ErrorPage } from '@/components';
+import { FaCheckCircle } from 'react-icons/fa';
 import styles from '../start.module.css';
 
 interface DonePageProps {
@@ -21,7 +22,7 @@ export default async function DonePage({ searchParams }: DonePageProps) {
   if (!courseId || !cohortId) {
     return (
       <ErrorPage
-        icon="🔗"
+        icon="link"
         title="잘못된 접근입니다"
         description="올바른 경로로 접근해 주세요."
         primaryAction={{
@@ -53,7 +54,7 @@ export default async function DonePage({ searchParams }: DonePageProps) {
   if (!enrollment) {
     return (
       <ErrorPage
-        icon="❌"
+        icon="sad"
         title="등록 정보를 찾을 수 없습니다"
         description="수강 등록이 완료되지 않았습니다. 다시 시도해 주세요."
         primaryAction={{
@@ -72,7 +73,7 @@ export default async function DonePage({ searchParams }: DonePageProps) {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.header}>
-            <div className={styles.successIcon}>🎉</div>
+            <div className={styles.successIcon}><FaCheckCircle /></div>
             <h1 className={styles.title}>수강 등록 완료!</h1>
             <p className={styles.successMessage}>
               <strong>{course?.title}</strong>의 <strong>{cohort?.title}</strong>에

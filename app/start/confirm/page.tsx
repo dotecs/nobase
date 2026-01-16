@@ -18,7 +18,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   if (!courseId || !cohortId) {
     return (
       <ErrorPage
-        icon="🔗"
+        icon="link"
         title="잘못된 접근입니다"
         description="올바른 경로로 접근해 주세요."
         primaryAction={{
@@ -56,7 +56,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   if (!course || !cohort) {
     return (
       <ErrorPage
-        icon="❌"
+        icon="sad"
         title="정보를 찾을 수 없습니다"
         description="강좌 또는 기수 정보를 불러올 수 없습니다."
         primaryAction={{

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import { Profile, Announcement } from '@/lib/database.types';
+import { FaThumbtack } from 'react-icons/fa';
 import styles from '../announcements.module.css';
 
 interface AnnouncementDetailPageProps {
@@ -67,9 +68,9 @@ export default async function AnnouncementDetailPage({ params }: AnnouncementDet
   if (!enrollment) {
     return (
       <div className={styles.detailPage}>
-        <Header userName={profile?.name || user.email} isLoggedIn={true} />
+        <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
         <ErrorPage
-          icon="🔒"
+          icon="lock"
           title="접근 권한이 없습니다"
           description="이 공지사항을 볼 수 있는 권한이 없습니다."
           primaryAction={{
@@ -86,7 +87,7 @@ export default async function AnnouncementDetailPage({ params }: AnnouncementDet
 
   return (
     <div className={styles.detailPage}>
-      <Header userName={profile?.name || user.email} isLoggedIn={true} />
+      <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
 
       <main className={styles.detailMain}>
         <Link href="/announcements" className={styles.backLink}>
@@ -99,7 +100,7 @@ export default async function AnnouncementDetailPage({ params }: AnnouncementDet
             <div className={styles.detailMeta}>
               {announcement.is_pinned && (
                 <span className={styles.pinnedBadge}>
-                  📌 고정됨
+                  <FaThumbtack /> 고정됨
                 </span>
               )}
               <span className={styles.cohortBadge}>

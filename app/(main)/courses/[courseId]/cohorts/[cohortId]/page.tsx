@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import { Profile, Course, Cohort, Lesson, LessonProgress, Announcement } from '@/lib/database.types';
+import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck } from 'react-icons/fa';
 import styles from './course.module.css';
 
 interface CoursePageProps {
@@ -35,9 +36,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
   if (!enrollment) {
     return (
       <div className={styles.page}>
-        <Header userName={profile?.name || user.email} isLoggedIn={true} />
+        <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
         <ErrorPage
-          icon="🔒"
+          icon="lock"
           title="접근 권한이 없습니다"
           description="이 강좌에 대한 수강 등록이 필요합니다. 강좌를 구매하셨다면 이메일로 받은 수강 시작 링크를 확인해 주세요."
           primaryAction={{
@@ -111,7 +112,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   return (
     <div className={styles.page}>
-      <Header userName={profile?.name || user.email} isLoggedIn={true} />
+      <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
 
       <main className={styles.main}>
         <nav className={styles.breadcrumb}>
@@ -131,12 +132,12 @@ export default async function CoursePage({ params }: CoursePageProps) {
                 className={styles.thumbnailImage}
               />
             ) : (
-              '📚'
+              <FaBook className={styles.thumbnailIcon} />
             )}
           </div>
 
           <div className={styles.headerContent}>
-            <span className={styles.cohortBadge}>📅 {cohort.title}</span>
+            <span className={styles.cohortBadge}><FaCalendarAlt /> {cohort.title}</span>
             <h1 className={styles.title}>{course.title}</h1>
             {course.description && (
               <p className={styles.description}>{course.description}</p>
@@ -169,7 +170,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
           <div className={styles.mainContent}>
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                <span className={styles.sectionIcon}>📋</span>
+                <span className={styles.sectionIcon}><FaList /></span>
                 커리큘럼
               </h2>
 
@@ -183,7 +184,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                       className={styles.lessonItem}
                     >
                       <span className={`${styles.lessonNumber} ${isCompleted ? styles.lessonComplete : styles.lessonIncomplete}`}>
-                        {isCompleted ? '✓' : index + 1}
+                        {isCompleted ? <FaCheck /> : index + 1}
                       </span>
                       <span className={styles.lessonTitle}>{lesson.title}</span>
                     </Link>
@@ -205,7 +206,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
           <aside className={styles.sidebar}>
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>
-                <span className={styles.sectionIcon}>📢</span>
+                <span className={styles.sectionIcon}><FaBullhorn /></span>
                 공지사항
               </h2>
 
@@ -218,7 +219,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                         className={styles.announcementTitle}
                       >
                         {announcement.is_pinned && (
-                          <span className={styles.announcementPinned}>📌</span>
+                          <span className={styles.announcementPinned}><FaThumbtack /></span>
                         )}
                         {announcement.title}
                       </Link>
