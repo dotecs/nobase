@@ -2,7 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
-import { Profile, Course, Cohort, Lesson, LessonProgress, Announcement } from '@/lib/database.types';
+import { Profile, Course, Cohort, Lesson, Announcement } from '@/lib/database.types';
 import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck } from 'react-icons/fa';
 import styles from './course.module.css';
 

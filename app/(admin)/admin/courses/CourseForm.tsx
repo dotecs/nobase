@@ -7,8 +7,7 @@ import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { FaArrowLeft, FaImage, FaBook, FaCloudUploadAlt, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
-import { uploadCourseThumbnail, validateImageFile, deleteFile, STORAGE_BUCKETS } from '@/lib/storage';
-import { Database } from '@/lib/database.types';
+import { uploadCourseThumbnail, validateImageFile } from '@/lib/storage';
 import styles from './courseForm.module.css';
 
 interface CourseFormProps {

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { FaBook, FaUsers, FaGraduationCap, FaBullhorn, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaBook, FaUsers, FaGraduationCap, FaBullhorn, FaPlus, FaEdit } from 'react-icons/fa';
 import { Button } from '@/components';
 import { Course } from '@/lib/database.types';
 import styles from './admin.module.css';

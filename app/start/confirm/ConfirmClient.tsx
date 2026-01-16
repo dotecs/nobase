@@ -57,7 +57,7 @@ export default function ConfirmClient({
 
       // 성공 - done 페이지로 이동
       router.push(`/start/done?courseId=${course.id}&cohortId=${cohort.id}`);
-    } catch (err) {
+    } catch {
       setError('수강 등록 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);

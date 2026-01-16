@@ -59,7 +59,7 @@ export default async function HomePage() {
           </h1>
           <p className={styles.heroDescription}>
             노베이스 구조대는 기초가 부족해서 공부가 막막한 사람들을 돕는 커뮤니티입니다.<br />
-            우리는 '나 자신을 믿기'의 가치를 믿습니다.
+            우리는 &apos;나 자신을 믿기&apos;의 가치를 믿습니다.
           </p>
           <div className={styles.heroActions}>
             <Button href={user ? "/dashboard" : "/signup"} size="lg">

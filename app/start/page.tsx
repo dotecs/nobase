@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient, getUser } from '@/lib/supabase-server';
 import { ErrorPage } from '@/components';
-import { Course, Cohort, Enrollment } from '@/lib/database.types';
+import { Course, Cohort } from '@/lib/database.types';
 
 interface StartPageProps {
   searchParams: Promise<{

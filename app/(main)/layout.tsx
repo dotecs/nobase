@@ -1,5 +1,4 @@
-import { getUser, getProfile } from '@/lib/supabase-server';
-import { Header, Footer } from '@/components';
+import { Footer } from '@/components';
 
 export default async function MainLayout({
   children,

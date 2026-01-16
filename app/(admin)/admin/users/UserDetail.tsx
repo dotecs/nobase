@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
-import { FaArrowLeft, FaUser, FaUserShield, FaGraduationCap, FaTrash } from 'react-icons/fa';
+import { FaArrowLeft, FaUser, FaGraduationCap, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
-import { Database, UserRole } from '@/lib/database.types';
+import { UserRole } from '@/lib/database.types';
 import styles from '../courses/courseForm.module.css';
 
 interface Enrollment {

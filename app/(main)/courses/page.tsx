@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
 import { Profile, Course, Cohort } from '@/lib/database.types';
-import { FaBook, FaCalendarAlt, FaUsers, FaClock } from 'react-icons/fa';
+import { FaBook, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import styles from './courses.module.css';
 
 interface CourseWithCohorts extends Course {

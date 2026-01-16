@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FaBook, FaCalendarAlt } from 'react-icons/fa';
 import styles from './CourseCard.module.css';
 
 interface CourseCardProps {

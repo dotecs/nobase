@@ -7,7 +7,6 @@ import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { FaArrowLeft, FaGraduationCap, FaTrash } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
-import { Database } from '@/lib/database.types';
 import styles from '../courses/courseForm.module.css';
 
 interface Course {

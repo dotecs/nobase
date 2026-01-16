@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { Button } from '@/components';
+import { FaCheck } from 'react-icons/fa';
 import styles from './lesson.module.css';
 
 interface LessonClientProps {

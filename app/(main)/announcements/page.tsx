@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
-import { Profile, Enrollment } from '@/lib/database.types';
+import { Profile } from '@/lib/database.types';
 import { FaBullhorn, FaInbox, FaThumbtack } from 'react-icons/fa';
 import styles from './announcements.module.css';
 
@@ -75,14 +75,6 @@ export default async function AnnouncementsPage() {
     
     announcements = data || [];
   }
-
-  // cohort 정보 매핑
-  const cohortMap = new Map(
-    enrollments.map(e => {
-      const cohort = e.cohorts as any;
-      return [cohort?.id, cohort];
-    })
-  );
 
   return (
     <div className={styles.page}>
