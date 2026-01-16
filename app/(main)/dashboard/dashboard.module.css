@@ -26,15 +26,12 @@
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-8);
+  display: flex;
+  justify-content: center;
 }
 
-@media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: 2fr 1fr;
-  }
+.mainContent {
+  width: 100%;
 }
 
 .section {
