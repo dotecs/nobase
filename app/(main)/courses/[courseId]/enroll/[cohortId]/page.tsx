@@ -7,7 +7,7 @@ import Footer from '@/components/Footer'
 import { Button } from '@/components'
 import { Course, Cohort, Profile } from '@/lib/database.types'
 import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaCheckCircle } from 'react-icons/fa'
-import styles from '../../courses.module.css'
+import styles from '../../../../courses/courses.module.css'
 
 interface PageProps {
   params: Promise<{
