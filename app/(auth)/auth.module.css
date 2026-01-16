@@ -184,3 +184,19 @@
   background: #FADA0A;
   border-color: #FADA0A;
 }
+
+.termsText {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+  line-height: 1.5;
+}
+
+.link {
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

@@ -37,14 +37,9 @@ export default async function HomePage() {
                 대시보드
               </Button>
             ) : (
-              <div className={styles.authButtons}>
-                <Button href="/login" variant="ghost" size="sm">
-                  로그인
-                </Button>
-                <Button href="/signup" size="sm">
-                  시작하기
-                </Button>
-              </div>
+              <Button href="/login" size="sm">
+                시작하기
+              </Button>
             )}
           </nav>
         </div>
@@ -62,7 +57,7 @@ export default async function HomePage() {
             우리는 &apos;나 자신을 믿기&apos;의 가치를 믿습니다.
           </p>
           <div className={styles.heroActions}>
-            <Button href={user ? "/dashboard" : "/signup"} size="lg">
+            <Button href={user ? "/dashboard" : "/login"} size="lg">
               {user ? "대시보드로 이동" : "구조대에 합류하기"}
             </Button>
           </div>

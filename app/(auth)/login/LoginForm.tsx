@@ -91,6 +91,9 @@ export default function LoginForm() {
             <p className={styles.footerText}>
               처음이신가요? 소셜 계정으로 바로 시작할 수 있어요!
             </p>
+            <p className={styles.termsText}>
+              로그인 시 <a href="/terms" className={styles.link}>이용약관</a> 및 <a href="/privacy" className={styles.link}>개인정보처리방침</a>에 동의하게 됩니다.
+            </p>
           </div>
         </div>
       </div>

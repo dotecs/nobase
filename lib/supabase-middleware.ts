@@ -77,8 +77,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // 이미 로그인한 사용자가 로그인/회원가입 페이지 접근 시
-  const authPaths = ['/login', '/signup']
+  // 이미 로그인한 사용자가 로그인 페이지 접근 시
+  const authPaths = ['/login']
   const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path))
 
   if (isAuthPath && user) {
