@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
-import type { Cohort, Lesson } from '@/lib/database.types';
-import { FaPlus, FaTrash, FaSave, FaCheck } from 'react-icons/fa';
+import type { Lesson } from '@/lib/database.types';
+import { FaPlus, FaTrash, FaSave } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import styles from './CurriculumManager.module.css';
@@ -22,7 +22,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   const { alert, confirm } = useModal();
 
   const [lessons, setLessons] = useState<EditingLesson[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   
   // New Lesson State
   const [newLesson, setNewLesson] = useState({
