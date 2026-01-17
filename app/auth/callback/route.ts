@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         .from('profiles')
         .select('name, phone')
         .eq('user_id', session.user.id)
-        .single();
+        .single() as { data: { name: string | null; phone: string | null } | null };
 
       // name 또는 phone이 없으면 프로필 완성 페이지로
       if (!profile?.name || !profile?.phone) {
