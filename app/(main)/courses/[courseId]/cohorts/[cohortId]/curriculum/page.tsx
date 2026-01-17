@@ -74,7 +74,7 @@ export default async function CurriculumPage({ params }: CurriculumPageProps) {
   const { data: lessonsData } = await supabase
     .from('lessons')
     .select('*')
-    .eq('cohort_id', cohortId)
+    .eq('course_id', courseId)
     .eq('is_published', true)
     .order('sort_order', { ascending: true });
 

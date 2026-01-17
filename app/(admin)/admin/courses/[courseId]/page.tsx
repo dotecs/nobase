@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import CourseForm from '../CourseForm';
+import CurriculumManager from '../components/CurriculumManager';
 
 interface PageProps {
   params: Promise<{ courseId: string }>;
@@ -20,5 +21,9 @@ export default async function EditCoursePage({ params }: PageProps) {
     notFound();
   }
 
-  return <CourseForm initialData={course} />;
+  return (
+    <CourseForm initialData={course}>
+      <CurriculumManager courseId={courseId} />
+    </CourseForm>
+  );
 }

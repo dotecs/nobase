@@ -99,6 +99,153 @@
   background-color: var(--color-error-50);
 }
 
+/* 햄버거 버튼 - 기본적으로 숨김 */
+.hamburgerButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: var(--text-xl);
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.hamburgerButton:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+/* 오버레이 */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-modal) - 1);
+  animation: fadeIn 0.2s ease;
+}
+
+/* 사이드바 */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background-color: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease;
+}
+
+.sidebarOpen {
+  right: 0;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebarUserName {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.sidebarNav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) 0;
+  overflow-y: auto;
+}
+
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebarLink:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.sidebarLinkActive {
+  color: var(--color-primary);
+  background-color: var(--color-primary-50);
+}
+
+.sidebarLinkActive:hover {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary);
+}
+
+.sidebarFooter {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.sidebarLogout {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-error);
+  background-color: var(--color-error-50);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebarLogout:hover {
+  background-color: var(--color-error-100);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Tablet */
 @media (max-width: 1024px) {
   .nav {
@@ -116,22 +263,31 @@
     display: none;
   }
 
+  /* 데스크탑 네비게이션 숨김 */
   .nav {
-    gap: var(--space-3);
+    display: none;
   }
 
+  /* 사용자 정보 숨김 */
   .userName {
+    display: none;
+  }
+
+  .logoutButton {
     display: none;
   }
 
   .userSection {
     gap: var(--space-2);
   }
-}
 
-/* Small mobile */
-@media (max-width: 480px) {
-  .navLink {
-    font-size: var(--text-xs);
+  /* 햄버거 버튼 표시 */
+  .hamburgerButton {
+    display: flex;
+  }
+
+  /* 오버레이 표시 */
+  .overlay {
+    display: block;
   }
 }

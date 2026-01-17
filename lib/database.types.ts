@@ -17,6 +17,7 @@ export interface Database {
           user_id: string
           role: UserRole
           name: string | null
+          phone: string | null
           created_at: string
           updated_at: string
         }
@@ -24,6 +25,7 @@ export interface Database {
           user_id: string
           role?: UserRole
           name?: string | null
+          phone?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -31,6 +33,7 @@ export interface Database {
           user_id?: string
           role?: UserRole
           name?: string | null
+          phone?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -105,7 +108,7 @@ export interface Database {
       lessons: {
         Row: {
           id: string
-          cohort_id: string
+          course_id: string
           title: string
           sort_order: number
           vimeo_url: string | null
@@ -117,7 +120,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          cohort_id: string
+          course_id: string
           title: string
           sort_order?: number
           vimeo_url?: string | null
@@ -129,7 +132,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          cohort_id?: string
+          course_id?: string
           title?: string
           sort_order?: number
           vimeo_url?: string | null

@@ -30,33 +30,32 @@ export default async function LessonPage({ params }: LessonPageProps) {
     .from('lessons')
     .select(`
       *,
-      cohorts (
-        *,
-        courses (*)
-      )
+      courses (*)
     `)
     .eq('id', lessonId)
     .single();
 
-  const lesson = lessonData as (Lesson & { cohorts: any }) | null;
+  const lesson = lessonData as (Lesson & { courses: any }) | null;
 
   if (!lesson) {
     notFound();
   }
 
-  const cohort = lesson.cohorts as any;
-  const course = cohort?.courses;
+  const course = lesson?.courses as any;
 
   // 등록 확인
   const { data: enrollment } = await supabase
     .from('enrollments')
-    .select('*')
+    .select('*, cohorts!inner(id, course_id)')
     .eq('user_id', user.id)
-    .eq('cohort_id', cohort.id)
     .eq('status', 'active')
-    .single();
+    .eq('cohorts.course_id', course.id)
+    .limit(1)
+    .maybeSingle();
 
-  if (!enrollment) {
+  const cohort = (enrollment as any)?.cohorts as { id: string; course_id: string } | null;
+
+  if (!enrollment || !cohort) {
     return (
       <div className={styles.page}>
         <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
@@ -87,7 +86,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const { data: allLessonsData } = await supabase
     .from('lessons')
     .select('id, title, sort_order')
-    .eq('cohort_id', cohort.id)
+    .eq('course_id', course.id)
     .eq('is_published', true)
     .order('sort_order', { ascending: true });
 

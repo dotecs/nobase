@@ -19,9 +19,10 @@ interface CourseFormProps {
     thumbnail_url: string | null;
     is_published: boolean;
   };
+  children?: React.ReactNode;
 }
 
-export default function CourseForm({ initialData }: CourseFormProps) {
+export default function CourseForm({ initialData, children }: CourseFormProps) {
   const router = useRouter();
   // Admin 페이지에서는 RLS 정책이 적용되지 않으므로 any 타입 사용
   const supabase = createClientSupabaseClient() as any;
@@ -505,6 +506,8 @@ export default function CourseForm({ initialData }: CourseFormProps) {
           </div>
         )}
       </form>
+      
+      {children}
     </main>
   );
 }

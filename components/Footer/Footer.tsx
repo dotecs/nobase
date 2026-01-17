@@ -1,40 +1,57 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import styles from './Footer.module.css';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        <div className={styles.companyInfo}>
-          <div className={styles.companyName}>도텍</div>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <span className={styles.label}>대표자</span>
-              <span className={styles.value}>한철민</span>
+        <div className={styles.mainRow}>
+          <span className={styles.copyright}>© {currentYear} NOBASE</span>
+          
+          <button 
+            className={`${styles.toggle} ${isExpanded ? styles.active : ''}`}
+            onClick={() => setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded}
+          >
+            <span className={styles.toggleText}>{isExpanded ? '접기' : '더보기'}</span>
+            <span className={styles.toggleIcon}>
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </span>
+          </button>
+        </div>
+        
+        <div className={`${styles.details} ${isExpanded ? styles.show : ''}`}>
+          <div className={styles.detailsInner}>
+            <div className={styles.info}>
+              <span><span className={styles.label}>상호</span> <span className={styles.value}>도텍</span></span>
+              <span className={styles.dot}>·</span>
+              <span><span className={styles.label}>대표</span> <span className={styles.value}>한철민</span></span>
+              <span className={styles.dot}>·</span>
+              <span><span className={styles.label}>사업자등록번호</span> <span className={styles.value}>603-18-99267</span></span>
+              <span className={styles.dot}>·</span>
+              <span><span className={styles.label}>통신판매</span> <span className={styles.value}>2020-수원장안-1017</span></span>
             </div>
-            <div className={styles.infoItem}>
-              <span className={styles.label}>사업자등록번호</span>
-              <span className={styles.value}>603-18-99267</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.label}>통신판매신고</span>
-              <span className={styles.value}>2020-수원장안-1017</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.label}>주소</span>
-              <span className={styles.value}>경기도 화성시 봉담읍 수영로 61-7, 201-601</span>
+            
+            <div className={styles.links}>
+              <Link href="/terms">이용약관</Link>
+              <Link href="/privacy">개인정보처리방침</Link>
             </div>
           </div>
-        </div>
-        
-        <div className={styles.legalLinks}>
-          <Link href="/terms" className={styles.legalLink}>서비스 이용약관</Link>
-          <span className={styles.divider}>|</span>
-          <Link href="/privacy" className={styles.legalLink}>개인정보처리방침</Link>
-        </div>
-        
-        <div className={styles.copyright}>
-          Copyright ⓒ 도텍 Corp. All rights reserved.
         </div>
       </div>
     </footer>

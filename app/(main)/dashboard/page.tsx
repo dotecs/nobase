@@ -39,11 +39,11 @@ export default async function DashboardPage() {
       const cohort = enrollment.cohorts;
       const course = cohort?.courses;
 
-      // 해당 cohort의 레슨들
+      // 해당 course의 레슨들
       const { data: lessonsData } = await supabase
         .from('lessons')
         .select('id, sort_order')
-        .eq('cohort_id', cohort.id)
+        .eq('course_id', course.id)
         .eq('is_published', true)
         .order('sort_order', { ascending: true });
 

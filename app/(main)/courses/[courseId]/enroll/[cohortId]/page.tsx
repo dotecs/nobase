@@ -72,12 +72,11 @@ export default async function EnrollPage({ params }: PageProps) {
     .eq('cohort_id', cohortId)
     .single()
 
-  // 해당 기수의 레슨 목록 조회
+  // 해당 강좌의 레슨 목록 조회 (수강신청 페이지에서는 전체 커리큘럼 표시)
   const { data: lessonsData } = await supabase
     .from('lessons')
-    .select('id, title, sort_order, is_published')
-    .eq('cohort_id', cohortId)
-    .eq('is_published', true)
+    .select('id, title, description, sort_order, is_published')
+    .eq('course_id', courseId)
     .order('sort_order', { ascending: true })
 
   const lessons = (lessonsData || []) as Lesson[]
@@ -191,6 +190,9 @@ export default async function EnrollPage({ params }: PageProps) {
                       <div className={styles.lessonNumber}>{index + 1}</div>
                       <div className={styles.lessonInfo}>
                         <span className={styles.lessonTitle}>{lesson.title}</span>
+                        {lesson.description && (
+                          <span className={styles.lessonDescription}>{lesson.description}</span>
+                        )}
                       </div>
                       <div className={styles.lessonStatus}>
                         {existingEnrollment ? (
