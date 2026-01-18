@@ -44,7 +44,7 @@ export default async function AdminEnrollmentsPage() {
     .from('profiles')
     .select('role')
     .eq('user_id', user.id)
-    .single();
+    .single() as { data: { role: string } | null };
 
   if (profile?.role !== 'admin') {
     redirect('/dashboard');
@@ -71,7 +71,7 @@ export default async function AdminEnrollmentsPage() {
         )
       )
     `)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }) as { data: any[] | null; error: any };
 
   if (error) {
     console.error('Error fetching enrollments:', error);
@@ -82,7 +82,7 @@ export default async function AdminEnrollmentsPage() {
   const { data: profiles } = await supabase
     .from('profiles')
     .select('user_id, name')
-    .in('user_id', userIds);
+    .in('user_id', userIds) as { data: { user_id: string; name: string | null }[] | null };
 
   const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
 
@@ -101,17 +101,15 @@ export default async function AdminEnrollmentsPage() {
     'use server';
 
     const enrollmentId = formData.get('enrollmentId') as string;
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient() as any;
 
-    const { error } = await supabase
+    const result = await supabase
       .from('enrollments')
-      .update({
-        status: 'active',
-      })
+      .update({ status: 'active' })
       .eq('id', enrollmentId);
 
-    if (error) {
-      console.error('Error approving enrollment:', error);
+    if (result.error) {
+      console.error('Error approving enrollment:', result.error);
     }
 
     revalidatePath('/admin/enrollments');
@@ -121,17 +119,15 @@ export default async function AdminEnrollmentsPage() {
     'use server';
 
     const enrollmentId = formData.get('enrollmentId') as string;
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient() as any;
 
-    const { error } = await supabase
+    const result = await supabase
       .from('enrollments')
-      .update({
-        status: 'cancelled',
-      })
+      .update({ status: 'cancelled' })
       .eq('id', enrollmentId);
 
-    if (error) {
-      console.error('Error rejecting enrollment:', error);
+    if (result.error) {
+      console.error('Error rejecting enrollment:', result.error);
     }
 
     revalidatePath('/admin/enrollments');

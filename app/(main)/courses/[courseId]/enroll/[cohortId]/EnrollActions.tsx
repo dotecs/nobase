@@ -54,7 +54,7 @@ export default function EnrollActions({
       const { error } = await supabase
         .from('enrollments')
         .delete()
-        .eq('id', existingEnrollment?.id)
+        .eq('id', existingEnrollment?.id || '')
 
       if (error) {
         console.error('Delete error:', error)

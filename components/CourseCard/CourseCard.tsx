@@ -11,7 +11,6 @@ interface CourseCardProps {
   thumbnailUrl?: string | null;
   totalLessons: number;
   completedLessons: number;
-  nextLessonId?: string | null;  // kept for backward compatibility
 }
 
 export default function CourseCard({
@@ -23,7 +22,6 @@ export default function CourseCard({
   thumbnailUrl,
   totalLessons,
   completedLessons,
-  nextLessonId: _nextLessonId,
 }: CourseCardProps) {
   const progressPercent = totalLessons > 0 
     ? Math.round((completedLessons / totalLessons) * 100) 
@@ -36,6 +34,7 @@ export default function CourseCard({
       <Link href={courseUrl}>
         <div className={styles.thumbnail}>
           {thumbnailUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img 
               src={thumbnailUrl} 
               alt={courseTitle}

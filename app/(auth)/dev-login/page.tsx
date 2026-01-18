@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import styles from '../auth.module.css';
 
-export default function DevLoginPage() {
+function DevLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo') || '/dashboard';
@@ -160,5 +160,21 @@ export default function DevLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DevLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.authPage}>
+        <div className={styles.authContainer}>
+          <div className={styles.authCard}>
+            <p>로딩 중...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <DevLoginContent />
+    </Suspense>
   );
 }

@@ -61,10 +61,6 @@ export default async function DashboardPage() {
         : { data: [] };
 
       const progress = (progressData || []) as any[];
-      const completedLessonIds = new Set(progress.map(p => p.lesson_id));
-
-      // 다음 레슨 찾기 (완료하지 않은 첫 번째 레슨)
-      const nextLesson = lessons.find(l => !completedLessonIds.has(l.id));
 
       return {
         ...enrollment,
@@ -72,7 +68,6 @@ export default async function DashboardPage() {
         cohort,
         totalLessons: lessons.length,
         completedLessons: progress.length,
-        nextLessonId: nextLesson?.id || null,
       };
     })
   );
@@ -118,7 +113,6 @@ export default async function DashboardPage() {
                       thumbnailUrl={item.course.thumbnail_url}
                       totalLessons={item.totalLessons}
                       completedLessons={item.completedLessons}
-                      nextLessonId={item.nextLessonId}
                     />
                   ))}
                 </div>
