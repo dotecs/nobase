@@ -85,7 +85,7 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
   };
 
   // 파일 업로드 처리
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = useCallback(async (file: File) => {
     const validation = validateImageFile(file);
     if (!validation.valid) {
       await alert({
@@ -132,7 +132,7 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
       setIsUploading(false);
       setUploadProgress(0);
     }
-  };
+  }, [alert, initialData?.id]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

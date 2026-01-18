@@ -60,6 +60,7 @@ export default async function CoursesPage() {
               <article key={course.id} className={styles.courseCard}>
                 <div className={styles.courseThumbnail}>
                   {course.thumbnail_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img 
                       src={course.thumbnail_url} 
                       alt={course.title}

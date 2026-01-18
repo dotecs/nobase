@@ -25,7 +25,7 @@ export function PaymentModal({
   isOpen,
   onClose,
   cohortId,
-  courseId,
+  courseId: _courseId,
   userId,
   price,
   courseName,
