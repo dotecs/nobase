@@ -184,9 +184,12 @@
 }
 
 .lessonLocked {
-  opacity: 0.6;
   cursor: not-allowed;
   background-color: var(--color-bg-secondary);
+}
+
+.lessonLocked .lessonTitle {
+  color: var(--color-text-muted);
 }
 
 .lessonLocked:hover {
