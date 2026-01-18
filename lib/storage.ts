@@ -58,7 +58,7 @@ export async function uploadCourseThumbnail(
 export async function uploadLessonResource(
   lessonId: string,
   file: File
-): Promise<{ url: string | null; error: Error | null }> {
+): Promise<{ url: string | null; storagePath: string | null; error: Error | null }> {
   const supabase = createClientSupabaseClient()
   
   // 파일명에서 특수문자 제거 및 타임스탬프 추가
@@ -74,7 +74,7 @@ export async function uploadLessonResource(
     })
 
   if (error) {
-    return { url: null, error }
+    return { url: null, storagePath: null, error }
   }
 
   // 비공개 버킷이므로 signed URL 생성
@@ -83,10 +83,10 @@ export async function uploadLessonResource(
     .createSignedUrl(data.path, 60 * 60 * 24 * 7) // 7일 유효
 
   if (urlError) {
-    return { url: null, error: urlError }
+    return { url: null, storagePath: null, error: urlError }
   }
 
-  return { url: urlData.signedUrl, error: null }
+  return { url: urlData.signedUrl, storagePath: data.path, error: null }
 }
 
 /**

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import { Profile, Course, Cohort, Lesson } from '@/lib/database.types';
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaClock, FaLock } from 'react-icons/fa';
 import styles from './curriculum.module.css';
 
 interface CurriculumPageProps {
@@ -70,30 +70,32 @@ export default async function CurriculumPage({ params }: CurriculumPageProps) {
     notFound();
   }
 
-  // 레슨 목록
+  // 레슨 목록 (is_published 여부와 관계없이 모두 가져옴)
   const { data: lessonsData } = await supabase
     .from('lessons')
     .select('*')
     .eq('course_id', courseId)
-    .eq('is_published', true)
     .order('sort_order', { ascending: true });
 
   const lessons = (lessonsData || []) as Lesson[];
+  
+  // 공개된 레슨만 필터 (진도 계산용)
+  const publishedLessons = lessons.filter(l => l.is_published);
 
-  // 진도 조회
-  const lessonIds = lessons.map(l => l.id);
-  const { data: progressData } = lessonIds.length > 0
+  // 진도 조회 (공개된 레슨 기준)
+  const publishedLessonIds = publishedLessons.map(l => l.id);
+  const { data: progressData } = publishedLessonIds.length > 0
     ? await supabase
         .from('lesson_progress')
         .select('lesson_id')
         .eq('user_id', user.id)
         .eq('completed', true)
-        .in('lesson_id', lessonIds)
+        .in('lesson_id', publishedLessonIds)
     : { data: [] };
 
   const progress = (progressData || []) as any[];
   const completedLessonIds = new Set(progress.map(p => p.lesson_id));
-  const totalLessons = lessons.length;
+  const totalLessons = publishedLessons.length;
   const completedLessons = progress.length;
   const progressPercent = totalLessons > 0 
     ? Math.round((completedLessons / totalLessons) * 100) 
@@ -144,24 +146,65 @@ export default async function CurriculumPage({ params }: CurriculumPageProps) {
         <div className={styles.lessonList}>
           {lessons.map((lesson, index) => {
             const isCompleted = completedLessonIds.has(lesson.id);
+            const now = new Date();
+            const availableAt = lesson.available_at ? new Date(lesson.available_at) : null;
+            const isScheduled = availableAt && availableAt > now; // 공개 예정 (시간 도래 안함)
+            const isUnpublished = !lesson.is_published; // 아직 미공개
+            const isLocked = isScheduled || isUnpublished; // 접근 불가 상태
+            
+            // 공개 예정일 포맷
+            const formattedDate = availableAt 
+              ? availableAt.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+              : null;
+
+            // 상태 메시지 결정
+            let statusMessage = '';
+            if (isUnpublished && availableAt) {
+              statusMessage = `${formattedDate} 공개 예정`;
+            } else if (isUnpublished) {
+              statusMessage = '준비 중';
+            } else if (isScheduled && formattedDate) {
+              statusMessage = `${formattedDate} 공개 예정`;
+            }
+
+            const content = (
+              <>
+                <span className={`${styles.lessonNumber} ${isCompleted ? styles.lessonComplete : isLocked ? styles.lessonUpcomingNum : styles.lessonIncomplete}`}>
+                  {isCompleted ? <FaCheck /> : isUnpublished ? <FaLock /> : isScheduled ? <FaClock /> : index + 1}
+                </span>
+                <div className={styles.lessonContent}>
+                  <div className={styles.lessonTitle}>{lesson.title}</div>
+                  {isLocked && statusMessage && (
+                    <div className={styles.lessonUpcomingDate}>{statusMessage}</div>
+                  )}
+                  {!isLocked && lesson.description && (
+                    <div className={styles.lessonDescription}>{lesson.description}</div>
+                  )}
+                </div>
+                <span className={`${styles.lessonStatus} ${isCompleted ? styles.statusComplete : isLocked ? styles.statusUpcoming : styles.statusIncomplete}`}>
+                  {isCompleted ? '완료' : isLocked ? '예정' : '미완료'}
+                </span>
+              </>
+            );
+
+            if (isLocked) {
+              return (
+                <div 
+                  key={lesson.id}
+                  className={`${styles.lessonItem} ${styles.lessonUpcoming}`}
+                >
+                  {content}
+                </div>
+              );
+            }
+
             return (
               <Link 
                 key={lesson.id}
                 href={`/lessons/${lesson.id}`}
                 className={styles.lessonItem}
               >
-                <span className={`${styles.lessonNumber} ${isCompleted ? styles.lessonComplete : styles.lessonIncomplete}`}>
-                  {isCompleted ? <FaCheck /> : index + 1}
-                </span>
-                <div className={styles.lessonContent}>
-                  <div className={styles.lessonTitle}>{lesson.title}</div>
-                  {lesson.description && (
-                    <div className={styles.lessonDescription}>{lesson.description}</div>
-                  )}
-                </div>
-                <span className={`${styles.lessonStatus} ${isCompleted ? styles.statusComplete : styles.statusIncomplete}`}>
-                  {isCompleted ? '완료' : '미완료'}
-                </span>
+                {content}
               </Link>
             );
           })}

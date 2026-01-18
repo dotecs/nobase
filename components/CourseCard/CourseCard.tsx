@@ -72,14 +72,12 @@ export default function CourseCard({
           </span>
         </div>
 
-        {nextLessonId && (
-          <Link 
-            href={`/lessons/${nextLessonId}`}
-            className={styles.continueButton}
-          >
-            이어보기 →
-          </Link>
-        )}
+        <Link 
+          href={courseUrl}
+          className={styles.continueButton}
+        >
+          학습하기 →
+        </Link>
       </div>
     </div>
   );

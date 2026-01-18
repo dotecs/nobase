@@ -80,6 +80,8 @@ export interface Database {
           ends_at: string | null
           is_active: boolean
           max_students: number | null
+          price: number
+          original_price: number | null
           created_at: string
           updated_at: string
         }
@@ -92,6 +94,8 @@ export interface Database {
           ends_at?: string | null
           is_active?: boolean
           max_students?: number | null
+          price?: number
+          original_price?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -104,6 +108,8 @@ export interface Database {
           ends_at?: string | null
           is_active?: boolean
           max_students?: number | null
+          price?: number
+          original_price?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -118,6 +124,7 @@ export interface Database {
           description: string | null
           is_published: boolean
           is_free: boolean
+          available_at: string | null
           created_at: string
           updated_at: string
         }
@@ -130,6 +137,7 @@ export interface Database {
           description?: string | null
           is_published?: boolean
           is_free?: boolean
+          available_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -142,6 +150,7 @@ export interface Database {
           description?: string | null
           is_published?: boolean
           is_free?: boolean
+          available_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -152,6 +161,7 @@ export interface Database {
           user_id: string
           cohort_id: string
           status: EnrollmentStatus
+          receipt_contact: string | null
           created_at: string
           updated_at: string
         }
@@ -160,6 +170,7 @@ export interface Database {
           user_id: string
           cohort_id: string
           status?: EnrollmentStatus
+          receipt_contact?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -168,6 +179,7 @@ export interface Database {
           user_id?: string
           cohort_id?: string
           status?: EnrollmentStatus
+          receipt_contact?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -334,4 +346,5 @@ export type Resource = {
   type: 'link' | 'pdf' | 'file'
   title: string
   url: string
+  storage_path?: string // Supabase Storage 경로 (파일 업로드 시)
 }

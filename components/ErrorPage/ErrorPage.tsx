@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { FaSadTear, FaLink, FaBook, FaCalendarAlt, FaLock } from 'react-icons/fa';
+import { FaSadTear, FaLink, FaBook, FaCalendarAlt, FaLock, FaClock } from 'react-icons/fa';
 import Button from '@/components/Button/Button';
 import styles from './ErrorPage.module.css';
 
@@ -9,6 +9,7 @@ const iconMap: Record<string, ReactNode> = {
   'book': <FaBook />,
   'calendar': <FaCalendarAlt />,
   'lock': <FaLock />,
+  'clock': <FaClock />,
 };
 
 interface ErrorPageProps {

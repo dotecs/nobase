@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import { Profile, Course, Cohort, Lesson, Announcement } from '@/lib/database.types';
-import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck } from 'react-icons/fa';
+import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck, FaClock, FaLock } from 'react-icons/fa';
 import styles from './course.module.css';
 
 interface CoursePageProps {
@@ -70,30 +70,32 @@ export default async function CoursePage({ params }: CoursePageProps) {
     notFound();
   }
 
-  // 레슨 목록
+  // 레슨 목록 (is_published 여부와 관계없이 모두 가져옴)
   const { data: lessonsData } = await supabase
     .from('lessons')
     .select('*')
     .eq('course_id', courseId)
-    .eq('is_published', true)
     .order('sort_order', { ascending: true });
 
   const lessons = (lessonsData || []) as Lesson[];
+  
+  // 공개된 레슨만 필터 (진도 계산용)
+  const publishedLessons = lessons.filter(l => l.is_published);
 
-  // 진도 조회
-  const lessonIds = lessons.map(l => l.id);
-  const { data: progressData } = lessonIds.length > 0
+  // 진도 조회 (공개된 레슨 기준)
+  const publishedLessonIds = publishedLessons.map(l => l.id);
+  const { data: progressData } = publishedLessonIds.length > 0
     ? await supabase
         .from('lesson_progress')
         .select('lesson_id')
         .eq('user_id', user.id)
         .eq('completed', true)
-        .in('lesson_id', lessonIds)
+        .in('lesson_id', publishedLessonIds)
     : { data: [] };
 
   const progress = (progressData || []) as any[];
   const completedLessonIds = new Set(progress.map(p => p.lesson_id));
-  const totalLessons = lessons.length;
+  const totalLessons = publishedLessons.length;
   const completedLessons = progress.length;
   const progressPercent = totalLessons > 0 
     ? Math.round((completedLessons / totalLessons) * 100) 
@@ -171,35 +173,66 @@ export default async function CoursePage({ params }: CoursePageProps) {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>
                 <span className={styles.sectionIcon}><FaList /></span>
-                커리큘럼
+                강의목록
               </h2>
 
               <div className={styles.lessonList}>
-                {lessons.slice(0, 5).map((lesson, index) => {
+                {lessons.map((lesson, index) => {
                   const isCompleted = completedLessonIds.has(lesson.id);
+                  const now = new Date();
+                  const availableAt = lesson.available_at ? new Date(lesson.available_at) : null;
+                  const isScheduled = availableAt && availableAt > now;
+                  const isUnpublished = !lesson.is_published;
+                  const isLocked = isScheduled || isUnpublished;
+                  
+                  // 공개 예정일 포맷
+                  const formattedDate = availableAt 
+                    ? availableAt.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+                    : null;
+
+                  const content = (
+                    <>
+                      <span className={`${styles.lessonNumber} ${isCompleted ? styles.lessonComplete : isLocked ? styles.lessonLockedNum : styles.lessonIncomplete}`}>
+                        {isCompleted ? <FaCheck /> : index + 1}
+                      </span>
+                      <div className={styles.lessonInfo}>
+                        <span className={styles.lessonTitle}>{lesson.title}</span>
+                        {isLocked && (
+                          <span className={styles.lessonSchedule}>
+                            {isUnpublished && availableAt ? `${formattedDate} 공개` : isUnpublished ? '준비 중' : `${formattedDate} 공개`}
+                          </span>
+                        )}
+                      </div>
+                      {isLocked && (
+                        <span className={styles.lockIcon}>
+                          <FaLock />
+                        </span>
+                      )}
+                    </>
+                  );
+
+                  if (isLocked) {
+                    return (
+                      <div 
+                        key={lesson.id}
+                        className={`${styles.lessonItem} ${styles.lessonLocked}`}
+                      >
+                        {content}
+                      </div>
+                    );
+                  }
+
                   return (
                     <Link 
                       key={lesson.id}
                       href={`/lessons/${lesson.id}`}
                       className={styles.lessonItem}
                     >
-                      <span className={`${styles.lessonNumber} ${isCompleted ? styles.lessonComplete : styles.lessonIncomplete}`}>
-                        {isCompleted ? <FaCheck /> : index + 1}
-                      </span>
-                      <span className={styles.lessonTitle}>{lesson.title}</span>
+                      {content}
                     </Link>
                   );
                 })}
               </div>
-
-              {totalLessons > 5 && (
-                <Link 
-                  href={`/courses/${courseId}/cohorts/${cohortId}/curriculum`}
-                  className={styles.viewAllLink}
-                >
-                  전체 커리큘럼 보기 ({totalLessons}개)
-                </Link>
-              )}
             </section>
           </div>
 

@@ -69,11 +69,21 @@
   border: 1px solid var(--color-border);
 }
 
+.videoPlayerContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.mainVideoArea {
+  width: 100%;
+}
+
 .videoWrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
   height: 0;
   overflow: hidden;
+  background: #000;
 }
 
 .videoWrapper iframe {
@@ -83,6 +93,141 @@
   width: 100%;
   height: 100%;
   border: none;
+}
+
+.currentVideoInfo {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.currentVideoTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.mainBadgeIcon {
+  color: var(--color-warning);
+  font-size: var(--text-sm);
+}
+
+.currentVideoDescription {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.videoListSection {
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-secondary);
+}
+
+.videoListTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.videoList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.videoListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+}
+
+.videoListItem:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.videoListItemActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.videoListThumbnail {
+  position: relative;
+  width: 60px;
+  height: 40px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.videoListPlayIcon {
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+}
+
+.videoListIndex {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  color: var(--color-text-muted);
+}
+
+.videoListInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.videoListName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mainBadge {
+  padding: 2px 6px;
+  background: var(--color-warning);
+  color: white;
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.videoListDesc {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .noVideo {
@@ -201,11 +346,20 @@
   border-radius: var(--radius-lg);
   color: var(--color-text);
   transition: background-color var(--transition-fast);
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
 }
 
-.resourceItem:hover {
+.resourceItem:hover:not(:disabled) {
   background-color: var(--color-gray-100);
   color: var(--color-primary-600);
+}
+
+.resourceItem:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 .resourceIcon {
@@ -220,6 +374,15 @@
 
 .resourceArrow {
   color: var(--color-text-muted);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .navigation {

@@ -99,6 +99,9 @@ export default async function CohortsPage() {
         <Link href="/admin/cohorts" className={`${styles.tab} ${styles.active}`}>
           기수 관리
         </Link>
+        <Link href="/admin/enrollments" className={styles.tab}>
+          수강신청 관리
+        </Link>
         <Link href="/admin/users" className={styles.tab}>
           사용자 관리
         </Link>

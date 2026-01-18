@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import LessonClient from './LessonClient';
+import LessonResources from './LessonResources';
+import VideoPlayer from './VideoPlayer';
 import styles from './lesson.module.css';
-import { Resource, Profile, Lesson, LessonProgress } from '@/lib/database.types';
-import { FaVideo, FaPaperclip, FaFilePdf, FaExternalLinkAlt, FaFolder } from 'react-icons/fa';
+import { Resource, Profile, Lesson, LessonProgress, LessonVideo } from '@/lib/database.types';
+import { FaPaperclip } from 'react-icons/fa';
 
 interface LessonPageProps {
   params: Promise<{
@@ -42,6 +44,39 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
 
   const course = lesson?.courses as any;
+
+  // 공개 예정일 체크 (available_at이 설정되어 있고 아직 도래하지 않은 경우)
+  if (lesson.available_at) {
+    const availableDate = new Date(lesson.available_at);
+    const now = new Date();
+    if (availableDate > now) {
+      const profileData = await getProfile();
+      const profile = profileData as Profile | null;
+      
+      const formattedDate = availableDate.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      return (
+        <div className={styles.page}>
+          <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
+          <ErrorPage
+            icon="clock"
+            title="아직 공개되지 않은 레슨입니다"
+            description={`이 레슨은 ${formattedDate}에 공개될 예정입니다.`}
+            primaryAction={{
+              label: '대시보드로 이동',
+              href: '/dashboard',
+            }}
+          />
+        </div>
+      );
+    }
+  }
 
   // 등록 확인
   const { data: enrollment } = await supabase
@@ -96,16 +131,17 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
-  // Vimeo URL 파싱
-  let vimeoEmbedUrl: string | null = null;
-  if (lesson.vimeo_url) {
-    const vimeoMatch = lesson.vimeo_url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (vimeoMatch) {
-      vimeoEmbedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-    } else if (lesson.vimeo_url.includes('player.vimeo.com')) {
-      vimeoEmbedUrl = lesson.vimeo_url;
-    }
-  }
+  // 레슨 영상 목록 조회
+  const { data: videosData } = await supabase
+    .from('lesson_videos')
+    .select('*')
+    .eq('lesson_id', lessonId)
+    .order('is_main', { ascending: false })
+    .order('sort_order', { ascending: true });
+
+  const lessonVideos = (videosData || []) as LessonVideo[];
+  const mainVideo = lessonVideos.find(v => v.is_main) || lessonVideos[0] || null;
+  const subVideos = lessonVideos.filter(v => !v.is_main || (v.is_main && lessonVideos.filter(x => x.is_main).length > 1 && v.id !== mainVideo?.id));
 
   const resources = (lesson.resources || []) as Resource[];
 
@@ -147,21 +183,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
 
         <div className={styles.videoContainer}>
-          {vimeoEmbedUrl ? (
-            <div className={styles.videoWrapper}>
-              <iframe
-                src={vimeoEmbedUrl}
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                title={lesson.title}
-              />
-            </div>
-          ) : (
-            <div className={styles.noVideo}>
-              <div className={styles.noVideoIcon}><FaVideo /></div>
-              <p>영상이 준비 중입니다</p>
-            </div>
-          )}
+          <VideoPlayer 
+            mainVideo={mainVideo}
+            subVideos={subVideos}
+            lessonTitle={lesson.title}
+          />
         </div>
 
         <LessonClient
@@ -176,23 +202,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
               <span className={styles.sectionIcon}><FaPaperclip /></span>
               학습 자료
             </h2>
-            <div className={styles.resourceList}>
-              {resources.map((resource, index) => (
-                <a
-                  key={index}
-                  href={resource.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.resourceItem}
-                >
-                  <span className={styles.resourceIcon}>
-                    {resource.type === 'pdf' ? <FaFilePdf /> : resource.type === 'link' ? <FaExternalLinkAlt /> : <FaFolder />}
-                  </span>
-                  <span className={styles.resourceTitle}>{resource.title}</span>
-                  <span className={styles.resourceArrow}>→</span>
-                </a>
-              ))}
-            </div>
+            <LessonResources resources={resources} lessonId={lessonId} />
           </div>
         )}
 

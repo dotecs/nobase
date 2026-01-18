@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import type { Lesson } from '@/lib/database.types';
-import { FaPlus, FaTrash, FaSave, FaVideo } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSave, FaVideo, FaPaperclip } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import LessonVideoModal from './LessonVideoModal';
+import LessonResourceModal from './LessonResourceModal';
 import styles from './CurriculumManager.module.css';
 
 interface CurriculumManagerProps {
@@ -28,12 +29,16 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   // Video Modal State
   const [videoModalLesson, setVideoModalLesson] = useState<{ id: string; title: string } | null>(null);
   
+  // Resource Modal State
+  const [resourceModalLesson, setResourceModalLesson] = useState<{ id: string; title: string } | null>(null);
+  
   // New Lesson State
   const [newLesson, setNewLesson] = useState({
     title: '',
     sort_order: 1,
     is_published: true,
     is_free: false,
+    available_at: '',
   });
 
   // Fetch Lessons
@@ -87,6 +92,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
              sort_order: lesson.sort_order,
              is_published: lesson.is_published,
              is_free: lesson.is_free,
+             available_at: lesson.available_at || null,
              updated_at: new Date().toISOString(),
         })
         .eq('id', lesson.id);
@@ -119,6 +125,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           sort_order: newLesson.sort_order,
           is_published: newLesson.is_published,
           is_free: newLesson.is_free,
+          available_at: newLesson.available_at || null,
           resources: []
         })
         .select()
@@ -133,6 +140,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
         sort_order: (data.sort_order || 0) + 1,
         is_published: true,
         is_free: false,
+        available_at: '',
       });
 
     } catch (err: any) {
@@ -173,8 +181,10 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                         <th style={{ width: '80px' }}>순서</th>
                         <th>제목</th>
                         <th style={{ width: '100px', textAlign: 'center' }}>영상</th>
+                        <th style={{ width: '100px', textAlign: 'center' }}>자료</th>
                         <th style={{ width: '70px', textAlign: 'center' }}>무료</th>
                         <th style={{ width: '70px', textAlign: 'center' }}>공개</th>
+                        <th style={{ width: '160px', textAlign: 'center' }}>공개일</th>
                         <th style={{ width: '100px', textAlign: 'right' }}>관리</th>
                     </tr>
                 </thead>
@@ -213,6 +223,17 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                             </td>
                             <td>
                                 <div className={styles.checkboxCenter}>
+                                    <button 
+                                        className={styles.videoButton}
+                                        onClick={() => setResourceModalLesson({ id: lesson.id, title: lesson.title })}
+                                        title="학습 자료 관리"
+                                    >
+                                        <FaPaperclip /> {(lesson.resources as any[])?.length || 0}
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div className={styles.checkboxCenter}>
                                     <input 
                                         type="checkbox"
                                         checked={lesson.is_free}
@@ -232,6 +253,15 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                                         title="공개 여부"
                                     />
                                 </div>
+                            </td>
+                            <td>
+                                <input 
+                                    type="datetime-local"
+                                    className={styles.tableInput}
+                                    value={lesson.available_at ? lesson.available_at.slice(0, 16) : ''}
+                                    onChange={(e) => handleLessonChange(lesson.id, 'available_at', e.target.value || null)}
+                                    title="공개 예정일 (비워두면 즉시 공개)"
+                                />
                             </td>
                             <td>
                                 <div className={styles.actions}>
@@ -283,6 +313,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                             {/* 새 레슨은 저장 후 영상 추가 */}
                         </td>
                         <td>
+                            {/* 새 레슨은 저장 후 자료 추가 */}
+                        </td>
+                        <td>
                             <div className={styles.checkboxCenter}>
                                 <input 
                                     type="checkbox"
@@ -305,6 +338,15 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                             </div>
                         </td>
                         <td>
+                            <input 
+                                type="datetime-local"
+                                className={styles.tableInput}
+                                value={newLesson.available_at}
+                                onChange={(e) => setNewLesson({...newLesson, available_at: e.target.value})}
+                                title="공개 예정일 (비워두면 즉시 공개)"
+                            />
+                        </td>
+                        <td>
                             <div className={styles.actions}>
                                 <Button size="sm" onClick={handleAddLesson} disabled={!newLesson.title.trim()}>
                                     <FaPlus /> 등록
@@ -323,6 +365,28 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           lessonTitle={videoModalLesson.title}
           isOpen={true}
           onClose={() => setVideoModalLesson(null)}
+        />
+      )}
+
+      {/* Resource Modal */}
+      {resourceModalLesson && (
+        <LessonResourceModal
+          lessonId={resourceModalLesson.id}
+          lessonTitle={resourceModalLesson.title}
+          isOpen={true}
+          onClose={() => {
+            setResourceModalLesson(null);
+            // 자료 수 업데이트를 위해 레슨 목록 다시 불러오기
+            const fetchLessons = async () => {
+              const { data } = await supabase
+                .from('lessons')
+                .select('*')
+                .eq('course_id', courseId)
+                .order('sort_order', { ascending: true });
+              if (data) setLessons(data);
+            };
+            fetchLessons();
+          }}
         />
       )}
     </div>

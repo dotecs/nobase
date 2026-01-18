@@ -3,11 +3,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/Header/Header'
-import { Button } from '@/components'
 import { Course, Cohort, Profile, Lesson, LessonVideo } from '@/lib/database.types'
-import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaCheckCircle, FaLock, FaPlay, FaList } from 'react-icons/fa'
+import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaLock, FaList } from 'react-icons/fa'
 import styles from './enroll.module.css'
 import { PreviewButton } from './PreviewModal'
+import EnrollActions from './EnrollActions'
 
 interface PageProps {
   params: Promise<{
@@ -73,12 +73,28 @@ export default async function EnrollPage({ params }: PageProps) {
     .eq('cohort_id', cohortId)
     .single()
 
-  // 해당 강좌의 레슨 목록 조회 (수강신청 페이지에서는 전체 커리큘럼 표시)
-  const { data: lessonsData } = await supabase
+  // 현재 등록된 수강생 수 조회 (active + paused 모두 포함)
+  const { count: enrollmentCount } = await supabase
+    .from('enrollments')
+    .select('*', { count: 'exact', head: true })
+    .eq('cohort_id', cohortId)
+    .in('status', ['active', 'paused'])
+
+  const currentEnrollments = enrollmentCount || 0
+  const maxStudents = cohort.max_students
+  const remainingSpots = maxStudents ? maxStudents - currentEnrollments : null
+  const isFull = maxStudents ? currentEnrollments >= maxStudents : false
+
+  // 해당 강좌의 레슨 목록 조회 (수강신청 페이지에서는 전체 커리큘럼 표시 - is_published 상관없이)
+  const { data: lessonsData, error: lessonsError } = await supabase
     .from('lessons')
     .select('id, title, description, sort_order, is_published, is_free')
     .eq('course_id', courseId)
     .order('sort_order', { ascending: true })
+
+  if (lessonsError) {
+    console.error('Lessons fetch error:', lessonsError)
+  }
 
   const lessons = (lessonsData || []) as (Lesson & { is_free?: boolean })[]
 
@@ -111,48 +127,6 @@ export default async function EnrollPage({ params }: PageProps) {
       month: 'long',
       day: 'numeric'
     })
-  }
-
-  // 수강신청 처리 (Server Action)
-  async function handleEnroll() {
-    'use server'
-    
-    const supabase = await createServerSupabaseClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      redirect('/login')
-    }
-
-    // 중복 등록 방지
-    const { data: existing } = await supabase
-      .from('enrollments')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('cohort_id', cohortId)
-      .single()
-
-    if (existing) {
-      redirect(`/courses/${courseId}/cohorts/${cohortId}`)
-    }
-
-    // 수강 등록
-    const enrollmentData = {
-      user_id: user.id,
-      cohort_id: cohortId,
-      status: 'active' as const
-    }
-    
-    const { error } = await supabase
-      .from('enrollments')
-      .insert(enrollmentData as any)
-
-    if (error) {
-      console.error('Enrollment error:', error)
-      redirect(`/courses?error=enrollment_failed`)
-    }
-
-    redirect(`/courses/${courseId}/cohorts/${cohortId}`)
   }
 
   // 총 강의 시간 계산 (임시: 레슨당 평균 30분으로 가정)
@@ -197,6 +171,12 @@ export default async function EnrollPage({ params }: PageProps) {
                 <FaCalendarAlt />
                 <span>{formatDate(cohort.starts_at)} 시작</span>
               </div>
+              {maxStudents && (
+                <div className={styles.statItem}>
+                  <FaUsers />
+                  <span>정원 {currentEnrollments}/{maxStudents}명</span>
+                </div>
+              )}
             </div>
 
             {/* 커리큘럼 섹션 */}
@@ -219,7 +199,7 @@ export default async function EnrollPage({ params }: PageProps) {
                       </div>
                       <div className={styles.lessonStatus}>
                         {existingEnrollment ? (
-                          <FaPlay className={styles.playIcon} />
+                          null
                         ) : (
                           lesson.is_free ? (
                             <PreviewButton 
@@ -263,34 +243,61 @@ export default async function EnrollPage({ params }: PageProps) {
               </div>
 
               <div className={styles.cardContent}>
+                {/* 정원 정보 */}
+                {maxStudents && (
+                  <div className={styles.capacitySection}>
+                    <div className={styles.capacityHeader}>
+                      <span className={styles.capacityLabel}>수강 정원</span>
+                      <span className={styles.capacityCount}>
+                        {currentEnrollments} / {maxStudents}명
+                      </span>
+                    </div>
+                    <div className={styles.capacityBar}>
+                      <div 
+                        className={`${styles.capacityFill} ${isFull ? styles.capacityFull : ''}`}
+                        style={{ width: `${Math.min((currentEnrollments / maxStudents) * 100, 100)}%` }}
+                      />
+                    </div>
+                    {remainingSpots !== null && remainingSpots > 0 && (
+                      <span className={styles.remainingSpots}>
+                        {remainingSpots}자리 남음
+                      </span>
+                    )}
+                    {isFull && (
+                      <span className={styles.fullBadge}>마감</span>
+                    )}
+                  </div>
+                )}
+
                 {/* 가격 정보 */}
                 <div className={styles.priceSection}>
-                  <span className={styles.currentPrice}>무료</span>
-                  {/* <span className={styles.originalPrice}>₩99,000</span> */}
+                  {cohort.price === 0 ? (
+                    <span className={styles.currentPrice}>무료</span>
+                  ) : (
+                    <>
+                      <span className={styles.currentPrice}>
+                        ₩{cohort.price.toLocaleString()}
+                      </span>
+                      {cohort.original_price && cohort.original_price > cohort.price && (
+                        <span className={styles.originalPrice}>
+                          ₩{cohort.original_price.toLocaleString()}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </div>
 
                 {/* 수강신청 버튼 */}
-                <div className={styles.enrollActions}>
-                  {existingEnrollment ? (
-                    <>
-                      <div className={styles.enrolledBadge}>
-                        <FaCheckCircle />
-                        수강 중
-                      </div>
-                      <Link href={`/courses/${courseId}/cohorts/${cohortId}`} className={styles.fullWidth}>
-                        <Button variant="primary" size="lg" fullWidth>
-                          강좌 바로가기
-                        </Button>
-                      </Link>
-                    </>
-                  ) : (
-                    <form action={handleEnroll} className={styles.fullWidth}>
-                      <Button type="submit" variant="primary" size="lg" fullWidth>
-                        무료로 수강 신청하기
-                      </Button>
-                    </form>
-                  )}
-                </div>
+                <EnrollActions
+                  cohortId={cohortId}
+                  courseId={courseId}
+                  userId={user.id}
+                  price={cohort.price}
+                  courseName={course.title}
+                  cohortName={cohort.title}
+                  isFull={isFull}
+                  existingEnrollment={existingEnrollment}
+                />
 
                 {/* 강좌 포함 내용 */}
                 <div className={styles.includesList}>
@@ -302,7 +309,7 @@ export default async function EnrollPage({ params }: PageProps) {
                     </li>
                     <li>
                       <FaClock />
-                      <span>평생 무제한 접근</span>
+                      <span>한 학기 동안 무제한 접근</span>
                     </li>
                     <li>
                       <FaUsers />
