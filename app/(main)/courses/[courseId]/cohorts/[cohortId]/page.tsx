@@ -1,9 +1,10 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import { Profile, Course, Cohort, Lesson, Announcement } from '@/lib/database.types';
-import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck, FaClock, FaLock } from 'react-icons/fa';
+import { FaBook, FaCalendarAlt, FaList, FaBullhorn, FaThumbtack, FaCheck, FaLock } from 'react-icons/fa';
 import styles from './course.module.css';
 
 interface CoursePageProps {
@@ -128,10 +129,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <div className={styles.header}>
           <div className={styles.thumbnail}>
             {course.thumbnail_url ? (
-              <img 
+              <Image 
                 src={course.thumbnail_url} 
                 alt={course.title}
                 className={styles.thumbnailImage}
+                width={200}
+                height={120}
+                unoptimized
               />
             ) : (
               <FaBook className={styles.thumbnailIcon} />

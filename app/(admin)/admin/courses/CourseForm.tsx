@@ -159,7 +159,7 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
     if (file) {
       handleFileUpload(file);
     }
-  }, []);
+  }, [handleFileUpload]);
 
   // 썸네일 삭제
   const handleRemoveThumbnail = async () => {
@@ -413,6 +413,7 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
           <div className={styles.thumbnailSection}>
             <div className={`${styles.thumbnailPreview} ${formData.thumbnail_url ? styles.hasImage : ''}`}>
               {formData.thumbnail_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={formData.thumbnail_url} alt="썸네일 미리보기" />
               ) : (
                 <div className={styles.thumbnailPlaceholder}>
