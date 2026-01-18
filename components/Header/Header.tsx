@@ -87,12 +87,14 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
             >
               수강신청
             </Link>
+            {/* 공지사항 메뉴 임시 숨김
             <Link 
               href="/announcements" 
               className={`${styles.navLink} ${isActive('/announcements') ? styles.navLinkActive : ''}`}
             >
               공지사항
             </Link>
+            */}
             {userRole === 'admin' && (
               <Link 
                 href="/admin" 
@@ -166,12 +168,14 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
           >
             수강신청
           </Link>
+          {/* 공지사항 메뉴 임시 숨김
           <Link 
             href="/announcements" 
             className={`${styles.sidebarLink} ${isActive('/announcements') ? styles.sidebarLinkActive : ''}`}
           >
             공지사항
           </Link>
+          */}
           {userRole === 'admin' && (
             <Link 
               href="/admin" 

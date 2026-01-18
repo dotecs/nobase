@@ -22,6 +22,9 @@ CREATE TABLE cohorts (
     -- 활성화 여부
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     
+    -- 최대 수강 인원 (NULL이면 제한 없음)
+    max_students INTEGER DEFAULT NULL,
+    
     -- 타임스탬프
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -34,8 +37,16 @@ CREATE TABLE cohorts (
 CREATE INDEX idx_cohorts_course_id ON cohorts(course_id);
 CREATE INDEX idx_cohorts_slug ON cohorts(slug);
 CREATE INDEX idx_cohorts_is_active ON cohorts(is_active);
+CREATE INDEX idx_cohorts_max_students ON cohorts(max_students) WHERE max_students IS NOT NULL;
+
+-- 트리거: updated_at 자동 갱신
+CREATE TRIGGER update_cohorts_updated_at
+    BEFORE UPDATE ON cohorts
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
 -- 코멘트
 COMMENT ON TABLE cohorts IS '강좌의 기수 정보';
 COMMENT ON COLUMN cohorts.course_id IS '소속 강좌 ID';
 COMMENT ON COLUMN cohorts.is_active IS '현재 운영 중인 기수 여부';
+COMMENT ON COLUMN cohorts.max_students IS '기수별 최대 수강 인원. NULL이면 제한 없음.';

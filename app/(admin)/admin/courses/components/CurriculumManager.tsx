@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import type { Lesson } from '@/lib/database.types';
-import { FaPlus, FaTrash, FaSave } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSave, FaVideo } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
+import LessonVideoModal from './LessonVideoModal';
 import styles from './CurriculumManager.module.css';
 
 interface CurriculumManagerProps {
@@ -24,12 +25,15 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   const [lessons, setLessons] = useState<EditingLesson[]>([]);
   const [, setIsLoading] = useState(false);
   
+  // Video Modal State
+  const [videoModalLesson, setVideoModalLesson] = useState<{ id: string; title: string } | null>(null);
+  
   // New Lesson State
   const [newLesson, setNewLesson] = useState({
     title: '',
-    vimeo_url: '',
     sort_order: 1,
     is_published: true,
+    is_free: false,
   });
 
   // Fetch Lessons
@@ -81,8 +85,8 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
         .update({
              title: lesson.title,
              sort_order: lesson.sort_order,
-             vimeo_url: lesson.vimeo_url,
              is_published: lesson.is_published,
+             is_free: lesson.is_free,
              updated_at: new Date().toISOString(),
         })
         .eq('id', lesson.id);
@@ -113,8 +117,8 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           course_id: courseId,
           title: newLesson.title,
           sort_order: newLesson.sort_order,
-          vimeo_url: newLesson.vimeo_url,
           is_published: newLesson.is_published,
+          is_free: newLesson.is_free,
           resources: []
         })
         .select()
@@ -126,9 +130,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
       setLessons(prev => [...prev, data]);
       setNewLesson({
         title: '',
-        vimeo_url: '',
         sort_order: (data.sort_order || 0) + 1,
         is_published: true,
+        is_free: false,
       });
 
     } catch (err: any) {
@@ -168,8 +172,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                     <tr>
                         <th style={{ width: '80px' }}>순서</th>
                         <th>제목</th>
-                        <th>Vimeo URL</th>
-                        <th style={{ width: '80px', textAlign: 'center' }}>공개</th>
+                        <th style={{ width: '100px', textAlign: 'center' }}>영상</th>
+                        <th style={{ width: '70px', textAlign: 'center' }}>무료</th>
+                        <th style={{ width: '70px', textAlign: 'center' }}>공개</th>
                         <th style={{ width: '100px', textAlign: 'right' }}>관리</th>
                     </tr>
                 </thead>
@@ -196,13 +201,26 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                                 />
                             </td>
                             <td>
-                                <input 
-                                    type="text"
-                                    className={styles.tableInput}
-                                    value={lesson.vimeo_url || ''}
-                                    onChange={(e) => handleLessonChange(lesson.id, 'vimeo_url', e.target.value)}
-                                    placeholder="https://vimeo.com/..."
-                                />
+                                <div className={styles.checkboxCenter}>
+                                    <button 
+                                        className={styles.videoButton}
+                                        onClick={() => setVideoModalLesson({ id: lesson.id, title: lesson.title })}
+                                        title="영상 관리"
+                                    >
+                                        <FaVideo /> 관리
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div className={styles.checkboxCenter}>
+                                    <input 
+                                        type="checkbox"
+                                        checked={lesson.is_free}
+                                        onChange={(e) => handleLessonChange(lesson.id, 'is_free', e.target.checked)}
+                                        style={{ width: '16px', height: '16px' }}
+                                        title="무료 공개"
+                                    />
+                                </div>
                             </td>
                             <td>
                                 <div className={styles.checkboxCenter}>
@@ -211,6 +229,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                                         checked={lesson.is_published}
                                         onChange={(e) => handleLessonChange(lesson.id, 'is_published', e.target.checked)}
                                         style={{ width: '16px', height: '16px' }}
+                                        title="공개 여부"
                                     />
                                 </div>
                             </td>
@@ -261,27 +280,30 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                             />
                         </td>
                         <td>
-                            <input 
-                                type="text"
-                                className={styles.tableInput}
-                                value={newLesson.vimeo_url}
-                                onChange={(e) => setNewLesson({...newLesson, vimeo_url: e.target.value})}
-                                placeholder="https://vimeo.com/... (선택)"
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleAddLesson();
-                                }}
-                            />
+                            {/* 새 레슨은 저장 후 영상 추가 */}
                         </td>
-                         <td>
-                                <div className={styles.checkboxCenter}>
-                                    <input 
-                                        type="checkbox"
-                                        checked={newLesson.is_published}
-                                        onChange={(e) => setNewLesson({...newLesson, is_published: e.target.checked})}
-                                        style={{ width: '16px', height: '16px' }}
-                                    />
-                                </div>
-                            </td>
+                        <td>
+                            <div className={styles.checkboxCenter}>
+                                <input 
+                                    type="checkbox"
+                                    checked={newLesson.is_free}
+                                    onChange={(e) => setNewLesson({...newLesson, is_free: e.target.checked})}
+                                    style={{ width: '16px', height: '16px' }}
+                                    title="무료 공개"
+                                />
+                            </div>
+                        </td>
+                        <td>
+                            <div className={styles.checkboxCenter}>
+                                <input 
+                                    type="checkbox"
+                                    checked={newLesson.is_published}
+                                    onChange={(e) => setNewLesson({...newLesson, is_published: e.target.checked})}
+                                    style={{ width: '16px', height: '16px' }}
+                                    title="공개 여부"
+                                />
+                            </div>
+                        </td>
                         <td>
                             <div className={styles.actions}>
                                 <Button size="sm" onClick={handleAddLesson} disabled={!newLesson.title.trim()}>
@@ -293,6 +315,16 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                 </tbody>
             </table>
         </div>
+
+      {/* Video Modal */}
+      {videoModalLesson && (
+        <LessonVideoModal
+          lessonId={videoModalLesson.id}
+          lessonTitle={videoModalLesson.title}
+          isOpen={true}
+          onClose={() => setVideoModalLesson(null)}
+        />
+      )}
     </div>
   );
 }

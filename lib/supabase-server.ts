@@ -2,6 +2,27 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { Database } from './database.types'
 
+// 쿠키 값을 안전하게 파싱하는 헬퍼 함수
+function safeParseCookieValue(value: string | undefined): string | undefined {
+  if (!value) return value
+  
+  try {
+    // base64로 인코딩된 JSON인지 확인
+    if (value.startsWith('base64-')) {
+      return value
+    }
+    
+    // JSON 문자열이 이중으로 인코딩되었는지 확인
+    if (value.startsWith('"') && value.endsWith('"')) {
+      return JSON.parse(value)
+    }
+    
+    return value
+  } catch {
+    return value
+  }
+}
+
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies()
 
@@ -11,7 +32,8 @@ export async function createServerSupabaseClient() {
     {
       cookies: {
         get(name: string) {
-          return cookieStore.get(name)?.value
+          const value = cookieStore.get(name)?.value
+          return safeParseCookieValue(value)
         },
         set(name: string, value: string, options: CookieOptions) {
           try {

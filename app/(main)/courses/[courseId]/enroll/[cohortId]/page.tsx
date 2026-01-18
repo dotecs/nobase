@@ -4,9 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/Header/Header'
 import { Button } from '@/components'
-import { Course, Cohort, Profile, Lesson } from '@/lib/database.types'
+import { Course, Cohort, Profile, Lesson, LessonVideo } from '@/lib/database.types'
 import { FaArrowLeft, FaBook, FaCalendarAlt, FaUsers, FaClock, FaCheckCircle, FaLock, FaPlay, FaList } from 'react-icons/fa'
 import styles from './enroll.module.css'
+import { PreviewButton } from './PreviewModal'
 
 interface PageProps {
   params: Promise<{
@@ -75,11 +76,33 @@ export default async function EnrollPage({ params }: PageProps) {
   // 해당 강좌의 레슨 목록 조회 (수강신청 페이지에서는 전체 커리큘럼 표시)
   const { data: lessonsData } = await supabase
     .from('lessons')
-    .select('id, title, description, sort_order, is_published')
+    .select('id, title, description, sort_order, is_published, is_free')
     .eq('course_id', courseId)
     .order('sort_order', { ascending: true })
 
-  const lessons = (lessonsData || []) as Lesson[]
+  const lessons = (lessonsData || []) as (Lesson & { is_free?: boolean })[]
+
+  // 무료 공개 레슨의 영상 정보 조회
+  const freeLessonIds = lessons.filter(l => l.is_free).map(l => l.id)
+  let lessonVideosMap: Record<string, LessonVideo[]> = {}
+  
+  if (freeLessonIds.length > 0) {
+    const { data: videosData } = await supabase
+      .from('lesson_videos')
+      .select('*')
+      .in('lesson_id', freeLessonIds)
+      .order('sort_order', { ascending: true })
+    
+    if (videosData) {
+      lessonVideosMap = (videosData as LessonVideo[]).reduce((acc, video) => {
+        if (!acc[video.lesson_id]) {
+          acc[video.lesson_id] = []
+        }
+        acc[video.lesson_id].push(video)
+        return acc
+      }, {} as Record<string, LessonVideo[]>)
+    }
+  }
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '미정'
@@ -198,8 +221,11 @@ export default async function EnrollPage({ params }: PageProps) {
                         {existingEnrollment ? (
                           <FaPlay className={styles.playIcon} />
                         ) : (
-                          index < 1 ? (
-                            <span className={styles.previewBadge}>미리보기</span>
+                          lesson.is_free ? (
+                            <PreviewButton 
+                              lessonTitle={lesson.title}
+                              videos={lessonVideosMap[lesson.id] || []}
+                            />
                           ) : (
                             <FaLock className={styles.lockIcon} />
                           )

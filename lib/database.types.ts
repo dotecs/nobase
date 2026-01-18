@@ -79,6 +79,7 @@ export interface Database {
           starts_at: string | null
           ends_at: string | null
           is_active: boolean
+          max_students: number | null
           created_at: string
           updated_at: string
         }
@@ -90,6 +91,7 @@ export interface Database {
           starts_at?: string | null
           ends_at?: string | null
           is_active?: boolean
+          max_students?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -101,6 +103,7 @@ export interface Database {
           starts_at?: string | null
           ends_at?: string | null
           is_active?: boolean
+          max_students?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -111,10 +114,10 @@ export interface Database {
           course_id: string
           title: string
           sort_order: number
-          vimeo_url: string | null
           resources: Json
           description: string | null
           is_published: boolean
+          is_free: boolean
           created_at: string
           updated_at: string
         }
@@ -123,10 +126,10 @@ export interface Database {
           course_id: string
           title: string
           sort_order?: number
-          vimeo_url?: string | null
           resources?: Json
           description?: string | null
           is_published?: boolean
+          is_free?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -135,10 +138,10 @@ export interface Database {
           course_id?: string
           title?: string
           sort_order?: number
-          vimeo_url?: string | null
           resources?: Json
           description?: string | null
           is_published?: boolean
+          is_free?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -227,6 +230,41 @@ export interface Database {
           updated_at?: string
         }
       }
+      lesson_videos: {
+        Row: {
+          id: string
+          lesson_id: string
+          title: string
+          video_url: string
+          is_main: boolean
+          sort_order: number
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          lesson_id: string
+          title: string
+          video_url: string
+          is_main?: boolean
+          sort_order?: number
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          lesson_id?: string
+          title?: string
+          video_url?: string
+          is_main?: boolean
+          sort_order?: number
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -268,6 +306,7 @@ export type Lesson = Tables<'lessons'>
 export type Enrollment = Tables<'enrollments'>
 export type LessonProgress = Tables<'lesson_progress'>
 export type Announcement = Tables<'announcements'>
+export type LessonVideo = Tables<'lesson_videos'>
 
 // 조인된 타입들
 export type CohortWithCourse = Cohort & {
@@ -280,6 +319,15 @@ export type EnrollmentWithCohort = Enrollment & {
 
 export type LessonWithProgress = Lesson & {
   lesson_progress?: LessonProgress[]
+}
+
+export type LessonWithVideos = Lesson & {
+  lesson_videos?: LessonVideo[]
+}
+
+export type LessonFull = Lesson & {
+  lesson_progress?: LessonProgress[]
+  lesson_videos?: LessonVideo[]
 }
 
 export type Resource = {
