@@ -84,14 +84,7 @@ export default async function DonePage({ searchParams }: DonePageProps) {
 
           <div className={styles.actions}>
             <Button 
-              href={`/courses/${courseId}/cohorts/${cohortId}/curriculum`}
-              fullWidth
-            >
-              커리큘럼 보기
-            </Button>
-            <Button 
               href={`/courses/${courseId}/cohorts/${cohortId}`}
-              variant="outline"
               fullWidth
             >
               강좌 홈으로 이동

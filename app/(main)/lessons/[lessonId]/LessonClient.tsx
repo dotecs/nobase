@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { Button } from '@/components';
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaUndo } from 'react-icons/fa';
 import styles from './lesson.module.css';
 
 interface LessonClientProps {
@@ -56,12 +56,52 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
     }
   };
 
+  const handleUncomplete = async () => {
+    if (!completed) return;
+    
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('lesson_progress')
+        .update({
+          completed: false,
+          completed_at: null,
+        })
+        .eq('user_id', userId)
+        .eq('lesson_id', lessonId);
+
+      if (error) {
+        console.error('Error unmarking lesson:', JSON.stringify(error, null, 2));
+        alert(`레슨 완료 취소 중 오류가 발생했습니다: ${error.message || error.code || '권한이 없습니다.'}`);
+        return;
+      }
+
+      setCompleted(false);
+      router.refresh();
+    } catch (err) {
+      console.error('Error:', err);
+      alert('레슨 완료 취소 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.completeSection}>
       {completed ? (
-        <div className={styles.completedBadge}>
-          <span className={styles.completedIcon}><FaCheck /></span>
-          <span>학습 완료</span>
+        <div className={styles.completedWrapper}>
+          <div className={styles.completedBadge}>
+            <span className={styles.completedIcon}><FaCheck /></span>
+            <span>학습 완료</span>
+          </div>
+          <button 
+            className={styles.uncompleteButton}
+            onClick={handleUncomplete}
+            disabled={loading}
+          >
+            <FaUndo /> 완료 취소
+          </button>
         </div>
       ) : (
         <Button

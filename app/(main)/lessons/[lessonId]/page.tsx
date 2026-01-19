@@ -117,19 +117,24 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const progress = progressData as LessonProgress | null;
 
-  // 전체 레슨 목록 (이전/다음 레슨용)
+  // 전체 레슨 목록 (이전/다음 레슨용) - is_published 여부 관계없이 전체 카운트
   const { data: allLessonsData } = await supabase
     .from('lessons')
-    .select('id, title, sort_order')
+    .select('id, title, sort_order, is_published')
     .eq('course_id', course.id)
-    .eq('is_published', true)
     .order('sort_order', { ascending: true });
 
-  const allLessons = (allLessonsData || []) as { id: string; title: string; sort_order: number }[];
-
-  const currentIndex = allLessons.findIndex(l => l.id === lessonId);
-  const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+  const allLessons = (allLessonsData || []) as { id: string; title: string; sort_order: number; is_published: boolean }[];
+  const totalLessonCount = allLessons.length;
+  
+  // 공개된 레슨만 필터 (이전/다음 네비게이션용)
+  const publishedLessons = allLessons.filter(l => l.is_published);
+  const currentIndex = publishedLessons.findIndex(l => l.id === lessonId);
+  const prevLesson = currentIndex > 0 ? publishedLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < publishedLessons.length - 1 ? publishedLessons[currentIndex + 1] : null;
+  
+  // 현재 레슨의 전체 목록 내 위치 (표시용)
+  const currentIndexInAll = allLessons.findIndex(l => l.id === lessonId);
 
   // 레슨 영상 목록 조회
   const { data: videosData } = await supabase
@@ -162,19 +167,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
             {course.title}
           </Link>
           <span className={styles.breadcrumbSeparator}>/</span>
-          <Link 
-            href={`/courses/${course.id}/cohorts/${cohort.id}/curriculum`}
-            className={styles.breadcrumbLink}
-          >
-            커리큘럼
-          </Link>
-          <span className={styles.breadcrumbSeparator}>/</span>
-          <span>레슨 {currentIndex + 1}</span>
+          <span>레슨 {currentIndexInAll + 1}</span>
         </nav>
 
         <div className={styles.lessonHeader}>
           <span className={styles.lessonNumber}>
-            레슨 {currentIndex + 1} / {allLessons.length}
+            레슨 {currentIndexInAll + 1} / {totalLessonCount}
           </span>
           <h1 className={styles.lessonTitle}>{lesson.title}</h1>
           {lesson.description && (
