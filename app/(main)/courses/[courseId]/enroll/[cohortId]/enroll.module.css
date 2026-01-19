@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   background: var(--color-bg-secondary);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .enrollMain {
@@ -11,6 +13,8 @@
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .backLink {
@@ -34,6 +38,10 @@
   grid-template-columns: 1fr 380px;
   gap: var(--space-8);
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* 왼쪽: 강좌 정보 및 커리큘럼 */
@@ -220,6 +228,10 @@
 .enrollSidebar {
   position: sticky;
   top: var(--space-8);
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .enrollCard {
@@ -228,6 +240,9 @@
   border: 1px solid var(--color-border);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .cardThumbnail {
@@ -254,6 +269,10 @@
 
 .cardContent {
   padding: var(--space-6);
+  box-sizing: border-box;
+  overflow: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 /* 정원 정보 섹션 */
@@ -262,6 +281,9 @@
   padding: var(--space-4);
   background: var(--color-bg-secondary);
   border-radius: var(--radius-lg);
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .capacityHeader {
@@ -269,18 +291,22 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-2);
+  max-width: 100%;
+  gap: var(--space-2);
 }
 
 .capacityLabel {
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   color: var(--color-text-secondary);
+  flex-shrink: 0;
 }
 
 .capacityCount {
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   color: var(--color-text);
+  white-space: nowrap;
 }
 
 .capacityBar {
@@ -325,12 +351,16 @@
   align-items: baseline;
   gap: var(--space-3);
   margin-bottom: var(--space-6);
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .currentPrice {
   font-size: var(--text-3xl);
   font-weight: var(--font-bold);
   color: var(--color-text);
+  word-break: break-word;
 }
 
 .originalPrice {
@@ -345,6 +375,8 @@
   flex-direction: column;
   gap: var(--space-3);
   margin-bottom: var(--space-6);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .fullWidth {
@@ -369,6 +401,9 @@
   background: var(--color-bg);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-6);
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .includesTitle {
@@ -402,34 +437,55 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .periodItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 100%;
+  gap: var(--space-2);
 }
 
 .periodLabel {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+  flex-shrink: 0;
 }
 
 .periodValue {
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   color: var(--color-text);
+  text-align: right;
+  word-break: keep-all;
 }
 
 /* 반응형 */
 @media (max-width: 1024px) {
   .enrollLayout {
     grid-template-columns: 1fr;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .enrollSidebar {
     position: static;
     order: -1;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .enrollCard {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .cardContent {
+    max-width: 100%;
+    width: 100%;
   }
 
   .cardThumbnail {
@@ -439,7 +495,24 @@
 
 @media (max-width: 768px) {
   .enrollMain {
-    padding: var(--space-4);
+    padding: 16px;
+    max-width: 100vw;
+  }
+
+  .enrollLayout {
+    max-width: calc(100vw - 32px);
+  }
+
+  .enrollSidebar {
+    max-width: calc(100vw - 32px);
+  }
+
+  .enrollCard {
+    max-width: calc(100vw - 32px);
+  }
+
+  .cardContent {
+    max-width: 100%;
   }
 
   .courseHeader {
@@ -459,9 +532,34 @@
     flex: 1 1 auto;
     min-width: 120px;
   }
+
+  .priceSection {
+    flex-wrap: wrap;
+  }
+
+  .currentPrice {
+    font-size: var(--text-2xl);
+  }
 }
 
 @media (max-width: 480px) {
+  .enrollMain {
+    padding: 12px;
+    max-width: 100vw;
+  }
+
+  .enrollLayout {
+    max-width: calc(100vw - 24px);
+  }
+
+  .enrollSidebar {
+    max-width: calc(100vw - 24px);
+  }
+
+  .enrollCard {
+    max-width: calc(100vw - 24px);
+  }
+
   .courseStats {
     flex-direction: column;
     gap: var(--space-3);
@@ -469,6 +567,18 @@
 
   .statItem {
     min-width: unset;
+  }
+
+  .cardContent {
+    padding: var(--space-4);
+  }
+
+  .capacitySection {
+    padding: var(--space-3);
+  }
+
+  .includesList {
+    padding: var(--space-4);
   }
 }
 
