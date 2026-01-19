@@ -67,7 +67,7 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
         .update({
           completed: false,
           completed_at: null,
-        })
+        } as any)
         .eq('user_id', userId)
         .eq('lesson_id', lessonId);
 
