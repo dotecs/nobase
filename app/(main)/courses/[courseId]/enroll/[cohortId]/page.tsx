@@ -198,17 +198,13 @@ export default async function EnrollPage({ params }: PageProps) {
                         )}
                       </div>
                       <div className={styles.lessonStatus}>
-                        {existingEnrollment ? (
-                          null
+                        {lesson.is_free ? (
+                          <PreviewButton 
+                            lessonTitle={lesson.title}
+                            videos={lessonVideosMap[lesson.id] || []}
+                          />
                         ) : (
-                          lesson.is_free ? (
-                            <PreviewButton 
-                              lessonTitle={lesson.title}
-                              videos={lessonVideosMap[lesson.id] || []}
-                            />
-                          ) : (
-                            <FaLock className={styles.lockIcon} />
-                          )
+                          <FaLock className={styles.lockIcon} />
                         )}
                       </div>
                     </div>
