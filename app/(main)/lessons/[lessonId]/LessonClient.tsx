@@ -6,6 +6,9 @@ import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { Button } from '@/components';
 import { FaCheck, FaUndo } from 'react-icons/fa';
 import styles from './lesson.module.css';
+import { Database } from '@/lib/database.types';
+
+type LessonProgressUpdate = Database['public']['Tables']['lesson_progress']['Update'];
 
 interface LessonClientProps {
   lessonId: string;
@@ -62,12 +65,13 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('lesson_progress')
-        .update({
-          completed: false,
-          completed_at: null,
-        } as any)
+      const updateData: LessonProgressUpdate = {
+        completed: false,
+        completed_at: null,
+      };
+      const { error } = await (supabase
+        .from('lesson_progress') as any)
+        .update(updateData)
         .eq('user_id', userId)
         .eq('lesson_id', lessonId);
 
