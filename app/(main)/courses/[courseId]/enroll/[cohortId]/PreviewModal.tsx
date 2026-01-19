@@ -111,10 +111,6 @@ interface PreviewButtonProps {
 export function PreviewButton({ lessonTitle, videos }: PreviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
 
-  if (!videos || videos.length === 0) {
-    return <span className={styles.previewBadge}>무료</span>
-  }
-
   return (
     <>
       <button 
