@@ -96,7 +96,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const progress = (progressData || []) as any[];
   const completedLessonIds = new Set(progress.map(p => p.lesson_id));
-  const totalLessons = publishedLessons.length;
+  const totalLessons = lessons.length; // 전체 레슨 수 (is_published 여부 관계없이)
   const completedLessons = progress.length;
   const progressPercent = totalLessons > 0 
     ? Math.round((completedLessons / totalLessons) * 100) 

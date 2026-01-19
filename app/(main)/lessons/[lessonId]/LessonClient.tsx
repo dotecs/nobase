@@ -38,8 +38,11 @@ export default function LessonClient({ lessonId, userId, isCompleted }: LessonCl
         });
 
       if (error) {
-        console.error('Error marking lesson as complete:', error);
-        alert('레슨 완료 처리 중 오류가 발생했습니다.');
+        console.error('Error marking lesson as complete:', JSON.stringify(error, null, 2));
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.details);
+        alert(`레슨 완료 처리 중 오류가 발생했습니다: ${error.message || error.code || '권한이 없습니다.'}`);
         return;
       }
 
