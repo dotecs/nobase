@@ -39,25 +39,24 @@ export default async function DashboardPage() {
       const cohort = enrollment.cohorts;
       const course = cohort?.courses;
 
-      // 해당 course의 레슨들
+      // 해당 course의 전체 레슨들 (is_published 여부 관계없이)
       const { data: lessonsData } = await supabase
         .from('lessons')
-        .select('id, sort_order')
+        .select('id, sort_order, is_published')
         .eq('course_id', course.id)
-        .eq('is_published', true)
         .order('sort_order', { ascending: true });
 
       const lessons = (lessonsData || []) as any[];
+      const publishedLessonIds = lessons.filter(l => l.is_published).map(l => l.id);
 
-      // 완료한 레슨
-      const lessonIds = lessons.map(l => l.id);
-      const { data: progressData } = lessonIds.length > 0
+      // 완료한 레슨 (공개된 레슨 기준)
+      const { data: progressData } = publishedLessonIds.length > 0
         ? await supabase
             .from('lesson_progress')
             .select('lesson_id')
             .eq('user_id', user.id)
             .eq('completed', true)
-            .in('lesson_id', lessonIds)
+            .in('lesson_id', publishedLessonIds)
         : { data: [] };
 
       const progress = (progressData || []) as any[];
