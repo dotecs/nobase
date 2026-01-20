@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import type { Lesson } from '@/lib/database.types';
-import { FaPlus, FaTrash, FaSave, FaVideo, FaPaperclip } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSave, FaVideo, FaPaperclip, FaGripVertical } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import LessonVideoModal from './LessonVideoModal';
@@ -26,6 +26,11 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   const [lessons, setLessons] = useState<EditingLesson[]>([]);
   const [, setIsLoading] = useState(false);
   
+  // Drag and Drop State
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragNode = useRef<HTMLTableRowElement | null>(null);
+  
   // Video Modal State
   const [videoModalLesson, setVideoModalLesson] = useState<{ id: string; title: string } | null>(null);
   
@@ -35,7 +40,6 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   // New Lesson State
   const [newLesson, setNewLesson] = useState({
     title: '',
-    sort_order: 1,
     is_published: true,
     is_free: false,
     available_at: '',
@@ -59,14 +63,6 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
       }
 
       setLessons(data || []);
-      
-      // Calculate next sort order
-      if (data && data.length > 0) {
-        const maxOrder = Math.max(...data.map((l: Lesson) => l.sort_order));
-        setNewLesson(prev => ({ ...prev, sort_order: maxOrder + 1 }));
-      } else {
-        setNewLesson(prev => ({ ...prev, sort_order: 1 }));
-      }
     };
 
     fetchLessons();
@@ -101,12 +97,96 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
 
       // Reset dirty state
       setLessons(prev => prev.map(l => l.id === lesson.id ? { ...l, isDirty: false } : l));
-      
-      // Optional: Show simplified toast/feedback
-      // await alert({ title: '저장 완료', message: '변경사항이 저장되었습니다.', type: 'success' });
     } catch (err: any) {
       alert({ title: '오류', message: err.message || '저장 중 오류가 발생했습니다.', type: 'error' });
     }
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (e: React.DragEvent<HTMLTableRowElement>, index: number) => {
+    dragNode.current = e.currentTarget;
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    
+    setTimeout(() => {
+      if (dragNode.current) {
+        dragNode.current.classList.add(styles.dragging);
+      }
+    }, 0);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLTableRowElement>, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLTableRowElement>, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLTableRowElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLTableRowElement>, dropIndex: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      resetDragState();
+      return;
+    }
+
+    // Reorder lessons
+    const newLessons = [...lessons];
+    const [draggedLesson] = newLessons.splice(draggedIndex, 1);
+    newLessons.splice(dropIndex, 0, draggedLesson);
+
+    // Update sort_order for all lessons
+    const updatedLessons = newLessons.map((lesson, index) => ({
+      ...lesson,
+      sort_order: index + 1,
+      isDirty: lesson.sort_order !== index + 1 ? true : lesson.isDirty
+    }));
+
+    setLessons(updatedLessons);
+    resetDragState();
+
+    // Save new order to database
+    try {
+      const updates = updatedLessons.map((lesson, index) => 
+        supabase
+          .from('lessons')
+          .update({ sort_order: index + 1 })
+          .eq('id', lesson.id)
+      );
+      
+      await Promise.all(updates);
+      
+      // Mark all as not dirty after successful save
+      setLessons(prev => prev.map(l => ({ ...l, isDirty: false })));
+    } catch (err: any) {
+      console.error('Error updating order:', err);
+      alert({ title: '오류', message: '순서 저장 중 오류가 발생했습니다.', type: 'error' });
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (dragNode.current) {
+      dragNode.current.classList.remove(styles.dragging);
+    }
+    resetDragState();
+  };
+
+  const resetDragState = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    dragNode.current = null;
   };
 
   // Add New Lesson
@@ -117,12 +197,14 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
     }
 
     try {
+      const nextOrder = lessons.length + 1;
+
       const { data, error } = await supabase
         .from('lessons')
         .insert({
           course_id: courseId,
           title: newLesson.title,
-          sort_order: newLesson.sort_order,
+          sort_order: nextOrder,
           is_published: newLesson.is_published,
           is_free: newLesson.is_free,
           available_at: newLesson.available_at || null,
@@ -137,7 +219,6 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
       setLessons(prev => [...prev, data]);
       setNewLesson({
         title: '',
-        sort_order: (data.sort_order || 0) + 1,
         is_published: true,
         is_free: false,
         available_at: '',
@@ -171,6 +252,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
     <div className={styles.container}>
       <div className={styles.header}>
         <h3 className={styles.title}>커리큘럼 관리</h3>
+        <span className={styles.dragHint}>드래그하여 순서 변경</span>
       </div>
 
       {/* Lesson Table */}
@@ -178,7 +260,8 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
             <table className={styles.table}>
                 <thead>
                     <tr>
-                        <th style={{ width: '80px' }}>순서</th>
+                        <th style={{ width: '50px' }}></th>
+                        <th style={{ width: '60px' }}>순서</th>
                         <th>제목</th>
                         <th style={{ width: '100px', textAlign: 'center' }}>영상</th>
                         <th style={{ width: '100px', textAlign: 'center' }}>자료</th>
@@ -190,16 +273,25 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                 </thead>
                 <tbody>
                     {/* Existing Lessons */}
-                    {lessons.map((lesson) => (
-                        <tr key={lesson.id}>
+                    {lessons.map((lesson, index) => (
+                        <tr 
+                            key={lesson.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDragEnter={(e) => handleDragEnter(e, index)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, index)}
+                            onDragEnd={handleDragEnd}
+                            className={dragOverIndex === index ? styles.dragOver : ''}
+                        >
                             <td>
-                                <input 
-                                    type="number"
-                                    className={styles.tableInput}
-                                    value={lesson.sort_order}
-                                    onChange={(e) => handleLessonChange(lesson.id, 'sort_order', parseInt(e.target.value) || 0)}
-                                    placeholder="0"
-                                />
+                                <div className={styles.dragHandle}>
+                                    <FaGripVertical />
+                                </div>
+                            </td>
+                            <td className={styles.orderCell}>
+                                {lesson.sort_order}
                             </td>
                             <td>
                                 <input 
@@ -288,14 +380,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                     
                     {/* New Lesson Row */}
                     <tr className={styles.newRow}>
-                         <td>
-                            <input 
-                                type="number"
-                                className={styles.tableInput}
-                                value={newLesson.sort_order}
-                                onChange={(e) => setNewLesson({...newLesson, sort_order: parseInt(e.target.value) || 0})}
-                                placeholder="Auto"
-                            />
+                        <td></td>
+                        <td className={styles.orderCell}>
+                            {lessons.length + 1}
                         </td>
                         <td>
                             <input 
