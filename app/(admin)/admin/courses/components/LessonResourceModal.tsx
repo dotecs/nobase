@@ -85,47 +85,98 @@ export default function LessonResourceModal({
     }
   };
 
-  // 파일 업로드
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // 업로드 진행 상태
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
 
-    // 파일 유효성 검사
-    const validation = validateResourceFile(file);
-    if (!validation.valid) {
-      alert({ title: '업로드 오류', message: validation.error || '파일 업로드에 실패했습니다.', type: 'error' });
-      return;
+  // 파일 업로드 (여러 파일 동시 업로드 지원)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // 모든 파일 유효성 검사
+    const invalidFiles: string[] = [];
+    const validFiles: File[] = [];
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const validation = validateResourceFile(file);
+      if (!validation.valid) {
+        invalidFiles.push(`${file.name}: ${validation.error}`);
+      } else {
+        validFiles.push(file);
+      }
     }
 
+    if (invalidFiles.length > 0) {
+      alert({ 
+        title: '일부 파일 업로드 불가', 
+        message: `다음 파일들은 업로드할 수 없습니다:\n${invalidFiles.join('\n')}`, 
+        type: 'warning' 
+      });
+    }
+
+    if (validFiles.length === 0) return;
+
     setIsUploading(true);
+    setUploadProgress({ current: 0, total: validFiles.length });
 
-    try {
-      const { url, storagePath, error } = await uploadLessonResource(lessonId, file);
-      
-      if (error || !url || !storagePath) {
-        throw error || new Error('업로드 실패');
+    const uploadedResources: Resource[] = [];
+    const failedFiles: string[] = [];
+
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadProgress({ current: i + 1, total: validFiles.length });
+
+      try {
+        const { url, storagePath, error } = await uploadLessonResource(lessonId, file);
+        
+        if (error || !url || !storagePath) {
+          throw error || new Error('업로드 실패');
+        }
+        
+        // 파일 타입 결정
+        const fileType: Resource['type'] = file.type === 'application/pdf' ? 'pdf' : 'file';
+        
+        uploadedResources.push({
+          type: fileType,
+          title: file.name,
+          url: url,
+          storage_path: storagePath,
+        });
+      } catch (err: any) {
+        failedFiles.push(file.name);
+        console.error(`파일 업로드 실패: ${file.name}`, err);
       }
-      
-      // 파일 타입 결정
-      const fileType: Resource['type'] = file.type === 'application/pdf' ? 'pdf' : 'file';
-      
-      const newResource: Resource = {
-        type: fileType,
-        title: file.name,
-        url: url,
-        storage_path: storagePath,
-      };
+    }
 
-      const newResources = [...resources, newResource];
+    // 성공한 파일들 저장
+    if (uploadedResources.length > 0) {
+      const newResources = [...resources, ...uploadedResources];
       await saveResources(newResources);
+    }
 
-    } catch (err: any) {
-      alert({ title: '업로드 오류', message: err.message || '파일 업로드에 실패했습니다.', type: 'error' });
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+    // 실패한 파일이 있으면 알림
+    if (failedFiles.length > 0) {
+      alert({ 
+        title: '일부 업로드 실패', 
+        message: `다음 파일들의 업로드에 실패했습니다:\n${failedFiles.join('\n')}`, 
+        type: 'error' 
+      });
+    } else if (uploadedResources.length > 0) {
+      // 모든 파일 업로드 성공 시 (여러 파일인 경우만 알림)
+      if (uploadedResources.length > 1) {
+        alert({ 
+          title: '업로드 완료', 
+          message: `${uploadedResources.length}개의 파일이 성공적으로 업로드되었습니다.`, 
+          type: 'success' 
+        });
       }
+    }
+
+    setIsUploading(false);
+    setUploadProgress({ current: 0, total: 0 });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -290,6 +341,7 @@ export default function LessonResourceModal({
                   onChange={handleFileUpload}
                   style={{ display: 'none' }}
                   accept=".pdf,.zip,.txt,.xlsx,.docx,.pptx,.jpg,.jpeg,.png,.webp,.gif"
+                  multiple
                 />
                 <Button 
                   onClick={() => fileInputRef.current?.click()}
@@ -297,7 +349,7 @@ export default function LessonResourceModal({
                 >
                   {isUploading ? (
                     <>
-                      <FaSpinner className={styles.spinner} /> 업로드 중...
+                      <FaSpinner className={styles.spinner} /> 업로드 중... {uploadProgress.total > 1 && `(${uploadProgress.current}/${uploadProgress.total})`}
                     </>
                   ) : (
                     <>
@@ -315,7 +367,8 @@ export default function LessonResourceModal({
               </div>
 
               <p className={styles.hint}>
-                지원 형식: PDF, ZIP, TXT, XLSX, DOCX, PPTX, 이미지 (최대 50MB)
+                지원 형식: PDF, ZIP, TXT, XLSX, DOCX, PPTX, 이미지 (최대 50MB)<br />
+                여러 파일을 동시에 선택하여 업로드할 수 있습니다.
               </p>
             </>
           )}
