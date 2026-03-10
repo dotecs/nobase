@@ -10,8 +10,26 @@ export async function GET(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
     const { data: { session } } = await supabase.auth.exchangeCodeForSession(code);
 
-    // 프로필 완성 여부 확인
+    // 로그인 성공 시 마이그레이션 데이터 연결 시도
     if (session?.user) {
+      // 이메일 기반으로 마이그레이션된 데이터 연결
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: linkResult, error: linkError } = await (supabase as any)
+        .rpc('link_migrated_data', {
+          p_user_id: session.user.id,
+          p_email: session.user.email
+        });
+
+      if (linkError) {
+        // 함수가 없거나 마이그레이션 테이블이 없는 경우 무시
+        if (!linkError.message?.includes('does not exist')) {
+          console.error('마이그레이션 데이터 연결 실패:', linkError);
+        }
+      } else if (linkResult?.linked) {
+        console.log('마이그레이션 데이터 연결 완료:', linkResult);
+      }
+
+      // 프로필 완성 여부 확인
       const { data: profile } = await supabase
         .from('profiles')
         .select('name, phone')

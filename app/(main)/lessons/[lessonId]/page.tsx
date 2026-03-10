@@ -5,6 +5,7 @@ import { Header, ErrorPage } from '@/components';
 import LessonClient from './LessonClient';
 import LessonResources from './LessonResources';
 import VideoPlayer from './VideoPlayer';
+import QuestionSection from './QuestionSection';
 import styles from './lesson.module.css';
 import { Resource, Profile, Lesson, LessonProgress, LessonVideo } from '@/lib/database.types';
 import { FaPaperclip } from 'react-icons/fa';
@@ -203,6 +204,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <LessonResources resources={resources} lessonId={lessonId} />
           </div>
         )}
+
+        <QuestionSection lessonId={lessonId} userId={user.id} />
 
         <div className={styles.navigation}>
           {prevLesson ? (

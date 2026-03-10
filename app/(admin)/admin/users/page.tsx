@@ -102,6 +102,9 @@ export default async function UsersPage() {
         <Link href="/admin/users" className={`${styles.tab} ${styles.active}`}>
           사용자 관리
         </Link>
+        <Link href="/admin/questions" className={styles.tab}>
+          질문 관리
+        </Link>
       </div>
 
       {/* User List */}

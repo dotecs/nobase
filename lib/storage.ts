@@ -4,6 +4,7 @@ import { createClientSupabaseClient } from './supabase-client'
 export const STORAGE_BUCKETS = {
   COURSE_THUMBNAILS: 'course-thumbnails',
   LESSON_RESOURCES: 'lesson-resources',
+  QA_ATTACHMENTS: 'qa-attachments',
 } as const
 
 type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS]
@@ -230,4 +231,107 @@ export function validateResourceFile(file: File): { valid: boolean; error?: stri
   }
 
   return { valid: true }
+}
+
+/**
+ * Q&A 첨부파일 업로드 (학생용 - 이미지만)
+ */
+export async function uploadQAAttachment(
+  userId: string,
+  file: File
+): Promise<{ url: string | null; storagePath: string | null; error: Error | null }> {
+  const supabase = createClientSupabaseClient()
+  
+  // 파일명에서 특수문자 제거 및 타임스탬프 추가
+  const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+  const timestamp = Date.now()
+  const path = `${userId}/questions/${timestamp}_${safeName}`
+  
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKETS.QA_ATTACHMENTS)
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+  if (error) {
+    return { url: null, storagePath: null, error }
+  }
+
+  // 비공개 버킷이므로 signed URL 생성
+  const { data: urlData, error: urlError } = await supabase.storage
+    .from(STORAGE_BUCKETS.QA_ATTACHMENTS)
+    .createSignedUrl(data.path, 60 * 60 * 24 * 365) // 1년 유효
+
+  if (urlError) {
+    return { url: null, storagePath: null, error: urlError }
+  }
+
+  return { url: urlData.signedUrl, storagePath: data.path, error: null }
+}
+
+/**
+ * Q&A 첨부파일 업로드 (관리자용 - 이미지, 동영상)
+ */
+export async function uploadQAAnswerAttachment(
+  adminId: string,
+  file: File
+): Promise<{ url: string | null; storagePath: string | null; error: Error | null }> {
+  const supabase = createClientSupabaseClient()
+  
+  // 파일명에서 특수문자 제거 및 타임스탬프 추가
+  const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+  const timestamp = Date.now()
+  const path = `admin/${adminId}/answers/${timestamp}_${safeName}`
+  
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKETS.QA_ATTACHMENTS)
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+  if (error) {
+    return { url: null, storagePath: null, error }
+  }
+
+  // 비공개 버킷이므로 signed URL 생성
+  const { data: urlData, error: urlError } = await supabase.storage
+    .from(STORAGE_BUCKETS.QA_ATTACHMENTS)
+    .createSignedUrl(data.path, 60 * 60 * 24 * 365) // 1년 유효
+
+  if (urlError) {
+    return { url: null, storagePath: null, error: urlError }
+  }
+
+  return { url: urlData.signedUrl, storagePath: data.path, error: null }
+}
+
+/**
+ * Q&A 첨부파일 서명된 URL 가져오기
+ */
+export async function getQAAttachmentSignedUrl(
+  path: string,
+  expiresIn: number = 60 * 60 * 24 * 7 // 기본 7일
+): Promise<{ url: string | null; error: Error | null }> {
+  const supabase = createClientSupabaseClient()
+  
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKETS.QA_ATTACHMENTS)
+    .createSignedUrl(path, expiresIn)
+
+  if (error) {
+    return { url: null, error }
+  }
+
+  return { url: data.signedUrl, error: null }
+}
+
+/**
+ * Q&A 첨부파일 삭제
+ */
+export async function deleteQAAttachment(
+  path: string
+): Promise<{ error: Error | null }> {
+  return deleteFile(STORAGE_BUCKETS.QA_ATTACHMENTS, path)
 }

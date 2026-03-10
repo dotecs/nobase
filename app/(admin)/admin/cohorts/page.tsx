@@ -105,6 +105,9 @@ export default async function CohortsPage() {
         <Link href="/admin/users" className={styles.tab}>
           사용자 관리
         </Link>
+        <Link href="/admin/questions" className={styles.tab}>
+          질문 관리
+        </Link>
       </div>
 
       {/* Cohort List */}
