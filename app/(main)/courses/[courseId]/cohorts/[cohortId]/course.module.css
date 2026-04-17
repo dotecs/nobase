@@ -329,3 +329,95 @@
     max-width: 400px;
   }
 }
+
+/* Subject (과목) 스타일 */
+.subjectList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.subjectCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.subjectCard:hover {
+  background-color: var(--color-bg);
+  border-color: var(--color-primary-200);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.subjectNumber {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  flex-shrink: 0;
+}
+
+.subjectInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.subjectTitle {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.subjectDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.subjectMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.lessonCountBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.subjectArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.subjectCard:hover .subjectArrow {
+  transform: translateX(4px);
+  color: var(--color-primary);
+}

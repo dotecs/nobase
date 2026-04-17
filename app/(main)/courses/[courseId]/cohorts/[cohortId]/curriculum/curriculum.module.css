@@ -35,6 +35,20 @@
   margin-bottom: var(--space-6);
 }
 
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  transition: color var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
 .title {
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);

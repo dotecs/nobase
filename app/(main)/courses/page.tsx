@@ -24,10 +24,24 @@ export default async function CoursesPage() {
     .eq('is_published', true)
     .order('created_at', { ascending: false });
 
-  // 활성 기수만 필터링
+  // 사용자가 이미 등록한 기수 ID 조회
+  let enrolledCohortIds: string[] = [];
+  if (user) {
+    const { data: enrollmentsData } = await supabase
+      .from('enrollments')
+      .select('cohort_id')
+      .eq('user_id', user.id)
+      .in('status', ['active', 'paused', 'pending']);
+    
+    enrolledCohortIds = (enrollmentsData || []).map(e => e.cohort_id);
+  }
+
+  // 활성 기수만 필터링 + 이미 등록한 기수 제외
   const courses = (coursesData || []).map((course: any) => ({
     ...course,
-    cohorts: (course.cohorts || []).filter((cohort: Cohort) => cohort.is_active)
+    cohorts: (course.cohorts || []).filter((cohort: Cohort) => 
+      cohort.is_active && !enrolledCohortIds.includes(cohort.id)
+    )
   })).filter((course: CourseWithCohorts) => course.cohorts.length > 0) as CourseWithCohorts[];
 
   return (

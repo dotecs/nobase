@@ -485,30 +485,30 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
             {isEditMode ? '저장' : '강좌 생성'}
           </Button>
         </div>
-
-        {/* 삭제 영역 (수정 모드에서만) */}
-        {isEditMode && (
-          <div className={`${styles.formSection} ${styles.dangerZone}`}>
-            <h2 className={styles.sectionTitle}>
-              <FaTrash /> 위험 구역
-            </h2>
-            <p className={styles.dangerDescription}>
-              강좌를 삭제하면 관련된 모든 기수, 레슨, 수강 정보가 함께 삭제됩니다.
-              이 작업은 되돌릴 수 없습니다.
-            </p>
-            <Button
-              type="button"
-              variant="danger"
-              onClick={handleDelete}
-              loading={isSubmitting}
-            >
-              <FaTrash /> 강좌 삭제
-            </Button>
-          </div>
-        )}
       </form>
       
       {children}
+
+      {/* 삭제 영역 (수정 모드에서만) - 폼 외부, 페이지 최하단 */}
+      {isEditMode && (
+        <div className={`${styles.formSection} ${styles.dangerZone}`}>
+          <h2 className={styles.sectionTitle}>
+            <FaTrash /> 위험 구역
+          </h2>
+          <p className={styles.dangerDescription}>
+            강좌를 삭제하면 관련된 모든 기수, 레슨, 수강 정보가 함께 삭제됩니다.
+            이 작업은 되돌릴 수 없습니다.
+          </p>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={handleDelete}
+            loading={isSubmitting}
+          >
+            <FaTrash /> 강좌 삭제
+          </Button>
+        </div>
+      )}
     </main>
   );
 }

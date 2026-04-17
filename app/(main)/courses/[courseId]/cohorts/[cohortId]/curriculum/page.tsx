@@ -2,8 +2,8 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
-import { Profile, Course, Cohort, Lesson } from '@/lib/database.types';
-import { FaCheck, FaClock, FaLock } from 'react-icons/fa';
+import { Profile, Course, Cohort, Lesson, Subject } from '@/lib/database.types';
+import { FaCheck, FaClock, FaLock, FaArrowLeft } from 'react-icons/fa';
 import styles from './curriculum.module.css';
 
 interface CurriculumPageProps {
@@ -11,10 +11,14 @@ interface CurriculumPageProps {
     courseId: string;
     cohortId: string;
   }>;
+  searchParams: Promise<{
+    subject?: string;
+  }>;
 }
 
-export default async function CurriculumPage({ params }: CurriculumPageProps) {
+export default async function CurriculumPage({ params, searchParams }: CurriculumPageProps) {
   const { courseId, cohortId } = await params;
+  const { subject: subjectId } = await searchParams;
   
   const user = await getUser();
   if (!user) {
@@ -70,12 +74,29 @@ export default async function CurriculumPage({ params }: CurriculumPageProps) {
     notFound();
   }
 
-  // 레슨 목록 (is_published 여부와 관계없이 모두 가져옴)
-  const { data: lessonsData } = await supabase
+  // 과목 정보 조회 (subjectId가 있는 경우)
+  let subject: Subject | null = null;
+  if (subjectId) {
+    const { data: subjectData } = await supabase
+      .from('subjects')
+      .select('*')
+      .eq('id', subjectId)
+      .single();
+    subject = subjectData as Subject | null;
+  }
+
+  // 레슨 목록 (subjectId가 있으면 해당 과목의 레슨만)
+  let lessonsQuery = supabase
     .from('lessons')
     .select('*')
     .eq('course_id', courseId)
     .order('sort_order', { ascending: true });
+
+  if (subjectId) {
+    lessonsQuery = lessonsQuery.eq('subject_id', subjectId);
+  }
+
+  const { data: lessonsData } = await lessonsQuery;
 
   const lessons = (lessonsData || []) as Lesson[];
   
@@ -118,14 +139,25 @@ export default async function CurriculumPage({ params }: CurriculumPageProps) {
             {course.title}
           </Link>
           <span className={styles.breadcrumbSeparator}>/</span>
-          <span>커리큘럼</span>
+          <span>{subject ? subject.title : '커리큘럼'}</span>
         </nav>
 
         <div className={styles.header}>
-          <h1 className={styles.title}>커리큘럼</h1>
-          <p className={styles.subtitle}>
-            {course.title} · {cohort.title}
-          </p>
+          <Link 
+            href={`/courses/${courseId}/cohorts/${cohortId}`}
+            className={styles.backLink}
+          >
+            <FaArrowLeft /> 과목 목록으로
+          </Link>
+          <h1 className={styles.title}>{subject ? subject.title : '커리큘럼'}</h1>
+          {subject?.description && (
+            <p className={styles.subtitle}>{subject.description}</p>
+          )}
+          {!subject && (
+            <p className={styles.subtitle}>
+              {course.title} · {cohort.title}
+            </p>
+          )}
         </div>
 
         <div className={styles.progressSummary}>

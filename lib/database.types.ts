@@ -118,6 +118,7 @@ export interface Database {
         Row: {
           id: string
           course_id: string
+          subject_id: string | null
           title: string
           sort_order: number
           resources: Json
@@ -131,6 +132,7 @@ export interface Database {
         Insert: {
           id?: string
           course_id: string
+          subject_id?: string | null
           title: string
           sort_order?: number
           resources?: Json
@@ -144,6 +146,7 @@ export interface Database {
         Update: {
           id?: string
           course_id?: string
+          subject_id?: string | null
           title?: string
           sort_order?: number
           resources?: Json
@@ -353,6 +356,38 @@ export interface Database {
           updated_at?: string
         }
       }
+      subjects: {
+        Row: {
+          id: string
+          course_id: string
+          title: string
+          description: string | null
+          sort_order: number
+          is_published: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          course_id: string
+          title: string
+          description?: string | null
+          sort_order?: number
+          is_published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          course_id?: string
+          title?: string
+          description?: string | null
+          sort_order?: number
+          is_published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -397,6 +432,7 @@ export type Announcement = Tables<'announcements'>
 export type LessonVideo = Tables<'lesson_videos'>
 export type LessonQuestion = Tables<'lesson_questions'>
 export type LessonAnswer = Tables<'lesson_answers'>
+export type Subject = Tables<'subjects'>
 
 // 조인된 타입들
 export type CohortWithCourse = Cohort & {
@@ -409,15 +445,18 @@ export type EnrollmentWithCohort = Enrollment & {
 
 export type LessonWithProgress = Lesson & {
   lesson_progress?: LessonProgress[]
+  subjects?: Subject | null
 }
 
 export type LessonWithVideos = Lesson & {
   lesson_videos?: LessonVideo[]
+  subjects?: Subject | null
 }
 
 export type LessonFull = Lesson & {
   lesson_progress?: LessonProgress[]
   lesson_videos?: LessonVideo[]
+  subjects?: Subject | null
 }
 
 export type LessonQuestionWithAnswer = LessonQuestion & {

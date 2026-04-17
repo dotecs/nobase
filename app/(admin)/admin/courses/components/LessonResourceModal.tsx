@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { uploadLessonResource, validateResourceFile, STORAGE_BUCKETS } from '@/lib/storage';
-import { FaTimes, FaUpload, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner } from 'react-icons/fa';
+import { FaTimes, FaUpload, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner, FaCloudUploadAlt } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import styles from './LessonResourceModal.module.css';
@@ -35,6 +35,7 @@ export default function LessonResourceModal({
   const [resources, setResources] = useState<Resource[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   
   // 새 링크 추가용 상태
   const [newLink, setNewLink] = useState({ title: '', url: '' });
@@ -88,10 +89,33 @@ export default function LessonResourceModal({
   // 업로드 진행 상태
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 });
 
-  // 파일 업로드 (여러 파일 동시 업로드 지원)
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  // 드래그앤드롭 핸들러
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      processFiles(files);
+    }
+  }, []);
+
+  // 파일 처리 (파일 입력 및 드래그앤드롭 공통)
+  const processFiles = async (files: FileList) => {
+    if (files.length === 0) return;
 
     // 모든 파일 유효성 검사
     const invalidFiles: string[] = [];
@@ -180,6 +204,13 @@ export default function LessonResourceModal({
     }
   };
 
+  // 파일 업로드 (input 이벤트)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    await processFiles(files);
+  };
+
   // 링크 추가
   const handleAddLink = async () => {
     if (!newLink.title.trim() || !newLink.url.trim()) {
@@ -251,7 +282,21 @@ export default function LessonResourceModal({
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div 
+        className={`${styles.modal} ${isDragOver ? styles.dragOver : ''}`} 
+        onClick={(e) => e.stopPropagation()}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* 드래그 오버레이 */}
+        {isDragOver && (
+          <div className={styles.dropOverlay}>
+            <FaCloudUploadAlt className={styles.dropIcon} />
+            <p>파일을 여기에 놓으세요</p>
+          </div>
+        )}
+        
         <div className={styles.header}>
           <h2 className={styles.title}>학습 자료 관리</h2>
           <p className={styles.subtitle}>{lessonTitle}</p>
@@ -268,8 +313,75 @@ export default function LessonResourceModal({
             </div>
           ) : (
             <>
+              {/* 드래그앤드롭 업로드 영역 */}
+              <div 
+                className={styles.dropZone}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <FaCloudUploadAlt className={styles.dropZoneIcon} />
+                <p className={styles.dropZoneText}>
+                  파일을 드래그하여 놓거나 <strong>클릭</strong>하여 업로드
+                </p>
+                <p className={styles.dropZoneHint}>
+                  PDF, ZIP, DOCX, XLSX, 이미지 등 (최대 50MB)
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                  accept=".pdf,.zip,.txt,.xlsx,.docx,.pptx,.jpg,.jpeg,.png,.webp,.gif"
+                  multiple
+                />
+              </div>
+
+              {/* 업로드 진행 상태 */}
+              {isUploading && (
+                <div className={styles.uploadProgress}>
+                  <FaSpinner className={styles.spinner} />
+                  <span>업로드 중... {uploadProgress.total > 1 && `(${uploadProgress.current}/${uploadProgress.total})`}</span>
+                </div>
+              )}
+
               {/* 자료 목록 */}
               <div className={styles.resourceList}>
+                <div className={styles.resourceListHeader}>
+                  <span>등록된 자료 ({resources.length})</span>
+                  <button 
+                    className={styles.addLinkButton}
+                    onClick={() => setShowLinkForm(!showLinkForm)}
+                  >
+                    <FaLink /> 링크 추가
+                  </button>
+                </div>
+
+                {/* 링크 추가 폼 */}
+                {showLinkForm && (
+                  <div className={styles.linkForm}>
+                    <input
+                      type="text"
+                      placeholder="자료 제목"
+                      value={newLink.title}
+                      onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+                      className={styles.input}
+                    />
+                    <input
+                      type="url"
+                      placeholder="https://..."
+                      value={newLink.url}
+                      onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
+                      className={styles.input}
+                    />
+                    <div className={styles.linkFormActions}>
+                      <Button size="sm" onClick={handleAddLink}>추가</Button>
+                      <Button size="sm" variant="outline" onClick={() => {
+                        setShowLinkForm(false);
+                        setNewLink({ title: '', url: '' });
+                      }}>취소</Button>
+                    </div>
+                  </div>
+                )}
+
                 {resources.length === 0 ? (
                   <div className={styles.emptyState}>
                     등록된 학습 자료가 없습니다.
@@ -305,71 +417,6 @@ export default function LessonResourceModal({
                   ))
                 )}
               </div>
-
-              {/* 링크 추가 폼 */}
-              {showLinkForm && (
-                <div className={styles.linkForm}>
-                  <input
-                    type="text"
-                    placeholder="자료 제목"
-                    value={newLink.title}
-                    onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                    className={styles.input}
-                  />
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    value={newLink.url}
-                    onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
-                    className={styles.input}
-                  />
-                  <div className={styles.linkFormActions}>
-                    <Button size="sm" onClick={handleAddLink}>추가</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                      setShowLinkForm(false);
-                      setNewLink({ title: '', url: '' });
-                    }}>취소</Button>
-                  </div>
-                </div>
-              )}
-
-              {/* 액션 버튼들 */}
-              <div className={styles.actions}>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  onChange={handleFileUpload}
-                  style={{ display: 'none' }}
-                  accept=".pdf,.zip,.txt,.xlsx,.docx,.pptx,.jpg,.jpeg,.png,.webp,.gif"
-                  multiple
-                />
-                <Button 
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <>
-                      <FaSpinner className={styles.spinner} /> 업로드 중... {uploadProgress.total > 1 && `(${uploadProgress.current}/${uploadProgress.total})`}
-                    </>
-                  ) : (
-                    <>
-                      <FaUpload /> 파일 업로드
-                    </>
-                  )}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowLinkForm(true)}
-                  disabled={showLinkForm}
-                >
-                  <FaLink /> 링크 추가
-                </Button>
-              </div>
-
-              <p className={styles.hint}>
-                지원 형식: PDF, ZIP, TXT, XLSX, DOCX, PPTX, 이미지 (최대 50MB)<br />
-                여러 파일을 동시에 선택하여 업로드할 수 있습니다.
-              </p>
             </>
           )}
         </div>
