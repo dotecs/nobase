@@ -1,15 +1,16 @@
 import { redirect, notFound } from 'next/navigation';
-import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
 import LessonClient from './LessonClient';
 import LessonResources from './LessonResources';
-import LessonSidebar from './LessonSidebar';
+import CourseSidebar from './CourseSidebar';
+import CourseTopBar from './CourseTopBar';
+import VideoControlBar from './VideoControlBar';
+import ContentTabs from './ContentTabs';
 import VideoPlayer from './VideoPlayer';
 import QuestionSection from './QuestionSection';
 import styles from './lesson.module.css';
-import { Resource, Profile, Lesson, LessonProgress, LessonVideo, Subject } from '@/lib/database.types';
-import { FaPaperclip } from 'react-icons/fa';
+import { Resource, Profile, Lesson, LessonProgress, LessonVideo } from '@/lib/database.types';
 
 interface LessonPageProps {
   params: Promise<{
@@ -19,7 +20,7 @@ interface LessonPageProps {
 
 export default async function LessonPage({ params }: LessonPageProps) {
   const { lessonId } = await params;
-  
+
   const user = await getUser();
   if (!user) {
     redirect('/login');
@@ -47,14 +48,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const course = lesson?.courses as any;
 
-  // 공개 예정일 체크 (available_at이 설정되어 있고 아직 도래하지 않은 경우)
+  // 공개 예정일 체크
   if (lesson.available_at) {
     const availableDate = new Date(lesson.available_at);
     const now = new Date();
     if (availableDate > now) {
-      const profileData = await getProfile();
-      const profile = profileData as Profile | null;
-      
       const formattedDate = availableDate.toLocaleString('ko-KR', {
         year: 'numeric',
         month: 'long',
@@ -119,17 +117,47 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const progress = progressData as LessonProgress | null;
 
-  // 전체 레슨 목록 (이전/다음 레슨용) - is_published 여부 관계없이 전체 카운트
+  // 전체 레슨 목록
   const { data: allLessonsData } = await supabase
     .from('lessons')
     .select('id, title, sort_order, is_published, available_at, subject_id')
     .eq('course_id', course.id)
     .order('sort_order', { ascending: true });
 
-  const allLessons = (allLessonsData || []) as { id: string; title: string; sort_order: number; is_published: boolean; available_at: string | null; subject_id: string | null }[];
-  const totalLessonCount = allLessons.length;
-  
-  // 해당 코스의 과목(subjects) 목록 조회
+  const allLessons = (allLessonsData || []) as {
+    id: string;
+    title: string;
+    sort_order: number;
+    is_published: boolean;
+    available_at: string | null;
+    subject_id: string | null;
+  }[];
+
+  // 코스의 모든 비디오 (사이드바 시간 표시 + 총 강의시간 계산용)
+  const lessonIds = allLessons.map((l) => l.id);
+  const { data: courseVideosData } = lessonIds.length > 0
+    ? await supabase
+        .from('lesson_videos')
+        .select('lesson_id, duration_seconds, is_main')
+        .in('lesson_id', lessonIds)
+    : { data: [] };
+  const courseVideos = (courseVideosData || []) as Pick<LessonVideo, 'lesson_id' | 'duration_seconds' | 'is_main'>[];
+
+  // lesson별 합산 duration (메인 영상 우선, 없으면 전체 합)
+  const lessonDurationMap: Record<string, number> = {};
+  courseVideos.forEach((v) => {
+    if (v.duration_seconds == null) return;
+    lessonDurationMap[v.lesson_id] = (lessonDurationMap[v.lesson_id] || 0) + v.duration_seconds;
+  });
+
+  const allLessonsWithDuration = allLessons.map((l) => ({
+    ...l,
+    duration_seconds: lessonDurationMap[l.id] || 0,
+  }));
+
+  const totalDurationSec = Object.values(lessonDurationMap).reduce((a, b) => a + b, 0);
+
+  // 과목 목록
   const { data: subjectsData } = await supabase
     .from('subjects')
     .select('id, title')
@@ -138,17 +166,16 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const subjects = (subjectsData || []) as { id: string; title: string }[];
 
-  // 공개된 레슨만 필터 (이전/다음 네비게이션용)
-  const publishedLessons = allLessons.filter(l => l.is_published);
-  const currentIndex = publishedLessons.findIndex(l => l.id === lessonId);
+  // 이전/다음 레슨 (공개된 것만)
+  const publishedLessons = allLessons.filter((l) => l.is_published);
+  const currentIndex = publishedLessons.findIndex((l) => l.id === lessonId);
   const prevLesson = currentIndex > 0 ? publishedLessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex < publishedLessons.length - 1 ? publishedLessons[currentIndex + 1] : null;
-  
-  // 현재 레슨의 전체 목록 내 위치 (표시용)
-  const currentIndexInAll = allLessons.findIndex(l => l.id === lessonId);
+  const nextLesson =
+    currentIndex >= 0 && currentIndex < publishedLessons.length - 1
+      ? publishedLessons[currentIndex + 1]
+      : null;
 
-  // 진도 조회 (완료된 레슨 ID 목록)
-  const lessonIds = allLessons.map(l => l.id);
+  // 완료된 레슨 ID
   const { data: allProgressData } = lessonIds.length > 0
     ? await supabase
         .from('lesson_progress')
@@ -157,10 +184,20 @@ export default async function LessonPage({ params }: LessonPageProps) {
         .eq('completed', true)
         .in('lesson_id', lessonIds)
     : { data: [] };
-  
-  const completedLessonIds = new Set((allProgressData || []).map((p: { lesson_id: string }) => p.lesson_id));
 
-  // 레슨 영상 목록 조회
+  const completedLessonIds = new Set(
+    (allProgressData || []).map((p: { lesson_id: string }) => p.lesson_id)
+  );
+
+  // 진도율 / 수강시간 계산
+  const publishedTotal = publishedLessons.length || 1;
+  const progressRate = (completedLessonIds.size / publishedTotal) * 100;
+  const watchedSeconds = Array.from(completedLessonIds).reduce(
+    (sum, id) => sum + (lessonDurationMap[id] || 0),
+    0
+  );
+
+  // 현재 레슨 영상 목록
   const { data: videosData } = await supabase
     .from('lesson_videos')
     .select('*')
@@ -169,94 +206,69 @@ export default async function LessonPage({ params }: LessonPageProps) {
     .order('sort_order', { ascending: true });
 
   const lessonVideos = (videosData || []) as LessonVideo[];
-  const mainVideo = lessonVideos.find(v => v.is_main) || lessonVideos[0] || null;
-  const subVideos = lessonVideos.filter(v => !v.is_main || (v.is_main && lessonVideos.filter(x => x.is_main).length > 1 && v.id !== mainVideo?.id));
+  const mainVideo = lessonVideos.find((v) => v.is_main) || lessonVideos[0] || null;
+  const subVideos = lessonVideos.filter(
+    (v) =>
+      !v.is_main ||
+      (v.is_main && lessonVideos.filter((x) => x.is_main).length > 1 && v.id !== mainVideo?.id)
+  );
 
   const resources = (lesson.resources || []) as Resource[];
+  const courseHomeHref = `/courses/${course.id}/cohorts/${cohort.id}`;
 
   return (
-    <div className={styles.page}>
-      <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
+    <div className={styles.coursePage}>
+      <CourseTopBar
+        courseTitle={course.title}
+        backHref={courseHomeHref}
+        progressRate={progressRate}
+        watchedSeconds={watchedSeconds}
+        totalSeconds={totalDurationSec}
+      />
 
-      <div className={styles.twoPanel}>
-        <LessonSidebar
-          lessons={allLessons}
-          subjects={subjects}
-          currentLessonId={lessonId}
-          completedLessonIds={completedLessonIds}
-          courseId={course.id}
-          cohortId={cohort.id}
-          courseTitle={course.title}
-        />
-
-        <main className={styles.main}>
-          <div className={styles.lessonHeader}>
-            <span className={styles.lessonNumber}>
-              레슨 {currentIndexInAll + 1} / {totalLessonCount}
-            </span>
-            <h1 className={styles.lessonTitle}>{lesson.title}</h1>
-            {lesson.description && (
-              <p className={styles.lessonDescription}>{lesson.description}</p>
-            )}
+      <div className={styles.courseLayout}>
+        <main className={styles.courseMain}>
+          <div className={styles.videoFrame}>
+            <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
           </div>
 
-          <div className={styles.videoContainer}>
-            <VideoPlayer 
-              mainVideo={mainVideo}
-              subVideos={subVideos}
-              lessonTitle={lesson.title}
+          <VideoControlBar
+            prevLesson={prevLesson}
+            nextLesson={nextLesson}
+            fallbackHref={courseHomeHref}
+          />
+
+          <div className={styles.lessonTitleRow}>
+            <h2 className={styles.lessonTitleText}>{lesson.title}</h2>
+            <LessonClient
+              lessonId={lessonId}
+              userId={user.id}
+              isCompleted={progress?.completed || false}
             />
           </div>
 
-          <LessonClient
-            lessonId={lessonId}
-            userId={user.id}
-            isCompleted={progress?.completed || false}
+          <ContentTabs
+            resourcesContent={
+              resources.length > 0 ? (
+                <LessonResources resources={resources} lessonId={lessonId} />
+              ) : undefined
+            }
+            introContent={
+              lesson.description ? (
+                <p className={styles.introText}>{lesson.description}</p>
+              ) : undefined
+            }
           />
 
-          {resources.length > 0 && (
-            <div className={styles.resourcesCard}>
-              <h2 className={styles.sectionTitle}>
-                <span className={styles.sectionIcon}><FaPaperclip /></span>
-                학습 자료
-              </h2>
-              <LessonResources resources={resources} lessonId={lessonId} />
-            </div>
-          )}
-
           <QuestionSection lessonId={lessonId} userId={user.id} />
-
-          <div className={styles.navigation}>
-            {prevLesson ? (
-              <Link 
-                href={`/lessons/${prevLesson.id}`}
-                className={styles.navButton}
-              >
-                ← 이전 레슨
-              </Link>
-            ) : (
-              <span className={`${styles.navButton} ${styles.navButtonDisabled}`}>
-                ← 이전 레슨
-              </span>
-            )}
-
-            {nextLesson ? (
-              <Link 
-                href={`/lessons/${nextLesson.id}`}
-                className={styles.navButton}
-              >
-                다음 레슨 →
-              </Link>
-            ) : (
-              <Link 
-                href={`/courses/${course.id}/cohorts/${cohort.id}`}
-                className={styles.navButton}
-              >
-                강좌 홈으로 →
-              </Link>
-            )}
-          </div>
         </main>
+
+        <CourseSidebar
+          lessons={allLessonsWithDuration}
+          subjects={subjects}
+          currentLessonId={lessonId}
+          completedLessonIds={completedLessonIds}
+        />
       </div>
     </div>
   );
