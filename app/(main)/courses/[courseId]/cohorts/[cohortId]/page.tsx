@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
-import { Profile, Course, Cohort, Lesson, Announcement, Subject } from '@/lib/database.types';
+import { Profile, Course, Cohort, Announcement, Subject } from '@/lib/database.types';
 import { FaBook, FaCalendarAlt, FaBullhorn, FaThumbtack, FaChevronRight, FaGraduationCap, FaPlayCircle } from 'react-icons/fa';
 import styles from './course.module.css';
 
