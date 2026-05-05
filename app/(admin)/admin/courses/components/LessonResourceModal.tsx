@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { uploadLessonResource, validateResourceFile, STORAGE_BUCKETS } from '@/lib/storage';
-import { FaTimes, FaUpload, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner, FaCloudUploadAlt } from 'react-icons/fa';
+import { FaTimes, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner, FaCloudUploadAlt } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import styles from './LessonResourceModal.module.css';

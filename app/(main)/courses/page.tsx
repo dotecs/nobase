@@ -33,7 +33,7 @@ export default async function CoursesPage() {
       .eq('user_id', user.id)
       .in('status', ['active', 'paused', 'pending']);
     
-    enrolledCohortIds = (enrollmentsData || []).map(e => e.cohort_id);
+    enrolledCohortIds = ((enrollmentsData || []) as { cohort_id: string }[]).map(e => e.cohort_id);
   }
 
   // 활성 기수만 필터링 + 이미 등록한 기수 제외
