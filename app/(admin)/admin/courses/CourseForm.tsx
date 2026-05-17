@@ -20,9 +20,10 @@ interface CourseFormProps {
     is_published: boolean;
   };
   children?: React.ReactNode;
+  embedded?: boolean;
 }
 
-export default function CourseForm({ initialData, children }: CourseFormProps) {
+export default function CourseForm({ initialData, children, embedded }: CourseFormProps) {
   const router = useRouter();
   // Admin 페이지에서는 RLS 정책이 적용되지 않으므로 any 타입 사용
   const supabase = createClientSupabaseClient() as any;
@@ -316,12 +317,14 @@ export default function CourseForm({ initialData, children }: CourseFormProps) {
 
   return (
     <main className={styles.main}>
-      <div className={styles.header}>
-        <Link href="/admin" className={styles.backLink}>
-          <FaArrowLeft /> 목록으로 돌아가기
-        </Link>
-        <h1>{isEditMode ? '강좌 수정' : '새 강좌 만들기'}</h1>
-      </div>
+      {!embedded && (
+        <div className={styles.header}>
+          <Link href="/admin" className={styles.backLink}>
+            <FaArrowLeft /> 목록으로 돌아가기
+          </Link>
+          <h1>{isEditMode ? '강좌 수정' : '새 강좌 만들기'}</h1>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         {/* 기본 정보 */}

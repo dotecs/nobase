@@ -84,12 +84,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
   // 각 과목별 레슨 수 조회
   const { data: lessonsData } = await supabase
     .from('lessons')
-    .select('id, subject_id, is_published')
+    .select('id, subject_id, is_published, sort_order')
     .eq('course_id', courseId)
-    .eq('is_published', true);
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true });
 
-  const lessons = (lessonsData || []) as { id: string; subject_id: string | null; is_published: boolean }[];
-  
+  const lessons = (lessonsData || []) as { id: string; subject_id: string | null; is_published: boolean; sort_order: number }[];
+
   // 과목별 레슨 카운트
   const lessonCountBySubject = lessons.reduce((acc, lesson) => {
     if (lesson.subject_id) {
@@ -97,6 +98,14 @@ export default async function CoursePage({ params }: CoursePageProps) {
     }
     return acc;
   }, {} as Record<string, number>);
+
+  // 과목별 첫 레슨 ID (sort_order 오름차순 기준 첫 항목)
+  const firstLessonBySubject = lessons.reduce((acc, lesson) => {
+    if (lesson.subject_id && !acc[lesson.subject_id]) {
+      acc[lesson.subject_id] = lesson.id;
+    }
+    return acc;
+  }, {} as Record<string, string>);
 
   // 총 레슨 수
   const totalLessons = lessons.length;
@@ -200,11 +209,15 @@ export default async function CoursePage({ params }: CoursePageProps) {
                 <div className={styles.subjectList}>
                   {subjects.map((subject, index) => {
                     const lessonCount = lessonCountBySubject[subject.id] || 0;
-                    
+                    const firstLessonId = firstLessonBySubject[subject.id];
+                    const href = firstLessonId
+                      ? `/lessons/${firstLessonId}`
+                      : `/courses/${courseId}/cohorts/${cohortId}/curriculum?subject=${subject.id}`;
+
                     return (
-                      <Link 
+                      <Link
                         key={subject.id}
-                        href={`/courses/${courseId}/cohorts/${cohortId}/curriculum?subject=${subject.id}`}
+                        href={href}
                         className={styles.subjectCard}
                       >
                         <div className={styles.subjectNumber}>{index + 1}</div>
