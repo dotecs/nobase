@@ -473,8 +473,9 @@ export type LessonQuestionWithDetails = LessonQuestion & {
 }
 
 export type Resource = {
-  type: 'link' | 'pdf' | 'file'
+  type: 'link' | 'pdf' | 'file' | 'image'
   title: string
   url: string
   storage_path?: string // Supabase Storage 경로 (파일 업로드 시)
+  caption?: string // image 타입에서 학생 페이지에 노출되는 설명
 }

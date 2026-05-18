@@ -3,16 +3,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import { uploadLessonResource, validateResourceFile, STORAGE_BUCKETS } from '@/lib/storage';
-import { FaTimes, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner, FaCloudUploadAlt } from 'react-icons/fa';
+import { FaTimes, FaTrash, FaFilePdf, FaFileAlt, FaLink, FaExternalLinkAlt, FaSpinner, FaCloudUploadAlt, FaImage, FaSave } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import styles from './LessonResourceModal.module.css';
 
 interface Resource {
-  type: 'link' | 'pdf' | 'file';
+  type: 'link' | 'pdf' | 'file' | 'image';
   title: string;
   url: string;
   storage_path?: string; // Supabase Storage 경로
+  caption?: string; // image 타입 캡션
 }
 
 interface LessonResourceModalProps {
@@ -159,13 +160,19 @@ export default function LessonResourceModal({
         }
         
         // 파일 타입 결정
-        const fileType: Resource['type'] = file.type === 'application/pdf' ? 'pdf' : 'file';
-        
+        const isImage = file.type.startsWith('image/');
+        const fileType: Resource['type'] = isImage
+          ? 'image'
+          : file.type === 'application/pdf'
+          ? 'pdf'
+          : 'file';
+
         uploadedResources.push({
           type: fileType,
           title: file.name,
           url: url,
           storage_path: storagePath,
+          ...(isImage ? { caption: '' } : {}),
         });
       } catch (err: any) {
         failedFiles.push(file.name);
@@ -273,8 +280,31 @@ export default function LessonResourceModal({
         return <FaFilePdf />;
       case 'link':
         return <FaExternalLinkAlt />;
+      case 'image':
+        return <FaImage />;
       default:
         return <FaFileAlt />;
+    }
+  };
+
+  // 캡션 편집 상태 (이미지 전용)
+  const [captionDrafts, setCaptionDrafts] = useState<Record<number, string>>({});
+
+  const handleCaptionChange = (index: number, value: string) => {
+    setCaptionDrafts((prev) => ({ ...prev, [index]: value }));
+  };
+
+  const handleSaveCaption = async (index: number) => {
+    const draft = captionDrafts[index];
+    if (draft === undefined) return;
+    const newResources = resources.map((r, i) => (i === index ? { ...r, caption: draft } : r));
+    const success = await saveResources(newResources);
+    if (success) {
+      setCaptionDrafts((prev) => {
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
     }
   };
 
@@ -387,34 +417,80 @@ export default function LessonResourceModal({
                     등록된 학습 자료가 없습니다.
                   </div>
                 ) : (
-                  resources.map((resource, index) => (
-                    <div key={index} className={styles.resourceItem}>
-                      <span className={styles.resourceIcon}>
-                        {getResourceIcon(resource.type)}
-                      </span>
-                      <div className={styles.resourceInfo}>
-                        <span className={styles.resourceTitle}>{resource.title}</span>
-                        <span className={styles.resourceType}>
-                          {resource.type === 'link' ? '링크' : resource.type === 'pdf' ? 'PDF' : '파일'}
+                  resources.map((resource, index) => {
+                    if (resource.type === 'image') {
+                      const draft = captionDrafts[index];
+                      const currentCaption = draft !== undefined ? draft : (resource.caption || '');
+                      const isDirty = draft !== undefined && draft !== (resource.caption || '');
+                      return (
+                        <div key={index} className={`${styles.resourceItem} ${styles.imageItem}`}>
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.imageThumbWrap}
+                            title="원본 보기"
+                          >
+                            <img src={resource.url} alt={resource.title} className={styles.imageThumb} />
+                          </a>
+                          <div className={styles.imageInfo}>
+                            <span className={styles.resourceTitle}>{resource.title}</span>
+                            <input
+                              type="text"
+                              value={currentCaption}
+                              onChange={(e) => handleCaptionChange(index, e.target.value)}
+                              placeholder="학생 페이지에 표시될 캡션 (예: 2-15-(7) 정정 풀이)"
+                              className={styles.captionInput}
+                            />
+                          </div>
+                          {isDirty && (
+                            <button
+                              className={`${styles.iconActionBtn} ${styles.saveBtn}`}
+                              onClick={() => handleSaveCaption(index)}
+                              title="캡션 저장"
+                            >
+                              <FaSave />
+                            </button>
+                          )}
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDeleteResource(index)}
+                            title="삭제"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={index} className={styles.resourceItem}>
+                        <span className={styles.resourceIcon}>
+                          {getResourceIcon(resource.type)}
                         </span>
+                        <div className={styles.resourceInfo}>
+                          <span className={styles.resourceTitle}>{resource.title}</span>
+                          <span className={styles.resourceType}>
+                            {resource.type === 'link' ? '링크' : resource.type === 'pdf' ? 'PDF' : '파일'}
+                          </span>
+                        </div>
+                        <a
+                          href={resource.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.resourcePreview}
+                        >
+                          미리보기
+                        </a>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDeleteResource(index)}
+                          title="삭제"
+                        >
+                          <FaTrash />
+                        </button>
                       </div>
-                      <a 
-                        href={resource.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={styles.resourcePreview}
-                      >
-                        미리보기
-                      </a>
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDeleteResource(index)}
-                        title="삭제"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </>

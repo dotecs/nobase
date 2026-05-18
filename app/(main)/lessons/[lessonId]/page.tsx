@@ -3,12 +3,14 @@ import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-
 import { Header, ErrorPage } from '@/components';
 import LessonClient from './LessonClient';
 import LessonResources from './LessonResources';
+import LessonImages from './LessonImages';
 import CourseSidebar from './CourseSidebar';
 import CourseTopBar from './CourseTopBar';
 import VideoControlBar from './VideoControlBar';
 import ContentTabs from './ContentTabs';
 import VideoPlayer from './VideoPlayer';
 import QuestionSection from './QuestionSection';
+import { STORAGE_BUCKETS } from '@/lib/storage';
 import styles from './lesson.module.css';
 import { Resource, Profile, Lesson, LessonProgress, LessonVideo } from '@/lib/database.types';
 
@@ -213,7 +215,22 @@ export default async function LessonPage({ params }: LessonPageProps) {
       (v.is_main && lessonVideos.filter((x) => x.is_main).length > 1 && v.id !== mainVideo?.id)
   );
 
-  const resources = (lesson.resources || []) as Resource[];
+  const allResources = (lesson.resources || []) as Resource[];
+
+  // 이미지 자료는 inline 표시용으로 분리, signed URL 갱신
+  const rawImages = allResources.filter((r) => r.type === 'image');
+  const nonImageResources = allResources.filter((r) => r.type !== 'image');
+
+  const imageResources = await Promise.all(
+    rawImages.map(async (img) => {
+      if (!img.storage_path) return img;
+      const { data } = await supabase.storage
+        .from(STORAGE_BUCKETS.LESSON_RESOURCES)
+        .createSignedUrl(img.storage_path, 60 * 60 * 24); // 24h
+      return data?.signedUrl ? { ...img, url: data.signedUrl } : img;
+    })
+  );
+
   const courseHomeHref = `/courses/${course.id}/cohorts/${cohort.id}`;
 
   return (
@@ -230,6 +247,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <main className={styles.courseMain}>
           <div className={styles.videoFrame}>
             <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
+            {imageResources.length > 0 && (
+              <LessonImages images={imageResources as any} />
+            )}
           </div>
 
           <VideoControlBar
@@ -249,8 +269,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
           <ContentTabs
             resourcesContent={
-              resources.length > 0 ? (
-                <LessonResources resources={resources} lessonId={lessonId} />
+              nonImageResources.length > 0 ? (
+                <LessonResources resources={nonImageResources} lessonId={lessonId} />
               ) : undefined
             }
             introContent={

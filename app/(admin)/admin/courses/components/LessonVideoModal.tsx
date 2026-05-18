@@ -37,7 +37,7 @@ export default function LessonVideoModal({
   
   // New Video State
   const [newVideo, setNewVideo] = useState({
-    title: '',
+    title: lessonTitle,
     video_url: '',
     description: '',
   });
@@ -45,7 +45,9 @@ export default function LessonVideoModal({
   // Fetch Videos
   useEffect(() => {
     if (!isOpen || !lessonId) return;
-    
+
+    setNewVideo({ title: lessonTitle, video_url: '', description: '' });
+
     const fetchVideos = async () => {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -66,7 +68,7 @@ export default function LessonVideoModal({
     };
 
     fetchVideos();
-  }, [lessonId, isOpen, supabase]);
+  }, [lessonId, lessonTitle, isOpen, supabase]);
 
   // Extract Vimeo video ID from URL
   const extractVimeoId = (url: string): string | null => {
@@ -238,10 +240,10 @@ export default function LessonVideoModal({
       if (error) throw error;
 
       setVideos(prev => [...prev, data]);
-      setNewVideo({ 
-        title: '', 
-        video_url: '', 
-        description: '' 
+      setNewVideo({
+        title: lessonTitle,
+        video_url: '',
+        description: ''
       });
 
     } catch (err: any) {
@@ -388,12 +390,12 @@ export default function LessonVideoModal({
                         />
                       </td>
                       <td>
-                        <input
-                          type="text"
-                          className={styles.tableInput}
+                        <textarea
+                          className={`${styles.tableInput} ${styles.tableTextarea}`}
                           value={video.description || ''}
                           onChange={(e) => handleVideoChange(video.id, 'description', e.target.value)}
-                          placeholder="설명 (선택)"
+                          placeholder="설명 (선택)&#10;줄바꿈 가능"
+                          rows={2}
                         />
                       </td>
                       <td>
@@ -465,14 +467,14 @@ export default function LessonVideoModal({
                       />
                     </td>
                     <td>
-                      <input
-                        type="text"
-                        className={styles.tableInput}
+                      <textarea
+                        className={`${styles.tableInput} ${styles.tableTextarea}`}
                         value={newVideo.description}
                         onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
-                        placeholder="설명 (선택)"
+                        placeholder="설명 (선택)&#10;줄바꿈 가능"
+                        rows={2}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleAddVideo();
+                          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleAddVideo();
                         }}
                       />
                     </td>
