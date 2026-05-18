@@ -1,3 +1,4 @@
+import * as tus from 'tus-js-client'
 import { createClientSupabaseClient } from './supabase-client'
 
 // 스토리지 버킷 이름
@@ -8,6 +9,67 @@ export const STORAGE_BUCKETS = {
 } as const
 
 type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS]
+
+// Standard upload 한도 (Supabase: 50MB)
+const STANDARD_UPLOAD_LIMIT = 50 * 1024 * 1024
+
+/**
+ * Resumable (TUS) 업로드 — Supabase 표준 50MB 한도를 초과하는 파일에 사용.
+ * 성공 시 storage_path 반환, 호출자가 signed URL 등을 별도로 발급.
+ */
+async function uploadResumable(
+  bucket: BucketName,
+  path: string,
+  file: File,
+  options?: { onProgress?: (loaded: number, total: number) => void }
+): Promise<{ storagePath: string | null; error: Error | null }> {
+  const supabase = createClientSupabaseClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
+    return { storagePath: null, error: new Error('인증이 필요합니다.') }
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!supabaseUrl) {
+    return { storagePath: null, error: new Error('NEXT_PUBLIC_SUPABASE_URL이 설정되지 않았습니다.') }
+  }
+
+  return new Promise((resolve) => {
+    const upload = new tus.Upload(file, {
+      endpoint: `${supabaseUrl}/storage/v1/upload/resumable`,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: {
+        authorization: `Bearer ${session.access_token}`,
+        'x-upsert': 'false',
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      metadata: {
+        bucketName: bucket,
+        objectName: path,
+        contentType: file.type || 'application/octet-stream',
+        cacheControl: '3600',
+      },
+      chunkSize: 6 * 1024 * 1024, // Supabase TUS 요구사항: 정확히 6MB 청크
+      onError: (error) => {
+        resolve({ storagePath: null, error })
+      },
+      onProgress: (loaded, total) => {
+        options?.onProgress?.(loaded, total)
+      },
+      onSuccess: () => {
+        resolve({ storagePath: path, error: null })
+      },
+    })
+
+    upload.findPreviousUploads().then((prev) => {
+      if (prev.length > 0) {
+        upload.resumeFromPreviousUpload(prev[0])
+      }
+      upload.start()
+    })
+  })
+}
 
 /**
  * 파일 업로드
@@ -54,40 +116,109 @@ export async function uploadCourseThumbnail(
 }
 
 /**
- * 레슨 리소스 업로드
+ * 레슨 리소스 업로드 (자동 하이브리드: 50MB 이하 standard, 초과 시 resumable TUS)
  */
 export async function uploadLessonResource(
   lessonId: string,
-  file: File
+  file: File,
+  options?: { onProgress?: (loaded: number, total: number) => void }
 ): Promise<{ url: string | null; storagePath: string | null; error: Error | null }> {
   const supabase = createClientSupabaseClient()
-  
-  // 파일명에서 특수문자 제거 및 타임스탬프 추가
+
   const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
   const timestamp = Date.now()
   const path = `lessons/${lessonId}/${timestamp}_${safeName}`
-  
-  const { data, error } = await supabase.storage
-    .from(STORAGE_BUCKETS.LESSON_RESOURCES)
-    .upload(path, file, {
-      cacheControl: '3600',
-      upsert: false,
-    })
 
-  if (error) {
-    return { url: null, storagePath: null, error }
+  let storagePath: string
+
+  if (file.size > STANDARD_UPLOAD_LIMIT) {
+    // 50MB 초과 → resumable
+    const { storagePath: tusPath, error } = await uploadResumable(
+      STORAGE_BUCKETS.LESSON_RESOURCES,
+      path,
+      file,
+      options
+    )
+    if (error || !tusPath) {
+      return { url: null, storagePath: null, error: error || new Error('업로드 실패') }
+    }
+    storagePath = tusPath
+  } else {
+    // 표준 업로드
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKETS.LESSON_RESOURCES)
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+    if (error) {
+      return { url: null, storagePath: null, error }
+    }
+    storagePath = data.path
   }
 
   // 비공개 버킷이므로 signed URL 생성
   const { data: urlData, error: urlError } = await supabase.storage
     .from(STORAGE_BUCKETS.LESSON_RESOURCES)
-    .createSignedUrl(data.path, 60 * 60 * 24 * 7) // 7일 유효
+    .createSignedUrl(storagePath, 60 * 60 * 24 * 7) // 7일 유효
 
   if (urlError) {
     return { url: null, storagePath: null, error: urlError }
   }
 
-  return { url: urlData.signedUrl, storagePath: data.path, error: null }
+  return { url: urlData.signedUrl, storagePath, error: null }
+}
+
+/**
+ * 과목 공통 자료 업로드 (lesson-resources 버킷 재사용, subjects/ 경로)
+ * 자동 하이브리드: 50MB 이하 standard, 초과 시 resumable TUS
+ */
+export async function uploadSubjectResource(
+  subjectId: string,
+  file: File,
+  options?: { onProgress?: (loaded: number, total: number) => void }
+): Promise<{ url: string | null; storagePath: string | null; error: Error | null }> {
+  const supabase = createClientSupabaseClient()
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+  const timestamp = Date.now()
+  const path = `subjects/${subjectId}/${timestamp}_${safeName}`
+
+  let storagePath: string
+
+  if (file.size > STANDARD_UPLOAD_LIMIT) {
+    const { storagePath: tusPath, error } = await uploadResumable(
+      STORAGE_BUCKETS.LESSON_RESOURCES,
+      path,
+      file,
+      options
+    )
+    if (error || !tusPath) {
+      return { url: null, storagePath: null, error: error || new Error('업로드 실패') }
+    }
+    storagePath = tusPath
+  } else {
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKETS.LESSON_RESOURCES)
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+    if (error) {
+      return { url: null, storagePath: null, error }
+    }
+    storagePath = data.path
+  }
+
+  const { data: urlData, error: urlError } = await supabase.storage
+    .from(STORAGE_BUCKETS.LESSON_RESOURCES)
+    .createSignedUrl(storagePath, 60 * 60 * 24 * 7) // 7일
+
+  if (urlError) {
+    return { url: null, storagePath: null, error: urlError }
+  }
+
+  return { url: urlData.signedUrl, storagePath, error: null }
 }
 
 /**
@@ -214,7 +345,7 @@ export function validateResourceFile(file: File): { valid: boolean; error?: stri
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ]
-  const maxSize = 50 * 1024 * 1024 // 50MB
+  const maxSize = 300 * 1024 * 1024 // 300MB
 
   if (!allowedTypes.includes(file.type)) {
     return {
@@ -226,7 +357,7 @@ export function validateResourceFile(file: File): { valid: boolean; error?: stri
   if (file.size > maxSize) {
     return {
       valid: false,
-      error: '파일 크기가 50MB를 초과합니다.',
+      error: '파일 크기가 300MB를 초과합니다.',
     }
   }
 

@@ -39,9 +39,10 @@ export default function LessonSidebar({
 }: LessonSidebarProps) {
   const now = new Date();
 
-  // 과목별로 레슨 그룹화
+  // 과목별로 레슨 그룹화 (과목 미배정 강의는 사이드바에서 제외)
   const lessonsBySubject = lessons.reduce((acc, lesson) => {
-    const key = lesson.subject_id || 'uncategorized';
+    if (!lesson.subject_id) return acc;
+    const key = lesson.subject_id;
     if (!acc[key]) acc[key] = [];
     acc[key].push(lesson);
     return acc;
@@ -56,7 +57,8 @@ export default function LessonSidebar({
   // 과목 ID 순서 (sort_order 기준으로 정렬된 레슨에서 추출)
   const orderedSubjectIds: string[] = [];
   lessons.forEach(lesson => {
-    const key = lesson.subject_id || 'uncategorized';
+    if (!lesson.subject_id) return;
+    const key = lesson.subject_id;
     if (!orderedSubjectIds.includes(key)) {
       orderedSubjectIds.push(key);
     }

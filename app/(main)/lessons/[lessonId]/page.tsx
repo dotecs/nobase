@@ -215,7 +215,21 @@ export default async function LessonPage({ params }: LessonPageProps) {
       (v.is_main && lessonVideos.filter((x) => x.is_main).length > 1 && v.id !== mainVideo?.id)
   );
 
-  const allResources = (lesson.resources || []) as Resource[];
+  const lessonResources = (lesson.resources || []) as Resource[];
+
+  // 소속 과목의 공통 자료 불러오기 (있으면)
+  let subjectResources: Resource[] = [];
+  if (lesson.subject_id) {
+    const { data: subjectData } = await supabase
+      .from('subjects')
+      .select('resources')
+      .eq('id', lesson.subject_id)
+      .single();
+    subjectResources = ((subjectData as any)?.resources || []) as Resource[];
+  }
+
+  // 과목 공통 자료를 먼저, 그 다음에 강의별 자료
+  const allResources: Resource[] = [...subjectResources, ...lessonResources];
 
   // 이미지 자료는 inline 표시용으로 분리, signed URL 갱신
   const rawImages = allResources.filter((r) => r.type === 'image');
@@ -245,12 +259,22 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
       <div className={styles.courseLayout}>
         <main className={styles.courseMain}>
-          <div className={styles.videoFrame}>
-            <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
-            {imageResources.length > 0 && (
+          {mainVideo ? (
+            <div className={styles.videoFrame}>
+              <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
+              {imageResources.length > 0 && (
+                <LessonImages images={imageResources as any} />
+              )}
+            </div>
+          ) : imageResources.length > 0 ? (
+            <div className={styles.imagesOnlyFrame}>
               <LessonImages images={imageResources as any} />
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className={styles.videoFrame}>
+              <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
+            </div>
+          )}
 
           <VideoControlBar
             prevLesson={prevLesson}

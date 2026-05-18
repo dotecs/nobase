@@ -5,10 +5,11 @@ import { FaFilePdf, FaExternalLinkAlt, FaFolder, FaDownload, FaSpinner } from 'r
 import styles from './lesson.module.css';
 
 interface Resource {
-  type: 'link' | 'pdf' | 'file';
+  type: 'link' | 'pdf' | 'file' | 'image';
   title: string;
   url: string;
   storage_path?: string;
+  caption?: string;
 }
 
 interface LessonResourcesProps {
@@ -31,7 +32,7 @@ export default function LessonResources({ resources, lessonId }: LessonResources
     
     try {
       const response = await fetch(
-        `/api/resources/download?path=${encodeURIComponent(resource.storage_path)}&lessonId=${lessonId}`
+        `/api/resources/download?path=${encodeURIComponent(resource.storage_path)}&lessonId=${lessonId}&filename=${encodeURIComponent(resource.title)}`
       );
       
       if (!response.ok) {

@@ -111,6 +111,17 @@
   border: 1px solid var(--color-border);
 }
 
+.imagesOnlyFrame {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.imagesOnlyFrame .lessonImagesSection {
+  border-bottom: none;
+}
+
 .videoControlBar {
   display: flex;
   align-items: center;

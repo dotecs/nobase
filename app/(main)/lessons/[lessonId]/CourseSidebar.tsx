@@ -48,12 +48,13 @@ export default function CourseSidebar({
   const [activeTab, setActiveTab] = useState<SidebarTab>('curriculum');
   const now = new Date();
 
-  // 과목별 그룹화
+  // 과목별 그룹화 (과목 미배정 강의는 사이드바에서 제외)
   const grouped = useMemo(() => {
     const map: Record<string, LessonItem[]> = {};
     const order: string[] = [];
     lessons.forEach((lesson) => {
-      const key = lesson.subject_id || 'uncategorized';
+      if (!lesson.subject_id) return;
+      const key = lesson.subject_id;
       if (!map[key]) {
         map[key] = [];
         order.push(key);

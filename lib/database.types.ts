@@ -364,6 +364,7 @@ export interface Database {
           description: string | null
           sort_order: number
           is_published: boolean
+          resources: Resource[]
           created_at: string
           updated_at: string
         }
@@ -374,6 +375,7 @@ export interface Database {
           description?: string | null
           sort_order?: number
           is_published?: boolean
+          resources?: Resource[]
           created_at?: string
           updated_at?: string
         }
@@ -384,6 +386,7 @@ export interface Database {
           description?: string | null
           sort_order?: number
           is_published?: boolean
+          resources?: Resource[]
           created_at?: string
           updated_at?: string
         }

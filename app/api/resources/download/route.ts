@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const path = searchParams.get('path');
   const lessonId = searchParams.get('lessonId');
+  const filename = searchParams.get('filename');
 
   if (!path || !lessonId) {
     return NextResponse.json({ error: '필수 파라미터가 누락되었습니다.' }, { status: 400 });
@@ -47,10 +48,10 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Signed URL 생성 (1시간 유효)
+  // Signed URL 생성 (1시간 유효) — filename이 있으면 Content-Disposition으로 원본 파일명 강제
   const { data, error } = await supabase.storage
     .from('lesson-resources')
-    .createSignedUrl(path, 60 * 60);
+    .createSignedUrl(path, 60 * 60, filename ? { download: filename } : undefined);
 
   if (error || !data) {
     console.error('Signed URL 생성 실패:', error);

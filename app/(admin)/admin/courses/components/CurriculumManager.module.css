@@ -680,6 +680,11 @@ button.subjectChip {
   font-weight: var(--font-medium);
   color: var(--color-text-secondary);
 }
+
+.colSubjectOrder {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-normal);
+}
 .colTitle {
   min-width: 220px;
 }

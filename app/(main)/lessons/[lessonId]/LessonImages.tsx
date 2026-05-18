@@ -51,28 +51,34 @@ export default function LessonImages({ images }: LessonImagesProps) {
       </h3>
 
       <div className={styles.lessonImagesGrid}>
-        {images.map((img, i) => (
-          <figure key={i} className={styles.lessonImageFigure}>
-            <button
-              type="button"
-              className={styles.lessonImageButton}
-              onClick={() => setLightboxIndex(i)}
-              aria-label={img.caption || img.title || `이미지 ${i + 1} 확대`}
-            >
-              <img
-                src={img.url}
-                alt={img.caption || img.title}
-                className={styles.lessonImage}
-                loading="lazy"
-              />
-            </button>
-            {(img.caption || img.title) && (
-              <figcaption className={styles.lessonImageCaption}>
-                {img.caption || img.title}
-              </figcaption>
-            )}
-          </figure>
-        ))}
+        {images.map((img, i) => {
+          const visibleCaption =
+            img.caption && img.caption.trim() !== '' && img.caption !== img.title
+              ? img.caption
+              : '';
+          return (
+            <figure key={i} className={styles.lessonImageFigure}>
+              <button
+                type="button"
+                className={styles.lessonImageButton}
+                onClick={() => setLightboxIndex(i)}
+                aria-label={visibleCaption || `이미지 ${i + 1} 확대`}
+              >
+                <img
+                  src={img.url}
+                  alt={visibleCaption}
+                  className={styles.lessonImage}
+                  loading="lazy"
+                />
+              </button>
+              {visibleCaption && (
+                <figcaption className={styles.lessonImageCaption}>
+                  {visibleCaption}
+                </figcaption>
+              )}
+            </figure>
+          );
+        })}
       </div>
 
       {currentImage && lightboxIndex !== null && (
@@ -111,18 +117,28 @@ export default function LessonImages({ images }: LessonImagesProps) {
               ›
             </button>
           )}
-          <figure className={styles.lightboxFigure} onClick={(e) => e.stopPropagation()}>
-            <img
-              src={currentImage.url}
-              alt={currentImage.caption || currentImage.title}
-              className={styles.lightboxImage}
-            />
-            {(currentImage.caption || currentImage.title) && (
-              <figcaption className={styles.lightboxCaption}>
-                {currentImage.caption || currentImage.title}
-              </figcaption>
-            )}
-          </figure>
+          {(() => {
+            const lbCaption =
+              currentImage.caption &&
+              currentImage.caption.trim() !== '' &&
+              currentImage.caption !== currentImage.title
+                ? currentImage.caption
+                : '';
+            return (
+              <figure className={styles.lightboxFigure} onClick={(e) => e.stopPropagation()}>
+                <img
+                  src={currentImage.url}
+                  alt={lbCaption}
+                  className={styles.lightboxImage}
+                />
+                {lbCaption && (
+                  <figcaption className={styles.lightboxCaption}>
+                    {lbCaption}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          })()}
         </div>
       )}
     </section>

@@ -9,6 +9,7 @@ import {
   FaSave,
   FaVideo,
   FaPaperclip,
+  FaImages,
   FaGripVertical,
   FaFolder,
   FaEdit,
@@ -27,6 +28,8 @@ import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
 import LessonVideoModal from './LessonVideoModal';
 import LessonResourceModal from './LessonResourceModal';
+import LessonImageModal from './LessonImageModal';
+import SubjectResourceModal from './SubjectResourceModal';
 import SubjectLessonModal from './SubjectLessonModal';
 import styles from './CurriculumManager.module.css';
 
@@ -100,7 +103,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   // Modals
   const [videoModalLesson, setVideoModalLesson] = useState<{ id: string; title: string } | null>(null);
   const [resourceModalLesson, setResourceModalLesson] = useState<{ id: string; title: string } | null>(null);
+  const [imageModalLesson, setImageModalLesson] = useState<{ id: string; title: string } | null>(null);
   const [assignSubject, setAssignSubject] = useState<{ id: string; title: string } | null>(null);
+  const [subjectResourceModal, setSubjectResourceModal] = useState<{ id: string; title: string } | null>(null);
   const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
 
   // Selection
@@ -177,6 +182,19 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
     subjects.forEach((s, i) => map.set(s.id, { subject: s, index: i }));
     return map;
   }, [subjects]);
+
+  // Derived: lesson.id → 과목 내 순번 (sort_order 기준 1-based)
+  const subjectOrderMap = useMemo(() => {
+    const map = new Map<string, number>();
+    const counter: Record<string, number> = {};
+    lessons.forEach((l) => {
+      if (l.subject_id) {
+        counter[l.subject_id] = (counter[l.subject_id] || 0) + 1;
+        map.set(l.id, counter[l.subject_id]);
+      }
+    });
+    return map;
+  }, [lessons]);
 
   // Derived: filtered lessons
   const filteredLessons = useMemo(() => {
@@ -820,6 +838,14 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                   <button
                     type="button"
                     className={styles.subjectMicroBtn}
+                    title="과목 공통 자료"
+                    onClick={() => setSubjectResourceModal({ id: subject.id, title: subject.title })}
+                  >
+                    <FaPaperclip size={10} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.subjectMicroBtn}
                     title="강의 배정"
                     onClick={() => setAssignSubject({ id: subject.id, title: subject.title })}
                   >
@@ -1006,6 +1032,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
               </th>
               <th className={styles.colHandle}></th>
               <th className={styles.colOrder}>#</th>
+              <th className={styles.colOrder} title="과목 내 순번">과목 #</th>
               <th className={styles.colTitle}>제목</th>
               <th className={styles.colSubject}>과목</th>
               <th className={styles.colContent}>콘텐츠</th>
@@ -1018,13 +1045,13 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={10} className={styles.emptyRow}>
+                <td colSpan={11} className={styles.emptyRow}>
                   불러오는 중…
                 </td>
               </tr>
             ) : filteredLessons.length === 0 ? (
               <tr>
-                <td colSpan={10} className={styles.emptyRow}>
+                <td colSpan={11} className={styles.emptyRow}>
                   {lessons.length === 0
                     ? '아직 등록된 강의가 없습니다. 위에서 강의를 추가하세요.'
                     : '필터 조건에 일치하는 강의가 없습니다.'}
@@ -1039,7 +1066,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                   : null;
                 const isSelected = selectedIds.has(lesson.id);
                 const isDirty = !!lesson.isDirty;
-                const resourceCount = (lesson.resources as any[])?.length || 0;
+                const resourcesArr = (lesson.resources as any[]) || [];
+                const imageCount = resourcesArr.filter((r) => r?.type === 'image').length;
+                const resourceCount = resourcesArr.length - imageCount;
                 const hasVideo = videoLessonIds.has(lesson.id);
                 const availableText = formatAvailableAt(lesson.available_at);
 
@@ -1078,6 +1107,9 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                       </div>
                     </td>
                     <td className={styles.colOrder}>{lesson.sort_order}</td>
+                    <td className={`${styles.colOrder} ${styles.colSubjectOrder}`}>
+                      {subjectOrderMap.get(lesson.id) ?? '—'}
+                    </td>
                     <td className={styles.colTitle}>
                       <input
                         type="text"
@@ -1137,6 +1169,15 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                         >
                           <FaVideo />
                           {hasVideo ? '' : <FaExclamationTriangle className={styles.contentWarn} size={9} />}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.contentBtn} ${imageCount > 0 ? styles.contentBtnActive : ''}`}
+                          onClick={() => setImageModalLesson({ id: lesson.id, title: lesson.title })}
+                          title="이미지 관리"
+                        >
+                          <FaImages />
+                          <span className={styles.contentCount}>{imageCount}</span>
                         </button>
                         <button
                           type="button"
@@ -1289,6 +1330,43 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
         />
       )}
 
+      {imageModalLesson && (
+        <LessonImageModal
+          lessonId={imageModalLesson.id}
+          lessonTitle={imageModalLesson.title}
+          isOpen={true}
+          onClose={() => {
+            setImageModalLesson(null);
+            const fetchLessons = async () => {
+              const { data } = await supabase
+                .from('lessons')
+                .select('*')
+                .eq('course_id', courseId)
+                .order('sort_order', { ascending: true });
+              if (data) {
+                setLessons((prev) =>
+                  data.map((l: Lesson) => {
+                    const existing = prev.find((p) => p.id === l.id);
+                    return {
+                      ...l,
+                      isDirty: existing?.isDirty || false,
+                      _original: existing?._original || {
+                        title: l.title,
+                        is_published: l.is_published,
+                        is_free: l.is_free,
+                        available_at: l.available_at,
+                        subject_id: l.subject_id,
+                      },
+                    };
+                  })
+                );
+              }
+            };
+            fetchLessons();
+          }}
+        />
+      )}
+
       {assignSubject && (
         <SubjectLessonModal
           isOpen={true}
@@ -1299,6 +1377,15 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           onAssignLessons={async (lessonIds) => {
             await handleAssignLessonsToSubject(lessonIds, assignSubject.id);
           }}
+        />
+      )}
+
+      {subjectResourceModal && (
+        <SubjectResourceModal
+          isOpen={true}
+          subjectId={subjectResourceModal.id}
+          subjectTitle={subjectResourceModal.title}
+          onClose={() => setSubjectResourceModal(null)}
         />
       )}
 
