@@ -1,4 +1,5 @@
-import { ConditionalFooter } from '@/components';
+import { Suspense } from 'react';
+import { ConditionalFooter, MigrationWelcomeToast } from '@/components';
 
 export default async function MainLayout({
   children,
@@ -7,6 +8,9 @@ export default async function MainLayout({
 }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Suspense fallback={null}>
+        <MigrationWelcomeToast />
+      </Suspense>
       {children}
       <ConditionalFooter />
     </div>

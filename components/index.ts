@@ -15,3 +15,4 @@ export { default as CourseCard } from './CourseCard/CourseCard';
 export { default as ErrorPage } from './ErrorPage/ErrorPage';
 export { ToastProvider, useToast } from './Toast';
 export { ModalProvider, useModal } from './Modal';
+export { default as MigrationWelcomeToast } from './MigrationWelcome/MigrationWelcomeToast';

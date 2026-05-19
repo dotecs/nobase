@@ -71,6 +71,9 @@ export default function LoginForm() {
               <span>{socialLoading === 'kakao' ? '연결 중...' : '카카오로 시작하기'}</span>
             </button>
 
+            {/* TEMP: 레거시 사용자 카카오 매칭 마이그레이션 기간 동안 Google 로그인 비활성화.
+                매칭이 끝나면 아래 블록을 다시 활성화하세요. */}
+            {/*
             <button
               type="button"
               className={styles.socialButton}
@@ -85,6 +88,7 @@ export default function LoginForm() {
               </svg>
               <span>{socialLoading === 'google' ? '연결 중...' : 'Google로 시작하기'}</span>
             </button>
+            */}
           </div>
 
           <div className={styles.footer}>
