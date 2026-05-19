@@ -8,10 +8,11 @@
    ======================================== */
 
 .coursePage {
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--color-bg-secondary);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .courseTopBar {
@@ -93,6 +94,7 @@
   display: flex;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .courseMain {
@@ -102,6 +104,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  overflow-y: auto;
 }
 
 .videoFrame {
@@ -259,10 +262,7 @@
   border-left: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 56px;
-  align-self: flex-start;
-  height: calc(100vh - 56px);
+  height: 100%;
   overflow: hidden;
 }
 
@@ -467,14 +467,24 @@
 
 /* 모바일 반응형 */
 @media (max-width: 1024px) {
+  .coursePage {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .courseLayout {
     flex-direction: column;
+    overflow: visible;
+  }
+
+  .courseMain {
+    padding: var(--space-4);
+    overflow: visible;
   }
 
   .courseSidebar {
     width: 100%;
-    position: relative;
-    top: 0;
     height: auto;
     max-height: none;
     border-left: none;
@@ -483,10 +493,6 @@
 
   .sidebarContent {
     max-height: 60vh;
-  }
-
-  .courseMain {
-    padding: var(--space-4);
   }
 
   .courseTopRight {
