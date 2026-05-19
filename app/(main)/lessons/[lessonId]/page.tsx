@@ -1,7 +1,6 @@
 import { redirect, notFound } from 'next/navigation';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
-import LessonClient from './LessonClient';
 import LessonResources from './LessonResources';
 import LessonImages from './LessonImages';
 import CourseSidebar from './CourseSidebar';
@@ -177,27 +176,53 @@ export default async function LessonPage({ params }: LessonPageProps) {
       ? publishedLessons[currentIndex + 1]
       : null;
 
-  // 완료된 레슨 ID
+  // 모든 진도 (완료 + 진행 중)
   const { data: allProgressData } = lessonIds.length > 0
     ? await supabase
         .from('lesson_progress')
-        .select('lesson_id')
+        .select('lesson_id, completed, max_position_seconds')
         .eq('user_id', user.id)
-        .eq('completed', true)
         .in('lesson_id', lessonIds)
     : { data: [] };
 
+  type ProgressRow = {
+    lesson_id: string;
+    completed: boolean;
+    max_position_seconds: number | null;
+  };
+  const progressRows = (allProgressData || []) as ProgressRow[];
+
   const completedLessonIds = new Set(
-    (allProgressData || []).map((p: { lesson_id: string }) => p.lesson_id)
+    progressRows.filter((p) => p.completed).map((p) => p.lesson_id)
   );
 
-  // 진도율 / 수강시간 계산
+  // 진행률 맵 (0~100, 정수). 완료된 강의는 100, 미시청은 미포함
+  const lessonProgressPercent: Record<string, number> = {};
+  progressRows.forEach((p) => {
+    if (p.completed) {
+      lessonProgressPercent[p.lesson_id] = 100;
+      return;
+    }
+    const duration = lessonDurationMap[p.lesson_id] || 0;
+    const pos = p.max_position_seconds || 0;
+    if (duration > 0 && pos > 0) {
+      lessonProgressPercent[p.lesson_id] = Math.min(
+        99,
+        Math.max(1, Math.round((pos / duration) * 100))
+      );
+    }
+  });
+
+  // 진도율 / 수강시간 계산 — 부분 시청도 포함 (max_position_seconds 합산)
   const publishedTotal = publishedLessons.length || 1;
   const progressRate = (completedLessonIds.size / publishedTotal) * 100;
-  const watchedSeconds = Array.from(completedLessonIds).reduce(
-    (sum, id) => sum + (lessonDurationMap[id] || 0),
-    0
-  );
+  const watchedSeconds = progressRows.reduce((sum, p) => {
+    const duration = lessonDurationMap[p.lesson_id] || 0;
+    if (duration === 0) return sum;
+    if (p.completed) return sum + duration;
+    const watched = Math.min(duration, p.max_position_seconds || 0);
+    return sum + watched;
+  }, 0);
 
   // 현재 레슨 영상 목록
   const { data: videosData } = await supabase
@@ -261,7 +286,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <main className={styles.courseMain}>
           {mainVideo ? (
             <div className={styles.videoFrame}>
-              <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
+              <VideoPlayer
+              mainVideo={mainVideo}
+              subVideos={subVideos}
+              lessonTitle={lesson.title}
+              lessonId={lessonId}
+              initialPosition={progress?.last_position_seconds || 0}
+            />
               {imageResources.length > 0 && (
                 <LessonImages images={imageResources as any} />
               )}
@@ -272,7 +303,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </div>
           ) : (
             <div className={styles.videoFrame}>
-              <VideoPlayer mainVideo={mainVideo} subVideos={subVideos} lessonTitle={lesson.title} />
+              <VideoPlayer
+              mainVideo={mainVideo}
+              subVideos={subVideos}
+              lessonTitle={lesson.title}
+              lessonId={lessonId}
+              initialPosition={progress?.last_position_seconds || 0}
+            />
             </div>
           )}
 
@@ -281,15 +318,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
             nextLesson={nextLesson}
             fallbackHref={courseHomeHref}
           />
-
-          <div className={styles.lessonTitleRow}>
-            <h2 className={styles.lessonTitleText}>{lesson.title}</h2>
-            <LessonClient
-              lessonId={lessonId}
-              userId={user.id}
-              isCompleted={progress?.completed || false}
-            />
-          </div>
 
           <ContentTabs
             resourcesContent={
@@ -312,6 +340,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           subjects={subjects}
           currentLessonId={lessonId}
           completedLessonIds={completedLessonIds}
+          lessonProgressPercent={lessonProgressPercent}
         />
       </div>
     </div>

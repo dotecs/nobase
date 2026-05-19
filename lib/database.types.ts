@@ -194,6 +194,9 @@ export interface Database {
           lesson_id: string
           completed: boolean
           completed_at: string | null
+          last_position_seconds: number
+          max_position_seconds: number
+          auto_completed: boolean
           created_at: string
           updated_at: string
         }
@@ -203,6 +206,9 @@ export interface Database {
           lesson_id: string
           completed?: boolean
           completed_at?: string | null
+          last_position_seconds?: number
+          max_position_seconds?: number
+          auto_completed?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -212,6 +218,9 @@ export interface Database {
           lesson_id?: string
           completed?: boolean
           completed_at?: string | null
+          last_position_seconds?: number
+          max_position_seconds?: number
+          auto_completed?: boolean
           created_at?: string
           updated_at?: string
         }

@@ -1,4 +1,4 @@
-import { Footer } from '@/components';
+import { ConditionalFooter } from '@/components';
 
 export default async function MainLayout({
   children,
@@ -8,7 +8,7 @@ export default async function MainLayout({
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {children}
-      <Footer />
+      <ConditionalFooter />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { FaCheck, FaLock, FaChevronDown, FaChevronUp, FaPlay, FaRegFileAlt } from 'react-icons/fa';
 import styles from './lesson.module.css';
@@ -25,6 +25,8 @@ interface CourseSidebarProps {
   subjects: SubjectItem[];
   currentLessonId: string;
   completedLessonIds: Set<string>;
+  /** lesson.id → 진행률(0~100). 완료된 강의는 100, 미시청은 키 없음 */
+  lessonProgressPercent?: Record<string, number>;
 }
 
 type SidebarTab = 'curriculum' | 'notes' | 'community';
@@ -44,9 +46,38 @@ export default function CourseSidebar({
   subjects,
   currentLessonId,
   completedLessonIds,
+  lessonProgressPercent,
 }: CourseSidebarProps) {
   const [activeTab, setActiveTab] = useState<SidebarTab>('curriculum');
   const now = new Date();
+
+  // VideoPlayer가 진도 저장 시 dispatch하는 이벤트를 받아 실시간 % 갱신
+  const [livePercent, setLivePercent] = useState<Record<string, number>>({});
+  const [liveCompleted, setLiveCompleted] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as
+        | { lessonId: string; percent: number; completed: boolean }
+        | undefined;
+      if (!detail) return;
+      setLivePercent((prev) => {
+        const prevPct = prev[detail.lessonId] ?? 0;
+        if (detail.percent <= prevPct) return prev;
+        return { ...prev, [detail.lessonId]: detail.percent };
+      });
+      if (detail.completed) {
+        setLiveCompleted((prev) => {
+          if (prev.has(detail.lessonId)) return prev;
+          const next = new Set(prev);
+          next.add(detail.lessonId);
+          return next;
+        });
+      }
+    };
+    window.addEventListener('lesson-progress', handler);
+    return () => window.removeEventListener('lesson-progress', handler);
+  }, []);
 
   // 과목별 그룹화 (과목 미배정 강의는 사이드바에서 제외)
   const grouped = useMemo(() => {
@@ -157,7 +188,8 @@ export default function CourseSidebar({
                   {isOpen && (
                     <ul className={styles.lessonList}>
                       {subjectLessons.map((lesson, index) => {
-                        const isCompleted = completedLessonIds.has(lesson.id);
+                        const isCompleted =
+                          completedLessonIds.has(lesson.id) || liveCompleted.has(lesson.id);
                         const isCurrent = lesson.id === currentLessonId;
                         const availableAt = lesson.available_at
                           ? new Date(lesson.available_at)
@@ -187,6 +219,11 @@ export default function CourseSidebar({
                           );
                         }
 
+                        const serverPct = lessonProgressPercent?.[lesson.id] ?? 0;
+                        const livePct = livePercent[lesson.id] ?? 0;
+                        const percent = Math.min(99, Math.max(serverPct, livePct));
+                        const showProgressBar = !isCompleted && percent > 0;
+
                         return (
                           <li key={lesson.id}>
                             <Link
@@ -205,11 +242,35 @@ export default function CourseSidebar({
                               <span className={styles.lessonRowTitle}>
                                 {numStr}. {lesson.title}
                               </span>
+                              {!isCompleted && (
+                                <span
+                                  className={`${styles.lessonRowPercent} ${
+                                    percent === 0 ? styles.lessonRowPercentZero : ''
+                                  }`}
+                                  aria-label={`${percent}% 시청`}
+                                >
+                                  {percent}%
+                                </span>
+                              )}
                               {lesson.duration_seconds ? (
                                 <span className={styles.lessonRowDuration}>
                                   {formatDurationShort(lesson.duration_seconds)}
                                 </span>
                               ) : null}
+                              {showProgressBar && (
+                                <span
+                                  className={styles.lessonRowProgressBar}
+                                  role="progressbar"
+                                  aria-valuenow={percent}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                >
+                                  <span
+                                    className={styles.lessonRowProgressFill}
+                                    style={{ width: `${percent}%` }}
+                                  />
+                                </span>
+                              )}
                             </Link>
                           </li>
                         );
