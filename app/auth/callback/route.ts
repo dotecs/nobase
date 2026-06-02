@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -12,6 +13,11 @@ export async function GET(request: NextRequest) {
 
     // 로그인 성공 시 마이그레이션 데이터 연결 시도
     if (session?.user) {
+      console.log('[migration] session.user.id =', session.user.id);
+      console.log('[migration] session.user.email =', session.user.email);
+      console.log('[migration] identities count =', session.user.identities?.length ?? 0);
+      console.log('[migration] identities =', JSON.stringify(session.user.identities, null, 2));
+
       // Kakao identity의 provider_id 추출 (있으면 카카오 ID 기반 매칭 우선)
       const kakaoIdentity = session.user.identities?.find((i) => i.provider === 'kakao');
       // Supabase SDK 버전에 따라 위치가 다를 수 있어 여러 경로 fallback
@@ -29,22 +35,28 @@ export async function GET(request: NextRequest) {
           kakaoId = parsed;
         }
       }
+      console.log('[migration] kakaoIdRaw =', kakaoIdRaw, ' → kakaoId =', kakaoId);
 
-      // 카카오 ID 우선, 실패 시 이메일로 fallback (서버 함수가 내부적으로 처리)
+      // Service Role 클라이언트로 RPC 호출 — authenticated role에서 발생하던
+      // SECURITY DEFINER + RLS 미우회 이슈를 백엔드 레이어에서 봉인.
+      const admin = createAdminSupabaseClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: linkResult, error: linkError } = await (supabase as any)
+      const { data: linkResult, error: linkError } = await (admin as any)
         .rpc('link_migrated_data', {
           p_user_id: session.user.id,
           p_email: session.user.email,
           p_kakao_id: kakaoId,
         });
 
+      console.log('[migration] rpc linkError =', linkError);
+      console.log('[migration] rpc linkResult =', linkResult);
+
       if (linkError) {
-        if (!linkError.message?.includes('does not exist')) {
-          console.error('마이그레이션 데이터 연결 실패:', linkError);
-        }
+        console.error('[migration] 마이그레이션 데이터 연결 실패:', linkError);
       } else if (linkResult?.linked) {
-        console.log('마이그레이션 데이터 연결 완료:', linkResult);
+        console.log('[migration] 마이그레이션 데이터 연결 완료:', linkResult);
+      } else {
+        console.log('[migration] 매칭된 레거시 데이터 없음 (linked=false)');
       }
 
       // 프로필 완성 여부 확인
