@@ -74,7 +74,7 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
     notFound();
   }
 
-  // 과목 정보 조회 (subjectId가 있는 경우)
+  // 과목 정보 조회 (subjectId가 있는 경우) — 접근 불가면 subjectData가 null이 됨
   let subject: Subject | null = null;
   if (subjectId) {
     const { data: subjectData } = await supabase
@@ -83,7 +83,19 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
       .eq('id', subjectId)
       .single();
     subject = subjectData as Subject | null;
+    if (!subject) {
+      notFound();
+    }
   }
+
+  // 접근 가능한 subject 목록 (RLS 자동 필터) — 미배정 lesson과 함께 노출 여부 판단용
+  const { data: visibleSubjectsData } = await supabase
+    .from('subjects')
+    .select('id')
+    .eq('course_id', courseId);
+  const visibleSubjectIds = new Set(
+    ((visibleSubjectsData || []) as { id: string }[]).map((s) => s.id)
+  );
 
   // 레슨 목록 (subjectId가 있으면 해당 과목의 레슨만)
   let lessonsQuery = supabase
@@ -98,7 +110,10 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
 
   const { data: lessonsData } = await lessonsQuery;
 
-  const lessons = (lessonsData || []) as Lesson[];
+  // 접근 불가한 subject에 속한 lesson은 제거
+  const lessons = ((lessonsData || []) as Lesson[]).filter(
+    (l) => l.subject_id === null || visibleSubjectIds.has(l.subject_id)
+  );
   
   // 공개된 레슨만 필터 (진도 계산용)
   const publishedLessons = lessons.filter(l => l.is_published);

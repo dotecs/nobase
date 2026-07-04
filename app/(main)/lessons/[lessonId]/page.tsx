@@ -49,6 +49,18 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const course = lesson?.courses as any;
 
+  // 소속 subject가 restricted인데 접근 권한이 없으면 노출 금지
+  if (lesson.subject_id) {
+    const { data: subjectAccess } = await supabase
+      .from('subjects')
+      .select('id')
+      .eq('id', lesson.subject_id)
+      .maybeSingle();
+    if (!subjectAccess) {
+      notFound();
+    }
+  }
+
   // 공개 예정일 체크
   if (lesson.available_at) {
     const availableDate = new Date(lesson.available_at);
@@ -118,21 +130,31 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const progress = progressData as LessonProgress | null;
 
-  // 전체 레슨 목록
+  // 과목 목록 — RLS가 visibility에 따라 자동 필터
+  const { data: subjectsData } = await supabase
+    .from('subjects')
+    .select('id, title')
+    .eq('course_id', course.id)
+    .order('sort_order', { ascending: true });
+
+  const subjects = (subjectsData || []) as { id: string; title: string }[];
+  const visibleSubjectIds = new Set(subjects.map((s) => s.id));
+
+  // 전체 레슨 목록 — 접근 불가한 subject 소속 lesson은 사이드바에서 제외
   const { data: allLessonsData } = await supabase
     .from('lessons')
     .select('id, title, sort_order, is_published, available_at, subject_id')
     .eq('course_id', course.id)
     .order('sort_order', { ascending: true });
 
-  const allLessons = (allLessonsData || []) as {
+  const allLessons = ((allLessonsData || []) as {
     id: string;
     title: string;
     sort_order: number;
     is_published: boolean;
     available_at: string | null;
     subject_id: string | null;
-  }[];
+  }[]).filter((l) => l.subject_id === null || visibleSubjectIds.has(l.subject_id));
 
   // 코스의 모든 비디오 (사이드바 시간 표시 + 총 강의시간 계산용)
   const lessonIds = allLessons.map((l) => l.id);
@@ -157,15 +179,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }));
 
   const totalDurationSec = Object.values(lessonDurationMap).reduce((a, b) => a + b, 0);
-
-  // 과목 목록
-  const { data: subjectsData } = await supabase
-    .from('subjects')
-    .select('id, title')
-    .eq('course_id', course.id)
-    .order('sort_order', { ascending: true });
-
-  const subjects = (subjectsData || []) as { id: string; title: string }[];
 
   // 이전/다음 레슨 (공개된 것만)
   const publishedLessons = allLessons.filter((l) => l.is_published);

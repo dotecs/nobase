@@ -23,6 +23,7 @@ import {
   FaExclamationTriangle,
   FaCalendarAlt,
   FaUndo,
+  FaUserLock,
 } from 'react-icons/fa';
 import { Button } from '@/components';
 import { useModal } from '@/components/Modal';
@@ -30,6 +31,7 @@ import LessonVideoModal from './LessonVideoModal';
 import LessonResourceModal from './LessonResourceModal';
 import LessonImageModal from './LessonImageModal';
 import SubjectResourceModal from './SubjectResourceModal';
+import SubjectVisibilityModal from './SubjectVisibilityModal';
 import SubjectLessonModal from './SubjectLessonModal';
 import styles from './CurriculumManager.module.css';
 
@@ -106,6 +108,7 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
   const [imageModalLesson, setImageModalLesson] = useState<{ id: string; title: string } | null>(null);
   const [assignSubject, setAssignSubject] = useState<{ id: string; title: string } | null>(null);
   const [subjectResourceModal, setSubjectResourceModal] = useState<{ id: string; title: string } | null>(null);
+  const [subjectVisibilityModal, setSubjectVisibilityModal] = useState<{ id: string; title: string } | null>(null);
   const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
 
   // Selection
@@ -854,6 +857,19 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
                   <button
                     type="button"
                     className={styles.subjectMicroBtn}
+                    title={subject.visibility === 'restricted' ? '공개 대상 관리 (제한 공개 중)' : '공개 대상 관리'}
+                    onClick={() => setSubjectVisibilityModal({ id: subject.id, title: subject.title })}
+                    style={
+                      subject.visibility === 'restricted'
+                        ? { color: 'var(--color-warning-700, #b45309)' }
+                        : undefined
+                    }
+                  >
+                    <FaUserLock size={10} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.subjectMicroBtn}
                     title="이름 변경"
                     onClick={() => {
                       setEditingSubjectId(subject.id);
@@ -1386,6 +1402,23 @@ export default function CurriculumManager({ courseId }: CurriculumManagerProps) 
           subjectId={subjectResourceModal.id}
           subjectTitle={subjectResourceModal.title}
           onClose={() => setSubjectResourceModal(null)}
+        />
+      )}
+
+      {subjectVisibilityModal && (
+        <SubjectVisibilityModal
+          isOpen={true}
+          subjectId={subjectVisibilityModal.id}
+          subjectTitle={subjectVisibilityModal.title}
+          courseId={courseId}
+          onClose={() => setSubjectVisibilityModal(null)}
+          onSaved={(visibility) => {
+            setSubjects((prev) =>
+              prev.map((s) =>
+                s.id === subjectVisibilityModal.id ? { ...s, visibility } : s
+              )
+            );
+          }}
         />
       )}
 

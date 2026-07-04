@@ -8,6 +8,7 @@ export type Json =
 
 export type UserRole = 'student' | 'admin'
 export type EnrollmentStatus = 'active' | 'paused' | 'ended'
+export type SubjectVisibility = 'public' | 'restricted'
 
 export interface Database {
   public: {
@@ -373,6 +374,7 @@ export interface Database {
           description: string | null
           sort_order: number
           is_published: boolean
+          visibility: SubjectVisibility
           resources: Resource[]
           created_at: string
           updated_at: string
@@ -384,6 +386,7 @@ export interface Database {
           description?: string | null
           sort_order?: number
           is_published?: boolean
+          visibility?: SubjectVisibility
           resources?: Resource[]
           created_at?: string
           updated_at?: string
@@ -395,9 +398,44 @@ export interface Database {
           description?: string | null
           sort_order?: number
           is_published?: boolean
+          visibility?: SubjectVisibility
           resources?: Resource[]
           created_at?: string
           updated_at?: string
+        }
+      }
+      subject_visibility: {
+        Row: {
+          subject_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          subject_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          subject_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+      subject_visibility_cohorts: {
+        Row: {
+          subject_id: string
+          cohort_id: string
+          created_at: string
+        }
+        Insert: {
+          subject_id: string
+          cohort_id: string
+          created_at?: string
+        }
+        Update: {
+          subject_id?: string
+          cohort_id?: string
+          created_at?: string
         }
       }
     }
@@ -445,6 +483,8 @@ export type LessonVideo = Tables<'lesson_videos'>
 export type LessonQuestion = Tables<'lesson_questions'>
 export type LessonAnswer = Tables<'lesson_answers'>
 export type Subject = Tables<'subjects'>
+export type SubjectVisibilityRow = Tables<'subject_visibility'>
+export type SubjectVisibilityCohortRow = Tables<'subject_visibility_cohorts'>
 
 // 조인된 타입들
 export type CohortWithCourse = Cohort & {

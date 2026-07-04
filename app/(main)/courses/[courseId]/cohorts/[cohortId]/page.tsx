@@ -71,7 +71,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     notFound();
   }
 
-  // 과목(Subject) 목록 조회
+  // 과목(Subject) 목록 조회 — RLS가 visibility에 따라 자동 필터
   const { data: subjectsData } = await supabase
     .from('subjects')
     .select('*')
@@ -80,8 +80,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
     .order('sort_order', { ascending: true });
 
   const subjects = (subjectsData || []) as Subject[];
+  const visibleSubjectIds = new Set(subjects.map((s) => s.id));
 
-  // 각 과목별 레슨 수 조회
+  // 각 과목별 레슨 수 조회 — subject 미배정(subject_id=null)이거나 접근 가능한 subject만 노출
   const { data: lessonsData } = await supabase
     .from('lessons')
     .select('id, subject_id, is_published, sort_order')
@@ -89,7 +90,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
     .eq('is_published', true)
     .order('sort_order', { ascending: true });
 
-  const lessons = (lessonsData || []) as { id: string; subject_id: string | null; is_published: boolean; sort_order: number }[];
+  const lessons = ((lessonsData || []) as { id: string; subject_id: string | null; is_published: boolean; sort_order: number }[])
+    .filter((l) => l.subject_id === null || visibleSubjectIds.has(l.subject_id));
 
   // 과목별 레슨 카운트
   const lessonCountBySubject = lessons.reduce((acc, lesson) => {
