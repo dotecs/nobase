@@ -62,6 +62,12 @@ export default function SubjectVisibilityModal({
   const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
   const [savingCohortIds, setSavingCohortIds] = useState<Set<string>>(new Set());
   const [togglingVisibility, setTogglingVisibility] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  const flashSaved = () => {
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 1500);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -195,6 +201,7 @@ export default function SubjectVisibilityModal({
     }
     setVisibility(next);
     onSaved?.(next);
+    flashSaved();
   };
 
   const addUser = async (user: EnrolledUser) => {
@@ -214,6 +221,7 @@ export default function SubjectVisibilityModal({
     }
     setAllowlist((prev) => [...prev, user]);
     setCandidates((prev) => prev.filter((c) => c.user_id !== user.user_id));
+    flashSaved();
   };
 
   const toggleCohort = async (cohort: CohortOption) => {
@@ -247,6 +255,7 @@ export default function SubjectVisibilityModal({
       else next.add(cohort.id);
       return next;
     });
+    flashSaved();
   };
 
   const removeUser = async (user: EnrolledUser) => {
@@ -268,6 +277,7 @@ export default function SubjectVisibilityModal({
     }
     setAllowlist((prev) => prev.filter((u) => u.user_id !== user.user_id));
     setCandidates((prev) => [user, ...prev]);
+    flashSaved();
   };
 
   if (!isOpen) return null;
@@ -284,9 +294,20 @@ export default function SubjectVisibilityModal({
               <span className={styles.subjectName}>{subjectTitle}</span>
             </p>
           </div>
-          <button className={styles.closeButton} onClick={onClose} aria-label="닫기">
-            <FaTimes />
-          </button>
+          <div className={styles.headerActions}>
+            {savedFlash && (
+              <span className={styles.savedBadge}>
+                <FaCheck /> 저장됨
+              </span>
+            )}
+            <button className={styles.closeButton} onClick={onClose} aria-label="닫기">
+              <FaTimes />
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.autoSaveHint}>
+          변경사항은 <strong>자동으로 저장</strong>됩니다. 별도 저장 버튼이 없어도 각 항목을 켜고 끄면 즉시 반영돼요.
         </div>
 
         <div className={styles.content}>
