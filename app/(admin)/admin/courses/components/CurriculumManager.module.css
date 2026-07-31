@@ -150,10 +150,6 @@
   transition: all var(--transition-fast);
 }
 
-.subjectChip:hover {
-  border-color: var(--color-gray-300);
-}
-
 .subjectChipActive {
   border-color: var(--color-primary-300);
   background: var(--color-primary-50);
@@ -214,17 +210,6 @@ button.subjectChip {
   align-items: center;
   gap: 2px;
   padding: 0 var(--space-1-5) 0 0;
-  opacity: 0;
-  max-width: 0;
-  transition: opacity var(--transition-fast), max-width var(--transition-fast);
-  pointer-events: none;
-}
-
-.subjectChip:hover .subjectChipActions,
-.subjectChipActive .subjectChipActions {
-  opacity: 1;
-  max-width: 100px;
-  pointer-events: auto;
 }
 
 .subjectMicroBtn {
