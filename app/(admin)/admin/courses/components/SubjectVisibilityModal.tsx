@@ -131,7 +131,7 @@ export default function SubjectVisibilityModal({
 
       const idsToFetch = Array.from(new Set([...enrolledIds, ...allowedIds]));
 
-      let profileMap = new Map<string, EnrolledUser>();
+      const profileMap = new Map<string, EnrolledUser>();
       if (idsToFetch.length > 0) {
         const { data: profilesData } = await supabase
           .from('profiles')
