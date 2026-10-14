@@ -1,0 +1,37 @@
+import { NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { getUser, getProfile } from '@/lib/supabase-server';
+import { getInterviewWorkbookAccess } from '@/lib/interview-workbook';
+
+export const dynamic = 'force-dynamic';
+
+/**
+ * 면접 대비 워크북 본문(HTML) 서빙.
+ * public/ 에 두면 누구나 URL로 열 수 있으므로, content/ 에 두고
+ * 여기서 권한을 확인한 뒤에만 내려준다. (iframe src로 사용)
+ */
+const WORKBOOK_FILE = path.join(process.cwd(), 'content', 'workbook', 'interview-2025.html');
+
+export async function GET() {
+  const user = await getUser();
+  if (!user) {
+    return new NextResponse('로그인이 필요합니다.', { status: 401 });
+  }
+
+  const profile = (await getProfile()) as { role?: string } | null;
+  const access = await getInterviewWorkbookAccess(user.id, profile?.role);
+  if (!access.granted) {
+    return new NextResponse('이 자료에 대한 접근 권한이 없습니다.', { status: 403 });
+  }
+
+  const html = await fs.readFile(WORKBOOK_FILE, 'utf-8');
+  return new NextResponse(html, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'private, no-store',
+      'X-Frame-Options': 'SAMEORIGIN',
+    },
+  });
+}

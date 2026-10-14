@@ -103,7 +103,7 @@ export default function CourseWorkspace({
 
   return (
     <main className={styles.main}>
-      <Link href="/admin" className={styles.backLink}>
+      <Link href="/admin/courses" className={styles.backLink}>
         <FaArrowLeft /> 강좌 목록으로
       </Link>
 

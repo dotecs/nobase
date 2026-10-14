@@ -303,7 +303,7 @@ export default function CourseForm({ initialData, children, embedded }: CourseFo
         type: 'success',
       });
 
-      router.push('/admin');
+      router.push('/admin/courses');
     } catch (error: any) {
       await alert({
         title: '삭제 실패',
@@ -319,7 +319,7 @@ export default function CourseForm({ initialData, children, embedded }: CourseFo
     <main className={styles.main}>
       {!embedded && (
         <div className={styles.header}>
-          <Link href="/admin" className={styles.backLink}>
+          <Link href="/admin/courses" className={styles.backLink}>
             <FaArrowLeft /> 목록으로 돌아가기
           </Link>
           <h1>{isEditMode ? '강좌 수정' : '새 강좌 만들기'}</h1>
@@ -481,7 +481,7 @@ export default function CourseForm({ initialData, children, embedded }: CourseFo
 
         {/* 액션 버튼 */}
         <div className={styles.formActions}>
-          <Button type="button" variant="outline" href="/admin">
+          <Button type="button" variant="outline" href="/admin/courses">
             취소
           </Button>
           <Button type="submit" loading={isSubmitting}>

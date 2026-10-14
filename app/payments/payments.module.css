@@ -1,0 +1,65 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-secondary);
+  padding: var(--space-6);
+}
+
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-12) var(--space-10);
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.iconSuccess {
+  font-size: 64px;
+  color: var(--color-success, #16a34a);
+  margin-bottom: var(--space-6);
+}
+
+.iconError {
+  font-size: 64px;
+  color: var(--color-danger, #dc2626);
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.description {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-8);
+}
+
+.errorCode {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+
+.primaryButton {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: var(--font-semibold);
+  padding: var(--space-3) var(--space-8);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.primaryButton:hover {
+  background: var(--color-primary-600);
+}

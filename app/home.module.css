@@ -126,6 +126,172 @@
   gap: var(--space-4);
 }
 
+/* Hero Stats */
+.heroStats {
+  margin-top: var(--space-12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.heroStatValue {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-extrabold);
+  color: var(--color-primary);
+}
+
+.heroStatLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.heroStatDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--color-border);
+}
+
+/* Courses Showcase */
+.coursesSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+}
+
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8);
+  text-align: left;
+}
+
+.showcaseCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.showcaseCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.showcaseThumbnail {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.showcaseImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showcasePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-4xl);
+  color: var(--color-primary);
+}
+
+.showcaseContent {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.showcaseTitle {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text);
+}
+
+.showcaseDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.showcaseMeta {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+
+.showcaseMetaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.showcaseCohorts {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.showcaseCohort {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.showcaseCohort:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg);
+}
+
+.showcaseCohortTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+}
+
+.showcaseCohortAction {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.coursesMore {
+  margin-top: var(--space-8);
+}
+
 /* Values Section */
 .values {
   max-width: 1200px;
@@ -266,6 +432,23 @@
 @media (max-width: 768px) {
   .headerContent {
     padding: var(--space-3) var(--space-4);
+  }
+
+  .heroStats {
+    gap: var(--space-4);
+  }
+
+  .heroStatValue {
+    font-size: var(--text-xl);
+  }
+
+  .coursesSection {
+    padding: var(--space-12) var(--space-4);
+  }
+
+  .showcaseGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
   }
 
   .logoText {

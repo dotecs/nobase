@@ -1,0 +1,44 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import styles from './workbook.module.css';
+
+interface WorkbookFrameProps {
+  src: string;
+  title: string;
+}
+
+/**
+ * 독립 HTML 워크북을 iframe으로 띄우고, 워크북이 postMessage로 보내는
+ * { type: 'passmj-height', h } 를 받아 iframe 높이를 콘텐츠에 맞춥니다.
+ * (워크북 HTML 하단의 sendHeight() 스크립트와 짝을 이룸)
+ */
+export default function WorkbookFrame({ src, title }: WorkbookFrameProps) {
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const [height, setHeight] = useState<number>(1200);
+
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      // 같은 출처의 워크북 iframe에서 온 메시지만 처리
+      if (e.origin !== window.location.origin) return;
+      if (e.source !== frameRef.current?.contentWindow) return;
+      const data = e.data as { type?: string; h?: number } | null;
+      if (data?.type === 'passmj-height' && typeof data.h === 'number' && data.h > 0) {
+        setHeight(Math.ceil(data.h) + 16);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  return (
+    <iframe
+      ref={frameRef}
+      src={src}
+      title={title}
+      className={styles.frame}
+      style={{ height }}
+      scrolling="no"
+    />
+  );
+}

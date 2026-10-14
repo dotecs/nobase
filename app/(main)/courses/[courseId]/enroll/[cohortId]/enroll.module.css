@@ -1025,6 +1025,31 @@
   margin-bottom: var(--space-1);
 }
 
+.paymentMethodBadge {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 2px var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  vertical-align: middle;
+}
+
+.cardPaySection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cardPayLoading {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  padding: var(--space-6) 0;
+}
+
 .paymentMethodDesc {
   display: block;
   font-size: var(--text-sm);

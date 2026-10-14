@@ -45,7 +45,8 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
     router.refresh();
   };
 
-  const isActive = (path: string) => pathname.startsWith(path);
+  const isActive = (path: string) =>
+    path === '/' ? pathname === '/' : pathname.startsWith(path);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -75,8 +76,14 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
 
         {isLoggedIn && (
           <nav className={styles.nav}>
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/"
+              className={`${styles.navLink} ${isActive('/') ? styles.navLinkActive : ''}`}
+            >
+              홈
+            </Link>
+            <Link
+              href="/dashboard"
               className={`${styles.navLink} ${isActive('/dashboard') ? styles.navLinkActive : ''}`}
             >
               대시보드
@@ -156,8 +163,14 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
         </div>
 
         <nav className={styles.sidebarNav}>
-          <Link 
-            href="/dashboard" 
+          <Link
+            href="/"
+            className={`${styles.sidebarLink} ${isActive('/') ? styles.sidebarLinkActive : ''}`}
+          >
+            홈
+          </Link>
+          <Link
+            href="/dashboard"
             className={`${styles.sidebarLink} ${isActive('/dashboard') ? styles.sidebarLinkActive : ''}`}
           >
             대시보드

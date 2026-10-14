@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import AdminPageHeader from '../AdminPageHeader';
 import styles from './enrollments.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +13,7 @@ type EnrollmentWithDetails = {
   status: string;
   depositor_name: string | null;
   receipt_contact: string | null;
+  written_passed_at: string | null;
   created_at: string;
   profile: {
     user_id: string;
@@ -24,6 +26,7 @@ type EnrollmentWithDetails = {
     course: {
       id: string;
       title: string;
+      interview_workbook_enabled: boolean;
     };
   };
 };
@@ -60,6 +63,7 @@ export default async function AdminEnrollmentsPage() {
       status,
       depositor_name,
       receipt_contact,
+      written_passed_at,
       created_at,
       cohort:cohorts (
         id,
@@ -67,7 +71,8 @@ export default async function AdminEnrollmentsPage() {
         price,
         course:courses (
           id,
-          title
+          title,
+          interview_workbook_enabled
         )
       )
     `)
@@ -133,6 +138,40 @@ export default async function AdminEnrollmentsPage() {
     revalidatePath('/admin/enrollments');
   }
 
+  // 면접 워크북: 필기 합격 처리 / 해제 (courses.interview_workbook_enabled 코스에서만 노출)
+  async function toggleWrittenPassed(formData: FormData) {
+    'use server';
+
+    const enrollmentId = formData.get('enrollmentId') as string;
+    const grant = formData.get('grant') === '1';
+    const supabase = await createServerSupabaseClient() as any;
+
+    // 관리자 확인 (DB RLS enrollments_admin_all 이 1차 방어, 여기는 2차 방어)
+    const { data: { user: actor } } = await supabase.auth.getUser();
+    if (!actor) return;
+    const { data: actorProfile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('user_id', actor.id)
+      .single();
+    if (actorProfile?.role !== 'admin') {
+      console.warn('toggleWrittenPassed: non-admin attempt', actor.id);
+      return;
+    }
+
+    const result = await supabase
+      .from('enrollments')
+      .update({ written_passed_at: grant ? new Date().toISOString() : null })
+      .eq('id', enrollmentId);
+
+    if (result.error) {
+      console.error('Error toggling written_passed_at:', result.error);
+    }
+
+    revalidatePath('/admin/enrollments');
+    revalidatePath('/workbook/interview');
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('ko-KR', {
@@ -164,14 +203,37 @@ export default async function AdminEnrollmentsPage() {
     }
   };
 
+  // 면접 워크북 열 — 코스에 워크북이 연결된 경우에만 토글 버튼 표시
+  // 버튼 하나가 켜기/끄기를 모두 담당: 미처리 → [필기 합격], 처리됨 → [합격 ✓] (누르면 해제)
+  const renderWorkbookCell = (enrollment: EnrollmentWithDetails) => {
+    if (!enrollment.cohort?.course?.interview_workbook_enabled) {
+      return <span className={styles.workbookNa}>-</span>;
+    }
+    const passed = !!enrollment.written_passed_at;
+    return (
+      <form action={toggleWrittenPassed}>
+        <input type="hidden" name="enrollmentId" value={enrollment.id} />
+        <input type="hidden" name="grant" value={passed ? '0' : '1'} />
+        <button
+          type="submit"
+          className={passed ? styles.passedToggleOn : styles.passedToggleOff}
+          title={passed ? '필기 합격 처리됨 — 누르면 워크북 접근 해제' : '필기 합격 처리 → 면접 워크북 열기'}
+          aria-pressed={passed}
+        >
+          {passed ? '합격 ✓' : '필기 합격'}
+        </button>
+      </form>
+    );
+  };
+
+  const passedCount = typedEnrollments.filter(e => e.written_passed_at).length;
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>수강신청 관리</h1>
-        <p className={styles.subtitle}>
-          입금 대기: {pendingEnrollments.length}건 | 활성: {activeEnrollments.length}건
-        </p>
-      </div>
+      <AdminPageHeader
+        title="수강신청 관리"
+        description={`입금 대기 ${pendingEnrollments.length}건 · 수강 중 ${activeEnrollments.length}건 · 필기 합격(면접 워크북) ${passedCount}명`}
+      />
 
       {/* 입금 대기 목록 */}
       <section className={styles.section}>
@@ -253,6 +315,7 @@ export default async function AdminEnrollmentsPage() {
                   <th>현금영수증</th>
                   <th>신청일</th>
                   <th>상태</th>
+                  <th>면접 워크북</th>
                 </tr>
               </thead>
               <tbody>
@@ -264,6 +327,7 @@ export default async function AdminEnrollmentsPage() {
                     <td>{enrollment.receipt_contact || '-'}</td>
                     <td>{formatDate(enrollment.created_at)}</td>
                     <td>{getStatusBadge(enrollment.status)}</td>
+                    <td>{renderWorkbookCell(enrollment)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -288,6 +352,7 @@ export default async function AdminEnrollmentsPage() {
                   <th>수강생</th>
                   <th>신청일</th>
                   <th>상태</th>
+                  <th>면접 워크북</th>
                 </tr>
               </thead>
               <tbody>
@@ -298,6 +363,7 @@ export default async function AdminEnrollmentsPage() {
                     <td>{enrollment.profile?.name || '-'}</td>
                     <td>{formatDate(enrollment.created_at)}</td>
                     <td>{getStatusBadge(enrollment.status)}</td>
+                    <td>{enrollment.status === 'ended' ? renderWorkbookCell(enrollment) : <span className={styles.workbookNa}>-</span>}</td>
                   </tr>
                 ))}
               </tbody>

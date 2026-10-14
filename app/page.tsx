@@ -1,12 +1,39 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getUser } from '@/lib/supabase-server';
+import { getUser, createServerSupabaseClient } from '@/lib/supabase-server';
 import { Button, ThemeToggle, Footer } from '@/components';
-import { FaLifeRing, FaHandshake, FaRocket } from 'react-icons/fa';
+import { Course, Cohort } from '@/lib/database.types';
+import { FaLifeRing, FaHandshake, FaRocket, FaBook, FaClock, FaArrowRight } from 'react-icons/fa';
 import styles from './home.module.css';
+
+interface CourseWithCohorts extends Course {
+  cohorts: Cohort[];
+  lessons: { count: number }[];
+}
 
 export default async function HomePage() {
   const user = await getUser();
+  const supabase = await createServerSupabaseClient();
+
+  // 공개 강좌 + 모집 중인 기수 + 레슨 수
+  const { data: coursesData } = await supabase
+    .from('courses')
+    .select('*, cohorts(*), lessons(count)')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false });
+
+  const courses = ((coursesData || []) as CourseWithCohorts[])
+    .map((course) => ({
+      ...course,
+      cohorts: (course.cohorts || []).filter((cohort) => cohort.is_active),
+    }))
+    .filter((course) => course.cohorts.length > 0);
+
+  // 전체 공개 레슨 수 (신뢰 지표)
+  const { count: totalLessons } = await supabase
+    .from('lessons')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_published', true);
 
   return (
     <div className={styles.page}>
@@ -57,11 +84,93 @@ export default async function HomePage() {
             우리는 &apos;나 자신을 믿기&apos;의 가치를 믿습니다.
           </p>
           <div className={styles.heroActions}>
-            <Button href={user ? "/dashboard" : "/login"} size="lg">
-              {user ? "대시보드로 이동" : "구조대에 합류하기"}
+            <Button href="/courses" size="lg">
+              모집 중인 강좌 보기
+            </Button>
+            <Button href={user ? "/dashboard" : "/login"} size="lg" variant="outline">
+              {user ? "내 강의실 가기" : "로그인"}
             </Button>
           </div>
+
+          <div className={styles.heroStats}>
+            <div className={styles.heroStat}>
+              <strong className={styles.heroStatValue}>6년차</strong>
+              <span className={styles.heroStatLabel}>교육 브랜드</span>
+            </div>
+            <div className={styles.heroStatDivider} aria-hidden="true" />
+            <div className={styles.heroStat}>
+              <strong className={styles.heroStatValue}>{(totalLessons || 0).toLocaleString()}개</strong>
+              <span className={styles.heroStatLabel}>강의 레슨</span>
+            </div>
+            <div className={styles.heroStatDivider} aria-hidden="true" />
+            <div className={styles.heroStat}>
+              <strong className={styles.heroStatValue}>1:1</strong>
+              <span className={styles.heroStatLabel}>질문 커뮤니티</span>
+            </div>
+          </div>
         </section>
+
+        {courses.length > 0 && (
+          <section className={styles.coursesSection}>
+            <h2 className={styles.sectionTitle}>모집 중인 강좌</h2>
+            <p className={styles.sectionSubtitle}>
+              지금 신청할 수 있는 과정입니다. 기초가 없어도 시작할 수 있습니다.
+            </p>
+            <div className={styles.showcaseGrid}>
+              {courses.map((course) => (
+                <article key={course.id} className={styles.showcaseCard}>
+                  <Link href="/courses" className={styles.showcaseThumbnail}>
+                    {course.thumbnail_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={course.thumbnail_url}
+                        alt={course.title}
+                        className={styles.showcaseImage}
+                      />
+                    ) : (
+                      <div className={styles.showcasePlaceholder}>
+                        <FaBook />
+                      </div>
+                    )}
+                  </Link>
+                  <div className={styles.showcaseContent}>
+                    <h3 className={styles.showcaseTitle}>{course.title}</h3>
+                    {course.description && (
+                      <p className={styles.showcaseDescription}>{course.description}</p>
+                    )}
+                    <div className={styles.showcaseMeta}>
+                      <span className={styles.showcaseMetaItem}>
+                        <FaBook /> {course.lessons?.[0]?.count ?? 0}개 레슨
+                      </span>
+                      <span className={styles.showcaseMetaItem}>
+                        <FaClock /> {course.cohorts.length}개 기수 모집 중
+                      </span>
+                    </div>
+                    <div className={styles.showcaseCohorts}>
+                      {course.cohorts.slice(0, 2).map((cohort) => (
+                        <Link
+                          key={cohort.id}
+                          href={`/courses/${course.id}/enroll/${cohort.id}`}
+                          className={styles.showcaseCohort}
+                        >
+                          <span className={styles.showcaseCohortTitle}>{cohort.title}</span>
+                          <span className={styles.showcaseCohortAction}>
+                            신청하기 <FaArrowRight />
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className={styles.coursesMore}>
+              <Button href="/courses" variant="ghost">
+                전체 강좌 보기 →
+              </Button>
+            </div>
+          </section>
+        )}
 
         <section className={styles.values}>
           <h2 className={styles.sectionTitle}>세 가지 믿음</h2>

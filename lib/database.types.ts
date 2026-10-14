@@ -19,6 +19,7 @@ export interface Database {
           role: UserRole
           name: string | null
           phone: string | null
+          email: string | null
           created_at: string
           updated_at: string
         }
@@ -27,6 +28,7 @@ export interface Database {
           role?: UserRole
           name?: string | null
           phone?: string | null
+          email?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -35,6 +37,7 @@ export interface Database {
           role?: UserRole
           name?: string | null
           phone?: string | null
+          email?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -47,6 +50,7 @@ export interface Database {
           description: string | null
           thumbnail_url: string | null
           is_published: boolean
+          interview_workbook_enabled: boolean
           created_at: string
           updated_at: string
         }
@@ -57,6 +61,7 @@ export interface Database {
           description?: string | null
           thumbnail_url?: string | null
           is_published?: boolean
+          interview_workbook_enabled?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -67,6 +72,7 @@ export interface Database {
           description?: string | null
           thumbnail_url?: string | null
           is_published?: boolean
+          interview_workbook_enabled?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -166,6 +172,7 @@ export interface Database {
           cohort_id: string
           status: EnrollmentStatus
           receipt_contact: string | null
+          written_passed_at: string | null
           created_at: string
           updated_at: string
         }
@@ -175,6 +182,7 @@ export interface Database {
           cohort_id: string
           status?: EnrollmentStatus
           receipt_contact?: string | null
+          written_passed_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -184,6 +192,30 @@ export interface Database {
           cohort_id?: string
           status?: EnrollmentStatus
           receipt_contact?: string | null
+          written_passed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      interview_workbook_answers: {
+        Row: {
+          user_id: string
+          answers: Json
+          version: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          answers?: Json
+          version?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          answers?: Json
+          version?: number
           created_at?: string
           updated_at?: string
         }

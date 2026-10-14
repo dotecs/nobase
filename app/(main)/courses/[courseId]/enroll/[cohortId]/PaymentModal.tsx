@@ -1,11 +1,50 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClientSupabaseClient } from '@/lib/supabase-client'
-import { FaTimes, FaUniversity, FaQrcode, FaCheckCircle, FaReceipt } from 'react-icons/fa'
+import { FaTimes, FaUniversity, FaQrcode, FaCheckCircle, FaReceipt, FaCreditCard } from 'react-icons/fa'
 import styles from './enroll.module.css'
+
+declare global {
+  interface Window {
+    TossPayments?: (clientKey: string) => {
+      widgets: (options: { customerKey: string }) => TossWidgets
+    }
+  }
+}
+
+interface TossWidgets {
+  setAmount: (amount: { currency: string; value: number }) => Promise<void>
+  renderPaymentMethods: (options: { selector: string }) => Promise<unknown>
+  renderAgreement: (options: { selector: string }) => Promise<unknown>
+  requestPayment: (options: {
+    orderId: string
+    orderName: string
+    successUrl: string
+    failUrl: string
+  }) => Promise<void>
+}
+
+const TOSS_SDK_URL = 'https://js.tosspayments.com/v2/standard'
+
+function loadTossSdk(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.TossPayments) return resolve()
+    const existing = document.querySelector(`script[src="${TOSS_SDK_URL}"]`)
+    if (existing) {
+      existing.addEventListener('load', () => resolve())
+      existing.addEventListener('error', reject)
+      return
+    }
+    const script = document.createElement('script')
+    script.src = TOSS_SDK_URL
+    script.onload = () => resolve()
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
 
 interface PaymentModalProps {
   isOpen: boolean
@@ -19,7 +58,7 @@ interface PaymentModalProps {
 }
 
 type PaymentMethod = 'bank' | 'kakaopay'
-type Step = 'method' | 'receipt' | 'complete'
+type Step = 'method' | 'receipt' | 'complete' | 'card'
 
 export function PaymentModal({
   isOpen,
@@ -38,12 +77,86 @@ export function PaymentModal({
   const [needReceipt, setNeedReceipt] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [widgetReady, setWidgetReady] = useState(false)
+  const widgetsRef = useRef<TossWidgets | null>(null)
+
+  const initCardWidget = useCallback(async () => {
+    const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY
+    if (!clientKey) {
+      setError('결제 설정이 완료되지 않았습니다. (클라이언트 키 없음)')
+      return
+    }
+    try {
+      await loadTossSdk()
+      if (!window.TossPayments) throw new Error('SDK 로드 실패')
+      const tossPayments = window.TossPayments(clientKey)
+      const widgets = tossPayments.widgets({ customerKey: userId })
+      await widgets.setAmount({ currency: 'KRW', value: price })
+      await Promise.all([
+        widgets.renderPaymentMethods({ selector: '#toss-payment-methods' }),
+        widgets.renderAgreement({ selector: '#toss-agreement' }),
+      ])
+      widgetsRef.current = widgets
+      setWidgetReady(true)
+    } catch (err) {
+      console.error('Toss widget init error:', err)
+      setError('결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }, [userId, price])
+
+  useEffect(() => {
+    if (isOpen && step === 'card' && !widgetsRef.current) {
+      initCardWidget()
+    }
+  }, [isOpen, step, initCardWidget])
 
   if (!isOpen) return null
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setPaymentMethod(method)
     setStep('receipt')
+  }
+
+  const handleCardSelect = async () => {
+    setError('')
+    setStep('card')
+  }
+
+  const handleCardPay = async () => {
+    if (!widgetsRef.current) {
+      setError('결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      // 서버에서 주문 생성 (금액은 서버가 확정)
+      const res = await fetch('/api/payments/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cohortId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || '주문 생성에 실패했습니다.')
+        setLoading(false)
+        return
+      }
+
+      await widgetsRef.current.requestPayment({
+        orderId: data.orderId,
+        orderName: data.orderName,
+        successUrl: `${window.location.origin}/payments/success`,
+        failUrl: `${window.location.origin}/payments/fail`,
+      })
+    } catch (err) {
+      const e = err as { message?: string; code?: string }
+      if (e?.code !== 'USER_CANCEL') {
+        setError(e?.message || '결제 요청 중 오류가 발생했습니다.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSubmit = async () => {
@@ -139,6 +252,8 @@ export function PaymentModal({
     setReceiptContact('')
     setNeedReceipt(true)
     setError('')
+    widgetsRef.current = null
+    setWidgetReady(false)
   }
 
   return (
@@ -168,6 +283,22 @@ export function PaymentModal({
               <div className={styles.paymentMethods}>
                 <button
                   className={styles.paymentMethodButton}
+                  onClick={handleCardSelect}
+                >
+                  <FaCreditCard className={styles.paymentMethodIcon} />
+                  <div className={styles.paymentMethodInfo}>
+                    <span className={styles.paymentMethodName}>
+                      카드 결제
+                      <span className={styles.paymentMethodBadge}>즉시 수강</span>
+                    </span>
+                    <span className={styles.paymentMethodDesc}>
+                      결제 즉시 자동 승인 — 바로 학습을 시작하세요
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  className={styles.paymentMethodButton}
                   onClick={() => handleMethodSelect('bank')}
                 >
                   <FaUniversity className={styles.paymentMethodIcon} />
@@ -193,6 +324,42 @@ export function PaymentModal({
                 </button>
               </div>
             </>
+          )}
+
+          {/* Step: 카드 결제 (토스페이먼츠 결제위젯) */}
+          {step === 'card' && (
+            <div className={styles.cardPaySection}>
+              <div className={styles.paymentSummary}>
+                <p className={styles.paymentCourseName}>{courseName}</p>
+                <p className={styles.paymentCohortName}>{cohortName}</p>
+                <p className={styles.paymentPrice}>₩{price.toLocaleString()}</p>
+              </div>
+
+              <div id="toss-payment-methods" />
+              <div id="toss-agreement" />
+
+              {!widgetReady && !error && (
+                <p className={styles.cardPayLoading}>결제 수단을 불러오는 중...</p>
+              )}
+              {error && <p className={styles.errorMessage}>{error}</p>}
+
+              <div className={styles.receiptActions}>
+                <button
+                  className={styles.backButton}
+                  onClick={() => setStep('method')}
+                  disabled={loading}
+                >
+                  이전
+                </button>
+                <button
+                  className={styles.submitButton}
+                  onClick={handleCardPay}
+                  disabled={loading || !widgetReady}
+                >
+                  {loading ? '처리 중...' : `₩${price.toLocaleString()} 결제하기`}
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Step 2: 현금영수증 정보 */}

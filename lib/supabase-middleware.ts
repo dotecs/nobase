@@ -89,7 +89,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 보호된 경로 체크
-  const protectedPaths = ['/dashboard', '/courses', '/lessons', '/announcements', '/start/confirm', '/start/done']
+  const protectedPaths = ['/dashboard', '/courses', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook']
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   )

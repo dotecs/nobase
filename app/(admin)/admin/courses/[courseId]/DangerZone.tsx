@@ -40,7 +40,7 @@ export default function DangerZone({ courseId, courseTitle }: DangerZoneProps) {
         message: '강좌가 성공적으로 삭제되었습니다.',
         type: 'success',
       });
-      router.push('/admin');
+      router.push('/admin/courses');
     } catch (err: any) {
       await alert({
         title: '삭제 실패',

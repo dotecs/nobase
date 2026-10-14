@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import Link from 'next/link';
+import AdminPageHeader from '../AdminPageHeader';
 import { FaQuestionCircle, FaCheckCircle, FaHourglassHalf, FaFilter } from 'react-icons/fa';
 import { Course, Lesson, LessonQuestionWithDetails } from '@/lib/database.types';
 import QuestionManager from './QuestionManager';
@@ -140,13 +141,7 @@ export default async function AdminQuestionsPage({ searchParams }: AdminQuestion
 
   return (
     <main className={styles.main}>
-      {/* Header */}
-      <div className={styles.header}>
-        <div className={styles.titleSection}>
-          <h1>질문 관리</h1>
-          <p>수강생들의 질문을 확인하고 답변합니다</p>
-        </div>
-      </div>
+      <AdminPageHeader title="질문 관리" description="수강생들의 질문을 확인하고 답변합니다" />
 
       {/* Stats */}
       <div className={styles.statsGrid}>
@@ -179,25 +174,6 @@ export default async function AdminQuestionsPage({ searchParams }: AdminQuestion
             <p>답변 완료</p>
           </div>
         </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className={styles.tabs}>
-        <Link href="/admin" className={styles.tab}>
-          강좌 관리
-        </Link>
-        <Link href="/admin/cohorts" className={styles.tab}>
-          기수 관리
-        </Link>
-        <Link href="/admin/enrollments" className={styles.tab}>
-          수강신청 관리
-        </Link>
-        <Link href="/admin/users" className={styles.tab}>
-          사용자 관리
-        </Link>
-        <Link href="/admin/questions" className={`${styles.tab} ${styles.active}`}>
-          질문 관리
-        </Link>
       </div>
 
       {/* Filters */}

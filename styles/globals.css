@@ -29,7 +29,9 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   transition: background-color var(--transition-normal), color var(--transition-normal);
-  overflow-x: hidden;
+  /* overflow-x: hidden 을 body에 두면 body가 스크롤 컨테이너가 되어
+     사이트 전체의 position: sticky(헤더, 사이드바, 목차)가 동작하지 않음.
+     가로 스크롤 방지는 html의 overflow-x: hidden(뷰포트로 전파됨)만으로 충분. */
   max-width: 100vw;
 }
 

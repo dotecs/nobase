@@ -114,6 +114,32 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
   const lessons = ((lessonsData || []) as Lesson[]).filter(
     (l) => l.subject_id === null || visibleSubjectIds.has(l.subject_id)
   );
+
+  // 전체 커리큘럼 보기일 때 과목별 그룹핑
+  let subjectGroups: { subject: Subject | null; lessons: Lesson[] }[] = [];
+  if (!subjectId) {
+    const { data: subjectsData } = await supabase
+      .from('subjects')
+      .select('*')
+      .eq('course_id', courseId)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true });
+
+    const subjects = (subjectsData || []) as Subject[];
+    subjectGroups = subjects
+      .map((s) => ({
+        subject: s as Subject | null,
+        lessons: lessons.filter((l) => l.subject_id === s.id),
+      }))
+      .filter((g) => g.lessons.length > 0);
+
+    const ungrouped = lessons.filter(
+      (l) => !l.subject_id || !subjects.some((s) => s.id === l.subject_id)
+    );
+    if (ungrouped.length > 0) {
+      subjectGroups.push({ subject: null, lessons: ungrouped });
+    }
+  }
   
   // 공개된 레슨만 필터 (진도 계산용)
   const publishedLessons = lessons.filter(l => l.is_published);
@@ -191,7 +217,24 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
         </div>
 
         <div className={styles.lessonList}>
-          {lessons.map((lesson, index) => {
+          {(subjectId ? [{ subject: null as Subject | null, lessons }] : subjectGroups).map((group) => (
+            <section key={group.subject?.id ?? 'all'} className={styles.subjectGroup}>
+              {group.subject && (
+                <div className={styles.subjectHeader}>
+                  <h2 className={styles.subjectTitle}>{group.subject.title}</h2>
+                  <span className={styles.subjectMeta}>
+                    {group.lessons.filter((l) => completedLessonIds.has(l.id)).length}
+                    {' / '}
+                    {group.lessons.filter((l) => l.is_published).length} 완료
+                  </span>
+                </div>
+              )}
+              {!group.subject && !subjectId && subjectGroups.length > 1 && (
+                <div className={styles.subjectHeader}>
+                  <h2 className={styles.subjectTitle}>기타</h2>
+                </div>
+              )}
+              {group.lessons.map((lesson, index) => {
             const isCompleted = completedLessonIds.has(lesson.id);
             const now = new Date();
             const availableAt = lesson.available_at ? new Date(lesson.available_at) : null;
@@ -255,6 +298,8 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
               </Link>
             );
           })}
+            </section>
+          ))}
         </div>
       </main>
     </div>

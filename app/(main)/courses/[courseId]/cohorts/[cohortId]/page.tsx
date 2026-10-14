@@ -3,8 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, ErrorPage } from '@/components';
-import { Profile, Course, Cohort, Announcement, Subject } from '@/lib/database.types';
-import { FaBook, FaCalendarAlt, FaBullhorn, FaThumbtack, FaChevronRight, FaGraduationCap, FaPlayCircle } from 'react-icons/fa';
+import { Profile, Course, Cohort, Announcement, Subject, Enrollment } from '@/lib/database.types';
+import { FaBook, FaCalendarAlt, FaBullhorn, FaThumbtack, FaChevronRight, FaGraduationCap, FaPlayCircle, FaUserTie, FaLock } from 'react-icons/fa';
+import { INTERVIEW_WORKBOOK_PATH } from '@/lib/interview-workbook';
 import styles from './course.module.css';
 
 interface CoursePageProps {
@@ -140,6 +141,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const announcements = (announcementsData || []) as Announcement[];
 
+  // 면접 대비 워크북 — 코스에 연결된 경우에만 카드 표시, 필기 합격 처리된 수강생에게만 열림
+  const showWorkbookCard = !!course.interview_workbook_enabled;
+  const workbookGranted = !!(enrollment as Enrollment).written_passed_at;
+
   return (
     <div className={styles.page}>
       <Header userName={profile?.name || user.email} isLoggedIn={true} userRole={profile?.role} />
@@ -248,6 +253,35 @@ export default async function CoursePage({ params }: CoursePageProps) {
           </div>
 
           <aside className={styles.sidebar}>
+            {showWorkbookCard && (
+              <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionIcon}><FaUserTie /></span>
+                  면접 대비
+                </h2>
+                {workbookGranted ? (
+                  <Link href={INTERVIEW_WORKBOOK_PATH} className={styles.workbookCard}>
+                    <div className={styles.workbookInfo}>
+                      <span className={styles.workbookTitle}>SSIT 면접 대비 워크북</span>
+                      <span className={styles.workbookDesc}>
+                        필기 합격을 축하합니다! 면접 개요 · PPT 발표 가이드 · 예상 질문 · 체크리스트
+                      </span>
+                    </div>
+                    <span className={styles.subjectArrow}><FaChevronRight /></span>
+                  </Link>
+                ) : (
+                  <div className={`${styles.workbookCard} ${styles.workbookLocked}`}>
+                    <div className={styles.workbookInfo}>
+                      <span className={styles.workbookTitle}><FaLock /> SSIT 면접 대비 워크북</span>
+                      <span className={styles.workbookDesc}>
+                        필기 합격 후 열리는 자료입니다. 합격 소식을 카카오톡 채널로 알려주시면 바로 열어드립니다.
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>
                 <span className={styles.sectionIcon}><FaBullhorn /></span>
