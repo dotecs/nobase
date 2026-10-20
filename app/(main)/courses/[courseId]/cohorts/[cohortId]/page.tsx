@@ -23,17 +23,21 @@ export default async function CoursePage({ params }: CoursePageProps) {
     redirect('/login');
   }
 
-  const profile = await getProfile() as Profile | null;
   const supabase = await createServerSupabaseClient();
 
   // 등록 확인
-  const { data: enrollment } = await supabase
-    .from('enrollments')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('cohort_id', cohortId)
-    .eq('status', 'active')
-    .single();
+  const [{ data: enrollment }, profileData] = await Promise.all([
+    supabase
+      .from('enrollments')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('cohort_id', cohortId)
+      .eq('status', 'active')
+      .single(),
+    getProfile(),
+  ]);
+
+  const profile = profileData as Profile | null;
 
   if (!enrollment) {
     return (
@@ -53,17 +57,18 @@ export default async function CoursePage({ params }: CoursePageProps) {
   }
 
   // 강좌 정보
-  const { data: courseData } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('id', courseId)
-    .single();
-
-  const { data: cohortData } = await supabase
-    .from('cohorts')
-    .select('*')
-    .eq('id', cohortId)
-    .single();
+  const [{ data: courseData }, { data: cohortData }] = await Promise.all([
+    supabase
+      .from('courses')
+      .select('*')
+      .eq('id', courseId)
+      .single(),
+    supabase
+      .from('cohorts')
+      .select('*')
+      .eq('id', cohortId)
+      .single(),
+  ]);
 
   const course = courseData as Course | null;
   const cohort = cohortData as Cohort | null;
@@ -73,23 +78,32 @@ export default async function CoursePage({ params }: CoursePageProps) {
   }
 
   // 과목(Subject) 목록 조회 — RLS가 visibility에 따라 자동 필터
-  const { data: subjectsData } = await supabase
-    .from('subjects')
-    .select('*')
-    .eq('course_id', courseId)
-    .eq('is_published', true)
-    .order('sort_order', { ascending: true });
+  const [{ data: subjectsData }, { data: lessonsData }, { data: announcementsData }] = await Promise.all([
+    supabase
+      .from('subjects')
+      .select('*')
+      .eq('course_id', courseId)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from('lessons')
+      .select('id, subject_id, is_published, sort_order')
+      .eq('course_id', courseId)
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from('announcements')
+      .select('*')
+      .eq('cohort_id', cohortId)
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ]);
 
   const subjects = (subjectsData || []) as Subject[];
   const visibleSubjectIds = new Set(subjects.map((s) => s.id));
 
   // 각 과목별 레슨 수 조회 — subject 미배정(subject_id=null)이거나 접근 가능한 subject만 노출
-  const { data: lessonsData } = await supabase
-    .from('lessons')
-    .select('id, subject_id, is_published, sort_order')
-    .eq('course_id', courseId)
-    .eq('is_published', true)
-    .order('sort_order', { ascending: true });
 
   const lessons = ((lessonsData || []) as { id: string; subject_id: string | null; is_published: boolean; sort_order: number }[])
     .filter((l) => l.subject_id === null || visibleSubjectIds.has(l.subject_id));
@@ -131,13 +145,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
     : 0;
 
   // 공지사항
-  const { data: announcementsData } = await supabase
-    .from('announcements')
-    .select('*')
-    .eq('cohort_id', cohortId)
-    .order('is_pinned', { ascending: false })
-    .order('created_at', { ascending: false })
-    .limit(5);
 
   const announcements = (announcementsData || []) as Announcement[];
 

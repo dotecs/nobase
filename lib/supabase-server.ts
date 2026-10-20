@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { Database } from './database.types'
 
 // 쿠키 값을 안전하게 파싱하는 헬퍼 함수
@@ -65,7 +66,8 @@ export async function getSession() {
   }
 }
 
-export async function getUser() {
+// Deduplicate within one Server Component render, never across users/requests.
+export const getUser = cache(async function getUser() {
   const supabase = await createServerSupabaseClient()
   try {
     const { data: { user } } = await supabase.auth.getUser()
@@ -74,9 +76,9 @@ export async function getUser() {
     console.error('Error getting user:', error)
     return null
   }
-}
+})
 
-export async function getProfile() {
+export const getProfile = cache(async function getProfile() {
   const supabase = await createServerSupabaseClient()
   const user = await getUser()
   
@@ -89,4 +91,4 @@ export async function getProfile() {
     .single()
 
   return profile
-}
+})

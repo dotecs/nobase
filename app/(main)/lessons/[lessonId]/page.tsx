@@ -27,20 +27,22 @@ export default async function LessonPage({ params }: LessonPageProps) {
     redirect('/login');
   }
 
-  const profileData = await getProfile();
-  const profile = profileData as Profile | null;
   const supabase = await createServerSupabaseClient();
 
   // 레슨 조회
-  const { data: lessonData } = await supabase
-    .from('lessons')
-    .select(`
-      *,
-      courses (*)
-    `)
-    .eq('id', lessonId)
-    .single();
+  const [{ data: lessonData }, profileData] = await Promise.all([
+    supabase
+      .from('lessons')
+      .select(`
+        *,
+        courses (*)
+      `)
+      .eq('id', lessonId)
+      .single(),
+    getProfile(),
+  ]);
 
+  const profile = profileData as Profile | null;
   const lesson = lessonData as (Lesson & { courses: any }) | null;
 
   if (!lesson) {
@@ -50,15 +52,17 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const course = lesson?.courses as any;
 
   // 소속 subject가 restricted인데 접근 권한이 없으면 노출 금지
+  let subjectResources: Resource[] = [];
   if (lesson.subject_id) {
     const { data: subjectAccess } = await supabase
       .from('subjects')
-      .select('id')
+      .select('id, resources')
       .eq('id', lesson.subject_id)
       .maybeSingle();
     if (!subjectAccess) {
       notFound();
     }
+    subjectResources = ((subjectAccess as { resources: unknown }).resources || []) as Resource[];
   }
 
   // 공개 예정일 체크
@@ -121,31 +125,39 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
 
   // 진도 조회
-  const { data: progressData } = await supabase
-    .from('lesson_progress')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('lesson_id', lessonId)
-    .single();
+  const [{ data: progressData }, { data: subjectsData }, { data: allLessonsData }, { data: videosData }] = await Promise.all([
+    supabase
+      .from('lesson_progress')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('lesson_id', lessonId)
+      .single(),
+    supabase
+      .from('subjects')
+      .select('id, title')
+      .eq('course_id', course.id)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from('lessons')
+      .select('id, title, sort_order, is_published, available_at, subject_id')
+      .eq('course_id', course.id)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from('lesson_videos')
+      .select('*')
+      .eq('lesson_id', lessonId)
+      .order('is_main', { ascending: false })
+      .order('sort_order', { ascending: true }),
+  ]);
 
   const progress = progressData as LessonProgress | null;
 
   // 과목 목록 — RLS가 visibility에 따라 자동 필터
-  const { data: subjectsData } = await supabase
-    .from('subjects')
-    .select('id, title')
-    .eq('course_id', course.id)
-    .order('sort_order', { ascending: true });
 
   const subjects = (subjectsData || []) as { id: string; title: string }[];
   const visibleSubjectIds = new Set(subjects.map((s) => s.id));
 
   // 전체 레슨 목록 — 접근 불가한 subject 소속 lesson은 사이드바에서 제외
-  const { data: allLessonsData } = await supabase
-    .from('lessons')
-    .select('id, title, sort_order, is_published, available_at, subject_id')
-    .eq('course_id', course.id)
-    .order('sort_order', { ascending: true });
 
   const allLessons = ((allLessonsData || []) as {
     id: string;
@@ -158,12 +170,21 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   // 코스의 모든 비디오 (사이드바 시간 표시 + 총 강의시간 계산용)
   const lessonIds = allLessons.map((l) => l.id);
-  const { data: courseVideosData } = lessonIds.length > 0
-    ? await supabase
+  const [{ data: courseVideosData }, { data: allProgressData }] = await Promise.all([
+    lessonIds.length > 0
+    ? supabase
         .from('lesson_videos')
         .select('lesson_id, duration_seconds, is_main')
         .in('lesson_id', lessonIds)
-    : { data: [] };
+    : { data: [] },
+    lessonIds.length > 0
+    ? supabase
+        .from('lesson_progress')
+        .select('lesson_id, completed, max_position_seconds')
+        .eq('user_id', user.id)
+        .in('lesson_id', lessonIds)
+    : { data: [] },
+  ]);
   const courseVideos = (courseVideosData || []) as Pick<LessonVideo, 'lesson_id' | 'duration_seconds' | 'is_main'>[];
 
   // lesson별 합산 duration (메인 영상 우선, 없으면 전체 합)
@@ -190,13 +211,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
       : null;
 
   // 모든 진도 (완료 + 진행 중)
-  const { data: allProgressData } = lessonIds.length > 0
-    ? await supabase
-        .from('lesson_progress')
-        .select('lesson_id, completed, max_position_seconds')
-        .eq('user_id', user.id)
-        .in('lesson_id', lessonIds)
-    : { data: [] };
 
   type ProgressRow = {
     lesson_id: string;
@@ -238,12 +252,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }, 0);
 
   // 현재 레슨 영상 목록
-  const { data: videosData } = await supabase
-    .from('lesson_videos')
-    .select('*')
-    .eq('lesson_id', lessonId)
-    .order('is_main', { ascending: false })
-    .order('sort_order', { ascending: true });
 
   const lessonVideos = (videosData || []) as LessonVideo[];
   const mainVideo = lessonVideos.find((v) => v.is_main) || lessonVideos[0] || null;
@@ -254,17 +262,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
   );
 
   const lessonResources = (lesson.resources || []) as Resource[];
-
-  // 소속 과목의 공통 자료 불러오기 (있으면)
-  let subjectResources: Resource[] = [];
-  if (lesson.subject_id) {
-    const { data: subjectData } = await supabase
-      .from('subjects')
-      .select('resources')
-      .eq('id', lesson.subject_id)
-      .single();
-    subjectResources = ((subjectData as any)?.resources || []) as Resource[];
-  }
 
   // 과목 공통 자료를 먼저, 그 다음에 강의별 자료
   const allResources: Resource[] = [...subjectResources, ...lessonResources];

@@ -11,30 +11,25 @@ interface CourseWithCohorts extends Course {
 
 export default async function CoursesPage() {
   const user = await getUser();
-  const profile = user ? await getProfile() as Profile | null : null;
   const supabase = await createServerSupabaseClient();
 
   // 공개된 강좌와 활성 기수 조회
-  const { data: coursesData } = await supabase
-    .from('courses')
-    .select(`
-      *,
-      cohorts (*)
-    `)
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
+  const [{ data: coursesData }, profileData, { data: enrollmentsData }] = await Promise.all([
+    supabase
+      .from('courses')
+      .select(`
+        *,
+        cohorts (*)
+      `)
+      .eq('is_published', true)
+      .order('created_at', { ascending: false }),
+    getProfile(),
+    user ? supabase.from('enrollments').select('cohort_id').eq('user_id', user.id).in('status', ['active', 'paused', 'pending']) : Promise.resolve({ data: [] }),
+  ]);
 
   // 사용자가 이미 등록한 기수 ID 조회
-  let enrolledCohortIds: string[] = [];
-  if (user) {
-    const { data: enrollmentsData } = await supabase
-      .from('enrollments')
-      .select('cohort_id')
-      .eq('user_id', user.id)
-      .in('status', ['active', 'paused', 'pending']);
-    
-    enrolledCohortIds = ((enrollmentsData || []) as { cohort_id: string }[]).map(e => e.cohort_id);
-  }
+  const profile = profileData as Profile | null;
+  const enrolledCohortIds = ((enrollmentsData || []) as { cohort_id: string }[]).map(e => e.cohort_id);
 
   // 활성 기수만 필터링 + 이미 등록한 기수 제외
   const courses = (coursesData || []).map((course: any) => ({

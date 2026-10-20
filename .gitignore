@@ -31,3 +31,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 로컬 자료 (레포 제외)
+brain100-evidence.tgz
+dowork-brand/
+dowork-evidence/
+dowork-output/

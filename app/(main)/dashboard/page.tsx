@@ -14,62 +14,66 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  const profile = await getProfile() as Profile | null;
   const supabase = await createServerSupabaseClient();
 
   // 내 수강 목록 조회
-  const { data: enrollmentsData } = await supabase
-    .from('enrollments')
-    .select(`
-      *,
-      cohorts (
+  const [{ data: enrollmentsData }, profileData] = await Promise.all([
+    supabase
+      .from('enrollments')
+      .select(`
         *,
-        courses (*)
-      )
-    `)
-    .eq('user_id', user.id)
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
+        cohorts (
+          *,
+          courses (*)
+        )
+      `)
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false }),
+    getProfile(),
+  ]);
 
+  const profile = profileData as Profile | null;
   const enrollments = (enrollmentsData || []) as any[];
 
-  // 각 enrollment별 레슨 정보 및 진도 조회
-  const enrollmentsWithProgress = await Promise.all(
-    enrollments.map(async (enrollment) => {
-      const cohort = enrollment.cohorts;
-      const course = cohort?.courses;
-
-      // 해당 course의 전체 레슨들 (is_published 여부 관계없이)
-      const { data: lessonsData } = await supabase
-        .from('lessons')
-        .select('id, sort_order, is_published')
-        .eq('course_id', course.id)
-        .order('sort_order', { ascending: true });
-
-      const lessons = (lessonsData || []) as any[];
-      const publishedLessonIds = lessons.filter(l => l.is_published).map(l => l.id);
-
-      // 완료한 레슨 (공개된 레슨 기준)
-      const { data: progressData } = publishedLessonIds.length > 0
-        ? await supabase
-            .from('lesson_progress')
-            .select('lesson_id')
-            .eq('user_id', user.id)
-            .eq('completed', true)
-            .in('lesson_id', publishedLessonIds)
-        : { data: [] };
-
-      const progress = (progressData || []) as any[];
-
-      return {
-        ...enrollment,
-        course,
-        cohort,
-        totalLessons: lessons.length,
-        completedLessons: progress.length,
-      };
-    })
-  );
+  // 수강 강좌들을 묶어서 조회하되, 응답 행 수 제한으로 레슨이 누락되지 않게 페이지 처리.
+  const courseIds = [...new Set<string>(enrollments.map(e => e.cohorts?.courses?.id).filter(Boolean))];
+  const lessons: { id: string; course_id: string; is_published: boolean }[] = [];
+  const pageSize = 500;
+  if (courseIds.length > 0) {
+    for (let offset = 0; ; offset += pageSize) {
+      const { data } = await supabase.from('lessons')
+        .select('id, course_id, is_published').in('course_id', courseIds)
+        .order('id').range(offset, offset + pageSize - 1);
+      const page = data || [];
+      lessons.push(...page);
+      if (page.length < pageSize) break;
+    }
+  }
+  const publishedLessonIds = lessons.filter(l => l.is_published).map(l => l.id);
+  // 긴 URL과 응답 제한을 피하도록 진도 조회의 ID 목록도 나눔.
+  const progressQueries: PromiseLike<{ data: { lesson_id: string }[] | null }>[] = [];
+  for (let offset = 0; offset < publishedLessonIds.length; offset += 200) {
+    progressQueries.push(supabase.from('lesson_progress').select('lesson_id')
+      .eq('user_id', user.id).eq('completed', true)
+      .in('lesson_id', publishedLessonIds.slice(offset, offset + 200)));
+  }
+  const progressResults = await Promise.all(progressQueries);
+  const completedIds = new Set(progressResults.flatMap(({ data }) =>
+    ((data || []) as { lesson_id: string }[]).map(p => p.lesson_id)
+  ));
+  const enrollmentsWithProgress = enrollments.filter(e => e.cohorts?.courses).map(enrollment => {
+    const cohort = enrollment.cohorts;
+    const course = cohort.courses;
+    const courseLessons = lessons.filter(l => l.course_id === course.id);
+    return {
+      ...enrollment,
+      course,
+      cohort,
+      totalLessons: courseLessons.length,
+      completedLessons: courseLessons.filter(l => l.is_published && completedIds.has(l.id)).length,
+    };
+  });
 
   return (
     <div className={styles.page}>

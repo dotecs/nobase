@@ -25,17 +25,21 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
     redirect('/login');
   }
 
-  const profile = await getProfile() as Profile | null;
   const supabase = await createServerSupabaseClient();
 
   // 등록 확인
-  const { data: enrollment } = await supabase
-    .from('enrollments')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('cohort_id', cohortId)
-    .eq('status', 'active')
-    .single();
+  const [{ data: enrollment }, profileData] = await Promise.all([
+    supabase
+      .from('enrollments')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('cohort_id', cohortId)
+      .eq('status', 'active')
+      .single(),
+    getProfile(),
+  ]);
+
+  const profile = profileData as Profile | null;
 
   if (!enrollment) {
     return (
@@ -55,17 +59,18 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
   }
 
   // 강좌 정보
-  const { data: courseData } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('id', courseId)
-    .single();
-
-  const { data: cohortData } = await supabase
-    .from('cohorts')
-    .select('*')
-    .eq('id', cohortId)
-    .single();
+  const [{ data: courseData }, { data: cohortData }] = await Promise.all([
+    supabase
+      .from('courses')
+      .select('*')
+      .eq('id', courseId)
+      .single(),
+    supabase
+      .from('cohorts')
+      .select('*')
+      .eq('id', cohortId)
+      .single(),
+  ]);
 
   const course = courseData as Course | null;
   const cohort = cohortData as Cohort | null;
