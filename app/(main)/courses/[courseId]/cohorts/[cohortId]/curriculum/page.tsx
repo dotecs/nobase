@@ -1,3 +1,4 @@
+import { resolveCourse } from '@/lib/courses';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
@@ -17,7 +18,7 @@ interface CurriculumPageProps {
 }
 
 export default async function CurriculumPage({ params, searchParams }: CurriculumPageProps) {
-  const { courseId, cohortId } = await params;
+  const { courseId: courseParam, cohortId } = await params;
   const { subject: subjectId } = await searchParams;
   
   const user = await getUser();
@@ -59,12 +60,8 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
   }
 
   // 강좌 정보
-  const [{ data: courseData }, { data: cohortData }] = await Promise.all([
-    supabase
-      .from('courses')
-      .select('*')
-      .eq('id', courseId)
-      .single(),
+  const [courseData, { data: cohortData }] = await Promise.all([
+    resolveCourse(courseParam),
     supabase
       .from('cohorts')
       .select('*')
@@ -78,6 +75,8 @@ export default async function CurriculumPage({ params, searchParams }: Curriculu
   if (!course || !cohort) {
     notFound();
   }
+
+  const courseId = course.id;
 
   // 과목 정보 조회 (subjectId가 있는 경우) — 접근 불가면 subjectData가 null이 됨
   let subject: Subject | null = null;

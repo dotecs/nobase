@@ -1,3 +1,4 @@
+import { resolveCourse } from '@/lib/courses';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,7 +17,7 @@ interface CoursePageProps {
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {
-  const { courseId, cohortId } = await params;
+  const { courseId: courseParam, cohortId } = await params;
   
   const user = await getUser();
   if (!user) {
@@ -57,12 +58,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
   }
 
   // 강좌 정보
-  const [{ data: courseData }, { data: cohortData }] = await Promise.all([
-    supabase
-      .from('courses')
-      .select('*')
-      .eq('id', courseId)
-      .single(),
+  const [courseData, { data: cohortData }] = await Promise.all([
+    resolveCourse(courseParam),
     supabase
       .from('cohorts')
       .select('*')
@@ -76,6 +73,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
   if (!course || !cohort) {
     notFound();
   }
+
+  const courseId = course.id;
 
   // 과목(Subject) 목록 조회 — RLS가 visibility에 따라 자동 필터
   const [{ data: subjectsData }, { data: lessonsData }, { data: announcementsData }] = await Promise.all([

@@ -1,5 +1,6 @@
+import { resolveCourse } from '@/lib/courses';
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import { redirect } from 'next/navigation'
+import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/Header/Header'
@@ -17,14 +18,14 @@ interface PageProps {
 }
 
 export default async function EnrollPage({ params }: PageProps) {
-  const { courseId, cohortId } = await params
+  const { courseId: courseParam, cohortId } = await params
   const supabase = await createServerSupabaseClient()
 
   // 사용자 확인
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    redirect(`/login?redirect=/courses/${courseId}/enroll/${cohortId}`)
+    redirect(`/login?redirect=/courses/${courseParam}/enroll/${cohortId}`)
   }
 
   // 프로필 조회
@@ -37,18 +38,10 @@ export default async function EnrollPage({ params }: PageProps) {
   const profile = profileData as Profile | null
 
   // 코스 정보 조회
-  const { data: courseData, error: courseError } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('id', courseId)
-    .eq('is_published', true)
-    .single()
-
-  const course = courseData as Course | null
-
-  if (courseError || !course) {
-    redirect('/courses')
-  }
+  const course = await resolveCourse(courseParam)
+  if (!course) notFound()
+  if (!course.is_published) redirect('/courses')
+  const courseId = course.id
 
   // 기수 정보 조회
   const { data: cohortData, error: cohortError } = await supabase

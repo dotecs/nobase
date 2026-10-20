@@ -89,10 +89,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 보호된 경로 체크
-  const protectedPaths = ['/dashboard', '/courses', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook']
-  const isProtectedPath = protectedPaths.some(path => 
-    request.nextUrl.pathname.startsWith(path)
-  )
+  const protectedPrefixes = ['/dashboard', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook']
+  const protectedCoursePattern = /^\/courses\/[^/]+\/(enroll|cohorts)(\/|$)/
+  const pathname = request.nextUrl.pathname
+  const isProtectedPath =
+    protectedPrefixes.some(path => pathname.startsWith(path)) ||
+    protectedCoursePattern.test(pathname)
 
   if (isProtectedPath && !user) {
     const redirectUrl = new URL('/login', request.url)

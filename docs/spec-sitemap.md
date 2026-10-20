@@ -177,6 +177,19 @@ COMMENT ON COLUMN profiles.lead_source IS '가입 경로. free_lesson: 무료강
 - `content/courses/brain-training-100.ts` (신규): 뇌지컬트레이닝100 본문 — **내용은 placeholder로 두고 TODO 주석**. 실제 카피는 사람이 채운다. slug는 DB의 실제 `courses.slug` 값을 조회해 맞출 것 (어드민 또는 `003_seed_data.sql` 참고). 값이 비어 있거나 UUID스러우면 보고서에 적고 `brain-training-100` 가정으로 진행
 - `app/(main)/courses/[courseId]/page.tsx` (신규) + `course.module.css`
 - 수정: `app/(main)/courses/[courseId]/enroll/[cohortId]/page.tsx`, `cohorts/[cohortId]/page.tsx`, `cohorts/[cohortId]/curriculum/page.tsx` — `courseId` 파라미터를 `resolveCourse`로 받도록. 조회 로직 변경은 그것뿐, 나머지 코드는 손대지 않는다.
+- 수정 (2026-10-20 추가): `lib/supabase-middleware.ts` 92행 — `protectedPaths`에 `/courses`가 통째로 들어 있어 새 공개 경로가 전부 로그인으로 307 이동한다. 아래처럼 바꾼다. 다른 줄은 손대지 않는다 (110행은 T3에서 별도 수정).
+
+```ts
+// 92~95행 교체
+const protectedPrefixes = ['/dashboard', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook']
+const protectedCoursePattern = /^\/courses\/[^/]+\/(enroll|cohorts)(\/|$)/   // 신청·학습 경로만 보호
+const pathname = request.nextUrl.pathname
+const isProtectedPath =
+  protectedPrefixes.some(path => pathname.startsWith(path)) ||
+  protectedCoursePattern.test(pathname)
+```
+
+공개로 풀리는 경로: `/courses`, `/courses/[slug]`, `/courses/[slug]/free/*`. 계속 보호: `/courses/[slug]/enroll/*`, `/courses/[slug]/cohorts/*`, 그 외 기존 목록 전부. 무료 레슨의 "두 번째부터 로그인" 판정은 미들웨어가 아니라 T3 페이지가 한다.
 
 **라우팅 규칙**
 - `isUuid`: `/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`
@@ -219,7 +232,7 @@ export interface CourseLanding {
 
 **메타데이터**: `generateMetadata` — title `${course.title} | 노베이스구조대`, description = tagline ?? course.description, openGraph.images = thumbnail_url (있을 때).
 
-**완료 조건**: 시크릿 창에서 `/courses/<slug>` 목차 전체 + 무료 레슨 블록 표시. `/courses/<uuid>` → slug로 리다이렉트. 기존 `/courses/<uuid>/enroll/<cohortId>` 정상 동작.
+**완료 조건**: 시크릿 창에서 `/courses`, `/courses/<slug>`가 로그인 없이 열리고 목차 전체 + 무료 레슨 블록 표시. `/courses/<uuid>` → slug로 리다이렉트. 비로그인으로 `/courses/<slug>/enroll/<cohortId>`, `/courses/<slug>/cohorts/<id>/curriculum` 접근 시 여전히 `/login?returnTo=…`로 이동. 기존 `/courses/<uuid>/enroll/<cohortId>` 로그인 후 정상 동작.
 
 ---
 
@@ -246,6 +259,7 @@ export interface CourseLanding {
 **로그인 복귀 (`app/auth/callback/route.ts`)**
 - `returnTo` 검증 함수 `safeReturnTo(raw)`: `/`로 시작하고 `//`로 시작하지 않으며 `:`를 포함하지 않는 상대경로만 허용. 그 외 `/dashboard`. 현재 코드는 `new URL(returnTo, origin)`에 그대로 넣어 절대 URL이 오면 외부로 튄다 — 이 함수로 감싼다.
 - `lead_source`: 세션 획득 후, `returnTo`가 `^/courses/[^/]+/free/` 패턴이고 **신규 가입**(`session.user.created_at`이 현재 시각 기준 5분 이내)이면 `profiles.lead_source = 'free_lesson'`을 `createAdminSupabaseClient()`로 UPDATE (`lead_source IS NULL`일 때만). §2 분기 결과 profiles 생성이 complete-profile에서 일어나면 그쪽에서 같은 규칙 적용.
+- `safeReturnTo`는 `lib/safe-return-to.ts`로 분리해 두 곳에서 쓴다: `app/auth/callback/route.ts`(8행, 92행, 99행)와 **`lib/supabase-middleware.ts` 110행** (로그인 상태로 `/login?returnTo=https://evil.example` 접근 시 외부로 튐 — 같은 결함). (2026-10-20 추가)
 - `LoginForm.tsx`는 이미 `returnTo`를 `/auth/callback?returnTo=`로 넘기고 있음 — 수정 불필요.
 
 **완료 조건**: 시크릿 창에서 첫 무료 레슨 재생 → 두 번째 무료 레슨 클릭 → 로그인 → 그 레슨으로 복귀 → `profiles.lead_source = 'free_lesson'` (신규 계정일 때).
@@ -299,7 +313,7 @@ export interface CourseLanding {
 | 8 | 수강 중 계정 `/courses/[slug]` → "이어서 학습하기" | 테스트 계정 | 사람 |
 | 9 | `/sitemap.xml`에 학습·관리자 경로 없음 | 직접 열기 | Codex |
 | 10 | `npx tsc --noEmit`, `npm run build` | CI | Codex |
-| 11 | `returnTo=https://evil.example` 로 로그인 → `/dashboard`로 떨어짐 | 직접 | Codex (유닛 테스트 또는 수동) |
+| 11 | `returnTo=https://evil.example` 로 (a) 비로그인 로그인 플로우, (b) 로그인 상태에서 `/login?returnTo=…` 접근 — 둘 다 `/dashboard`로 떨어짐 | 직접 | Codex (유닛 테스트 또는 수동) |
 
 T6-5 SQL (Supabase SQL editor):
 ```sql
