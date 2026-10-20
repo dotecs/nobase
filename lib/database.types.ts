@@ -20,6 +20,7 @@ export interface Database {
           name: string | null
           phone: string | null
           email: string | null
+          lead_source: string | null
           created_at: string
           updated_at: string
         }
@@ -29,6 +30,7 @@ export interface Database {
           name?: string | null
           phone?: string | null
           email?: string | null
+          lead_source?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -38,6 +40,7 @@ export interface Database {
           name?: string | null
           phone?: string | null
           email?: string | null
+          lead_source?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -472,7 +475,20 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      lessons_public: {
+        Row: {
+          id: string
+          course_id: string
+          subject_id: string | null
+          title: string
+          description: string | null
+          sort_order: number
+          is_free: boolean
+          available_at: string | null
+          created_at: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin: {
