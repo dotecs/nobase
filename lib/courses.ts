@@ -21,8 +21,8 @@ export const resolveCourse = cache(async (param: string): Promise<Course | null>
   return data as Course | null;
 });
 
-export const getPublicCurriculum = cache(async (courseId: string) => {
-  const supabase = await createServerSupabaseClient();
+export const getPublicCurriculum = cache(async (courseId: string, client?: Awaited<ReturnType<typeof createServerSupabaseClient>>) => {
+  const supabase = client ?? await createServerSupabaseClient();
   const [subjectsResult, lessonsResult] = await Promise.all([
     supabase.from('subjects').select('id, title, sort_order')
       .eq('course_id', courseId).eq('is_published', true).eq('visibility', 'public')
@@ -46,8 +46,8 @@ export const getPublicCurriculum = cache(async (courseId: string) => {
   return { subjects, lessons };
 });
 
-export const getFirstFreeLesson = cache(async (courseId: string) => {
-  const { lessons } = await getPublicCurriculum(courseId);
+export const getFirstFreeLesson = cache(async (courseId: string, client?: Awaited<ReturnType<typeof createServerSupabaseClient>>) => {
+  const { lessons } = await (client ? getPublicCurriculum(courseId, client) : getPublicCurriculum(courseId));
   return lessons.find(lesson => lesson.is_free) ?? null;
 });
 

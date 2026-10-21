@@ -72,7 +72,7 @@ export default async function CoursesPage() {
           <div className={styles.courseGrid}>
             {courses.map((course) => {
               const enrolledCohort = (course.cohorts || []).find(cohort => enrolledCohortIds.includes(cohort.id));
-              const cohorts = (course.cohorts || []).filter(cohort => cohort.is_active);
+              const cohorts = (course.cohorts || []).filter(cohort => cohort.is_active && !enrolledCohortIds.includes(cohort.id));
               const freeCount = freeCounts.get(course.id) || 0;
               const badge = enrolledCohort ? '수강중' : cohorts.length ? '모집중' : freeCount ? `무료 레슨 ${freeCount}개` : null;
               const href = enrolledCohort
