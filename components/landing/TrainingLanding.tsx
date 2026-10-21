@@ -5,7 +5,9 @@ import { FiBookOpen, FiCalendar, FiMonitor, FiHelpCircle, FiRefreshCw, FiCheckSq
 import type { trainingLanding } from '@/content/courses/n-training';
 import type { Cohort, Course } from '@/lib/database.types';
 import { getPricingContent } from '@/content/pricing';
+import { contact } from '@/content/contact';
 import PricingPlans from '@/components/pricing/PricingPlans';
+import LandingActions from './LandingActions';
 import styles from './TrainingLanding.module.css';
 
 type Content = typeof trainingLanding;
@@ -84,5 +86,6 @@ export default function TrainingLanding({ content, course, cohorts, enrolledIds,
     <Hero content={content} freeHref={freeHref} /><Overview content={content} /><Curriculum content={content} /><Materials content={content} /><Support content={content} /><Instructor content={content} />
     <section id="plans" className={styles.section}><div className={styles.container}><Heading lines={content.plans.title}><p>{content.plans.description}</p></Heading><PricingPlans course={course} cohorts={cohorts} enrolledIds={enrolledIds} content={getPricingContent(course.slug)} isLoggedIn={isLoggedIn} /></div></section>
     <Faq content={content} freeHref={freeHref} />
+    <LandingActions primary={{ href: content.links.pricing, label: content.cta.primary }} talk={{ href: contact.href, label: contact.floatingLabel }} />
   </main>;
 }

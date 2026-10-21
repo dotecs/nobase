@@ -1,0 +1,9 @@
+.bar { display: none; }
+.talk { position: fixed; right: 24px; bottom: 24px; z-index: 40; display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-radius: 999px; background: var(--color-bg-elevated); color: var(--color-text); border: 1px solid var(--color-border); box-shadow: 0 8px 28px rgba(0,72,134,0.06); }
+.talk svg { color: var(--color-primary); width: 24px; height: 24px; }
+@media (max-width: 700px) {
+  .bar { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--color-bg-elevated); border-top: 1px solid var(--color-border); }
+  .bar a { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 12px 20px; border-radius: 12px; background: var(--color-primary-500); color: #fff; font-weight: 700; }
+  .talk { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .raised { bottom: calc(88px + env(safe-area-inset-bottom)); }
+}

@@ -13,9 +13,11 @@ interface HeaderProps {
   userName?: string | null;
   isLoggedIn?: boolean;
   userRole?: 'student' | 'admin';
+  landingNavigation?: { label: string; href: string }[];
+  landingCta?: { label: string; href: string };
 }
 
-export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) {
+export default function Header({ userName, isLoggedIn, userRole, landingNavigation, landingCta }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClientSupabaseClient();
@@ -75,6 +77,10 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
         </Link>
 
           <nav className={styles.nav}>
+            {landingNavigation && !isLoggedIn ? <>
+              {landingNavigation.map(item => <a key={item.href} href={item.href} className={styles.navLink}>{item.label}</a>)}
+              {landingCta && <Link href={landingCta.href} className={`${styles.navLink} ${styles.navLinkActive}`}>{landingCta.label}</Link>}
+            </> : <>
             <Link
               href="/"
               className={`${styles.navLink} ${isActive('/') ? styles.navLinkActive : ''}`}
@@ -109,6 +115,7 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
                 관리자
               </Link>
             )}
+            </>}
           </nav>
 
         <div className={styles.userSection}>
@@ -160,6 +167,10 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
         </div>
 
         <nav className={styles.sidebarNav}>
+          {landingNavigation && !isLoggedIn ? <>
+            {landingNavigation.map(item => <a key={item.href} href={item.href} className={styles.sidebarLink} onClick={() => setIsMobileMenuOpen(false)}>{item.label}</a>)}
+            {landingCta && <Link href={landingCta.href} className={styles.sidebarLink} onClick={() => setIsMobileMenuOpen(false)}>{landingCta.label}</Link>}
+          </> : <>
           <Link
             href="/"
             className={`${styles.sidebarLink} ${isActive('/') ? styles.sidebarLinkActive : ''}`}
@@ -194,6 +205,7 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
               관리자
             </Link>
           )}
+          </>}
         </nav>
 
         <div className={styles.sidebarFooter}>

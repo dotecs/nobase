@@ -1,4 +1,5 @@
 .page { --landing-tint: var(--color-primary-50); --landing-opacity: 1; color: var(--color-text); background: var(--color-bg); }
+.page svg { stroke-width: 1.75; }
 .section { position: relative; padding: 96px 0; scroll-margin-top: 96px; }
 .section:nth-child(even) { background: var(--color-bg-secondary); }
 .container { position: relative; z-index: 1; max-width: 1264px; margin: 0 auto; padding: 0 32px; }
@@ -70,6 +71,8 @@
   .four { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card { padding: 24px; }
 }
 @media (max-width: 700px) {
+  .page { padding-bottom: 84px; }
+  .page ~ :global(footer) { padding-bottom: calc(108px + env(safe-area-inset-bottom)); }
   .container { padding: 0 16px; } .section { padding: 56px 0; scroll-margin-top: 84px; }
   .hero h1, .heading h2 { font-size: 30px; } .copy, .heading p { font-size: 15px; }
   .heroRow, .three, .four, .two { grid-template-columns: 1fr; }

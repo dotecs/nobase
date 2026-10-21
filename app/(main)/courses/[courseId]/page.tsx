@@ -67,7 +67,9 @@ export default async function CourseLandingPage({ params }: PageProps) {
   if (ungrouped.length) groups.push({ id: 'ungrouped', title: '기타', lessons: ungrouped });
 
   if (landing?.redesign) return <>
-    <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role} />
+    <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role}
+      landingNavigation={landing.redesign.navigation}
+      landingCta={{ label: landing.redesign.cta.header, href: landing.redesign.links.pricing }} />
     <TrainingLanding content={landing.redesign} course={course} cohorts={cohorts}
       enrolledIds={[...enrolledIds]} isLoggedIn={!!user} freeLessonId={firstFreeLesson?.id ?? null} />
   </>;
