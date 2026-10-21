@@ -168,6 +168,38 @@ COMMENT ON COLUMN profiles.lead_source IS '가입 경로. free_lesson: 무료강
 
 ---
 
+### T1-b. 038 보강 — 검증에서 발견된 두 가지 (2026-10-21 추가, T3 전에 처리)
+
+**파일**: `supabase/migrations/038_lessons_public_tighten.sql` (신규). T1과 같이 파일만 작성, 적용은 사람이 SQL Editor에서.
+
+1. **뷰 쓰기 권한 회수** — Supabase `public` 스키마 기본 권한 때문에 `lessons_public`에 anon/authenticated가 INSERT·UPDATE·DELETE 등을 갖고 있다. JOIN 뷰라 실제 쓰기는 불가능하지만 권한은 정리한다.
+   ```sql
+   REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON lessons_public FROM anon, authenticated;
+   ```
+2. **restricted·미발행 과목의 레슨 제외** — 현재 뷰는 과목 공개 범위를 보지 않아 restricted 과목의 레슨 제목·설명 15건이 REST로 anon에게 읽힌다(UI에서는 T2가 걸러서 안 보임). 뷰 정의에 과목 조건을 넣는다. `subject_id IS NULL`인 레슨은 유지.
+   ```sql
+   CREATE OR REPLACE VIEW lessons_public WITH (security_invoker = false) AS
+   SELECT l.id, l.course_id, l.subject_id, l.title, l.description,
+          l.sort_order, l.is_free, l.available_at, l.created_at
+   FROM lessons l
+   JOIN courses c ON c.id = l.course_id
+   LEFT JOIN subjects s ON s.id = l.subject_id
+   WHERE l.is_published = TRUE AND c.is_published = TRUE
+     AND (l.subject_id IS NULL OR (s.is_published = TRUE AND s.visibility = 'public'));
+   ```
+   `CREATE OR REPLACE VIEW`는 컬럼 목록이 같으면 기존 GRANT·정책 의존성을 유지한다 — 컬럼을 바꾸지 말 것.
+
+**검증 SQL 추가 (T6-5에 포함)**
+```sql
+set role anon;
+select count(*) from lessons_public lp join subjects s on s.id = lp.subject_id where s.visibility = 'restricted';  -- 0 (038 전: 15)
+reset role;
+select grantee, privilege_type from information_schema.role_table_grants
+ where table_name = 'lessons_public' and grantee in ('anon','authenticated');                                    -- SELECT만
+```
+
+---
+
 ### T2. 커리큘럼 랜딩 `/courses/[slug]`
 
 **파일**
