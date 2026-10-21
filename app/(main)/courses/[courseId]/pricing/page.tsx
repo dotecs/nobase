@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
@@ -12,6 +13,23 @@ import styles from './pricing.module.css';
 
 interface PageProps {
   params: Promise<{ courseId: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const course = await resolveCourse((await params).courseId);
+  if (!course?.is_published) notFound();
+  const content = getPricingContent(course.slug);
+  const title = `${course.title} 플랜·가격 | 노베이스구조대`;
+  const description = content?.hero.subtitle ?? course.description ?? undefined;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      ...(content ? { images: [new URL(content.hero.brandImage, 'https://nobase911.com').href] } : {}),
+    },
+  };
 }
 
 export default async function PricingPage({ params }: PageProps) {

@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const first = await getFirstFreeLesson(course.id, anon);
     return [
       { url: `${origin}${path}` },
+      { url: `${origin}${path}/pricing` },
       ...(first ? [{ url: `${origin}${path}/free/${first.id}` }] : []),
     ];
   }));
