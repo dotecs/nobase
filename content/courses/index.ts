@@ -1,9 +1,9 @@
-import brainTraining100 from './brain-training-100';
+import training from './n-training';
 import { CourseLanding } from './types';
 
 // 실제 courses.slug 기준의 정적 매핑.
 const landings: Record<string, CourseLanding> = {
-  'n-training': brainTraining100,
+  'n-training': training,
 };
 
 export function getCourseLanding(slug: string): CourseLanding | null {
