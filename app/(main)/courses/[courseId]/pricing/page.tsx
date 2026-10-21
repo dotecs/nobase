@@ -8,7 +8,7 @@ import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-
 import { Cohort, Profile } from '@/lib/database.types';
 import { resolveCourse, isUuid, courseHref } from '@/lib/courses';
 import { getPricingContent } from '@/content/pricing';
-import { matchPricingPlans } from '@/lib/pricing';
+import PricingPlans from '@/components/pricing/PricingPlans';
 import styles from './pricing.module.css';
 
 interface PageProps {
@@ -50,8 +50,6 @@ export default async function PricingPage({ params }: PageProps) {
   if (cohortResult.error) throw cohortResult.error;
   if (enrollmentResult.error) throw enrollmentResult.error;
   const content = getPricingContent(course.slug);
-  const cards = matchPricingPlans((cohortResult.data || []) as Cohort[], content?.plans || []);
-  const enrolled = new Set(((enrollmentResult.data || []) as { cohort_id: string }[]).map(item => item.cohort_id));
   const profile = profileData as Profile | null;
 
   return (
@@ -66,56 +64,9 @@ export default async function PricingPage({ params }: PageProps) {
           {content && <Image className={styles.heroBrand} src={content.hero.brandImage} alt="" width={1200} height={600} priority sizes="(max-width: 700px) 90vw, 45vw" />}
         </section>
 
-        {cards.length ? <div className={styles.grid}>
-          {cards.map(({ cohort, plan }) => {
-            const isEnrolled = enrolled.has(cohort.id);
-            return <article key={cohort.id} className={`${styles.card} ${plan?.highlight ? styles.highlight : ''}`}>
-              <div className={styles.cardHeading}>
-                {plan && <Image className={styles.planIcon} src={plan.icon} alt="" width={80} height={80} />}
-                {plan && <p className={styles.eyebrow}>{plan.eyebrow}</p>}
-                <h2>{plan?.name ?? cohort.title}</h2>
-                {plan && <p className={styles.tagline}>{plan.tagline}</p>}
-              </div>
-              <div className={styles.priceBlock}>
-                {cohort.original_price != null && cohort.original_price > cohort.price && <del className={styles.originalPrice}>{cohort.original_price.toLocaleString('ko-KR')}원</del>}
-                <p className={styles.price}>{cohort.price.toLocaleString('ko-KR')}<span>원</span></p>
-                {cohort.max_students != null && <p className={styles.capacity}>정원 {cohort.max_students}명</p>}
-              </div>
-              {plan && <ul className={styles.features}>{plan.features.map(feature => <li key={feature.text}>
-                <span className={styles.check} aria-hidden="true">✓</span>
-                {feature.emphasis ? <strong>{feature.text}</strong> : <span>{feature.text}</span>}
-              </li>)}</ul>}
-              {isEnrolled ? (
-                <Link className={styles.button} href={`/courses/${course.id}/cohorts/${cohort.id}/curriculum`}>
-                  이어서 학습하기<span aria-hidden="true">›</span>
-                </Link>
-              ) : plan?.checkoutUrl ? (
-                <a className={styles.button} href={plan.checkoutUrl} target="_blank" rel="noopener noreferrer">
-                  등록하기<span aria-hidden="true">›</span>
-                </a>
-              ) : (
-                <Link className={styles.button} href={`${courseHref(course)}/enroll/${cohort.id}`}>
-                  등록하기<span aria-hidden="true">›</span>
-                </Link>
-              )}
-            </article>;
-          })}
-        </div> : <section className={styles.empty}>
-          <h2>현재 모집 중인 기수가 없습니다</h2>
-          {!user && <Link className={styles.button} href={`/login?returnTo=${encodeURIComponent(path)}`}>다음 기수 알림 받기</Link>}
-        </section>}
-
-        {content && <section className={styles.benefits}>
-          <div className={styles.benefitHeading}>
-            <h2>{content.commonBenefits.title}</h2>
-            <p>{content.commonBenefits.subtitle}</p>
-          </div>
-          {content.commonBenefits.items.map(item => <div className={styles.benefit} key={item.title}>
-            <Image src={item.icon} width={48} height={48} alt="" />
-            <div><h3>{item.title}</h3><p>{item.description}</p></div>
-          </div>)}
-        </section>}
-        {content?.footnote && <p className={styles.footnote}>{content.footnote}</p>}
+        <div id="plans"><PricingPlans course={course} cohorts={(cohortResult.data || []) as Cohort[]}
+          enrolledIds={((enrollmentResult.data || []) as { cohort_id: string }[]).map(item => item.cohort_id)}
+          content={content} isLoggedIn={!!user} /></div>
         <Link className={styles.back} href={courseHref(course)}>← 커리큘럼 소개로</Link>
       </main>
     </div>
