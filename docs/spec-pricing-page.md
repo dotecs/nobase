@@ -108,6 +108,8 @@ export interface PricingContent {
 
 시안에 없는 문구를 만들어 넣지 않는다 (할인·평점·수강생 수 등 금지).
 
+**2026-10-21 변경 (대표 지시, 시안과 다름)**: 플랜 순서 PREMIUM → STANDARD → BASIC, 강조(`highlight`)는 PREMIUM, PREMIUM 고유 혜택 `전용 질문 카톡방` → `개인별 맞춤 설명 영상 제공`. `content/pricing/n-training.ts`에 반영됨.
+
 ### P3. 페이지 `app/(main)/courses/[courseId]/pricing/page.tsx` + `pricing.module.css`
 
 **데이터**: `resolveCourse` → 미발행이면 `notFound()`. UUID로 오면 slug로 `redirect`. `cohorts` 활성만 `starts_at, created_at` 순. 로그인 시 `enrollments(active)` 조회(기존 랜딩과 같은 패턴). `getPricingContent(course.slug)`.
@@ -160,6 +162,35 @@ export interface PricingContent {
 | 8 | 수강 중 계정: 등록한 기수 카드만 "이어서 학습하기" | 사람 |
 | 9 | `lib/pricing.ts` 매칭 함수 단위 테스트: 매칭 없음 / 중복 매칭 / 미매칭 기수 일반 카드 | Codex |
 | 10 | `/sitemap.xml`에 pricing 2개 추가, `tsc`·`build` 통과 | Codex |
+
+---
+
+### P3-fix. 히어로 배경 단절 수정 (2026-10-21 프리뷰 검수에서 발견)
+
+**증상**: 배경 이미지가 `.hero::before`(`inset: 0 -32px`)로 히어로 박스 안에만 깔려서, 데스크톱에서는 좌우(컨테이너 1320px 경계)·아래(카드 시작선)에 사각형 테두리가 보이고 모바일에서도 카드와 단절된다. 다크에서는 회색 박스로 보인다. 시안은 배경이 **화면 전체 폭**으로 깔리고 **카드 상단 뒤까지 내려가다 페이지 배경으로 녹아 사라지는** 구조다.
+
+**수정** — `pricing.module.css`만 변경. 마크업 변경 없음.
+
+1. `.hero::before` 규칙(4행)과 모바일의 `.hero::before { inset: 0 -16px }`(57행) **삭제**. `.hero`에서 `isolation`은 유지해도 무방.
+2. 배경을 페이지 최상단 전체 폭 레이어로 옮긴다:
+   ```css
+   .page { position: relative; }
+   .page::before {
+     content: ''; position: absolute; left: 0; right: 0; top: 0; z-index: 0; pointer-events: none;
+     height: 620px;                                   /* 히어로(≈290+64) + 카드 상단 ~260px 겹침 */
+     background: var(--hero-background) center top / cover no-repeat;
+     opacity: var(--hero-opacity);
+     -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+     mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+   }
+   .main { position: relative; z-index: 1; }
+   ```
+   `--hero-background`는 지금처럼 `.hero`의 inline style로 들어오므로 **`.page`로 옮긴다** (page.tsx의 `style={...}`을 `<div className={styles.page}>`로 이동 — 이 한 줄은 tsx 변경 허용).
+3. 페이지 배경색을 이미지 기조와 맞춘다: `--pricing-bg: #fbfcff` (이미지 가장자리가 거의 흰색이라 `#f6f9ff`보다 밝아야 경계가 안 보인다). 카드 그림자는 그대로.
+4. 모바일(`max-width: 700px`): `.page::before { height: 560px; }` — 히어로가 세로로 길어지므로 카드 상단과 겹치는 양을 비슷하게 유지.
+5. 다크: `--hero-opacity: 0.12` 유지. 박스가 사라지므로 은은한 광원처럼만 남는다. 너무 보이면 `0.08`.
+
+**완료 조건**: 데스크톱 1440px·모바일 375px·다크 3가지에서 배경 사각형 경계가 보이지 않고, 카드 상단이 연한 파랑 위에 걸쳐 있다가 아래로 갈수록 페이지 배경으로 이어진다. 가로 스크롤 없음.
 
 ---
 

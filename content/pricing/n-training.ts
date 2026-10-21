@@ -14,20 +14,20 @@ const training: PricingContent = {
   },
   plans: [
     {
-      match: 'BASIC', eyebrow: 'BASIC TRAINING', name: '기본 트레이닝',
-      tagline: '기초부터 차근차근 시작하고 싶다면', icon: '/pricing/n-training/plan-basic.webp',
-      features: [...commonFeatures, { text: '실전모의고사 1회', emphasis: true }],
+      match: 'PREMIUM', eyebrow: 'PREMIUM TRAINING', name: '프리미엄 트레이닝',
+      tagline: '더 많은 1:1 강의와 질문 지원이 필요하다면', icon: '/pricing/n-training/plan-premium.webp',
+      features: [...commonFeatures, { text: '실시간 1:1 강의 무제한', emphasis: true }, { text: '실전모의고사 5회', emphasis: true }, { text: '개인별 맞춤 설명 영상 제공', emphasis: true }],
+      highlight: true,
     },
     {
       match: 'STANDARD', eyebrow: 'STANDARD TRAINING', name: '스탠다드 트레이닝',
       tagline: '1:1 강의와 실전 연습을 함께 원한다면', icon: '/pricing/n-training/plan-standard.webp',
       features: [...commonFeatures, { text: '실시간 1:1 강의 20시간', emphasis: true }, { text: '실전모의고사 3회', emphasis: true }],
-      highlight: true,
     },
     {
-      match: 'PREMIUM', eyebrow: 'PREMIUM TRAINING', name: '프리미엄 트레이닝',
-      tagline: '더 많은 1:1 강의와 질문 지원이 필요하다면', icon: '/pricing/n-training/plan-premium.webp',
-      features: [...commonFeatures, { text: '실시간 1:1 강의 무제한', emphasis: true }, { text: '실전모의고사 5회', emphasis: true }, { text: '전용 질문 카톡방', emphasis: true }],
+      match: 'BASIC', eyebrow: 'BASIC TRAINING', name: '기본 트레이닝',
+      tagline: '기초부터 차근차근 시작하고 싶다면', icon: '/pricing/n-training/plan-basic.webp',
+      features: [...commonFeatures, { text: '실전모의고사 1회', emphasis: true }],
     },
   ],
   commonBenefits: {
