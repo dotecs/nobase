@@ -1,0 +1,17 @@
+.page { min-height: 100vh; background: var(--color-bg); }
+.main { max-width: 1000px; margin: 0 auto; padding: 32px 24px 72px; }
+.back { color: var(--color-primary); }
+.title { font-size: clamp(24px, 4vw, 36px); margin: 24px 0; overflow-wrap: anywhere; }
+.description { white-space: pre-line; margin-top: 24px; color: var(--color-text-secondary); }
+.section { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--color-border); }
+.section h2 { font-size: 22px; margin-bottom: 16px; }
+.list { display: grid; gap: 8px; }
+.lesson { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; border: 1px solid var(--color-border); border-radius: 8px; overflow-wrap: anywhere; }
+.lesson:hover, .current { border-color: var(--color-primary); }
+.current { font-weight: 600; }
+.status { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; font-size: 12px; color: var(--color-text-secondary); }
+.cta { display: inline-flex; padding: 12px 20px; border-radius: 8px; color: #fff; background: var(--color-primary); font-weight: 600; }
+@media (max-width: 640px) {
+  .main { padding: 24px 16px 48px; }
+  .lesson { align-items: flex-start; flex-direction: column; gap: 8px; }
+}

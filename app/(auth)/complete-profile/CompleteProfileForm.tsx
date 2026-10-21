@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { safeReturnTo } from '@/lib/safe-return-to';
 import { createBrowserClient } from '@supabase/ssr';
 import styles from '../auth.module.css';
 import formStyles from './complete-profile.module.css';
 
 export default function CompleteProfileForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = safeReturnTo(searchParams.get('returnTo'));
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState('');
@@ -26,7 +29,7 @@ export default function CompleteProfileForm() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        router.push('/login');
+        router.push(`/login?returnTo=${encodeURIComponent(returnTo)}`);
         return;
       }
 
@@ -37,9 +40,9 @@ export default function CompleteProfileForm() {
         .single();
 
       if (profile) {
-        // 이미 프로필이 완성되어 있으면 대시보드로
+        // 이미 프로필이 완성되어 있으면 안전한 복귀 경로로
         if (profile.name && profile.phone) {
-          router.push('/dashboard');
+          router.push(returnTo);
           return;
         }
         
@@ -53,7 +56,7 @@ export default function CompleteProfileForm() {
     };
 
     loadProfile();
-  }, [router]);
+  }, [router, returnTo]);
 
   const formatPhoneNumber = (value: string) => {
     // 숫자만 추출
@@ -126,7 +129,7 @@ export default function CompleteProfileForm() {
       return;
     }
 
-    router.push('/dashboard');
+    router.push(returnTo);
   };
 
   if (initialLoading) {

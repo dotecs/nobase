@@ -1,3 +1,4 @@
+import { safeReturnTo } from '@/lib/safe-return-to'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -109,7 +110,7 @@ export async function updateSession(request: NextRequest) {
   if (isAuthPath && user) {
     const returnTo = request.nextUrl.searchParams.get('returnTo')
     if (returnTo) {
-      return NextResponse.redirect(new URL(returnTo, request.url))
+      return NextResponse.redirect(new URL(safeReturnTo(returnTo), request.url))
     }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }

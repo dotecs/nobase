@@ -25,7 +25,7 @@ export default async function EnrollPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    redirect(`/login?redirect=/courses/${courseParam}/enroll/${cohortId}`)
+    redirect(`/login?returnTo=/courses/${courseParam}/enroll/${cohortId}`)
   }
 
   // 프로필 조회

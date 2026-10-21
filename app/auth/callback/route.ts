@@ -1,3 +1,4 @@
+import { safeReturnTo } from '@/lib/safe-return-to';
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -5,7 +6,7 @@ import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const returnTo = requestUrl.searchParams.get('returnTo') || '/dashboard';
+  const returnTo = safeReturnTo(requestUrl.searchParams.get('returnTo'));
 
   if (code) {
     const supabase = await createServerSupabaseClient();
@@ -40,6 +41,13 @@ export async function GET(request: NextRequest) {
       // Service Role 클라이언트로 RPC 호출 — authenticated role에서 발생하던
       // SECURITY DEFINER + RLS 미우회 이슈를 백엔드 레이어에서 봉인.
       const admin = createAdminSupabaseClient();
+      const accountAge = Date.now() - Date.parse(session.user.created_at);
+      if (/^\/courses\/[^/]+\/free\//.test(returnTo) && accountAge >= 0 && accountAge <= 5 * 60 * 1000) {
+        const { error: leadError } = await (admin as any).from('profiles')
+          .update({ lead_source: 'free_lesson' })
+          .eq('user_id', session.user.id).is('lead_source', null);
+        if (leadError) console.error('[lead_source] update failed', leadError.code);
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: linkResult, error: linkError } = await (admin as any)
         .rpc('link_migrated_data', {
@@ -84,6 +92,7 @@ export async function GET(request: NextRequest) {
       // name 또는 phone이 없으면 프로필 완성 페이지로 (이때도 migrated 정보 전달)
       if (!profile?.name || !profile?.phone) {
         const url = new URL('/complete-profile', requestUrl.origin);
+        url.searchParams.set('returnTo', returnTo);
         if (migrated) attachMigratedParams(url);
         return NextResponse.redirect(url);
       }
