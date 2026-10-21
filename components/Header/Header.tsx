@@ -74,7 +74,6 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
           />
         </Link>
 
-        {isLoggedIn && (
           <nav className={styles.nav}>
             <Link
               href="/"
@@ -82,17 +81,17 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
             >
               홈
             </Link>
-            <Link
+            {isLoggedIn && (<Link
               href="/dashboard"
               className={`${styles.navLink} ${isActive('/dashboard') ? styles.navLinkActive : ''}`}
             >
               대시보드
-            </Link>
+            </Link>)}
             <Link 
               href="/courses" 
               className={`${styles.navLink} ${isActive('/courses') ? styles.navLinkActive : ''}`}
             >
-              수강신청
+              커리큘럼
             </Link>
             {/* 공지사항 메뉴 임시 숨김
             <Link 
@@ -102,7 +101,7 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
               공지사항
             </Link>
             */}
-            {userRole === 'admin' && (
+            {isLoggedIn && userRole === 'admin' && (
               <Link 
                 href="/admin" 
                 className={`${styles.navLink} ${isActive('/admin') ? styles.navLinkActive : ''}`}
@@ -111,7 +110,6 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
               </Link>
             )}
           </nav>
-        )}
 
         <div className={styles.userSection}>
           <ThemeToggle />
@@ -129,15 +127,14 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
           )}
           
           {/* 모바일 햄버거 버튼 */}
-          {isLoggedIn && (
             <button 
               className={styles.hamburgerButton}
               onClick={toggleMobileMenu}
               aria-label="메뉴 열기"
+              aria-expanded={isMobileMenuOpen}
             >
               <FaBars />
             </button>
-          )}
         </div>
       </header>
 
@@ -169,17 +166,17 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
           >
             홈
           </Link>
-          <Link
+          {isLoggedIn && (<Link
             href="/dashboard"
             className={`${styles.sidebarLink} ${isActive('/dashboard') ? styles.sidebarLinkActive : ''}`}
           >
             대시보드
-          </Link>
+          </Link>)}
           <Link 
             href="/courses" 
             className={`${styles.sidebarLink} ${isActive('/courses') ? styles.sidebarLinkActive : ''}`}
           >
-            수강신청
+            커리큘럼
           </Link>
           {/* 공지사항 메뉴 임시 숨김
           <Link 
@@ -189,7 +186,7 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
             공지사항
           </Link>
           */}
-          {userRole === 'admin' && (
+          {isLoggedIn && userRole === 'admin' && (
             <Link 
               href="/admin" 
               className={`${styles.sidebarLink} ${isActive('/admin') ? styles.sidebarLinkActive : ''}`}
@@ -200,9 +197,9 @@ export default function Header({ userName, isLoggedIn, userRole }: HeaderProps) 
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <button onClick={handleLogout} className={styles.sidebarLogout}>
+          {isLoggedIn ? (<button onClick={handleLogout} className={styles.sidebarLogout}>
             로그아웃
-          </button>
+          </button>) : (<Link href="/login" className={styles.sidebarLink}>로그인</Link>)}
         </div>
       </aside>
     </>

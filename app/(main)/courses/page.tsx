@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { courseHref } from '@/lib/courses';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
 import { Profile, Course, Cohort } from '@/lib/database.types';
@@ -14,7 +15,7 @@ export default async function CoursesPage() {
   const supabase = await createServerSupabaseClient();
 
   // 공개된 강좌와 활성 기수 조회
-  const [{ data: coursesData }, profileData, { data: enrollmentsData }] = await Promise.all([
+  const [{ data: coursesData, error: coursesError }, profileData, { data: enrollmentsData }] = await Promise.all([
     supabase
       .from('courses')
       .select(`
@@ -24,20 +25,24 @@ export default async function CoursesPage() {
       .eq('is_published', true)
       .order('created_at', { ascending: false }),
     getProfile(),
-    user ? supabase.from('enrollments').select('cohort_id').eq('user_id', user.id).in('status', ['active', 'paused', 'pending']) : Promise.resolve({ data: [] }),
+    user ? supabase.from('enrollments').select('cohort_id').eq('user_id', user.id).eq('status', 'active') : Promise.resolve({ data: [] }),
   ]);
+  if (coursesError) throw coursesError;
 
   // 사용자가 이미 등록한 기수 ID 조회
   const profile = profileData as Profile | null;
   const enrolledCohortIds = ((enrollmentsData || []) as { cohort_id: string }[]).map(e => e.cohort_id);
 
-  // 활성 기수만 필터링 + 이미 등록한 기수 제외
-  const courses = (coursesData || []).map((course: any) => ({
-    ...course,
-    cohorts: (course.cohorts || []).filter((cohort: Cohort) => 
-      cohort.is_active && !enrolledCohortIds.includes(cohort.id)
-    )
-  })).filter((course: CourseWithCohorts) => course.cohorts.length > 0) as CourseWithCohorts[];
+  const courses = (coursesData || []) as CourseWithCohorts[];
+  const { data: freeLessonRows, error: freeLessonError } = courses.length
+    ? await supabase.from('lessons_public').select('course_id').eq('is_free', true)
+        .in('course_id', courses.map(course => course.id))
+    : { data: [], error: null };
+  if (freeLessonError) throw freeLessonError;
+  const freeCounts = new Map<string, number>();
+  for (const lesson of (freeLessonRows || []) as { course_id: string }[]) {
+    freeCounts.set(lesson.course_id, (freeCounts.get(lesson.course_id) || 0) + 1);
+  }
 
   return (
     <div className={styles.page}>
@@ -49,7 +54,7 @@ export default async function CoursesPage() {
       
       <main className={styles.main}>
         <div className={styles.header}>
-          <h1 className={styles.title}>수강 신청</h1>
+          <h1 className={styles.title}>커리큘럼</h1>
           <p className={styles.subtitle}>
             노베이스 구조대와 함께 성장할 수 있는 강좌를 만나보세요
           </p>
@@ -58,15 +63,24 @@ export default async function CoursesPage() {
         {courses.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}><FaBook /></div>
-            <h2 className={styles.emptyTitle}>현재 모집 중인 강좌가 없습니다</h2>
+            <h2 className={styles.emptyTitle}>공개된 강좌가 없습니다</h2>
             <p className={styles.emptyDescription}>
               새로운 강좌가 열리면 안내해 드릴게요!
             </p>
           </div>
         ) : (
           <div className={styles.courseGrid}>
-            {courses.map((course) => (
+            {courses.map((course) => {
+              const enrolledCohort = (course.cohorts || []).find(cohort => enrolledCohortIds.includes(cohort.id));
+              const cohorts = (course.cohorts || []).filter(cohort => cohort.is_active);
+              const freeCount = freeCounts.get(course.id) || 0;
+              const badge = enrolledCohort ? '수강중' : cohorts.length ? '모집중' : freeCount ? `무료 레슨 ${freeCount}개` : null;
+              const href = enrolledCohort
+                ? `/courses/${course.id}/cohorts/${enrolledCohort.id}/curriculum`
+                : courseHref(course);
+              return (
               <article key={course.id} className={styles.courseCard}>
+                <Link href={href}>
                 <div className={styles.courseThumbnail}>
                   {course.thumbnail_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -84,18 +98,22 @@ export default async function CoursesPage() {
                 
                 <div className={styles.courseContent}>
                   <h2 className={styles.courseTitle}>{course.title}</h2>
+                  {badge && <span className={styles.enrollButton}>{badge}</span>}
                   {course.description && (
                     <p className={styles.courseDescription}>{course.description}</p>
                   )}
                   
+                </div>
+                </Link>
+                {cohorts.length > 0 && <div className={styles.courseContent}>
                   <div className={styles.cohortList}>
                     <h3 className={styles.cohortListTitle}>
                       <FaCalendarAlt /> 모집 중인 기수
                     </h3>
-                    {course.cohorts.map((cohort) => (
+                    {cohorts.map((cohort) => (
                       <Link 
                         key={cohort.id}
-                        href={`/courses/${course.id}/enroll/${cohort.id}`}
+                        href={`${courseHref(course)}/enroll/${cohort.id}`}
                         className={styles.cohortItem}
                       >
                         <div className={styles.cohortInfo}>
@@ -110,9 +128,10 @@ export default async function CoursesPage() {
                       </Link>
                     ))}
                   </div>
-                </div>
+                </div>}
               </article>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

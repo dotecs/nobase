@@ -1,3 +1,4 @@
+import { courseHref } from '@/lib/courses';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getUser, createServerSupabaseClient } from '@/lib/supabase-server';
@@ -8,7 +9,7 @@ import styles from './home.module.css';
 
 interface CourseWithCohorts extends Course {
   cohorts: Cohort[];
-  lessons: { count: number }[];
+  lessonCount: number;
 }
 
 export default async function HomePage() {
@@ -16,24 +17,32 @@ export default async function HomePage() {
   const supabase = await createServerSupabaseClient();
 
   // 공개 강좌 + 모집 중인 기수 + 레슨 수
-  const { data: coursesData } = await supabase
+  const { data: coursesData, error: coursesError } = await supabase
     .from('courses')
-    .select('*, cohorts(*), lessons(count)')
+    .select('*, cohorts(*)')
     .eq('is_published', true)
     .order('created_at', { ascending: false });
+  if (coursesError) throw coursesError;
+
+  const publishedCourses = (coursesData || []) as CourseWithCohorts[];
+  const { data: lessonRows, error: lessonsError } = publishedCourses.length
+    ? await supabase.from('lessons_public').select('course_id').in('course_id', publishedCourses.map(course => course.id))
+    : { data: [], error: null };
+  if (lessonsError) throw lessonsError;
+  const lessonCounts = new Map<string, number>();
+  for (const lesson of (lessonRows || []) as { course_id: string }[]) {
+    lessonCounts.set(lesson.course_id, (lessonCounts.get(lesson.course_id) || 0) + 1);
+  }
+  // 전체 공개 레슨 수 (신뢰 지표)
+  const totalLessons = lessonRows?.length || 0;
 
   const courses = ((coursesData || []) as CourseWithCohorts[])
     .map((course) => ({
       ...course,
+      lessonCount: lessonCounts.get(course.id) || 0,
       cohorts: (course.cohorts || []).filter((cohort) => cohort.is_active),
     }))
     .filter((course) => course.cohorts.length > 0);
-
-  // 전체 공개 레슨 수 (신뢰 지표)
-  const { count: totalLessons } = await supabase
-    .from('lessons')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_published', true);
 
   return (
     <div className={styles.page}>
@@ -58,6 +67,7 @@ export default async function HomePage() {
             />
           </Link>
           <nav className={styles.nav}>
+            <Link href="/courses">커리큘럼</Link>
             <ThemeToggle />
             {user ? (
               <Button href="/dashboard" size="sm">
@@ -85,8 +95,9 @@ export default async function HomePage() {
           </p>
           <div className={styles.heroActions}>
             <Button href="/courses" size="lg">
-              모집 중인 강좌 보기
+              커리큘럼 보기
             </Button>
+            {courses.some(course => course.cohorts.length > 0) && <span className={styles.showcaseMetaItem}>모집중</span>}
             <Button href={user ? "/dashboard" : "/login"} size="lg" variant="outline">
               {user ? "내 강의실 가기" : "로그인"}
             </Button>
@@ -119,7 +130,7 @@ export default async function HomePage() {
             <div className={styles.showcaseGrid}>
               {courses.map((course) => (
                 <article key={course.id} className={styles.showcaseCard}>
-                  <Link href="/courses" className={styles.showcaseThumbnail}>
+                  <Link href={courseHref(course)} className={styles.showcaseThumbnail}>
                     {course.thumbnail_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -134,13 +145,13 @@ export default async function HomePage() {
                     )}
                   </Link>
                   <div className={styles.showcaseContent}>
-                    <h3 className={styles.showcaseTitle}>{course.title}</h3>
+                    <h3 className={styles.showcaseTitle}><Link href={courseHref(course)}>{course.title}</Link></h3>
                     {course.description && (
                       <p className={styles.showcaseDescription}>{course.description}</p>
                     )}
                     <div className={styles.showcaseMeta}>
                       <span className={styles.showcaseMetaItem}>
-                        <FaBook /> {course.lessons?.[0]?.count ?? 0}개 레슨
+                        <FaBook /> {course.lessonCount}개 레슨
                       </span>
                       <span className={styles.showcaseMetaItem}>
                         <FaClock /> {course.cohorts.length}개 기수 모집 중
@@ -150,7 +161,7 @@ export default async function HomePage() {
                       {course.cohorts.slice(0, 2).map((cohort) => (
                         <Link
                           key={cohort.id}
-                          href={`/courses/${course.id}/enroll/${cohort.id}`}
+                          href={`${courseHref(course)}/enroll/${cohort.id}`}
                           className={styles.showcaseCohort}
                         >
                           <span className={styles.showcaseCohortTitle}>{cohort.title}</span>
