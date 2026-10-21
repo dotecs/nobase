@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { courseHref } from '@/lib/courses';
+import { getCohortCheckoutUrl } from '@/lib/pricing';
+import { getPricingContent } from '@/content/pricing';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
 import { Profile, Course, Cohort } from '@/lib/database.types';
@@ -111,9 +113,11 @@ export default async function CoursesPage() {
                       <FaCalendarAlt /> 모집 중인 기수
                     </h3>
                     {cohorts.map((cohort) => (
-                      <Link 
+                      <a
                         key={cohort.id}
-                        href={`${courseHref(course)}/enroll/${cohort.id}`}
+                        href={getCohortCheckoutUrl(cohort, getPricingContent(course.slug)?.plans) ?? `${courseHref(course)}/pricing`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className={styles.cohortItem}
                       >
                         <div className={styles.cohortInfo}>
@@ -125,7 +129,7 @@ export default async function CoursesPage() {
                           )}
                         </div>
                         <span className={styles.enrollButton}>신청하기</span>
-                      </Link>
+                      </a>
                     ))}
                   </div>
                 </div>}

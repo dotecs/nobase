@@ -29,3 +29,11 @@ export function matchPricingPlans(cohorts: readonly Cohort[], plans: readonly Pr
   }
   return cards;
 }
+
+/** 홈·카탈로그용: 기수에 맞는 플랜의 외부 결제 URL. 없으면 null (호출부는 가격 페이지로 폴백). */
+export function getCohortCheckoutUrl(cohort: Pick<Cohort, 'title'>, plans: readonly PricingPlan[] | undefined): string | null {
+  if (!plans) return null;
+  const title = cohort.title.toLowerCase();
+  const plan = plans.find(item => item.match.length > 0 && title.includes(item.match.toLowerCase()));
+  return plan?.checkoutUrl ?? null;
+}

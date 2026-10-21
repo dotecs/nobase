@@ -85,11 +85,19 @@ export default async function PricingPage({ params }: PageProps) {
                 <span className={styles.check} aria-hidden="true">✓</span>
                 {feature.emphasis ? <strong>{feature.text}</strong> : <span>{feature.text}</span>}
               </li>)}</ul>}
-              <Link className={styles.button} href={isEnrolled
-                ? `/courses/${course.id}/cohorts/${cohort.id}/curriculum`
-                : `${courseHref(course)}/enroll/${cohort.id}`}>
-                {isEnrolled ? '이어서 학습하기' : '등록하기'}<span aria-hidden="true">›</span>
-              </Link>
+              {isEnrolled ? (
+                <Link className={styles.button} href={`/courses/${course.id}/cohorts/${cohort.id}/curriculum`}>
+                  이어서 학습하기<span aria-hidden="true">›</span>
+                </Link>
+              ) : plan?.checkoutUrl ? (
+                <a className={styles.button} href={plan.checkoutUrl} target="_blank" rel="noopener noreferrer">
+                  등록하기<span aria-hidden="true">›</span>
+                </a>
+              ) : (
+                <Link className={styles.button} href={`${courseHref(course)}/enroll/${cohort.id}`}>
+                  등록하기<span aria-hidden="true">›</span>
+                </Link>
+              )}
             </article>;
           })}
         </div> : <section className={styles.empty}>

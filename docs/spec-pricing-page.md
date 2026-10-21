@@ -108,6 +108,8 @@ export interface PricingContent {
 
 시안에 없는 문구를 만들어 넣지 않는다 (할인·평점·수강생 수 등 금지).
 
+**2026-10-21 변경 2 (대표 지시)**: `PricingPlan.checkoutUrl` 추가. 값이 있으면 등록하기 버튼은 내부 `/enroll` 대신 **스마트스토어 상품 페이지를 새 탭**으로 연다(`target=_blank`, `rel=noopener noreferrer`). 등록된 수강생의 '이어서 학습하기'와 플랜 없는 일반 카드의 내부 `/enroll` 링크는 그대로. n-training 3개 플랜에 URL 반영됨.
+
 **2026-10-21 변경 (대표 지시, 시안과 다름)**: 플랜 순서 PREMIUM → STANDARD → BASIC, 강조(`highlight`)는 PREMIUM, PREMIUM 고유 혜택 `전용 질문 카톡방` → `개인별 맞춤 설명 영상 제공`. `content/pricing/n-training.ts`에 반영됨.
 
 ### P3. 페이지 `app/(main)/courses/[courseId]/pricing/page.tsx` + `pricing.module.css`
@@ -141,7 +143,7 @@ export interface PricingContent {
 - `getCourseCta` 2순위 변경: 활성 기수 있음 → `수강 신청` → **`/courses/[slug]/pricing`** (기존 `cohorts[0]` enroll 제거). 1·3·4순위는 그대로.
 - 랜딩의 "모집 기수" 섹션을 요약으로 교체: 제목 `모집 기수` 유지, 본문은 `플랜 N개 · {최저가}원부터` 한 줄 + `플랜·가격 보기 →` 버튼(`/courses/[slug]/pricing`). 기수별 카드 나열은 제거(가격 페이지와 중복). 활성 기수 0개일 때의 "다음 기수 알림 받기" 분기는 그대로.
 - 무료 레슨 페이지 하단 CTA는 `getCourseCta`를 쓰므로 자동 반영.
-- `/courses` 카탈로그·홈의 기수별 "신청하기" 링크는 **이번 범위에서 손대지 않는다** (직접 enroll로 가도 틀리지 않음).
+- `/courses` 카탈로그·홈의 기수별 "신청하기" → **기수에 맞는 플랜의 스마트스토어 URL을 새 탭으로** (`lib/pricing.ts`의 `getCohortCheckoutUrl`). 매칭되는 플랜·URL이 없으면 `/courses/[slug]/pricing`으로 폴백. (2026-10-21 변경: 결제 경로를 스마트스토어 한 갈래로 통일. 내부 `/enroll` 페이지는 링크만 끊고 코드는 유지.)
 
 ### P5. 메타·사이트맵
 
@@ -155,7 +157,7 @@ export interface PricingContent {
 | 1 | 비로그인 `/courses/n-training/pricing` 200, 카드 3개, 가격이 DB와 일치(890,000 / 1,290,000 / 1,490,000), STANDARD만 강조 | Codex (`curl` HTML) + 사람 (시크릿 창) |
 | 2 | `/courses/n-campus-math/pricing` — 플랜 콘텐츠 없이 일반 카드 1개(250,000원) | Codex |
 | 3 | `/courses/<uuid>/pricing` → slug로 리다이렉트 | Codex |
-| 4 | 등록하기 → 비로그인 시 `/login?returnTo=/courses/n-training/enroll/<id>` | Codex |
+| 4 | 등록하기 → 새 탭으로 스마트스토어 상품 페이지가 열림 | Codex |
 | 5 | 랜딩 CTA "수강 신청"이 pricing으로, 모집 기수 섹션이 요약+버튼으로 | Codex |
 | 6 | 모바일 폭(375px)에서 카드 1열, 히어로 오브제 제목 아래, 가로 스크롤 없음 | 사람 (DevTools) |
 | 7 | 다크 테마에서 카드·텍스트 가독 | 사람 |

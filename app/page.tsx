@@ -1,4 +1,6 @@
 import { courseHref } from '@/lib/courses';
+import { getCohortCheckoutUrl } from '@/lib/pricing';
+import { getPricingContent } from '@/content/pricing';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getUser, createServerSupabaseClient } from '@/lib/supabase-server';
@@ -159,16 +161,18 @@ export default async function HomePage() {
                     </div>
                     <div className={styles.showcaseCohorts}>
                       {course.cohorts.slice(0, 2).map((cohort) => (
-                        <Link
+                        <a
                           key={cohort.id}
-                          href={`${courseHref(course)}/enroll/${cohort.id}`}
+                          href={getCohortCheckoutUrl(cohort, getPricingContent(course.slug)?.plans) ?? `${courseHref(course)}/pricing`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className={styles.showcaseCohort}
                         >
                           <span className={styles.showcaseCohortTitle}>{cohort.title}</span>
                           <span className={styles.showcaseCohortAction}>
                             신청하기 <FaArrowRight />
                           </span>
-                        </Link>
+                        </a>
                       ))}
                     </div>
                   </div>
