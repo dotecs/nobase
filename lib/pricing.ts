@@ -1,5 +1,14 @@
 import { Cohort } from './database.types';
 import { PricingPlan } from '@/content/pricing/types';
+import { bookingContent } from '@/content/booking';
+
+export function matchesPricingKeyword(title: string, keyword: string): boolean {
+  return keyword.length > 0 && title.toLowerCase().includes(keyword.toLowerCase());
+}
+
+export function isBookingEligible(cohorts: readonly Pick<Cohort, 'title'>[]): boolean {
+  return cohorts.some(cohort => bookingContent.eligibleKeywords.some(keyword => matchesPricingKeyword(cohort.title, keyword)));
+}
 
 export interface PricingCard {
   cohort: Cohort;
@@ -14,7 +23,7 @@ export function matchPricingPlans(cohorts: readonly Cohort[], plans: readonly Pr
       || a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id);
   });
   const matches = (cohort: Cohort, plan: PricingPlan) =>
-    plan.match.length > 0 && cohort.title.toLowerCase().includes(plan.match.toLowerCase());
+    matchesPricingKeyword(cohort.title, plan.match);
   const cards: PricingCard[] = [];
   const selected = new Set<string>();
   for (const plan of plans) {
@@ -33,7 +42,6 @@ export function matchPricingPlans(cohorts: readonly Cohort[], plans: readonly Pr
 /** 홈·카탈로그용: 기수에 맞는 플랜의 외부 결제 URL. 없으면 null (호출부는 가격 페이지로 폴백). */
 export function getCohortCheckoutUrl(cohort: Pick<Cohort, 'title'>, plans: readonly PricingPlan[] | undefined): string | null {
   if (!plans) return null;
-  const title = cohort.title.toLowerCase();
-  const plan = plans.find(item => item.match.length > 0 && title.includes(item.match.toLowerCase()));
+  const plan = plans.find(item => matchesPricingKeyword(cohort.title, item.match));
   return plan?.checkoutUrl ?? null;
 }
