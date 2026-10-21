@@ -118,12 +118,10 @@ export default async function CourseLandingPage({ params }: PageProps) {
 
         <section className={styles.section}>
           <h2>모집 기수</h2>
-          {cohorts.length ? <div className={styles.cards}>{cohorts.map(cohort => <article key={cohort.id} className={styles.card}>
-            <h3>{cohort.title}</h3>
-            <p>{cohort.price == null ? '수강료 미정' : `${cohort.price.toLocaleString('ko-KR')}원`}</p>
-            <p className={styles.muted}>시작일: {cohort.starts_at ? new Date(cohort.starts_at).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' }) : '미정'}</p>
-            <Link href={`${courseHref(course)}/enroll/${cohort.id}`} className={styles.cta}>신청하기</Link>
-          </article>)}</div> : user
+          {cohorts.length ? <div>
+            <p>플랜 {cohorts.length}개 · {Math.min(...cohorts.map(cohort => cohort.price)).toLocaleString('ko-KR')}원부터</p>
+            <Link href={`${courseHref(course)}/pricing`} className={styles.cta}>플랜·가격 보기 →</Link>
+          </div> : user
             ? <p className={styles.muted}>다음 기수 모집 일정은 추후 안내됩니다.</p>
             : <Link className={styles.cta} href={`/login?returnTo=${encodeURIComponent(courseHref(course))}`}>다음 기수 알림 받기</Link>}
         </section>

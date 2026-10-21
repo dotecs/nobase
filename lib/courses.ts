@@ -62,7 +62,7 @@ export function getCourseCta(
     return { label: '이어서 학습하기', href: `/courses/${course.id}/cohorts/${activeCohortId}/curriculum` };
   }
   if (cohorts.length) {
-    return { label: '수강 신청', href: `${courseHref(course)}/enroll/${cohorts[0].id}` };
+    return { label: '수강 신청', href: `${courseHref(course)}/pricing` };
   }
   if (firstFreeLesson) {
     return { label: '무료 레슨 보기', href: `${courseHref(course)}/free/${firstFreeLesson.id}` };
