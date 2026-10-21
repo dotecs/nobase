@@ -55,10 +55,10 @@ export default async function PricingPage({ params }: PageProps) {
   const profile = profileData as Profile | null;
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} style={content ? { '--hero-background': `url("${content.hero.background}")` } as CSSProperties : undefined}>
       <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role} />
       <main className={styles.main}>
-        <section className={styles.hero} style={content ? { '--hero-background': `url("${content.hero.background}")` } as CSSProperties : undefined}>
+        <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <h1>{content ? <>{content.hero.title[0]}<br /><span>{content.hero.title[1]}</span></> : course.title}</h1>
             <p>{content?.hero.subtitle ?? course.description}</p>
