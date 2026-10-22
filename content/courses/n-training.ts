@@ -9,7 +9,6 @@ export const trainingLanding = {
   ],
   cta: { primary: '나에게 맞는 플랜 보기', free: '무료 기초 강의 보기', compare: '플랜별 지원 비교하기', header: '플랜 보기' },
   assets: { brand: '/pricing/n-training/hero-brand.webp', background: '/pricing/n-training/hero-bg.webp' },
-  pendingLabel: (id: string) => `[ASSET-PENDING:${id}]`,
   hero: {
     eyebrow: '뇌지컬 트레이닝 100', title: ['SSIT 준비,', '기초부터 실전까지', '한 흐름으로.'],
     description: ['수학·물리·화학부터 면접까지.', '일과 공부를 병행하는 당신을 위한 온라인 학습 과정.'],
@@ -24,14 +23,15 @@ export const trainingLanding = {
     questions: ['공부를 쉰 지 오래됐어요', '일과 병행할 수 있을까요?', '시험 범위가 너무 넓어요'],
     subtitle: 'SSIT 준비에 필요한 4개 영역',
     subjects: [
-      { title: '수학', text: '기초 개념부터 차근차근', asset: 'M01-a' },
-      { title: '물리', text: '원리를 이해하고 문제에 적용', asset: 'M01-b' },
-      { title: '화학', text: '핵심 개념을 연결하는 학습', asset: 'M01-c' },
-      { title: '면접', text: '면접 워크북으로 준비', asset: 'M01-d' },
+      { title: '수학', text: '기초 개념부터 차근차근', asset: '/landing/n-training/subject-math.webp', alt: '' },
+      { title: '물리', text: '원리를 이해하고 문제에 적용', asset: '/landing/n-training/subject-physics.webp', alt: '' },
+      { title: '화학', text: '핵심 개념을 연결하는 학습', asset: '/landing/n-training/subject-chemistry.webp', alt: '' },
+      { title: '면접', text: '면접 워크북으로 준비', asset: '/landing/n-training/subject-interview.webp', alt: '' },
     ],
     strip: '흩어진 준비를 하나의 학습 흐름으로.',
   },
   curriculum: {
+    asset: '/landing/n-training/curriculum-steps.webp', alt: '',
     eyebrow: 'CURRICULUM', title: ['기초를 다지고,', '22주 학습의 흐름을 만드세요.'],
     description: '기초 수학 2주 + 정규 과정 20주 · 3회독 기준',
     timeline: [{ title: '기초 수학', duration: '2주' }, { title: '정규 과정', duration: '20주' }], total: '총 22주',
@@ -46,11 +46,12 @@ export const trainingLanding = {
     title: ['배운 내용을 정리하고,', '실전에서 확인하세요.'],
     description: '체계적인 학습 자료와 실전 모의고사로, 배움을 확실한 실력으로 만듭니다.',
     panels: [
-      { label: '개념 요약 PDF', title: '복습할 때 필요한 핵심을 한곳에', text: '강의의 핵심 개념을 과목별로 정리한 요약 PDF 교재로, 학습 내용을 빠르고 효율적으로 복습할 수 있습니다.', asset: 'M05', caption: '학습 자료 구성 예시', items: ['수학', '물리', '화학'] },
-      { label: '실전모의고사', title: '응시부터 해설과 피드백까지', text: '실전과 동일한 환경의 모의고사로 실력을 점검하고, 상세한 해설강의와 1:1 피드백으로 부족한 부분까지 짚어드립니다.', asset: 'M06', caption: '', items: ['모의고사 응시', '해설강의', '1:1 피드백'] },
+      { label: '개념 요약 PDF', title: '복습할 때 필요한 핵심을 한곳에', text: '강의의 핵심 개념을 과목별로 정리한 요약 PDF 교재로, 학습 내용을 빠르고 효율적으로 복습할 수 있습니다.', asset: '/landing/n-training/materials-sheets.webp', alt: '수학·물리·화학 개념 요약 자료 구성 예시', caption: '학습 자료 구성 예시', items: ['수학', '물리', '화학'] },
+      { label: '실전모의고사', title: '응시부터 해설과 피드백까지', text: '실전과 동일한 환경의 모의고사로 실력을 점검하고, 상세한 해설강의와 1:1 피드백으로 부족한 부분까지 짚어드립니다.', asset: '/landing/n-training/exam-sheet.webp', alt: '실전모의고사 답안지와 타이머 일러스트', caption: '', items: ['모의고사 응시', '해설강의', '1:1 피드백'] },
     ], note: '모의고사 제공 횟수는 플랜에 따라 다릅니다.',
   },
   support: {
+    asset: '/landing/n-training/live-support.webp', alt: '노트북 화면의 1:1 실시간 강의 이용 흐름 예시',
     title: ['혼자 막히는 순간,', '1:1로 이어지는 학습.'],
     description: ['등록 후 사이트에서 예약하고,', '실시간 강의로 궁금한 내용을 확인하세요.'],
     steps: [
@@ -64,7 +65,8 @@ export const trainingLanding = {
     ], note: '※ 1:1 실시간 강의는 해당 혜택이 포함된 플랜에서 이용할 수 있습니다.',
   },
   instructor: {
-    title: ['누가 안내하는지,', '어떤 경험이었는지 확인하세요.'], photoLabel: '강사 사진 영역',
+    title: ['누가 안내하는지,', '어떤 경험이었는지 확인하세요.'],
+    asset: '/landing/n-training/instructor.webp', alt: '한철민 강사 사진',
     name: '한철민 강사', education: '성균관대학교 기계공학과 졸업', description: '수학·과학 학습을 안내합니다.',
     interviewsTitle: '합격생 인터뷰',
     interviews: ['72i-71vNbVc', 'xCwW3z3u2Q0', 'Id092xkPGgE'].map((id, index) => ({

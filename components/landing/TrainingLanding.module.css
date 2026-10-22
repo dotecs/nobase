@@ -32,8 +32,11 @@
 .chips svg { flex-shrink: 0; color: var(--color-primary); }
 .subheading { font-size: 26px; margin: 40px 0 24px; letter-spacing: -0.04em; }
 .strip { margin-top: 24px; padding: 24px; text-align: center; background: var(--landing-tint); border-radius: 20px; font-weight: 600; }
-.pending { display: flex; justify-content: center; align-items: center; aspect-ratio: 4 / 3; width: 100%; min-width: 0; margin: 24px 0; border: 1px dashed var(--color-primary); border-radius: 16px; background: var(--landing-tint); color: var(--color-text-secondary); font-size: 13px; overflow-wrap: anywhere; }
-.square { aspect-ratio: 1; }
+.subjectImage, .illustration { display: block; width: 100%; height: auto; object-fit: contain; margin: 24px 0; }
+.subjectImage { aspect-ratio: 1; }
+.curriculumHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.curriculumHeader > div { flex: 1; min-width: 0; }
+.curriculumImage { width: 300px; height: auto; object-fit: contain; flex-shrink: 0; }
 .timeline { display: flex; gap: 24px; align-items: center; margin: 48px 0; }
 .segments { flex: 1; display: flex; min-width: 0; }
 .segments > div { flex: 2; min-width: 108px; padding: 24px 12px; display: flex; flex-direction: column; align-items: center; background: var(--landing-tint); border-radius: 16px 0 0 16px; }
@@ -52,7 +55,7 @@
 .checks svg { flex-shrink: 0; color: var(--color-primary); margin-top: 4px; }
 .instructor { display: flex; align-items: center; gap: 40px; }
 .portrait { width: 240px; flex-shrink: 0; text-align: center; }
-.portrait .pending { margin: 0; }
+.portrait img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: center; border-radius: 16px; }
 .thumbnail { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; }
 .interviewTitle { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
 .interviewTitle svg { color: var(--color-primary); flex-shrink: 0; }
@@ -66,6 +69,7 @@
 :global([data-theme="dark"]) .page { --landing-tint: var(--color-bg-secondary); --landing-opacity: 0.12; }
 @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .page { --landing-tint: var(--color-bg-secondary); --landing-opacity: 0.12; } }
 @media (max-width: 1199px) {
+  .curriculumImage { display: none; }
   .container { padding: 0 24px; } .section { padding: 72px 0; }
   .hero h1, .heading h2 { font-size: 40px; } .copy, .heading p { font-size: 16px; }
   .four { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card { padding: 24px; }
