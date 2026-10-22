@@ -4,14 +4,17 @@ import Link from 'next/link';
 import { FiBookOpen, FiCalendar, FiMonitor, FiHelpCircle, FiRefreshCw, FiCheckSquare, FiVideo, FiMessageCircle, FiPlay, FiCheckCircle } from 'react-icons/fi';
 import type { trainingLanding } from '@/content/courses/n-training';
 import type { Cohort, Course } from '@/lib/database.types';
+import type { PublicLesson, PublicSubject } from '@/lib/courses';
 import { getPricingContent } from '@/content/pricing';
 import { contact } from '@/content/contact';
 import PricingPlans from '@/components/pricing/PricingPlans';
 import LandingActions from './LandingActions';
+import InterviewPlayer from './InterviewPlayer';
 import styles from './TrainingLanding.module.css';
 
 type Content = typeof trainingLanding;
 type Shared = { content: Content };
+type CurriculumData = { subjects: PublicSubject[]; lessons: PublicLesson[] };
 function Heading({ lines, children }: { lines: string[]; children?: ReactNode }) {
   return <div className={styles.heading}><h2>{lines.map((line, i) => <span key={line} className={i ? styles.blue : undefined}>{line}</span>)}</h2>{children}</div>;
 }
@@ -36,12 +39,23 @@ function Overview({ content }: Shared) {
       <Image className={styles.subjectImage} src={item.asset} alt={item.alt} width={480} height={480} loading="lazy" sizes="(max-width: 700px) calc(100vw - 88px), (max-width: 1199px) 40vw, 224px" /><h3>{item.title}</h3><p>{item.text}</p></article>)}</div><p className={styles.strip}>{content.overview.strip}</p>
   </div></section>;
 }
-function Curriculum({ content }: Shared) {
+function Curriculum({ content, curriculum, freeLessonId }: Shared & { curriculum: CurriculumData; freeLessonId: string | null }) {
   const c = content.curriculum; const icons = [FiBookOpen, FiRefreshCw, FiCheckSquare];
+  const lessons = curriculum.lessons.filter(lesson => lesson.subject_id === null || curriculum.subjects.some(subject => subject.id === lesson.subject_id));
+  const groups = curriculum.subjects.map(subject => ({ id: subject.id, title: subject.title, lessons: lessons.filter(lesson => lesson.subject_id === subject.id) }));
+  const ungrouped = lessons.filter(lesson => lesson.subject_id === null);
+  if (ungrouped.length) groups.push({ id: 'ungrouped', title: c.ungroupedLabel, lessons: ungrouped });
   return <section id="curriculum" className={styles.section}><div className={styles.container}><div className={styles.curriculumHeader}><div><p className={styles.eyebrow}>{c.eyebrow}</p><Heading lines={c.title}><p>{c.description}</p></Heading></div>
     <Image className={styles.curriculumImage} src={c.asset} alt={c.alt} width={900} height={600} loading="lazy" sizes="(max-width: 1199px) 1px, 300px" /></div>
     <div className={styles.timeline}><div className={styles.segments}>{c.timeline.map(item => <div key={item.title}><strong>{item.title}</strong><span>{item.duration}</span></div>)}</div><strong className={styles.total}>{c.total}</strong></div>
     <div className={`${styles.three} ${styles.steps}`}>{c.steps.map((item, i) => { const Icon = icons[i]; return <article className={styles.card} key={item.title}><Icon aria-hidden="true" /><p className={styles.eyebrow}>{String(i + 1).padStart(2, '0')}</p><h3>{item.title}</h3><p>{item.text}</p></article>; })}</div><p className={styles.note}>{c.note}</p>
+    <details className={styles.curriculumContents}><summary>{c.contentsLabel}</summary>
+      <p className={styles.note}>{c.countLabel(curriculum.subjects.length, lessons.length)}</p>
+      {groups.map(group => <div className={styles.subjectGroup} key={group.id}><h3>{group.title}</h3><ol>{group.lessons.map(lesson => <li key={lesson.id}>
+        {lesson.is_free && lesson.id === freeLessonId ? <Link href={content.links.freeLesson(lesson.id)}>{lesson.title}</Link> : <span>{lesson.title}</span>}
+        {lesson.is_free && <span className={styles.freeBadge}>{c.freeLabel}</span>}
+      </li>)}</ol></div>)}
+    </details>
   </div></section>;
 }
 function Materials({ content }: Shared) {
@@ -62,8 +76,8 @@ function Support({ content }: Shared) {
 function Instructor({ content }: Shared) {
   const s = content.instructor;
   return <section id="instructor" className={styles.section}><div className={styles.container}><Heading lines={s.title} />
-    <article className={`${styles.card} ${styles.instructor}`}><div className={styles.portrait}><Image src={s.asset} alt={s.alt} width={480} height={480} loading="lazy" sizes="(max-width: 700px) 160px, 240px" /></div><div><h3>{s.name}</h3><p>{s.education}</p><p>{s.description}</p></div></article>
-    <h3 className={styles.subheading}>{s.interviewsTitle}</h3><div className={styles.three}>{s.interviews.map(item => <a className={styles.card} key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
+    <article className={`${styles.card} ${styles.instructor}`}><div className={styles.portrait}><Image src={s.asset} alt={s.alt} width={480} height={480} loading="lazy" sizes="(max-width: 700px) 160px, 240px" /></div><div><h3>{s.name}</h3><p>{s.education}</p><p>{s.credentials}</p><p>{s.description}</p></div></article>
+    <h3 className={styles.subheading}>{s.interviewsTitle}</h3><InterviewPlayer interview={s.interviews[0]} /><div className={styles.two}>{s.interviews.slice(1).map(item => <a className={styles.card} key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
       {/* YouTube thumbnails use their public source without adding a remote image configuration. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className={styles.thumbnail} src={item.image} alt={item.alt} loading="lazy" width={480} height={360} /><h3 className={styles.interviewTitle}><FiPlay aria-hidden="true" />{item.title}</h3>
@@ -76,12 +90,12 @@ function Faq({ content, freeHref }: Shared & { freeHref: string | null }) {
     <div className={styles.closing}><div><Heading lines={content.faq.closing}><p>{content.faq.description}</p></Heading><Actions content={content} freeHref={freeHref} /></div><Image src={content.assets.brand} alt="" width={720} height={360} sizes="(max-width: 700px) 50vw, 30vw" /></div>
   </div></section>;
 }
-export default function TrainingLanding({ content, course, cohorts, enrolledIds, isLoggedIn, freeLessonId }: Shared & {
-  course: Course; cohorts: Cohort[]; enrolledIds: string[]; isLoggedIn: boolean; freeLessonId: string | null;
+export default function TrainingLanding({ content, course, cohorts, enrolledIds, isLoggedIn, freeLessonId, curriculum }: Shared & {
+  course: Course; cohorts: Cohort[]; enrolledIds: string[]; isLoggedIn: boolean; freeLessonId: string | null; curriculum: CurriculumData;
 }) {
   const freeHref = freeLessonId ? content.links.freeLesson(freeLessonId) : null;
   return <main className={styles.page} style={{ '--landing-background': `url("${content.assets.background}")` } as CSSProperties}>
-    <Hero content={content} freeHref={freeHref} /><Overview content={content} /><Curriculum content={content} /><Materials content={content} /><Support content={content} /><Instructor content={content} />
+    <Hero content={content} freeHref={freeHref} /><Overview content={content} /><Curriculum content={content} curriculum={curriculum} freeLessonId={freeLessonId} /><Materials content={content} /><Support content={content} /><Instructor content={content} />
     <section id="plans" className={styles.section}><div className={styles.container}><Heading lines={content.plans.title}><p>{content.plans.description}</p></Heading><PricingPlans course={course} cohorts={cohorts} enrolledIds={enrolledIds} content={getPricingContent(course.slug)} isLoggedIn={isLoggedIn} /></div></section>
     <Faq content={content} freeHref={freeHref} />
     <LandingActions primary={{ href: content.links.pricing, label: content.cta.primary }} talk={{ href: contact.href, label: contact.floatingLabel }} />

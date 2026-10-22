@@ -31,6 +31,8 @@ export const trainingLanding = {
     strip: '흩어진 준비를 하나의 학습 흐름으로.',
   },
   curriculum: {
+    contentsLabel: '커리큘럼 목차 펼치기', freeLabel: '무료', ungroupedLabel: '기타',
+    countLabel: (subjects: number, lessons: number) => `${subjects}개 과목 · ${lessons}개 레슨`,
     asset: '/landing/n-training/curriculum-steps.webp', alt: '',
     eyebrow: 'CURRICULUM', title: ['기초를 다지고,', '22주 학습의 흐름을 만드세요.'],
     description: '기초 수학 2주 + 정규 과정 20주 · 3회독 기준',
@@ -68,10 +70,13 @@ export const trainingLanding = {
     title: ['누가 안내하는지,', '어떤 경험이었는지 확인하세요.'],
     asset: '/landing/n-training/instructor.webp', alt: '한철민 강사 사진',
     name: '한철민 강사', education: '성균관대학교 기계공학과 졸업', description: '수학·과학 학습을 안내합니다.',
+    // 운영: 경력 연수는 매년 1월에 확인하고 갱신합니다.
+    credentials: '수학·과학 강의 경력 7년 · 노베이스구조대 운영 경력 4년',
     interviewsTitle: '합격생 인터뷰',
     interviews: ['72i-71vNbVc', 'xCwW3z3u2Q0', 'Id092xkPGgE'].map((id, index) => ({
       title: `합격생 인터뷰 ${String(index + 1).padStart(2, '0')}`,
       image: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, href: `https://www.youtube.com/watch?v=${id}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${id}`,
       alt: `합격생 인터뷰 ${String(index + 1).padStart(2, '0')} 영상 썸네일`,
     })),
     note: '개인정보 보호를 위해 일부 정보는 비공개됩니다. 기존 안내 기준, 유료 수강생에게 원본 영상을 공유합니다.',

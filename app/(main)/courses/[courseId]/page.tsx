@@ -71,7 +71,7 @@ export default async function CourseLandingPage({ params }: PageProps) {
       landingNavigation={landing.redesign.navigation}
       landingCta={{ label: landing.redesign.cta.header, href: landing.redesign.links.pricing }} />
     <TrainingLanding content={landing.redesign} course={course} cohorts={cohorts}
-      enrolledIds={[...enrolledIds]} isLoggedIn={!!user} freeLessonId={firstFreeLesson?.id ?? null} />
+      enrolledIds={[...enrolledIds]} isLoggedIn={!!user} freeLessonId={firstFreeLesson?.id ?? null} curriculum={curriculum} />
   </>;
 
   return (
