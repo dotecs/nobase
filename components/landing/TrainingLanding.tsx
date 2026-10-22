@@ -10,6 +10,7 @@ import { contact } from '@/content/contact';
 import PricingPlans from '@/components/pricing/PricingPlans';
 import LandingActions from './LandingActions';
 import InterviewPlayer from './InterviewPlayer';
+import WeeklyCurriculum from './WeeklyCurriculum';
 import styles from './TrainingLanding.module.css';
 
 type Content = typeof trainingLanding;
@@ -49,6 +50,7 @@ function Curriculum({ content, curriculum, freeLessonId }: Shared & { curriculum
     <Image className={styles.curriculumImage} src={c.asset} alt={c.alt} width={900} height={600} loading="lazy" sizes="(max-width: 1199px) 1px, 300px" /></div>
     <div className={styles.timeline}><div className={styles.segments}>{c.timeline.map(item => <div key={item.title}><strong>{item.title}</strong><span>{item.duration}</span></div>)}</div><strong className={styles.total}>{c.total}</strong></div>
     <div className={`${styles.three} ${styles.steps}`}>{c.steps.map((item, i) => { const Icon = icons[i]; return <article className={styles.card} key={item.title}><Icon aria-hidden="true" /><p className={styles.eyebrow}>{String(i + 1).padStart(2, '0')}</p><h3>{item.title}</h3><p>{item.text}</p></article>; })}</div><p className={styles.note}>{c.note}</p>
+    <WeeklyCurriculum content={c.weekly} weeks={c.weeks} freeHref={freeLessonId ? content.links.freeLesson(freeLessonId) : null} />
     <details className={styles.curriculumContents}><summary>{c.contentsLabel}</summary>
       <p className={styles.note}>{c.countLabel(curriculum.subjects.length, lessons.length)}</p>
       {groups.map(group => <div className={styles.subjectGroup} key={group.id}><h3>{group.title}</h3><ol>{group.lessons.map(lesson => <li key={lesson.id}>
