@@ -6,6 +6,7 @@ import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-
 import { Cohort, Profile } from '@/lib/database.types';
 import { courseHref, resolveCourse, isUuid, getPublicCurriculum, getFirstFreeLesson, getCourseCta } from '@/lib/courses';
 import { getCourseLanding } from '@/content/courses';
+import TrainingLanding from '@/components/landing/TrainingLanding';
 import styles from './course.module.css';
 
 interface PageProps {
@@ -64,6 +65,14 @@ export default async function CourseLandingPage({ params }: PageProps) {
   }));
   const ungrouped = publicLessons.filter(lesson => lesson.subject_id === null);
   if (ungrouped.length) groups.push({ id: 'ungrouped', title: '기타', lessons: ungrouped });
+
+  if (landing?.redesign) return <>
+    <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role}
+      landingNavigation={landing.redesign.navigation}
+      landingCta={{ label: landing.redesign.cta.header, href: landing.redesign.links.pricing }} />
+    <TrainingLanding content={landing.redesign} course={course} cohorts={cohorts}
+      enrolledIds={[...enrolledIds]} isLoggedIn={!!user} freeLessonId={firstFreeLesson?.id ?? null} curriculum={curriculum} />
+  </>;
 
   return (
     <div className={styles.page}>

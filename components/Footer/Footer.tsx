@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { contact } from '@/content/contact';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -50,6 +51,7 @@ export default function Footer() {
             <div className={styles.links}>
               <Link href="/terms">이용약관</Link>
               <Link href="/privacy">개인정보처리방침</Link>
+              <a href={contact.href} target="_blank" rel="noopener noreferrer">{contact.label}</a>
             </div>
           </div>
         </div>

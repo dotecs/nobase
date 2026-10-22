@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
 import { Header, CourseCard } from '@/components';
 import { Profile } from '@/lib/database.types';
+import { bookingContent } from '@/content/booking';
+import { isBookingEligible } from '@/lib/pricing';
 import { FaBook, FaInbox } from 'react-icons/fa';
 import { HiHand } from 'react-icons/hi';
 import styles from './dashboard.module.css';
@@ -35,6 +37,7 @@ export default async function DashboardPage() {
 
   const profile = profileData as Profile | null;
   const enrollments = (enrollmentsData || []) as any[];
+  const canBook = isBookingEligible(enrollments.flatMap(item => item.cohorts ? [item.cohorts] : []));
 
   // 수강 강좌들을 묶어서 조회하되, 응답 행 수 제한으로 레슨이 누락되지 않게 페이지 처리.
   const courseIds = [...new Set<string>(enrollments.map(e => e.cohorts?.courses?.id).filter(Boolean))];
@@ -96,6 +99,7 @@ export default async function DashboardPage() {
         <div className={styles.grid}>
           <div className={styles.mainContent}>
             <section className={styles.section}>
+              {canBook && <Link href={bookingContent.path} className={styles.browseCoursesLink}>{bookingContent.button}</Link>}
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>
                   <span className={styles.sectionIcon}><FaBook /></span>

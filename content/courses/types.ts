@@ -1,4 +1,5 @@
 export interface CourseLanding {
+  redesign?: typeof import('./n-training').trainingLanding;
   tagline: string;
   audience: string[];
   outcomes: string[];

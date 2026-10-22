@@ -90,7 +90,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 보호된 경로 체크
-  const protectedPrefixes = ['/dashboard', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook']
+  const protectedPrefixes = ['/dashboard', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook', '/booking']
   const protectedCoursePattern = /^\/courses\/[^/]+\/(enroll|cohorts)(\/|$)/
   const pathname = request.nextUrl.pathname
   const isProtectedPath =

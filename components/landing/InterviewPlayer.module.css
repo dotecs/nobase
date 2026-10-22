@@ -1,0 +1,10 @@
+.card { padding: 28px; margin-bottom: 24px; border: 1px solid var(--color-border); border-radius: 20px; background: var(--color-bg-elevated); }
+.card h3 { margin-top: 20px; font-size: 21px; color: var(--color-text); }
+.frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: var(--color-bg-secondary); }
+.frame iframe, .facade, .facade img { display: block; width: 100%; height: 100%; border: 0; }
+.facade { position: relative; cursor: pointer; padding: 0; }
+.facade img { object-fit: cover; }
+.facade:focus-visible { outline: 3px solid var(--color-primary); outline-offset: -4px; }
+.play { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.12); }
+.play svg { width: 72px; height: 72px; padding: 20px; border-radius: 50%; background: var(--color-primary-500); color: #fff; }
+@media (max-width: 700px) { .card { padding: 16px; } .play svg { width: 56px; height: 56px; padding: 16px; } }
