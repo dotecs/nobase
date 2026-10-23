@@ -2,74 +2,115 @@
 .programExplorer { margin-top: 32px; }
 .section { padding: 96px 0; scroll-margin-top: 90px; }
 .section, .about { color: var(--color-ink); word-break: keep-all; overflow-wrap: anywhere; }
-.section h1 { font-size: clamp(36px, 4.5vw, 56px); line-height: 1.28; letter-spacing: -.045em; font-weight: 700; }
-.section h2, .about h2 { font-size: clamp(28px, 3.2vw, 40px); line-height: 1.4; letter-spacing: -.04em; font-weight: 700; }
+.section h1 { font-size: clamp(40px, 4.6vw, 64px); line-height: 1.18; letter-spacing: -.04em; font-weight: 700; }
+.section h2, .about h2 { font-size: clamp(32px, 3.4vw, 44px); line-height: 1.4; letter-spacing: -.04em; font-weight: 700; }
 .section h1 > span, .section h2 > span, .about h2 > span { color: var(--color-primary); }
-.description { font-size: 16px; line-height: 26px; color: var(--color-muted); margin-top: 24px; }
-.hero { background: linear-gradient(135deg, var(--color-surface-brand), var(--color-bg) 75%); }
-.heroColumns { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.description { font-size: 17px; line-height: 28px; color: var(--color-muted); margin-top: 24px; }
+.heroColumns .description { font-size: 18px; line-height: 30px; }
+.heroColumns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 32px; align-items: center; }
 .heroTextOnly { max-width: 960px; }
-.heroImage { width: 100%; height: auto; border-radius: var(--radius-card); background: #fff; }
+.heroArt { width: 100%; max-width: 720px; }
+.heroImage { width: 100%; height: auto; }
 .actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 32px; }
-.actions a { border-radius: var(--radius-button); font-size: 16px; }
-.actions a:first-child { background: var(--color-brand); color: #fff; }
+.actions a { border-radius: var(--radius-button); height: 56px; font-size: 17px; padding: 0 28px; }
+.actions a:first-child { background: var(--color-brand); color: #fff; box-shadow: 0 8px 20px rgba(0,114,198,.25); }
 .actions a:first-child:hover { background: var(--color-brand-hover); }
 .actions a:not(:first-child):hover { background: var(--color-surface-hover); }
-.goals { margin-top: 64px; padding: 32px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
-.goals h2 { font-size: 24px; line-height: 34px; margin-bottom: 24px; }
+.goals { margin-top: 64px; padding: 40px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.goals h2 { font-size: 26px; line-height: 34px; margin-bottom: 24px; }
 .goalGrid, .valueGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.goal { display: flex; align-items: center; gap: 16px; min-height: 96px; padding: 20px; border: 1px solid var(--color-border-brand); border-radius: 12px; background: var(--color-surface-brand); font-weight: 700; }
+.goal { display: flex; align-items: center; gap: 16px; min-height: 128px; padding: 20px 24px; border: 1px solid var(--color-border-brand); border-radius: 12px; background: var(--color-bg-elevated); font-size: 18px; font-weight: 700; }
 .goal > svg { flex-shrink: 0; color: var(--color-primary); }
 .goal > svg:last-child { margin-left: auto; }
 .goal img { flex-shrink: 0; }
-.surface { background: var(--color-surface-brand); }
+.surface { background: linear-gradient(180deg, #EEF6FC, #F7FBFF); }
 .eyebrow { color: var(--color-primary); font-size: 14px; font-weight: 700; letter-spacing: .22em; margin-bottom: 16px; }
 .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 40px 0 24px; }
-.steps li { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 24px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); }
+.steps li { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; height: 88px; padding: 16px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); }
 .steps li:not(:last-child)::after { content: ''; position: absolute; width: 24px; height: 1px; background: var(--color-border-brand); right: -25px; top: 50%; }
 .steps span, .steps svg { color: var(--color-primary); }
-.steps h3 { font-size: 18px; line-height: 28px; }
+.steps span { font-size: 16px; font-weight: 700; }
+.steps svg { flex-shrink: 0; }
+.steps h3 { font-size: 20px; line-height: 28px; font-weight: 700; }
 .learningGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.textCard { padding: 40px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); display: flex; flex-direction: column; justify-content: center; gap: 20px; }
-.textCard > svg { color: var(--color-primary); }
-.textCard h3, .guide h3, .value h3 { font-size: 24px; line-height: 34px; }
-.textCard p, .guide p { color: var(--color-muted); font-size: 16px; line-height: 26px; }
+.textCard { padding: 28px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); display: grid; grid-template-columns: minmax(0, 1fr) 48%; align-items: center; gap: 20px; }
+.textCard img { width: 100%; height: 100%; min-height: 240px; object-fit: cover; border-radius: 16px; }
+.textCard h3 { font-size: 28px; line-height: 38px; }
+.textCard p { margin-top: 20px; font-size: 17px; line-height: 28px; color: var(--color-muted); }
+.guide h3 { font-size: 22px; line-height: 32px; }
+.value h3 { font-size: 26px; line-height: 36px; }
+.guide p { color: var(--color-muted); font-size: 16px; line-height: 26px; }
 .guides { display: grid; gap: 24px; }
-.guide { display: flex; align-items: center; gap: 20px; padding: 28px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); }
+.guide { display: flex; align-items: center; gap: 20px; padding: 28px 32px; background: var(--color-bg-elevated); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); }
 .guide svg { color: var(--color-primary); flex-shrink: 0; }
-.guide svg:last-child { margin-left: auto; }
+.guide > svg:last-child { margin-left: auto; }
 .guide p { margin-top: 8px; }
+.guideIcon { width: 64px; height: 64px; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; background: var(--color-surface-brand); }
 .note { display: flex; align-items: flex-start; gap: 12px; color: var(--color-muted); font-size: 14px; line-height: 22px; margin-top: 24px; }
 .note svg { flex-shrink: 0; }
 .about { scroll-margin-top: 90px; }
 .values { padding-block: 96px; }
-.values > h2 { text-align: center; margin-bottom: 40px; }
-.value { display: flex; align-items: center; gap: 24px; padding: 32px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); }
-.valueIcon { display: flex; flex-direction: column; align-items: center; gap: 16px; color: var(--color-primary); }
+.values > h2 { text-align: center; margin-bottom: 48px; font-size: clamp(32px, 3.6vw, 48px); }
+.value { display: flex; align-items: center; gap: 24px; min-height: 220px; padding: 40px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); }
+.valueIcon { width: 112px; height: 112px; flex-shrink: 0; border-radius: 50%; background: var(--color-surface-brand); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; color: var(--color-primary); }
 .valueIcon > span { font-size: 14px; font-weight: 700; }
-.value p { color: var(--color-primary); font-size: 14px; margin-bottom: 12px; }
-.ctaBand { background: var(--color-surface-brand); padding: 64px 0; }
+.value p { color: var(--color-primary); font-size: 15px; margin-bottom: 12px; }
+.ctaBand { padding: 96px 0; }
+.ctaBand h2 { font-size: clamp(32px, 3.6vw, 48px); }
 .ctaInner { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
-.ctaImage { width: 40%; max-width: 480px; height: auto; border-radius: var(--radius-card); background: #fff; }
+.ctaArt { width: 44%; max-width: 560px; flex-shrink: 0; }
 .section a:focus-visible, .about a:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-@media (max-width: 1023px) { .value { padding: 24px; gap: 16px; } .value h3 { font-size: 20px; } .steps li { padding: 20px; } }
+
+.goal, .textCard, .guide, .value { transition: transform 200ms, box-shadow 200ms; }
+@media (hover: hover) { .goal:hover, .textCard:hover, .guide:hover, .value:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); } }
+:global([data-theme="dark"]) .surface { background: var(--color-surface-brand); }
+@media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .surface { background: var(--color-surface-brand); } }
+@media (min-width: 1200px) { .heroArt { min-width: 560px; } }
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .goals { padding: 40px 24px; }
+  .goal { gap: 8px; padding: 20px 16px; }
+  .value { flex-direction: column; text-align: center; }
+  .steps li { gap: 8px; padding: 12px; }
+}
+@media (max-width: 1023px) {
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps li:nth-child(2)::after { display: none; }
+  .goal { padding: 16px; gap: 8px; font-size: 16px; }
+  .goal img { width: 64px; height: 64px; }
+  .goals { padding: 24px; }
+  .goalGrid { gap: 12px; }
+  .learningGrid { grid-template-columns: minmax(0, 1fr); }
+  .value { padding: 24px; gap: 16px; flex-direction: column; text-align: center; }
+  .value h3 { font-size: 20px; }
+  .valueIcon { width: 80px; height: 80px; }
+}
 @media (max-width: 767px) {
   .section, .values { padding-block: 56px; }
-  .heroColumns, .goalGrid, .valueGrid, .learningGrid { grid-template-columns: minmax(0, 1fr); }
+  .section h1 { font-size: clamp(36px, 4.5vw, 56px); line-height: 1.28; }
+  .section h2, .about h2 { font-size: clamp(28px, 3.2vw, 40px); }
+  .description, .heroColumns .description { font-size: 16px; line-height: 26px; }
+  .heroColumns, .goalGrid, .valueGrid { grid-template-columns: minmax(0, 1fr); }
   .heroImage { max-height: 220px; object-fit: contain; }
-  .goals { padding: 24px; margin-top: 40px; }
-  .goal { min-height: 80px; padding: 16px; }
-  .goalGrid { gap: 12px; }
+  .goals { margin-top: 40px; }
+  .goals h2 { font-size: 24px; }
+  .goal { min-height: 80px; gap: 16px; }
   .actions { gap: 12px; }
-  .actions a { width: 100%; }
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .steps li { gap: 10px; padding: 16px; }
+  .actions a { width: 100%; font-size: 16px; min-height: 48px; height: auto; padding: 12px 24px; }
+  .steps { gap: 16px; }
+  .steps li { height: auto; gap: 10px; padding: 16px; }
   .steps li::after { display: none; }
   .steps h3 { width: 100%; font-size: 16px; }
-  .textCard, .guide { padding: 24px; }
-  .guide { gap: 12px; }
+  .textCard { padding: 24px; grid-template-columns: minmax(0, 1fr); }
+  .textCard img { grid-row: 1; height: 180px; min-height: 0; }
+  .textCard h3 { font-size: 24px; line-height: 34px; }
+  .guide { padding: 24px; gap: 12px; }
+  .guideIcon { width: 48px; height: 48px; }
   .guide h3 { font-size: 20px; }
-  .value { padding: 28px; }
+  .value { padding: 28px; flex-direction: row; text-align: left; }
   .ctaBand { padding-block: 56px; }
-  .ctaImage { display: none; }
+  .ctaArt { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .goal, .textCard, .guide, .value { transition: none; }
+  .goal:hover, .textCard:hover, .guide:hover, .value:hover { transform: none; }
 }
