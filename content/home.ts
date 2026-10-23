@@ -2,11 +2,11 @@ export const home = {
   hero: {
     title: ['기초가 없어도,', '목표는 시작할 수 있으니까.'],
     description: ['입학 준비부터 대학 공부, 새로운 도전까지.', '나의 출발점에 맞는 배움을 찾아보세요.'],
-    image: '/home/hero-scene.webp', goalsTitle: '어떤 목표로 시작하시나요?',
+    image: null as string | null, goalsTitle: '어떤 목표로 시작하시나요?',
     goals: [
-      { label: 'SSIT 입학 준비', category: 'ssit-admission', image: '/home/goal-ssit.webp' },
-      { label: '대학 학습', category: 'university', image: '/home/goal-university.webp' },
-      { label: '편입 준비 · 준비 중', category: 'transfer', image: '/home/goal-transfer.webp' },
+      { label: 'SSIT 입학 준비', category: 'ssit-admission', image: null as string | null },
+      { label: '대학 학습', category: 'university', image: null as string | null },
+      { label: '편입 준비 · 준비 중', category: 'transfer', image: null as string | null },
     ],
   },
   actions: { explore: '프로그램 둘러보기', consult: '학습 상담하기' },

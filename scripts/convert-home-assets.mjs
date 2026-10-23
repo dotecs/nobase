@@ -39,3 +39,4 @@ for (const [id, output, width, height, maxKB] of assets) {
   await writeFile(destination, buffer);
   console.log(`${id}: ${output} (${buffer.length} bytes)`);
 }
+console.log('변환된 에셋을 반영하려면 content/home.ts와 content/programs.ts의 해당 이미지 경로를 채워 주세요. content 파일은 자동으로 변경하지 않습니다.');
