@@ -1,6 +1,10 @@
 .page { min-height: 100vh; display: flex; flex-direction: column; }
-.main { flex: 1; width: min(var(--container-max), calc(100% - var(--gutter) * 2)); margin-inline: auto; padding-block: 96px; word-break: keep-all; overflow-wrap: anywhere; }
-.header { margin-bottom: 40px; }
+.main { flex: 1;  word-break: keep-all; overflow-wrap: anywhere; }
+.header { padding-block: 72px; margin-bottom: 40px; }
+.headerInner, .explorer { width: min(var(--container-max), calc(100% - var(--gutter) * 2)); margin-inline: auto; }
+.headerInner { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.headerArt { width: 40%; max-width: 520px; flex-shrink: 0; }
+.explorer { padding-bottom: 96px; }
 .title { font-size: clamp(36px, 4.5vw, 56px); line-height: 1.28; font-weight: 700; color: var(--color-ink); letter-spacing: -.04em; margin-bottom: 24px; }
-.subtitle { font-size: 16px; line-height: 26px; color: var(--color-muted); }
-@media (max-width: 767px) { .main { padding-block: 56px; } }
+.subtitle { font-size: 17px; line-height: 28px; color: var(--color-muted); }
+@media (max-width: 767px) { .header { padding-block: 56px; } .headerArt { display: none; } .explorer { padding-bottom: 56px; } }

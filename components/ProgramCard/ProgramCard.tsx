@@ -16,9 +16,10 @@ export default function ProgramCard({ program, enrolledHref }: { program: Progra
     <div className={styles.thumbnail}>
       {program.thumbnail && !failedImage ? <Image src={program.thumbnail} alt="" fill sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1023px) 45vw, 384px" onError={() => setFailedImage(true)} />
         : <FiBook size={48} strokeWidth={2} aria-hidden="true" />}
+      <div className={styles.statusOverlay}><StatusBadge status={program.status} /></div>
     </div>
     <div className={styles.content}>
-      <div className={styles.badges}><StatusBadge status={program.status} />{enrolledHref && <span className={styles.enrolled}>{text.enrolled}</span>}</div>
+      {enrolledHref && <span className={styles.enrolled}>{text.enrolled}</span>}
       <h3>{program.title}</h3><p className={styles.audience}>{program.audience}</p><p className={styles.summary}>{program.summary}</p>
       {program.status === 'comingSoon' ? <Button variant="outline" disabled aria-disabled="true" fullWidth>{text.comingSoon}</Button>
         : <Button href={enrolledHref ?? program.href ?? undefined} variant="outline" fullWidth>{enrolledHref ? text.curriculum : text.more}<FiArrowRight size={24} strokeWidth={2} aria-hidden="true" /></Button>}
