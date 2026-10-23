@@ -32,7 +32,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
     }
   }
   return <div className={styles.page}>
-    <Header userName={profile?.name || user?.email} isLoggedIn={!!user} userRole={profile?.role} />
+    <Header glassHeader userName={profile?.name || user?.email} isLoggedIn={!!user} userRole={profile?.role} />
     <main className={styles.main}>
       <div className={`${styles.header} ${scene.backdrop}`}><div className={styles.headerInner}><div><h1 className={styles.title}>{home.programs.catalogTitle}</h1><p className={styles.subtitle}>{home.programs.subtitle}</p></div>{home.hero.image && <div className={`${styles.headerArt} ${scene.art}`}><Image src={home.hero.image} alt="" width={1280} height={800} sizes="(max-width: 767px) 0px, 40vw" /></div>}</div></div>
       <div className={styles.explorer}><Suspense><ProgramExplorer programs={programs} syncUrl initialCategory={normalizeCategory(params.category)} enrolledHrefs={enrolledHrefs} /></Suspense></div>

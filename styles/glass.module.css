@@ -1,0 +1,34 @@
+
+.glass {
+ position: relative; color: var(--color-ink);
+ background: var(--glass-bg); border: 1px solid var(--glass-border-outer); border-radius: var(--radius-card);
+ box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+ -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+ backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+.glassStrong { composes: glass; background: var(--glass-bg-strong); }
+.glassFlat {
+ color: var(--color-ink); background: var(--glass-bg-flat); border: 1px solid var(--glass-border-outer); border-radius: var(--radius-card);
+ box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+}
+.glassBar { position: sticky; top: 0; background: transparent; border-bottom: 1px solid var(--glass-border-outer); }
+.glassBar::before {
+ content: ''; position: absolute; inset: 0; height: 200%;
+ background: linear-gradient(to bottom, var(--glass-bg-strong), var(--glass-bg-strong) 50%, transparent 50%);
+ -webkit-backdrop-filter: blur(var(--glass-blur-bar)) saturate(var(--glass-saturate));
+ backdrop-filter: blur(var(--glass-blur-bar)) saturate(var(--glass-saturate));
+ -webkit-mask-image: linear-gradient(to bottom, #000 0 50%, transparent 50%);
+ mask-image: linear-gradient(to bottom, #000 0 50%, transparent 50%);
+ pointer-events: none; z-index: -1;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+ .glass, .glassStrong { background: var(--glass-bg-flat); }
+ .glassBar::before { background: var(--glass-bg-flat); mask-image: none; -webkit-mask-image: none; height: 100%; }
+}
+@media (max-width: 767px) {
+ .glass, .glassStrong { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--glass-bg-flat); }
+}
+@media (prefers-reduced-transparency: reduce) {
+ .glass, .glassStrong, .glassFlat { background: var(--color-bg-elevated); -webkit-backdrop-filter: none; backdrop-filter: none; }
+ .glassBar::before { background: var(--color-bg); -webkit-backdrop-filter: none; backdrop-filter: none; mask-image: none; -webkit-mask-image: none; height: 100%; }
+}
