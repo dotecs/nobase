@@ -13,7 +13,14 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        <Link href="/" aria-label="노베이스구조대 홈"><BrandLogo footer /></Link>
+        <div className={styles.brandRow}>
+          <div className={styles.brand}><Link href="/" aria-label="노베이스구조대 홈"><BrandLogo footer /></Link><span>기초부터, 가능성까지.</span></div>
+          <div className={styles.links}>
+            <Link href="/terms">이용약관</Link>
+            <Link href="/privacy">개인정보처리방침</Link>
+            <a href={contact.href} target="_blank" rel="noopener noreferrer">{contact.label}</a>
+          </div>
+        </div>
         <div className={styles.mainRow}>
           <span className={styles.copyright}>© {currentYear} NOBASE</span>
           
@@ -50,11 +57,6 @@ export default function Footer() {
               <span><span className={styles.label}>통신판매</span> <span className={styles.value}>2020-수원장안-1017</span></span>
             </div>
             
-            <div className={styles.links}>
-              <Link href="/terms">이용약관</Link>
-              <Link href="/privacy">개인정보처리방침</Link>
-              <a href={contact.href} target="_blank" rel="noopener noreferrer">{contact.label}</a>
-            </div>
           </div>
         </div>
       </div>

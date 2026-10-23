@@ -2,10 +2,9 @@ import { courseHref } from '@/lib/courses';
 import { getCohortCheckoutUrl } from '@/lib/pricing';
 import { getPricingContent } from '@/content/pricing';
 import Link from 'next/link';
-import Image from 'next/image';
-import { getUser, createServerSupabaseClient } from '@/lib/supabase-server';
-import { Button, ThemeToggle, Footer } from '@/components';
-import { Course, Cohort } from '@/lib/database.types';
+import { getUser, getProfile, createServerSupabaseClient } from '@/lib/supabase-server';
+import { Button, Header, Footer } from '@/components';
+import { Course, Cohort, Profile } from '@/lib/database.types';
 import { FaLifeRing, FaHandshake, FaRocket, FaBook, FaClock, FaArrowRight } from 'react-icons/fa';
 import styles from './home.module.css';
 
@@ -16,6 +15,7 @@ interface CourseWithCohorts extends Course {
 
 export default async function HomePage() {
   const user = await getUser();
+  const profile = await getProfile() as Profile | null;
   const supabase = await createServerSupabaseClient();
 
   // 공개 강좌 + 모집 중인 기수 + 레슨 수
@@ -48,41 +48,7 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <Link href="/" className={styles.logo}>
-            <Image
-              src="/logo_kr_b.png"
-              alt="노베이스구조대"
-              width={180}
-              height={36}
-              className={styles.logoImage}
-              priority
-            />
-            <Image
-              src="/logo_kr_w.png"
-              alt="노베이스구조대"
-              width={180}
-              height={36}
-              className={styles.logoImageDark}
-              priority
-            />
-          </Link>
-          <nav className={styles.nav}>
-            <Link href="/courses">커리큘럼</Link>
-            <ThemeToggle />
-            {user ? (
-              <Button href="/dashboard" size="sm">
-                대시보드
-              </Button>
-            ) : (
-              <Button href="/login" size="sm">
-                시작하기
-              </Button>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role} />
 
       <main className={styles.main}>
         <section className={styles.hero}>

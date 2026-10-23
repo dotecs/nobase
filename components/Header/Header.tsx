@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import BrandLogo from '@/components/BrandLogo/BrandLogo';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import BrandLogo from '@/components/BrandLogo/BrandLogo';
+import Button from '@/components/Button/Button';
+import { FiMenu, FiX } from 'react-icons/fi';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -16,189 +17,73 @@ interface HeaderProps {
   landingNavigation?: { label: string; href: string }[];
   landingCta?: { label: string; href: string };
 }
+const defaultNavigation = [
+  { label: '학습 프로그램', href: '/courses' },
+  { label: '학습 방식', href: '/#how' },
+  { label: '브랜드 소개', href: '/#about' },
+];
 
 export default function Header({ userName, isLoggedIn, userRole, landingNavigation, landingCta }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClientSupabaseClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // 경로 변경 시 메뉴 닫기
+  const [hash, setHash] = useState('');
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const sidebar = useRef<HTMLElement>(null);
+  const navigation = landingNavigation && !isLoggedIn ? landingNavigation : defaultNavigation;
+  useEffect(() => { setIsMobileMenuOpen(false); }, [pathname]);
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    const update = () => setHash(window.location.hash);
+    update(); window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
   }, [pathname]);
-
-  // 메뉴 열렸을 때 body 스크롤 방지
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
+    if (!isMobileMenuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const items = () => Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? []);
+    items()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+      if (event.key === 'Tab') {
+        const links = items(), first = links[0], last = links[links.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
     };
+    document.addEventListener('keydown', keydown);
+    return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', keydown); menuButton.current?.focus(); };
   }, [isMobileMenuOpen]);
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsMobileMenuOpen(false);
-    router.push('/login');
-    router.refresh();
+    await createClientSupabaseClient().auth.signOut();
+    setIsMobileMenuOpen(false); router.push('/login'); router.refresh();
   };
-
-  const isActive = (path: string) =>
-    path === '/' ? pathname === '/' : pathname.startsWith(path);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  return (
-    <>
-      <header className={styles.header}>
-        <Link href={isLoggedIn ? '/dashboard' : '/'} className={styles.logo}>
-          <BrandLogo />
-        </Link>
-
-          <nav className={styles.nav}>
-            {landingNavigation && !isLoggedIn ? <>
-              {landingNavigation.map(item => <a key={item.href} href={item.href} className={styles.navLink}>{item.label}</a>)}
-              {landingCta && <Link href={landingCta.href} className={`${styles.navLink} ${styles.navLinkActive}`}>{landingCta.label}</Link>}
-            </> : <>
-            <Link
-              href="/"
-              className={`${styles.navLink} ${isActive('/') ? styles.navLinkActive : ''}`}
-            >
-              홈
-            </Link>
-            {isLoggedIn && (<Link
-              href="/dashboard"
-              className={`${styles.navLink} ${isActive('/dashboard') ? styles.navLinkActive : ''}`}
-            >
-              대시보드
-            </Link>)}
-            <Link 
-              href="/courses" 
-              className={`${styles.navLink} ${isActive('/courses') ? styles.navLinkActive : ''}`}
-            >
-              커리큘럼
-            </Link>
-            {/* 공지사항 메뉴 임시 숨김
-            <Link 
-              href="/announcements" 
-              className={`${styles.navLink} ${isActive('/announcements') ? styles.navLinkActive : ''}`}
-            >
-              공지사항
-            </Link>
-            */}
-            {isLoggedIn && userRole === 'admin' && (
-              <Link 
-                href="/admin" 
-                className={`${styles.navLink} ${isActive('/admin') ? styles.navLinkActive : ''}`}
-              >
-                관리자
-              </Link>
-            )}
-            </>}
-          </nav>
-
-        <div className={styles.userSection}>
-          <ThemeToggle />
-          {isLoggedIn ? (
-            <>
-              <span className={styles.userName}>{userName}</span>
-              <button onClick={handleLogout} className={styles.logoutButton}>
-                로그아웃
-              </button>
-            </>
-          ) : (
-            <Link href="/login" className={styles.navLink}>
-              로그인
-            </Link>
-          )}
-          
-          {/* 모바일 햄버거 버튼 */}
-            <button 
-              className={styles.hamburgerButton}
-              onClick={toggleMobileMenu}
-              aria-label="메뉴 열기"
-              aria-expanded={isMobileMenuOpen}
-            >
-              <FaBars />
-            </button>
-        </div>
-      </header>
-
-      {/* 모바일 사이드바 오버레이 */}
-      {isMobileMenuOpen && (
-        <div 
-          className={styles.overlay}
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* 모바일 사이드바 */}
-      <aside className={`${styles.sidebar} ${isMobileMenuOpen ? styles.sidebarOpen : ''}`}>
-        <div className={styles.sidebarHeader}>
-          <span className={styles.sidebarUserName}>{userName}</span>
-          <button 
-            className={styles.closeButton}
-            onClick={() => setIsMobileMenuOpen(false)}
-            aria-label="메뉴 닫기"
-          >
-            <FaTimes />
-          </button>
-        </div>
-
-        <nav className={styles.sidebarNav}>
-          {landingNavigation && !isLoggedIn ? <>
-            {landingNavigation.map(item => <a key={item.href} href={item.href} className={styles.sidebarLink} onClick={() => setIsMobileMenuOpen(false)}>{item.label}</a>)}
-            {landingCta && <Link href={landingCta.href} className={styles.sidebarLink} onClick={() => setIsMobileMenuOpen(false)}>{landingCta.label}</Link>}
-          </> : <>
-          <Link
-            href="/"
-            className={`${styles.sidebarLink} ${isActive('/') ? styles.sidebarLinkActive : ''}`}
-          >
-            홈
-          </Link>
-          {isLoggedIn && (<Link
-            href="/dashboard"
-            className={`${styles.sidebarLink} ${isActive('/dashboard') ? styles.sidebarLinkActive : ''}`}
-          >
-            대시보드
-          </Link>)}
-          <Link 
-            href="/courses" 
-            className={`${styles.sidebarLink} ${isActive('/courses') ? styles.sidebarLinkActive : ''}`}
-          >
-            커리큘럼
-          </Link>
-          {/* 공지사항 메뉴 임시 숨김
-          <Link 
-            href="/announcements" 
-            className={`${styles.sidebarLink} ${isActive('/announcements') ? styles.sidebarLinkActive : ''}`}
-          >
-            공지사항
-          </Link>
-          */}
-          {isLoggedIn && userRole === 'admin' && (
-            <Link 
-              href="/admin" 
-              className={`${styles.sidebarLink} ${isActive('/admin') ? styles.sidebarLinkActive : ''}`}
-            >
-              관리자
-            </Link>
-          )}
-          </>}
-        </nav>
-
-        <div className={styles.sidebarFooter}>
-          {isLoggedIn ? (<button onClick={handleLogout} className={styles.sidebarLogout}>
-            로그아웃
-          </button>) : (<Link href="/login" className={styles.sidebarLink}>로그인</Link>)}
-        </div>
-      </aside>
-    </>
-  );
+  const isActive = (href: string) => href.includes('#')
+    ? pathname === (href.split('#')[0] || pathname) && hash === `#${href.split('#')[1]}`
+    : pathname === href || pathname.startsWith(`${href}/`);
+  const links = (mobile = false) => <>
+    {navigation.map(item => <a key={item.href} href={item.href} aria-current={isActive(item.href) ? 'location' : undefined}
+      className={`${mobile ? styles.sidebarLink : styles.navLink} ${isActive(item.href) ? mobile ? styles.sidebarLinkActive : styles.navLinkActive : ''}`}
+      onClick={() => { setHash(item.href.includes('#') ? `#${item.href.split('#')[1]}` : ''); setIsMobileMenuOpen(false); }}>{item.label}</a>)}
+    {landingNavigation && !isLoggedIn && landingCta && <Link href={landingCta.href} className={mobile ? styles.sidebarLink : styles.navLink} onClick={() => setIsMobileMenuOpen(false)}>{landingCta.label}</Link>}
+    {isLoggedIn && userRole === 'admin' && <Link href="/admin" className={mobile ? styles.sidebarLink : styles.navLink}>관리자</Link>}
+  </>;
+  return <>
+    <header className={styles.header}>
+      <Link href={isLoggedIn ? '/dashboard' : '/'} className={styles.logo}><BrandLogo /></Link>
+      <nav className={styles.nav} aria-label="주 메뉴">{links()}</nav>
+      <div className={styles.userSection}>
+        <ThemeToggle />
+        {isLoggedIn ? <><span className={styles.classroom}><Button href="/dashboard" size="sm">내 강의실</Button></span><span className={styles.userName}>{userName}</span><button onClick={handleLogout} className={styles.logoutButton}>로그아웃</button></>
+          : <Link href="/login" className={styles.navLink}>로그인</Link>}
+        <button ref={menuButton} className={styles.hamburgerButton} onClick={() => setIsMobileMenuOpen(value => !value)} aria-label="메뉴 열기" aria-expanded={isMobileMenuOpen} aria-controls="mobile-navigation"><FiMenu size={24} /></button>
+      </div>
+    </header>
+    {isMobileMenuOpen && <><div className={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />
+      <aside ref={sidebar} id="mobile-navigation" className={`${styles.sidebar} ${styles.sidebarOpen}`} role="dialog" aria-modal="true" aria-label="전체 메뉴">
+        <div className={styles.sidebarHeader}><span className={styles.sidebarUserName}>{userName}</span><button className={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)} aria-label="메뉴 닫기"><FiX size={24} /></button></div>
+        <nav className={styles.sidebarNav} aria-label="모바일 메뉴">{links(true)}{isLoggedIn && <Link href="/dashboard" className={styles.sidebarLink}>내 강의실</Link>}</nav>
+        <div className={styles.sidebarFooter}>{isLoggedIn ? <button onClick={handleLogout} className={styles.sidebarLogout}>로그아웃</button> : <Link href="/login" className={styles.sidebarLink}>로그인</Link>}</div>
+      </aside></>}
+  </>;
 }
