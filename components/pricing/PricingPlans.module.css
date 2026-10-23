@@ -1,7 +1,8 @@
 .pricing { --pricing-navy: #0f1f4d; scroll-margin-top: 96px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.card { display: flex; flex-direction: column; min-width: 0; border: 2px solid var(--color-border-light); border-radius: 20px; padding: 28px; background: var(--color-bg-elevated); box-shadow: 0 8px 28px rgba(0, 72, 134, 0.05); }
-.highlight { border-color: var(--color-primary); }
+.card { display: flex; flex-direction: column; min-width: 0; padding: 28px; }
+.card:not(.glassCard) { border: 2px solid var(--color-border-light); border-radius: 20px; background: var(--color-bg-elevated); box-shadow: 0 8px 28px rgba(0, 72, 134, 0.05); }
+.highlight:not(.glassCard) { border-color: var(--color-primary); }
 .cardHeading { position: relative; min-height: 136px; padding-bottom: 22px; border-bottom: 1px solid var(--color-border); }
 .eyebrow { padding-right: 68px; font-size: 12px; letter-spacing: 0.04em; color: var(--color-text-secondary); margin-bottom: 10px; }
 .card h2 { padding-right: 60px; color: var(--pricing-navy); font-size: clamp(20px, 2vw, 26px); line-height: 1.4; letter-spacing: -0.04em; word-break: keep-all; overflow-wrap: anywhere; }
@@ -50,3 +51,7 @@
   .price { font-size: 36px; }
   .benefits { padding: 24px; }
 }
+
+.glassCard { --pricing-navy: var(--color-ink); color: var(--color-ink); }
+
+.glassCard :is(.eyebrow, .tagline, .originalPrice, .capacity) { color: var(--color-muted); }

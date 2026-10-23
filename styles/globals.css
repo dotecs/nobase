@@ -616,3 +616,13 @@ ol {
   --color-status-closed-text: #F5ADAD; --color-status-closed-bg: rgba(122,46,46,.18); } }
 @media (max-width: 767px) { :root { --gutter: 20px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Public-page glass surfaces */
+:root {
+ --glass-bg: rgba(255,255,255,.62); --glass-bg-strong: rgba(255,255,255,.78); --glass-bg-flat: rgba(255,255,255,.86);
+ --glass-border: rgba(255,255,255,.75); --glass-border-outer: rgba(0,114,198,.14); --glass-highlight: rgba(255,255,255,.9);
+ --glass-shadow: 0 12px 32px rgba(0,114,198,.10), 0 1px 2px rgba(16,27,51,.04);
+ --glass-blur: 16px; --glass-blur-bar: 12px; --glass-saturate: 1.4;
+}
+[data-theme="dark"] { --glass-bg: rgba(14,26,43,.58); --glass-bg-strong: rgba(14,26,43,.74); --glass-bg-flat: rgba(14,26,43,.88); --glass-border: rgba(140,180,220,.22); --glass-border-outer: rgba(0,114,198,.28); --glass-highlight: rgba(170,205,240,.35); --glass-shadow: 0 16px 40px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glass-bg: rgba(14,26,43,.58); --glass-bg-strong: rgba(14,26,43,.74); --glass-bg-flat: rgba(14,26,43,.88); --glass-border: rgba(140,180,220,.22); --glass-border-outer: rgba(0,114,198,.28); --glass-highlight: rgba(170,205,240,.35); --glass-shadow: 0 16px 40px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3); } }

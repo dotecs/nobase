@@ -6,8 +6,10 @@ import type { PricingContent } from '@/content/pricing/types';
 import { courseHref } from '@/lib/courses';
 import { matchPricingPlans } from '@/lib/pricing';
 import styles from './PricingPlans.module.css';
+import glass from '@/styles/glass.module.css';
 
 interface Props {
+  glassSurface?: boolean;
   course: Course;
   cohorts: Cohort[];
   enrolledIds: string[];
@@ -15,7 +17,7 @@ interface Props {
   isLoggedIn: boolean;
 }
 
-export default function PricingPlans({ course, cohorts, enrolledIds, content, isLoggedIn }: Props) {
+export default function PricingPlans({ course, cohorts, enrolledIds, content, isLoggedIn, glassSurface = false }: Props) {
   const cards = matchPricingPlans(cohorts, content?.plans || []);
   const enrolled = new Set(enrolledIds);
   const path = `${courseHref(course)}/pricing`;
@@ -23,7 +25,7 @@ export default function PricingPlans({ course, cohorts, enrolledIds, content, is
         {cards.length ? <div className={styles.grid}>
           {cards.map(({ cohort, plan }) => {
             const isEnrolled = enrolled.has(cohort.id);
-            return <article key={cohort.id} className={`${styles.card} ${plan?.highlight ? styles.highlight : ''}`}>
+            return <article key={cohort.id} className={`${styles.card} ${plan?.highlight ? styles.highlight : ''} ${glassSurface ? `${styles.glassCard} ${plan?.highlight ? glass.glassStrong : glass.glassFlat}` : ''}`}>
               <div className={styles.cardHeading}>
                 {plan && <Image className={styles.planIcon} src={plan.icon} alt="" width={80} height={80} />}
                 {plan && <p className={styles.eyebrow}>{plan.eyebrow}</p>}

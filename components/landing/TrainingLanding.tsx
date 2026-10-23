@@ -11,6 +11,8 @@ import PricingPlans from '@/components/pricing/PricingPlans';
 import LandingActions from './LandingActions';
 import InterviewPlayer from './InterviewPlayer';
 import styles from './TrainingLanding.module.css';
+import glass from '@/styles/glass.module.css';
+import scene from '@/components/home/Scene.module.css';
 
 type Content = typeof trainingLanding;
 type Shared = { content: Content };
@@ -59,24 +61,24 @@ function Curriculum({ content, curriculum, freeLessonId }: Shared & { curriculum
   </div></section>;
 }
 function Materials({ content }: Shared) {
-  return <section id="materials" className={styles.section}><div className={styles.container}><Heading lines={content.materials.title}><p>{content.materials.description}</p></Heading>
-    <div className={styles.two}>{content.materials.panels.map(panel => <article className={styles.card} key={panel.asset}><p className={styles.eyebrow}>{panel.label}</p><h3>{panel.title}</h3><p>{panel.text}</p>
+  return <section id="materials" className={`${styles.section} ${styles.sceneSection} ${scene.backdrop}`}><div className={styles.container}><Heading lines={content.materials.title}><p>{content.materials.description}</p></Heading>
+    <div className={styles.two}>{content.materials.panels.map((panel, i) => <article className={`${styles.card} ${styles.glassCard} ${i === 0 ? glass.glass : glass.glassFlat}`} key={panel.asset}><p className={styles.eyebrow}>{panel.label}</p><h3>{panel.title}</h3><p>{panel.text}</p>
       <Image className={styles.illustration} src={panel.asset} alt={panel.alt} width={800} height={533} loading="lazy" sizes="(max-width: 700px) calc(100vw - 88px), (max-width: 1199px) 42vw, 530px" />{panel.caption && <p className={styles.note}>{panel.caption}</p>}<ol className={styles.process}>{panel.items.map(item => <li key={item}>{item}</li>)}</ol>
     </article>)}</div><p className={styles.strip}>{content.materials.note}</p>
   </div></section>;
 }
 function Support({ content }: Shared) {
   const s = content.support; const icons = [FiCalendar, FiVideo, FiMessageCircle];
-  return <section id="support" className={styles.section}><div className={styles.container}><Heading lines={s.title}><p>{s.description.map(line => <span key={line}>{line}</span>)}</p></Heading>
+  return <section id="support" className={`${styles.section} ${styles.sceneSection} ${scene.backdrop} ${scene.reverse}`}><div className={styles.container}><Heading lines={s.title}><p>{s.description.map(line => <span key={line}>{line}</span>)}</p></Heading>
     <div className={styles.two}><ol className={styles.supportSteps}>{s.steps.map((step, i) => { const Icon = icons[i]; return <li className={styles.evidence} key={step.title}><Icon aria-hidden="true" /><div><h3>{String(i + 1).padStart(2, '0')} {step.title}</h3><p>{step.text}</p></div></li>; })}</ol><div><Image className={styles.illustration} src={s.asset} alt={s.alt} width={1000} height={667} loading="lazy" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1199px) 46vw, 588px" /><p className={styles.note}>{s.caption}</p></div></div>
-    <p className={styles.note}>{s.memo}</p><div className={styles.two}>{s.plans.map(plan => <article className={styles.card} key={plan.title}><Image src={plan.icon} width={72} height={72} alt="" /><h3>{plan.title}</h3><p><strong>{plan.text}</strong></p><ul className={styles.checks}>{plan.features.map(text => <li key={text}><FiCheckCircle aria-hidden="true" />{text}</li>)}</ul></article>)}</div>
+    <p className={styles.note}>{s.memo}</p><div className={styles.two}>{s.plans.map((plan, i) => <article className={`${styles.card} ${styles.glassCard} ${i === 0 ? glass.glass : glass.glassFlat}`} key={plan.title}><Image src={plan.icon} width={72} height={72} alt="" /><h3>{plan.title}</h3><p><strong>{plan.text}</strong></p><ul className={styles.checks}>{plan.features.map(text => <li key={text}><FiCheckCircle aria-hidden="true" />{text}</li>)}</ul></article>)}</div>
     <div className={styles.actions}><Link href={content.links.compare} className={styles.secondary}>{content.cta.compare}<span aria-hidden="true">›</span></Link></div><p className={styles.note}>{s.note}</p>
   </div></section>;
 }
 function Instructor({ content }: Shared) {
   const s = content.instructor;
-  return <section id="instructor" className={styles.section}><div className={styles.container}><Heading lines={s.title} />
-    <article className={`${styles.card} ${styles.instructor}`}><div className={styles.portrait}><Image src={s.asset} alt={s.alt} width={480} height={480} loading="lazy" sizes="(max-width: 700px) 160px, 240px" /></div><div><h3>{s.name}</h3><p>{s.education}</p><p>{s.credentials}</p><p>{s.description}</p></div></article>
+  return <section id="instructor" className={`${styles.section} ${styles.sceneSection} ${scene.backdrop}`}><div className={styles.container}><Heading lines={s.title} />
+    <article className={`${styles.card} ${styles.instructor} ${styles.glassCard} ${glass.glass}`}><div className={styles.portrait}><Image src={s.asset} alt={s.alt} width={480} height={480} loading="lazy" sizes="(max-width: 700px) 160px, 240px" /></div><div><h3>{s.name}</h3><p>{s.education}</p><p>{s.credentials}</p><p>{s.description}</p></div></article>
     <h3 className={styles.subheading}>{s.interviewsTitle}</h3><InterviewPlayer interview={s.interviews[0]} /><div className={styles.two}>{s.interviews.slice(1).map(item => <a className={styles.card} key={item.href} href={item.href} target="_blank" rel="noopener noreferrer">
       {/* YouTube thumbnails use their public source without adding a remote image configuration. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}

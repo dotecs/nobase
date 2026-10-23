@@ -3,12 +3,9 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4) var(--space-6);
-  background-color: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  backdrop-filter: blur(8px);
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
@@ -304,3 +301,5 @@
 .navLink[aria-current] { text-decoration: underline; text-decoration-color: var(--color-brand); text-decoration-thickness: 2px; text-underline-offset: 8px; }
 .classroom > a { height: 40px; min-height: 40px; border-radius: 12px; }
 @media (min-width: 1024px) { .logo img { width: 180px; height: auto; } }
+
+.solid { background-color: var(--color-bg); border-bottom: 1px solid var(--color-border); backdrop-filter: blur(8px); }

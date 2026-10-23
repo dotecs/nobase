@@ -9,8 +9,10 @@ import BrandLogo from '@/components/BrandLogo/BrandLogo';
 import Button from '@/components/Button/Button';
 import { FiMenu, FiX } from 'react-icons/fi';
 import styles from './Header.module.css';
+import glass from '@/styles/glass.module.css';
 
 interface HeaderProps {
+  glassHeader?: boolean;
   userName?: string | null;
   isLoggedIn?: boolean;
   userRole?: 'student' | 'admin';
@@ -23,9 +25,10 @@ const defaultNavigation = [
   { label: '브랜드 소개', href: '/#about' },
 ];
 
-export default function Header({ userName, isLoggedIn, userRole, landingNavigation, landingCta }: HeaderProps) {
+export default function Header({ userName, isLoggedIn, userRole, landingNavigation, landingCta, glassHeader = false }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const useGlassHeader = glassHeader || pathname === '/' || pathname === '/courses' || pathname === '/booking' || /^\/courses\/[^/]+(?:\/pricing)?$/.test(pathname);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hash, setHash] = useState('');
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -70,7 +73,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
     {isLoggedIn && userRole === 'admin' && <Link href="/admin" className={mobile ? styles.sidebarLink : styles.navLink}>관리자</Link>}
   </>;
   return <>
-    <header className={styles.header}>
+    <header className={`${styles.header} ${useGlassHeader ? glass.glassBar : styles.solid}`}>
       <Link href={isLoggedIn ? '/dashboard' : '/'} className={styles.logo}><BrandLogo /></Link>
       <nav className={styles.nav} aria-label="주 메뉴">{links()}</nav>
       <div className={styles.userSection}>

@@ -64,7 +64,7 @@ export default async function PricingPage({ params }: PageProps) {
           {content && <Image className={styles.heroBrand} src={content.hero.brandImage} alt="" width={1200} height={600} priority sizes="(max-width: 700px) 90vw, 45vw" />}
         </section>
 
-        <div id="plans"><PricingPlans course={course} cohorts={(cohortResult.data || []) as Cohort[]}
+        <div id="plans"><PricingPlans glassSurface course={course} cohorts={(cohortResult.data || []) as Cohort[]}
           enrolledIds={((enrollmentResult.data || []) as { cohort_id: string }[]).map(item => item.cohort_id)}
           content={content} isLoggedIn={!!user} /></div>
         <Link className={styles.back} href={courseHref(course)}>← 커리큘럼 소개로</Link>
