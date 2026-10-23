@@ -92,7 +92,7 @@
 
 .logoutButton {
   font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
   transition: color var(--transition-fast), background-color var(--transition-fast);
@@ -297,5 +297,6 @@
 }
 
 .header a:focus-visible, .header button:focus-visible, .sidebar a:focus-visible, .sidebar button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.userSection > button { color: var(--color-text); }
 @media (max-width: 767px) { .classroom { display: none; } }
 @media (prefers-reduced-motion: reduce) { .overlay, .sidebar { animation: none; transition: none; } }

@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
-import { Header, Footer } from '@/components';
+import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
 import { getUser, getProfile } from '@/lib/supabase-server';
 import type { Profile } from '@/lib/database.types';
 import { getPrograms } from '@/lib/programs';

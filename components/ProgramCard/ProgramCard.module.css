@@ -8,3 +8,4 @@
 .audience { color: var(--color-primary); font-size: 16px; font-weight: 600; }
 .summary { color: var(--color-muted); font-size: 16px; line-height: 26px; margin-bottom: 12px; }
 .content > a, .content > button { margin-top: auto; min-height: 48px; border-radius: var(--radius-button); }
+.content > a:hover { background: var(--color-surface-hover); }

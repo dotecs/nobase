@@ -40,6 +40,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const previous = document.body.style.overflow;
+    const trigger = menuButton.current;
     document.body.style.overflow = 'hidden';
     const items = () => Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? []);
     items()[0]?.focus();
@@ -52,7 +53,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
       }
     };
     document.addEventListener('keydown', keydown);
-    return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', keydown); menuButton.current?.focus(); };
+    return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', keydown); trigger?.focus(); };
   }, [isMobileMenuOpen]);
   const handleLogout = async () => {
     await createClientSupabaseClient().auth.signOut();

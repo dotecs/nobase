@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { createServerSupabaseClient, getUser, getProfile } from '@/lib/supabase-server';
-import { Header } from '@/components';
+import Header from '@/components/Header/Header';
 import type { Profile } from '@/lib/database.types';
 import { getPrograms } from '@/lib/programs';
 import { getProgramEnrollment } from '@/lib/program-enrollment';
