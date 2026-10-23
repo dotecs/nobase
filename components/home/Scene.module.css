@@ -1,9 +1,11 @@
-.backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.14), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.08), transparent 70%), linear-gradient(180deg, #E9F3FC 0%, #F7FBFF 70%, var(--color-bg) 100%); }
+.backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.14), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.08), transparent 70%), linear-gradient(var(--scene-direction, 180deg), #E9F3FC 0%, #F7FBFF 70%, var(--color-bg) 100%); }
 .art { min-width: 0; -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
 .art img { display: block; width: 100%; height: auto; }
-:global([data-theme="dark"]) .backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.28), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.16), transparent 70%), linear-gradient(180deg, #0B1526 0%, #0E1A2B 70%, var(--color-bg) 100%); }
+:global([data-theme="dark"]) .backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.28), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.16), transparent 70%), linear-gradient(var(--scene-direction, 180deg), #0B1526 0%, #0E1A2B 70%, var(--color-bg) 100%); }
 :global([data-theme="dark"]) .art { -webkit-mask-image: none; mask-image: none; border-radius: var(--radius-card); overflow: hidden; }
 @media (prefers-color-scheme: dark) {
-  :global(:root:not([data-theme="light"])) .backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.28), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.16), transparent 70%), linear-gradient(180deg, #0B1526 0%, #0E1A2B 70%, var(--color-bg) 100%); }
+  :global(:root:not([data-theme="light"])) .backdrop { background: radial-gradient(900px 500px at 78% 30%, rgba(0,114,198,.28), transparent 70%), radial-gradient(700px 400px at 12% 85%, rgba(0,114,198,.16), transparent 70%), linear-gradient(var(--scene-direction, 180deg), #0B1526 0%, #0E1A2B 70%, var(--color-bg) 100%); }
   :global(:root:not([data-theme="light"])) .art { -webkit-mask-image: none; mask-image: none; border-radius: var(--radius-card); overflow: hidden; }
 }
+
+.reverse { --scene-direction: 0deg; }
