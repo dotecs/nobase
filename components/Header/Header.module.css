@@ -57,12 +57,12 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: 32px;
 }
 
 .navLink {
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
+  font-size: 16px;
+  font-weight: 600;
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
 }
@@ -300,3 +300,7 @@
 .userSection > button { color: var(--color-text); }
 @media (max-width: 767px) { .classroom { display: none; } }
 @media (prefers-reduced-motion: reduce) { .overlay, .sidebar { animation: none; transition: none; } }
+
+.navLink[aria-current] { text-decoration: underline; text-decoration-color: var(--color-brand); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.classroom > a { height: 40px; min-height: 40px; border-radius: 12px; }
+@media (min-width: 1024px) { .logo img { width: 180px; height: auto; } }
