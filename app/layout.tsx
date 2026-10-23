@@ -7,8 +7,8 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://nobase911.com'),
-  title: '노베이스구조대 - 누구나 할 수 있는 온라인 강의',
-  description: '프로그래밍 경험이 없어도 괜찮아요. 노베이스구조대와 함께 시작하세요.',
+  title: { default: '노베이스구조대 — 기초부터, 가능성까지.', template: '%s | 노베이스구조대' },
+  description: '입학 준비부터 대학 공부, 새로운 도전까지. 나의 출발점에 맞는 배움을 찾아보세요.',
   icons: {
     icon: '/logo_sim_b.ico',
     apple: '/logo_sim_b.png',

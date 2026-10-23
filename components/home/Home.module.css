@@ -1,4 +1,5 @@
 .container { width: min(var(--container-max), calc(100% - var(--gutter) * 2)); margin-inline: auto; }
+.programExplorer { margin-top: 32px; }
 .section { padding: 96px 0; scroll-margin-top: 90px; }
 .section, .about { color: var(--color-ink); word-break: keep-all; overflow-wrap: anywhere; }
 .section h1 { font-size: clamp(36px, 4.5vw, 56px); line-height: 1.28; letter-spacing: -.045em; font-weight: 700; }

@@ -22,7 +22,7 @@ export default async function HomePage() {
       <HomeHero />
       <section id="programs" className={styles.section}><div className={styles.container}>
         <h2>{home.programs.title}</h2><p className={styles.description}>{home.programs.subtitle}</p>
-        <div style={{ marginTop: 32 }}><Suspense><ProgramExplorer programs={programs} /></Suspense></div>
+        <div className={styles.programExplorer}><Suspense><ProgramExplorer programs={programs} /></Suspense></div>
       </div></section>
       <HowWeLearn />
       <BrandValues />
