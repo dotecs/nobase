@@ -23,11 +23,13 @@
 }
 
 .md {
+  min-height: 44px;
   padding: var(--space-3) var(--space-5);
   font-size: var(--text-base);
 }
 
 .lg {
+  min-height: 48px;
   padding: var(--space-4) var(--space-6);
   font-size: var(--text-lg);
 }
@@ -96,6 +98,9 @@
 .fullWidth {
   width: 100%;
 }
+
+.button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.button:active:not(:disabled) { filter: brightness(0.94); }
 
 /* Loading state */
 .loading {

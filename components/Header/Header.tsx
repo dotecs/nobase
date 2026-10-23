@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import BrandLogo from '@/components/BrandLogo/BrandLogo';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClientSupabaseClient } from '@/lib/supabase-client';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
@@ -58,22 +58,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
     <>
       <header className={styles.header}>
         <Link href={isLoggedIn ? '/dashboard' : '/'} className={styles.logo}>
-          <Image
-            src="/logo_kr_b.png"
-            alt="노베이스구조대"
-            width={160}
-            height={32}
-            className={styles.logoImage}
-            priority
-          />
-          <Image
-            src="/logo_kr_w.png"
-            alt="노베이스구조대"
-            width={160}
-            height={32}
-            className={styles.logoImageDark}
-            priority
-          />
+          <BrandLogo />
         </Link>
 
           <nav className={styles.nav}>

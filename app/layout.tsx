@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
 import { Providers } from './providers';
