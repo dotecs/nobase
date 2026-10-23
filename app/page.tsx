@@ -1,269 +1,32 @@
-import { courseHref } from '@/lib/courses';
-import { getCohortCheckoutUrl } from '@/lib/pricing';
-import { getPricingContent } from '@/content/pricing';
-import Link from 'next/link';
-import Image from 'next/image';
-import { getUser, createServerSupabaseClient } from '@/lib/supabase-server';
-import { Button, ThemeToggle, Footer } from '@/components';
-import { Course, Cohort } from '@/lib/database.types';
-import { FaLifeRing, FaHandshake, FaRocket, FaBook, FaClock, FaArrowRight } from 'react-icons/fa';
-import styles from './home.module.css';
-
-interface CourseWithCohorts extends Course {
-  cohorts: Cohort[];
-  lessonCount: number;
-}
+import { Suspense } from 'react';
+import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
+import { getUser, getProfile } from '@/lib/supabase-server';
+import type { Profile } from '@/lib/database.types';
+import { getPrograms } from '@/lib/programs';
+import { home } from '@/content/home';
+import HomeHero from '@/components/home/HomeHero';
+import HowWeLearn from '@/components/home/HowWeLearn';
+import BrandValues from '@/components/home/BrandValues';
+import HomeMotion from '@/components/home/HomeMotion';
+import ProgramExplorer from '@/components/ProgramExplorer/ProgramExplorer';
+import styles from '@/components/home/Home.module.css';
 
 export default async function HomePage() {
-  const user = await getUser();
-  const supabase = await createServerSupabaseClient();
-
-  // 공개 강좌 + 모집 중인 기수 + 레슨 수
-  const { data: coursesData, error: coursesError } = await supabase
-    .from('courses')
-    .select('*, cohorts(*)')
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
-  if (coursesError) throw coursesError;
-
-  const publishedCourses = (coursesData || []) as CourseWithCohorts[];
-  const { data: lessonRows, error: lessonsError } = publishedCourses.length
-    ? await supabase.from('lessons_public').select('course_id').in('course_id', publishedCourses.map(course => course.id))
-    : { data: [], error: null };
-  if (lessonsError) throw lessonsError;
-  const lessonCounts = new Map<string, number>();
-  for (const lesson of (lessonRows || []) as { course_id: string }[]) {
-    lessonCounts.set(lesson.course_id, (lessonCounts.get(lesson.course_id) || 0) + 1);
-  }
-  // 전체 공개 레슨 수 (신뢰 지표)
-  const totalLessons = lessonRows?.length || 0;
-
-  const courses = ((coursesData || []) as CourseWithCohorts[])
-    .map((course) => ({
-      ...course,
-      lessonCount: lessonCounts.get(course.id) || 0,
-      cohorts: (course.cohorts || []).filter((cohort) => cohort.is_active),
-    }))
-    .filter((course) => course.cohorts.length > 0);
-
-  return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <Link href="/" className={styles.logo}>
-            <Image
-              src="/logo_kr_b.png"
-              alt="노베이스구조대"
-              width={180}
-              height={36}
-              className={styles.logoImage}
-              priority
-            />
-            <Image
-              src="/logo_kr_w.png"
-              alt="노베이스구조대"
-              width={180}
-              height={36}
-              className={styles.logoImageDark}
-              priority
-            />
-          </Link>
-          <nav className={styles.nav}>
-            <Link href="/courses">커리큘럼</Link>
-            <ThemeToggle />
-            {user ? (
-              <Button href="/dashboard" size="sm">
-                대시보드
-              </Button>
-            ) : (
-              <Button href="/login" size="sm">
-                시작하기
-              </Button>
-            )}
-          </nav>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <section className={styles.hero}>
-          <p className={styles.heroSubtitle}>기초가 부족해서 막막할 때, 당신 곁에</p>
-          <h1 className={styles.heroTitle}>
-            나를 믿는 것에서<br />
-            모든 <span className={styles.highlight}>성장</span>이 시작됩니다
-          </h1>
-          <p className={styles.heroDescription}>
-            노베이스 구조대는 기초가 부족해서 공부가 막막한 사람들을 돕는 커뮤니티입니다.<br />
-            우리는 &apos;나 자신을 믿기&apos;의 가치를 믿습니다.
-          </p>
-          <div className={styles.heroActions}>
-            <Button href="/courses" size="lg">
-              커리큘럼 보기
-            </Button>
-            {courses.some(course => course.cohorts.length > 0) && <span className={styles.showcaseMetaItem}>모집중</span>}
-            <Button href={user ? "/dashboard" : "/login"} size="lg" variant="outline">
-              {user ? "내 강의실 가기" : "로그인"}
-            </Button>
-          </div>
-
-          <div className={styles.heroStats}>
-            <div className={styles.heroStat}>
-              <strong className={styles.heroStatValue}>6년차</strong>
-              <span className={styles.heroStatLabel}>교육 브랜드</span>
-            </div>
-            <div className={styles.heroStatDivider} aria-hidden="true" />
-            <div className={styles.heroStat}>
-              <strong className={styles.heroStatValue}>{(totalLessons || 0).toLocaleString()}개</strong>
-              <span className={styles.heroStatLabel}>강의 레슨</span>
-            </div>
-            <div className={styles.heroStatDivider} aria-hidden="true" />
-            <div className={styles.heroStat}>
-              <strong className={styles.heroStatValue}>1:1</strong>
-              <span className={styles.heroStatLabel}>질문 커뮤니티</span>
-            </div>
-          </div>
-        </section>
-
-        {courses.length > 0 && (
-          <section className={styles.coursesSection}>
-            <h2 className={styles.sectionTitle}>모집 중인 강좌</h2>
-            <p className={styles.sectionSubtitle}>
-              지금 신청할 수 있는 과정입니다. 기초가 없어도 시작할 수 있습니다.
-            </p>
-            <div className={styles.showcaseGrid}>
-              {courses.map((course) => (
-                <article key={course.id} className={styles.showcaseCard}>
-                  <Link href={courseHref(course)} className={styles.showcaseThumbnail}>
-                    {course.thumbnail_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={course.thumbnail_url}
-                        alt={course.title}
-                        className={styles.showcaseImage}
-                      />
-                    ) : (
-                      <div className={styles.showcasePlaceholder}>
-                        <FaBook />
-                      </div>
-                    )}
-                  </Link>
-                  <div className={styles.showcaseContent}>
-                    <h3 className={styles.showcaseTitle}><Link href={courseHref(course)}>{course.title}</Link></h3>
-                    {course.description && (
-                      <p className={styles.showcaseDescription}>{course.description}</p>
-                    )}
-                    <div className={styles.showcaseMeta}>
-                      <span className={styles.showcaseMetaItem}>
-                        <FaBook /> {course.lessonCount}개 레슨
-                      </span>
-                      <span className={styles.showcaseMetaItem}>
-                        <FaClock /> {course.cohorts.length}개 기수 모집 중
-                      </span>
-                    </div>
-                    <div className={styles.showcaseCohorts}>
-                      {course.cohorts.slice(0, 2).map((cohort) => (
-                        <a
-                          key={cohort.id}
-                          href={getCohortCheckoutUrl(cohort, getPricingContent(course.slug)?.plans) ?? `${courseHref(course)}/pricing`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.showcaseCohort}
-                        >
-                          <span className={styles.showcaseCohortTitle}>{cohort.title}</span>
-                          <span className={styles.showcaseCohortAction}>
-                            신청하기 <FaArrowRight />
-                          </span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <div className={styles.coursesMore}>
-              <Button href="/courses" variant="ghost">
-                전체 강좌 보기 →
-              </Button>
-            </div>
-          </section>
-        )}
-
-        <section className={styles.values}>
-          <h2 className={styles.sectionTitle}>세 가지 믿음</h2>
-          <p className={styles.sectionSubtitle}>
-            우리의 세 가지 믿음으로 노베이스는 믿음으로 가득한 삼각형을 얻었습니다.
-          </p>
-          <div className={styles.valueCards}>
-            <div className={styles.valueCard}>
-              <div className={styles.valueIcon}>
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <path d="M24 8L42 40H6L24 8Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                </svg>
-              </div>
-              <h3 className={styles.valueTitle}>Trust Myself</h3>
-              <p className={styles.valueDescription}>
-                나 자신을 믿습니다.<br />
-                스스로의 가능성을 인정하는 것이 성장의 첫걸음입니다.
-              </p>
-            </div>
-            <div className={styles.valueCard}>
-              <div className={styles.valueIcon}>
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <path d="M24 8L42 40H6L24 8Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                </svg>
-              </div>
-              <h3 className={styles.valueTitle}>Trust Yourself</h3>
-              <p className={styles.valueDescription}>
-                당신을 믿습니다.<br />
-                기초가 없어도, 누구나 배울 수 있는 잠재력이 있습니다.
-              </p>
-            </div>
-            <div className={styles.valueCard}>
-              <div className={styles.valueIcon}>
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <path d="M24 8L42 40H6L24 8Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                </svg>
-              </div>
-              <h3 className={styles.valueTitle}>Trust Ourselves</h3>
-              <p className={styles.valueDescription}>
-                함께를 믿습니다.<br />
-                믿음이 쌓이면 강력한 신뢰와 성공 에너지가 됩니다.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.features}>
-          <h2 className={styles.sectionTitle}>노베이스 구조대와 함께</h2>
-          <p className={styles.sectionSubtitle}>
-            내면의 잠재력을 이끌어 내어 큰 성과를 이뤄냅니다.
-          </p>
-          <div className={styles.featureGrid}>
-            <div className={styles.feature}>
-              <div className={styles.featureIcon}><FaLifeRing /></div>
-              <h3 className={styles.featureTitle}>기초부터 구조</h3>
-              <p className={styles.featureDescription}>
-                막막한 기초, 노베이스 구조대가 함께 잡아드립니다
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <div className={styles.featureIcon}><FaHandshake /></div>
-              <h3 className={styles.featureTitle}>함께하는 성장</h3>
-              <p className={styles.featureDescription}>
-                혼자가 아닌 커뮤니티와 함께 성장하는 경험
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <div className={styles.featureIcon}><FaRocket /></div>
-              <h3 className={styles.featureTitle}>잠재력 발견</h3>
-              <p className={styles.featureDescription}>
-                당신 안에 있는 가능성을 발견하고 이끌어냅니다
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
-  );
+  const [user, profileData, programs] = await Promise.all([getUser(), getProfile(), getPrograms()]);
+  const profile = profileData as Profile | null;
+  return <>
+    <Header isLoggedIn={!!user} userName={profile?.name || user?.email} userRole={profile?.role} />
+    <main>
+      <HomeMotion />
+      <HomeHero />
+      <section id="programs" className={styles.section}><div className={styles.container}>
+        <h2>{home.programs.title}</h2><p className={styles.description}>{home.programs.subtitle}</p>
+        <div className={styles.programExplorer}><Suspense><ProgramExplorer programs={programs} /></Suspense></div>
+      </div></section>
+      <HowWeLearn />
+      <BrandValues />
+    </main>
+    <Footer />
+  </>;
 }

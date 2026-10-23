@@ -8,6 +8,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   loading?: boolean;
   href?: string;
+  target?: '_blank' | '_self';
+  rel?: string;
   children: ReactNode;
 }
 
@@ -17,6 +19,8 @@ export default function Button({
   fullWidth = false,
   loading = false,
   href,
+  target,
+  rel,
   children,
   className = '',
   disabled,
@@ -32,9 +36,9 @@ export default function Button({
     className,
   ].filter(Boolean).join(' ');
 
-  if (href) {
+  if (href && !disabled && !loading) {
     return (
-      <Link href={href} className={classNames}>
+      <Link href={href} target={target} rel={rel} className={classNames}>
         {children}
       </Link>
     );

@@ -1,0 +1,5 @@
+.badge { display: inline-flex; align-items: center; gap: 7px; border-radius: var(--radius-chip); padding: 5px 12px; font-size: 14px; line-height: 22px; font-weight: 600; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.open { color: var(--color-status-open-text); background: var(--color-status-open-bg); }
+.closed { color: var(--color-status-closed-text); background: var(--color-status-closed-bg); }
+.comingSoon { color: var(--color-status-pending-text); background: var(--color-status-pending-bg); }
