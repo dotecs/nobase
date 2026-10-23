@@ -2,12 +2,12 @@
 .programExplorer { margin-top: 32px; }
 .section { padding: 96px 0; scroll-margin-top: 90px; }
 .section, .about { color: var(--color-ink); word-break: keep-all; overflow-wrap: anywhere; }
-.section h1 { font-size: clamp(40px, 4.6vw, 64px); line-height: 1.18; letter-spacing: -.04em; font-weight: 700; }
+.section h1 { font-size: clamp(38px, 3.9vw, 56px); line-height: 1.2; letter-spacing: -.04em; font-weight: 700; }
 .section h2, .about h2 { font-size: clamp(32px, 3.4vw, 44px); line-height: 1.4; letter-spacing: -.04em; font-weight: 700; }
 .section h1 > span, .section h2 > span, .about h2 > span { color: var(--color-primary); }
 .description { font-size: 17px; line-height: 28px; color: var(--color-muted); margin-top: 24px; }
 .heroColumns .description { font-size: 18px; line-height: 30px; }
-.heroColumns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 32px; align-items: center; }
+.heroColumns { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
 .heroTextOnly { max-width: 960px; }
 .heroArt { width: 100%; max-width: 720px; }
 .heroImage { width: 100%; height: auto; }
