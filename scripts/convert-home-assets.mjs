@@ -1,5 +1,5 @@
 // Usage: node scripts/convert-home-assets.mjs <input-directory>
-// Input names: A01.png/.jpg/.webp ... A07.png/.jpg/.webp, or output basenames.
+// Input names: A01-hero.png ... A07-goal-transfer.png, IDs, or output basenames.
 import sharp from 'sharp';
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -9,7 +9,7 @@ const input = process.argv[2];
 if (!input) throw new Error('Usage: node scripts/convert-home-assets.mjs <input-directory>');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const assets = [
-  ['A01', 'home/hero-scene.webp', 1600, 1000, 160],
+  ['A01', 'home/hero-scene.webp', 1280, 800, 160],
   ['A02', 'programs/n-training.webp', 800, 500, 80],
   ['A03', 'programs/n-campus-math.webp', 800, 500, 80],
   ['A04', 'programs/transfer-math.webp', 800, 500, 80],
@@ -20,7 +20,7 @@ const assets = [
 const files = await readdir(input);
 for (const [id, output, width, height, maxKB] of assets) {
   const names = [id.toLowerCase(), path.basename(output, '.webp')];
-  const matches = files.filter(file => names.includes(path.parse(file).name.toLowerCase()) && /\.(png|jpe?g|webp)$/i.test(file));
+  const matches = files.filter(file => (names.includes(path.parse(file).name.toLowerCase()) || path.parse(file).name.toLowerCase().startsWith(`${id.toLowerCase()}-`)) && /\.(png|jpe?g|webp)$/i.test(file));
   if (!matches.length) { console.log(`${id}: missing, keeping placeholder`); continue; }
   if (matches.length > 1) throw new Error(`${id}: ambiguous input (${matches.join(', ')})`);
   const source = path.join(input, matches[0]);
@@ -29,14 +29,20 @@ for (const [id, output, width, height, maxKB] of assets) {
   if (metadata.width < width || metadata.height < height) throw new Error(`${id}: input too small; no upscaling`);
   if (id >= 'A05' && !metadata.hasAlpha) throw new Error(`${id}: transparent input required`);
   let buffer;
-  for (const quality of [80, 75, 70]) {
-    buffer = await sharp(source).rotate().resize(width, height, { fit: 'inside', withoutEnlargement: true }).webp({ quality, alphaQuality: 100 }).toBuffer();
+  let usedQuality;
+  for (const quality of [80, 75, 70, 65, 60, 55, 50]) {
+    // Normalized canvases can have subpixel ratio rounding (e.g. 1321x825).
+    // Resize to the specified canvas without cropping or enlarging either axis.
+    buffer = await sharp(source).rotate().resize(width, height, { fit: 'fill', withoutEnlargement: true }).webp({ quality, alphaQuality: 100 }).toBuffer();
+    usedQuality = quality;
     if (buffer.length <= maxKB * 1024) break;
+    console.log(`${id}: quality ${quality}, ${buffer.length} bytes exceeds ${maxKB}KB; retrying lower quality`);
   }
-  if (buffer.length > maxKB * 1024) throw new Error(`${id}: exceeds ${maxKB}KB at quality 70`);
+  if (buffer.length > maxKB * 1024) throw new Error(`${id}: exceeds ${maxKB}KB at quality ${usedQuality}`);
+  const result = await sharp(buffer).metadata();
   const destination = path.join(root, output);
   await mkdir(path.dirname(destination), { recursive: true });
   await writeFile(destination, buffer);
-  console.log(`${id}: ${output} (${buffer.length} bytes)`);
+  console.log(`${id}: ${output} ${result.width}x${result.height}, ${buffer.length} bytes (${(buffer.length / 1024).toFixed(2)}KB), quality ${usedQuality}, alpha ${result.hasAlpha}`);
 }
 console.log('변환된 에셋을 반영하려면 content/home.ts와 content/programs.ts의 해당 이미지 경로를 채워 주세요. content 파일은 자동으로 변경하지 않습니다.');

@@ -11,7 +11,7 @@ export default function HomeHero() {
     <div className={styles.container}>
       <div className={image ? styles.heroColumns : styles.heroTextOnly}>
         <div><h1>{c.title[0]}<br /><span>{c.title[1]}</span></h1><p className={styles.description}>{c.description[0]}<br />{c.description[1]}</p><HomeActions href="#programs" /></div>
-        {image && <Image className={styles.heroImage} src={image} alt="" width={1600} height={1000} priority sizes="(max-width: 767px) 100vw, 50vw" />}
+        {image && <Image className={styles.heroImage} src={image} alt="" width={1280} height={800} priority sizes="(max-width: 767px) 100vw, 50vw" />}
       </div>
       <div className={styles.goals}><h2>{c.goalsTitle}</h2><div className={styles.goalGrid}>{c.goals.map(goal => {
         const icon = goal.image;
