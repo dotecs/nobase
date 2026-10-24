@@ -74,7 +74,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
   </>;
   return <>
     <header className={`${styles.header} ${useGlassHeader ? glass.glassBar : styles.solid}`}>
-      <Link href={isLoggedIn ? '/dashboard' : '/'} className={styles.logo}><BrandLogo /></Link>
+      <Link href="/" className={styles.logo}><BrandLogo /></Link>
       <nav className={styles.nav} aria-label="주 메뉴">{links()}</nav>
       <div className={styles.userSection}>
         <ThemeToggle />
