@@ -6,7 +6,7 @@ import styles from './ThemeToggle.module.css';
 
 type Theme = 'light' | 'dark' | 'system';
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ segmented = false }: { segmented?: boolean }) {
   const [theme, setTheme] = useState<Theme>('system');
   const [mounted, setMounted] = useState(false);
 
@@ -36,6 +36,14 @@ export default function ThemeToggle() {
     localStorage.setItem('theme', newTheme);
     applyTheme(newTheme);
   };
+
+  if (segmented) return <div className={styles.segmented} role="group" aria-label="테마 선택">
+    {(['light', 'dark', 'system'] as const).map(value => <button type="button" key={value}
+      aria-pressed={mounted && theme === value} onClick={() => { setTheme(value); localStorage.setItem('theme', value); applyTheme(value); }}>
+      {value === 'light' ? <FaSun aria-hidden="true" /> : value === 'dark' ? <FaMoon aria-hidden="true" /> : <FaDesktop aria-hidden="true" />}
+      {value === 'light' ? '라이트' : value === 'dark' ? '다크' : '자동'}
+    </button>)}
+  </div>;
 
   // 서버 사이드 렌더링 시 hydration mismatch 방지
   if (!mounted) {

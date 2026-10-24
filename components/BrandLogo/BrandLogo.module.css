@@ -1,5 +1,10 @@
 .logo { display: block; width: 160px; height: auto; }
 .footer { height: 24px; width: auto; }
+.switcher { position: relative; display: block; width: 100%; }
+.wordmark { clip-path: inset(0 0 0 17.1035%); opacity: 1; transition: opacity 250ms ease; }
+.symbol { position: absolute; top: 0; left: 0; }
+.switcher[data-compact="true"] .wordmark { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .wordmark { transition: none; } }
 [data-theme="dark"] .logo { filter: brightness(0) invert(1); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo { filter: brightness(0) invert(1); } }
 @media (max-width: 390px) { .logo:not(.footer) { width: 136px; } }
