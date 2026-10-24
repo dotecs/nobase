@@ -80,7 +80,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
     {landingNavigation && !isLoggedIn && landingCta && <Link href={landingCta.href} className={mobile ? styles.sidebarLink : styles.navLink} onClick={() => setIsMobileMenuOpen(false)}>{landingCta.label}</Link>}
   </>;
   return <>
-    <header className={`${styles.header} ${useGlassHeader ? glass.glassBar : styles.solid}`}>
+    <header data-scrolled={compactLogo} className={`${styles.header} ${useGlassHeader ? glass.glassBar : styles.solid}`}>
       <Link href="/" className={styles.logo} data-compact={compactLogo}><BrandLogo compact={compactLogo} /></Link>
       <nav className={styles.nav} aria-label="주 메뉴">{links()}</nav>
       <div className={styles.userSection}>
