@@ -1,6 +1,6 @@
 .root { position: relative; }
 .trigger { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
-.avatar { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: #14284f; color: #fff; font-size: 14px; font-weight: 700; }
+.avatar { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: #0072c6; color: #fff; font-size: 14px; font-weight: 700; }
 .trigger:hover, .trigger[aria-expanded="true"] { background: var(--color-bg-secondary); }
 .panel { position: absolute; top: calc(100% + 10px); right: 0; width: min(280px, calc(100vw - 32px)); padding: 8px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-bg-elevated); color: var(--color-text); box-shadow: 0 12px 36px rgb(15 23 42 / 14%); }
 .identity { display: flex; align-items: center; gap: 10px; padding: 10px 8px 16px; border-bottom: 1px solid var(--color-border); }
