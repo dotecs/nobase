@@ -1,0 +1,19 @@
+.root { position: relative; }
+.trigger { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.avatar { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: #14284f; color: #fff; font-size: 14px; font-weight: 700; }
+.trigger:hover, .trigger[aria-expanded="true"] { background: var(--color-bg-secondary); }
+.panel { position: absolute; top: calc(100% + 10px); right: 0; width: min(280px, calc(100vw - 32px)); padding: 8px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-bg-elevated); color: var(--color-text); box-shadow: 0 12px 36px rgb(15 23 42 / 14%); }
+.identity { display: flex; align-items: center; gap: 10px; padding: 10px 8px 16px; border-bottom: 1px solid var(--color-border); }
+.details { display: grid; gap: 3px; min-width: 0; }
+.details strong { font-size: 14px; overflow-wrap: anywhere; }
+.details span { font-size: 12px; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+.theme { padding: 12px 8px; }
+.label { display: block; margin-bottom: 8px; font-size: 12px; color: var(--color-text-secondary); }
+.links { display: grid; border-top: 1px solid var(--color-border); padding: 6px 0; }
+.links a, .logout { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 10px; border-radius: 8px; font-size: 14px; }
+.links a:hover { background: var(--color-bg-secondary); }
+.logout { width: 100%; border: 0; background: transparent; color: var(--color-error); cursor: pointer; text-align: left; }
+.logout:hover { background: var(--color-error-50); }
+.logout:disabled { cursor: wait; opacity: .6; }
+.error { padding: 8px; font-size: 12px; color: var(--color-error); }
+.root button:focus-visible, .root a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
