@@ -30,11 +30,18 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
   const router = useRouter();
   const useGlassHeader = glassHeader || pathname === '/' || pathname === '/courses' || pathname === '/booking' || /^\/courses\/[^/]+(?:\/pricing)?$/.test(pathname);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [compactLogo, setCompactLogo] = useState(false);
   const [hash, setHash] = useState('');
   const menuButton = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLElement>(null);
   const navigation = landingNavigation && !isLoggedIn ? landingNavigation : defaultNavigation;
   useEffect(() => { setIsMobileMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    const updateLogo = () => setCompactLogo(window.scrollY > 48);
+    updateLogo();
+    window.addEventListener('scroll', updateLogo, { passive: true });
+    return () => window.removeEventListener('scroll', updateLogo);
+  }, [pathname]);
   useEffect(() => {
     const update = () => setHash(window.location.hash);
     update(); window.addEventListener('hashchange', update);
@@ -74,7 +81,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
   </>;
   return <>
     <header className={`${styles.header} ${useGlassHeader ? glass.glassBar : styles.solid}`}>
-      <Link href="/" className={styles.logo}><BrandLogo /></Link>
+      <Link href="/" className={styles.logo} data-compact={compactLogo}><BrandLogo compact={compactLogo} /></Link>
       <nav className={styles.nav} aria-label="주 메뉴">{links()}</nav>
       <div className={styles.userSection}>
         {isLoggedIn ? <AccountDropdown userName={userName} userRole={userRole} onLogout={handleLogout} />
