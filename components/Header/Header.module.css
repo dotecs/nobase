@@ -315,9 +315,20 @@
 
 .solid { background-color: var(--color-bg); border-bottom: 1px solid var(--color-border); backdrop-filter: blur(8px); }
 
-/* Only the glass backdrop becomes more transparent; text and controls stay opaque. */
-.header[data-scrolled="true"] { --glass-bg-strong: rgba(255, 255, 255, .48); }
-:global([data-theme="dark"]) .header[data-scrolled="true"] { --glass-bg-strong: rgba(14, 26, 43, .5); }
-@media (prefers-color-scheme: dark) {
-  :global(:root:not([data-theme="light"])) .header[data-scrolled="true"] { --glass-bg-strong: rgba(14, 26, 43, .5); }
+/* Animate the backdrop only; text and controls stay opaque. */
+.header::before { opacity: 1; transition: opacity 250ms ease; }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header[data-scrolled="true"]::before { opacity: .62; }
+  :global([data-theme="dark"]) .header[data-scrolled="true"]::before { opacity: .68; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .header[data-scrolled="true"]::before { opacity: .68; }
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .header[data-scrolled="true"]::before,
+  :global([data-theme]) .header[data-scrolled="true"]::before,
+  :global(:root:not([data-theme="light"])) .header[data-scrolled="true"]::before { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header::before { transition: none; }
 }
