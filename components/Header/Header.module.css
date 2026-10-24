@@ -2,7 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-6);
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 var(--space-6);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -257,7 +259,8 @@
 /* Mobile */
 @media (max-width: 1100px) {
   .header {
-    padding: var(--space-3) var(--space-4);
+    height: 60px;
+    padding: 0 var(--space-4);
   }
 
   .logoText {
