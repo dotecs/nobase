@@ -311,7 +311,6 @@
 @media (min-width: 1024px) and (max-width: 1100px) { .logo { width: 180px; } }
 @media (min-width: 1101px) { .logo { width: 144px; } }
 @media (max-width: 390px) { .logo { width: 136px; } }
-.logo[data-compact="true"] img { width: 25px; height: 33px; object-fit: contain; }
 
 .solid { background-color: var(--color-bg); border-bottom: 1px solid var(--color-border); backdrop-filter: blur(8px); }
 
