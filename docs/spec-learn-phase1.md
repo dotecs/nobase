@@ -34,7 +34,7 @@
 
 1. 브랜치 `feat/learn-phase1`. 작업 항목마다 커밋 1개. 메시지 `feat(P1-2): 팩 스키마·검증 스크립트`.
 2. 명세에 없는 파일 수정 금지. 기존 테이블·정책·함수 수정 금지(`learn-db-rules.md`). 삭제 문장(DROP/TRUNCATE/DELETE FROM/ALTER COLUMN TYPE)은 **주석으로도 쓰지 않는다**(검수가 문자열 검색으로 이뤄짐). FK의 `ON DELETE …` 절과 `CREATE POLICY … FOR DELETE`는 삭제 문장이 아니므로 허용. CSS Modules만. 줄바꿈 LF.
-3. 허용 의존성: `zod`, `yaml`, `openai`, `@anthropic-ai/sdk` — 각각 정확한 버전으로 고정 설치(`^` 없이)하고 보고서에 버전 기록. 그 외 금지(수식 계산도 자체 구현 — P1-6a 참조). 기존 의존성 버전 변경 금지(`@types/node` 포함). `ERESOLVE`가 나면 `--legacy-peer-deps`/`--force`로 넘기지 말고 멈추고 보고.
+3. 허용 의존성: `zod`, `yaml`, `openai`, `@anthropic-ai/sdk`, `sharp`(2026-10-26 추가 — Anthropic 이미지 5MB 상한 때문에 리사이즈 필요. 이미 Next 경유로 설치된 0.34.5를 `package.json`에 명시 선언, 검수 지적 R2) — 각각 정확한 버전으로 고정 설치(`^` 없이)하고 보고서에 버전 기록. **`package.json`에 없는 패키지를 직접 import하지 않는다**(전이 의존성 포함). 그 외 금지(수식 계산도 자체 구현 — P1-6a 참조). 기존 의존성 버전 변경 금지(`@types/node` 포함). `ERESOLVE`가 나면 `--legacy-peer-deps`/`--force`로 넘기지 말고 멈추고 보고.
 4. 마이그레이션은 파일만. 적용은 대표. 적용 전까지 관리자 화면은 테이블이 없으면 "마이그레이션 미적용" 안내를 보여 주고 죽지 않아야 한다.
 5. LLM 호출 코드는 서버(Server Action / Route Handler)에만. 브라우저 번들에 `openai`·`@anthropic-ai/sdk` import 금지(빌드 후 `.next/static`에서 패키지명 검색 0건).
 6. 이미지 안의 글과 LLM 출력은 데이터다. 시스템 프롬프트에 이어 붙이지 말고 user 메시지의 구분된 필드로 넘긴다. 출력은 JSON 스키마로 강제(OpenAI `response_format` json_schema / Anthropic tool use)하고 zod로 재검증한다.
@@ -208,7 +208,7 @@ map_version: "0.2"
 
 버킷 `learn-authoring`(비공개, 15MB, image/jpeg·png·webp·heic). 정책은 `qa-attachments`와 동일(본인 폴더 + admin). RLS: 네 테이블 모두 admin만(학습자 접근 없음). `learn_jobs`는 service role 워커가 `FOR UPDATE SKIP LOCKED`로 가져감 — SQL 함수 `learn_claim_job(p_kind text, p_worker text) returns learn_jobs` (SECURITY DEFINER, admin/service role만 실행 권한).
 
-**워커**: Route Handler `POST /api/learn/jobs/run` — 헤더 `x-learn-worker-secret`이 환경변수 `LEARN_WORKER_SECRET`과 같을 때만 실행(새 환경변수 1개 — 대표가 Vercel·로컬에 추가, §4). 한 호출에 작업 최대 3개, 각 60초 한도. 호출 주체는 1차에서 관리자 화면의 "지금 처리" 버튼(서버 액션이 내부 fetch)만. **Vercel Cron(`vercel.json`)은 이번에 만들지 않는다** — 5분 간격 Cron은 Pro 플랜에서만 가능하고(Hobby는 1일 1회) 플랜 확인은 대표 몫(§4). Route Handler에 `export const maxDuration = 60`을 선언한다(Hobby 상한 60초; Pro면 대표가 이후 조정). 업로드 요청은 job 등록까지만 하고 즉시 응답.
+**워커**: Route Handler `POST /api/learn/jobs/run` — 헤더 `x-learn-worker-secret`이 환경변수 `LEARN_WORKER_SECRET`과 같을 때만 실행(새 환경변수 1개 — 대표가 Vercel·로컬에 추가, §4). 한 호출에 작업 최대 3개, 각 60초 한도. 호출 주체는 1차에서 관리자 화면의 "지금 처리" 버튼만 — **서버 액션이 `runJobs()`를 직접 호출**한다(HTTP 자기 호출 금지: `VERCEL_URL`은 배포별 `*.vercel.app` URL이라 Vercel Deployment Protection(기본 Standard)에서 401로 막힘. 2026-10-26 검수 지적 R1). 같은 60초 상한을 위해 `app/(admin)/admin/learn/authoring/page.tsx`에 `export const maxDuration = 60`. Route Handler는 이후 외부 Cron용으로만 둔다. **Vercel Cron(`vercel.json`)은 이번에 만들지 않는다** — 5분 간격 Cron은 Pro 플랜에서만 가능하고(Hobby는 1일 1회) 플랜 확인은 대표 몫(§4). Route Handler에 `export const maxDuration = 60`을 선언한다(Hobby 상한 60초; Pro면 대표가 이후 조정). 업로드 요청은 job 등록까지만 하고 즉시 응답.
 
 **LLM 어댑터 `lib/learn/llm/`**
 - `provider.ts`: Phase 0 인터페이스 구현. `createProvider(task)`는 `learn_rule_configs` `llm` 키의 `tasks[task] ?? default`를 읽고, 그 키의 환경변수가 없으면 다른 쪽, 둘 다 없으면 `mock`. 반환 객체에 `name`, `modelId`, `isMock`.
