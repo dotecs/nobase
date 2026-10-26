@@ -7,12 +7,56 @@ export type Json =
   | Json[]
 
 export type UserRole = 'student' | 'admin'
-export type EnrollmentStatus = 'active' | 'paused' | 'ended'
+export type EnrollmentStatus = 'pending' | 'active' | 'paused' | 'ended'
 export type SubjectVisibility = 'public' | 'restricted'
 
 export interface Database {
   public: {
     Tables: {
+      payments: {
+        Row: {
+          id: string
+          order_id: string
+          user_id: string
+          cohort_id: string
+          amount: number
+          status: string
+          payment_key: string | null
+          method: string | null
+          receipt_url: string | null
+          fail_reason: string | null
+          created_at: string
+          approved_at: string | null
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          user_id: string
+          cohort_id: string
+          amount: number
+          status?: string
+          payment_key?: string | null
+          method?: string | null
+          receipt_url?: string | null
+          fail_reason?: string | null
+          created_at?: string
+          approved_at?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          user_id?: string
+          cohort_id?: string
+          amount?: number
+          status?: string
+          payment_key?: string | null
+          method?: string | null
+          receipt_url?: string | null
+          fail_reason?: string | null
+          created_at?: string
+          approved_at?: string | null
+        }
+      }
       profiles: {
         Row: {
           user_id: string

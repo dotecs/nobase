@@ -1,5 +1,55 @@
 # 📦 Database Schema Documentation
 
+## 마이그레이션 적용 이력
+
+근거: `docs/db/remote-schema-2026-10-26.md`와 각 마이그레이션 파일의 적용 주석.
+적용 방식이 확인되지 않은 파일은 미확인으로 기록한다. 039b는 원격의 세 MCP 마이그레이션을 역추적한 파일이며, 039b 자체를 운영에 적용한 것은 아니다.
+
+| 파일 | 적용 방식 |
+|---|---|
+| 001_initial_schema.sql | 미확인 |
+| 002_add_phone_to_profiles.sql | 미확인 |
+| 002_rls_policies.sql | 미확인 |
+| 003_seed_data.sql | 미확인 |
+| 004_storage_setup.sql | 미확인 |
+| 005_lessons_course_fk.sql | 미확인 |
+| 006_seed_math_lessons.sql | 미확인 |
+| 007_lesson_videos.sql | 미확인 |
+| 008_lessons_is_free.sql | 미확인 |
+| 009_cohorts_max_students.sql | 미확인 |
+| 010_fix_courses_rls.sql | 미확인 |
+| 011_cohorts_price.sql | 미확인 |
+| 012_enrollments_receipt_contact.sql | 미확인 |
+| 013_enrollments_depositor_name.sql | 미확인 |
+| 014_enrollments_delete_policy.sql | 미확인 |
+| 015_enrollments_count_policy.sql | 미확인 |
+| 016_lessons_available_at.sql | 미확인 |
+| 017_fix_can_access_lesson.sql | 미확인 |
+| 018_lesson_videos_duration.sql | 미확인 |
+| 019_lesson_questions.sql | 미확인 |
+| 020_profiles_email_migration.sql | 미확인 |
+| 021_legacy_user_id_columns.sql | 미확인 |
+| 022_migration_tables.sql | 미확인 |
+| 023_link_migrated_data_function.sql | 미확인 |
+| 024_subjects.sql | 미확인 |
+| 025_seed_math_lessons.sql | 미확인 |
+| 026_subjects_resources.sql | 미확인 |
+| 027_storage_bump_resource_limit.sql | 미확인 |
+| 028_lesson_progress_position.sql | 미확인 |
+| 029_backfill_lesson_video_duration.sql | 미확인 |
+| 030_kakao_id_columns.sql | 미확인 |
+| 031_link_migrated_data_with_kakao.sql | 미확인 |
+| 032_migrated_legacy_user_id_nullable.sql | 미확인 |
+| 033_link_migrated_data_search_path_fix.sql | 미확인 |
+| 034_interview_workbook_access.sql | MCP |
+| 034_subject_visibility.sql | 미확인 |
+| 035_enrollments_insert_block_written_passed.sql | MCP |
+| 036_interview_workbook_answers.sql | MCP |
+| 037_public_read_and_lead_source.sql | 수동(SQL Editor) |
+| 038_lessons_public_tighten.sql | 수동(SQL Editor) |
+| 039_cohorts_select_enrolled.sql | 미확인 |
+| 039b_remote_only_schema.sql | MCP (remote 3 migrations; 039b not applied) |
+
 노베이스구조대 SaaS 데이터베이스 스키마 정의 파일들입니다.
 
 ## 📁 폴더 구조
