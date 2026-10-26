@@ -3,7 +3,7 @@
 - 대상 저장소: `nobase` (Next.js 15 App Router + Supabase + CSS Modules, Vercel 배포)
 - 작성일: 2026-10-26
 - 실행 주체: Codex / 검수: Claude
-- 선행 상태: HEAD `6f663ef` (main). `git status`로 작업 트리가 깨끗한지 먼저 확인. 미커밋 변경이 있으면 건드리지 말고 보고 후 중단.
+- 선행 상태: HEAD `109e28a` (main, 2026-10-26 정리 커밋 2개 포함). `git status`로 작업 트리가 깨끗한지 먼저 확인. 미커밋 변경이 있으면 건드리지 말고 보고 후 중단.
 - 상위 문서: 「노베이스 적응형 수학 학습 MVP 설계안」(Claude Docs, 2026-10-26). 이 명세는 설계안 §8 Phase 0을 실행 단위로 옮긴 것이다.
 - 확정된 결정 (2026-10-26)
   1. **개발/운영 환경을 분리하지 않는다.** Supabase 프로젝트 `nobase911` 하나에서 바로 개발한다. 대신 아래 P0-1 규칙이 시작 조건이다.
@@ -85,7 +85,7 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
    - 대상: `public.payments`(컬럼·PK·FK·인덱스·RLS 정책), `enrollment_status` enum 값 목록, `migrated_profiles`/`migrated_enrollments`/`migrated_lesson_progress`의 RLS 정책, `lessons_public` 뷰 정의(`pg_get_viewdef`).
 2. 출력을 바탕으로 `supabase/migrations/039b_remote_only_schema.sql` 작성. 상단 주석: `-- 원격(nobase911)에 MCP/대시보드로 기적용된 스키마의 역추적본. 새 환경 재현용. 운영에 다시 적용하지 말 것.` 각 블록에 원격 마이그레이션 이름(`20260810070703_create_payments_table` 등)을 주석으로.
 3. `database/README.md`에 "마이그레이션 적용 이력" 절 추가: 레포 001~039b 중 어느 것이 수동 적용, 어느 것이 MCP 적용인지 표로. 모르는 것은 "미확인"으로 두고 추측하지 않는다.
-4. `.env.local.example`에 `OPENAI_API_KEY=`, `ANTHROPIC_API_KEY=` 두 줄 추가(값 비움). 레거시 Supabase 3개 변수 주석은 그대로 둔다.
+4. ~~`.env.local.example`에 LLM 키 이름 추가~~ — **이미 완료됨**(커밋 `109e28a`, 자리표시자 값). 건드리지 않는다.
 
 **완료 기준**: 스크립트가 읽기만 하고(코드에 insert/update/delete/rpc 호출 없음), `039b` 파일의 테이블·컬럼·enum·정책이 스크립트 출력과 일치. 보고서에 스크립트 출력 전문 첨부(값에 개인정보 없음 — 스키마만).
 
