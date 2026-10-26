@@ -1,6 +1,6 @@
 export const home = {
   hero: {
-    title: ['기초가 없어도,', '목표는 시작할 수 있으니까.'],
+    title: ['기초가 없어도,', '시작은 할 수 있으니까.'],
     description: ['입학 준비부터 대학 공부, 새로운 도전까지.', '나의 출발점에 맞는 배움을 찾아보세요.'],
     image: '/home/hero-scene.webp' as string | null, goalsTitle: '어떤 목표로 시작하시나요?',
     goals: [
