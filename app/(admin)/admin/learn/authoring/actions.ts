@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { adminClient, message as packMessage } from '../packs/server';
 import { prepareApproval, type Draft, type Source } from '@/lib/learn/llm/authoring';
 import type { Database } from '@/lib/database.types';
+import { runJobs } from '@/lib/learn/llm/worker';
 
 function message(error: unknown) {
   const code = (error as { code?: string })?.code;
@@ -33,14 +34,9 @@ export async function registerSource(input: unknown) {
 export async function processNow() {
   try {
     await adminClient();
-    const secret = process.env.LEARN_WORKER_SECRET;
-    if (!secret) throw new Error('LEARN_WORKER_SECRET 설정이 필요합니다.');
-    const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://127.0.0.1:${process.env.PORT || '3000'}`;
-    const response = await fetch(`${origin}/api/learn/jobs/run`, { method: 'POST', headers: { 'x-learn-worker-secret': secret }, cache: 'no-store', signal: AbortSignal.timeout(58_000) });
-    if (!response.ok) throw new Error(`워커 요청 실패 (${response.status}). 서버 설정을 확인해 주세요.`);
-    const result = await response.json();
+    const jobs = await runJobs();
     revalidatePath('/admin/learn/authoring');
-    return { message: JSON.stringify(result.jobs) };
+    return { message: JSON.stringify(jobs) };
   } catch (error) { return { error: message(error) }; }
 }
 export async function rejectDraft(id: string) {
