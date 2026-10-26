@@ -13,6 +13,276 @@ export type SubjectVisibility = 'public' | 'restricted'
 export interface Database {
   public: {
     Tables: {
+      // Manual learn types: replace with generated types after migration 040 is applied.
+      learn_packs: {
+        Row: {
+          id: string
+          title: string
+          version: number
+          status: string
+          source_book: string | null
+          map_version: string | null
+          checksum: string | null
+          imported_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          title: string
+          version: number
+          status?: string
+          source_book?: string | null
+          map_version?: string | null
+          checksum?: string | null
+          imported_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_packs']['Insert']>
+        Relationships: []
+      }
+      learn_units: {
+        Row: {
+          id: string
+          pack_id: string
+          order: number
+          title: string
+          slide_pages: string | null
+          tier: string
+        }
+        Insert: {
+          id: string
+          pack_id: string
+          order: number
+          title: string
+          slide_pages?: string | null
+          tier: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_units']['Insert']>
+        Relationships: []
+      }
+      learn_abilities: {
+        Row: {
+          id: string
+          pack_id: string
+          unit_id: string
+          order_in_unit: number
+          name: string
+          action: string
+          kind: string
+          slide_pages: string | null
+          is_supplement: boolean
+          request_ability: string | null
+          source_node_id: string | null
+          status: string
+        }
+        Insert: {
+          id: string
+          pack_id: string
+          unit_id: string
+          order_in_unit: number
+          name: string
+          action: string
+          kind: string
+          slide_pages?: string | null
+          is_supplement?: boolean
+          request_ability?: string | null
+          source_node_id?: string | null
+          status?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_abilities']['Insert']>
+        Relationships: []
+      }
+      learn_ability_edges: {
+        Row: {
+          id: string
+          pack_id: string
+          source_id: string
+          target_id: string
+          type: string
+          origin: string
+          status: string
+          reason: string | null
+        }
+        Insert: {
+          id?: string
+          pack_id: string
+          source_id: string
+          target_id: string
+          type: string
+          origin: string
+          status?: string
+          reason?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_ability_edges']['Insert']>
+        Relationships: []
+      }
+      learn_goals: {
+        Row: {
+          id: string
+          pack_id: string
+          title: string
+          track: string | null
+          year: number | null
+          evidence: string | null
+        }
+        Insert: {
+          id: string
+          pack_id: string
+          title: string
+          track?: string | null
+          year?: number | null
+          evidence?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_goals']['Insert']>
+        Relationships: []
+      }
+      learn_goal_requirements: {
+        Row: {
+          goal_id: string
+          ability_id: string
+          required_level: string
+          format_notes: string | null
+        }
+        Insert: {
+          goal_id: string
+          ability_id: string
+          required_level: string
+          format_notes?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_goal_requirements']['Insert']>
+        Relationships: []
+      }
+      learn_materials: {
+        Row: {
+          id: string
+          ability_id: string
+          type: string
+          slide_pages: string | null
+          body_md: string | null
+          storage_path: string | null
+          lesson_id: string | null
+          role: string
+          status: string
+          version: number
+        }
+        Insert: {
+          id?: string
+          ability_id: string
+          type: string
+          slide_pages?: string | null
+          body_md?: string | null
+          storage_path?: string | null
+          lesson_id?: string | null
+          role: string
+          status?: string
+          version?: number
+        }
+        Update: Partial<Database['public']['Tables']['learn_materials']['Insert']>
+        Relationships: []
+      }
+      learn_items: {
+        Row: {
+          id: string
+          version: number
+          ability_id: string
+          usage: string
+          variant_group: string | null
+          stem_md: string
+          answer_type: string
+          answer_spec: Json
+          hints: Json
+          rubric: Json
+          required_abilities: string[]
+          misconception_ids: string[]
+          status: string
+          exposure: string
+          source_draft_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          version: number
+          ability_id: string
+          usage: string
+          variant_group?: string | null
+          stem_md: string
+          answer_type: string
+          answer_spec: Json
+          hints?: Json
+          rubric?: Json
+          required_abilities?: string[]
+          misconception_ids?: string[]
+          status?: string
+          exposure?: string
+          source_draft_id?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_items']['Insert']>
+        Relationships: []
+      }
+      learn_misconceptions: {
+        Row: {
+          id: string
+          ability_id: string
+          pattern: string
+          suggests: string[]
+          coach_note: string | null
+        }
+        Insert: {
+          id: string
+          ability_id: string
+          pattern: string
+          suggests?: string[]
+          coach_note?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_misconceptions']['Insert']>
+        Relationships: []
+      }
+      learn_diagnostic_scripts: {
+        Row: {
+          id: string
+          goal_id: string
+          version: number
+          base_abilities: string[]
+          followup_rule: string | null
+          base_items: string[]
+          followups: Json
+        }
+        Insert: {
+          id?: string
+          goal_id: string
+          version: number
+          base_abilities?: string[]
+          followup_rule?: string | null
+          base_items?: string[]
+          followups?: Json
+        }
+        Update: Partial<Database['public']['Tables']['learn_diagnostic_scripts']['Insert']>
+        Relationships: []
+      }
+      learn_rule_configs: {
+        Row: {
+          id: string
+          key: string
+          version: number
+          config: Json
+          active_from: string
+          note: string | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          version: number
+          config: Json
+          active_from?: string
+          note?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_rule_configs']['Insert']>
+        Relationships: []
+      }
+
       payments: {
         Row: {
           id: string
@@ -519,6 +789,10 @@ export interface Database {
       }
     }
     Views: {
+      learn_items_public: {
+        Row: Omit<Database['public']['Tables']['learn_items']['Row'], 'answer_spec' | 'rubric' | 'hints'>
+        Relationships: []
+      }
       lessons_public: {
         Row: {
           id: string
