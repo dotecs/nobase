@@ -33,7 +33,7 @@
 
 1. 브랜치 `feat/learn-phase0`. 작업 항목마다 커밋 1개. 메시지 `chore(P0-3): Vitest 도입` 형식.
 2. **이 명세에 없는 파일은 수정하지 않는다.** 리팩터링·포맷 정리·CRLF 변환 금지. 줄바꿈 LF.
-3. 새 의존성은 P0-3의 `vitest`(devDependency)만 허용. 그 외 금지.
+3. 새 의존성은 P0-3의 `vitest@4.1.12`(devDependency)와 P0-4에서 필요 시 `jsdom`만 허용. 기존 의존성 버전 변경 금지(`@types/node` 포함).
 4. 각 커밋 전 `npx tsc --noEmit` 통과. 마지막에 `npm run build`, `npm test` 통과.
 5. **운영 DB에 쓰는 코드·스크립트를 실행하지 않는다.** P0-2의 스키마 조회 스크립트는 `information_schema`·`pg_catalog` SELECT만 한다. 마이그레이션 파일은 작성만 하고 적용은 대표가 한다.
 6. `.env.local`의 값을 읽거나 출력하지 않는다. 키 이름만 다룬다.
@@ -94,7 +94,7 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
 **완료 기준**: `039b`의 테이블·컬럼·enum·정책이 `docs/db/remote-schema-2026-10-26.md`와 일치(검수에서 대조). 파일에 삭제 문장(`DROP`, `TRUNCATE`, `DELETE FROM`) 없음 — 외래키의 `ON DELETE CASCADE`는 원격과 동일하게 보존한다. `npx tsc --noEmit` 통과.
 ### P0-3. Vitest 도입
 
-1. `npm i -D vitest` (버전은 설치 시점 최신 안정). `package.json` scripts에 `"test": "vitest run"`, `"test:watch": "vitest"`.
+1. `npm i -D vitest@4.1.12` — **2026-10-26 결정**: Vitest 5.x는 `@types/node` 22+를 요구하나 레포는 20.x이고 이 파일은 명세 범위 밖이므로 올리지 않는다. 4.x 최신 패치(4.1.12)를 고정 설치. `package.json` scripts에 `"test": "vitest run"`, `"test:watch": "vitest"`.
 2. `vitest.config.ts`: `test.include = ['lib/**/*.test.ts', 'lib/**/*.test.tsx']`, `environment: 'node'`. 경로 별칭 `@/` 는 `tsconfig.json`의 `paths`와 동일하게.
 3. `lib/learn/README.md`(짧게: 이 폴더는 순수 함수만, Supabase 클라이언트 import 금지, 모든 규칙 값은 인자로 받음).
 4. `lib/learn/version.test.ts` — `export const LEARN_MODULE_VERSION = '0.1.0'`를 가진 `lib/learn/version.ts`와 그것을 검사하는 테스트 1개.
