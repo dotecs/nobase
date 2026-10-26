@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { validatePack } from './pack-schema';
 import { importValidated, message, readRepositoryPack } from '../../app/(admin)/admin/learn/packs/server';
+import { hasLearnAccess } from './access';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 vi.mock('@/lib/supabase-server', () => ({ createServerSupabaseClient: vi.fn(() => { throw new Error('Real DB access prohibited in tests'); }) }));
 
@@ -54,5 +56,44 @@ describe('pack import without a remote database', () => {
   it('테이블 미적용 오류는 안내문으로 변환한다', () => {
     expect(message({ code: '42P01' })).toContain('마이그레이션 미적용');
     expect(message({ code: 'PGRST205' })).toContain('마이그레이션 미적용');
+  });
+  it('관리자 페이지는 테이블이 없어도 안내문을 렌더한다', async () => {
+    const client = {
+      auth: { getUser: async () => ({ data: { user: { id: 'test-admin' } }, error: null }) },
+      from: (table: string) => table === 'profiles'
+        ? { select: () => ({ eq: () => ({ single: async () => ({ data: { role: 'admin' } }) }) }) }
+        : { select: () => ({ order: () => ({ range: async () => ({ data: null, error: { code: '42P01' } }) }) }) },
+    } as unknown as Awaited<ReturnType<typeof createServerSupabaseClient>>;
+    vi.mocked(createServerSupabaseClient).mockResolvedValueOnce(client);
+    const { default: Page } = await import('../../app/(admin)/admin/learn/packs/page');
+    const { renderToStaticMarkup } = await import('react-dom/server');
+    expect(renderToStaticMarkup(await Page())).toContain('마이그레이션 미적용');
+  });
+});
+
+describe('learn access with mocked enrollment data', () => {
+  it('비로그인은 DB 호출 없이 거절한다', async () => {
+    vi.mocked(createServerSupabaseClient).mockClear();
+    expect(await hasLearnAccess(null)).toEqual({ granted: false, reason: 'anonymous' });
+    expect(createServerSupabaseClient).not.toHaveBeenCalled();
+  });
+  it.each([
+    ['admin', [], true, 'admin'],
+    ['student', [], false, 'not_enrolled'],
+    ['student', [{ cohort: { course: { slug: 'root-math' } } }], true, 'enrolled'],
+    ['student', [{ cohort: { course: { slug: 'other' } } }], false, 'not_enrolled'],
+  ] as const)('%s 접근 결과 %s', async (role, rows, granted, reason) => {
+    const filters: [string, unknown][] = [];
+    const query = {
+      select() { return this; }, eq(key: string, value: unknown) { filters.push([key, value]); return this; },
+      single: async () => ({ data: { role } }),
+      then(resolve: (value: unknown) => unknown) { return Promise.resolve({ data: rows, error: null }).then(resolve); },
+    };
+    vi.mocked(createServerSupabaseClient).mockResolvedValueOnce({ from: () => query } as unknown as Awaited<ReturnType<typeof createServerSupabaseClient>>);
+    expect(await hasLearnAccess('test-user')).toEqual({ granted, reason });
+    if (role !== 'admin') {
+      expect(filters).toContainEqual(['status', 'active']);
+      expect(filters).toContainEqual(['cohort.course.slug', 'root-math']);
+    }
   });
 });
