@@ -1,0 +1,8 @@
+.page { padding: 24px; max-width: 1100px; }
+.page h1 { margin-bottom: 24px; }
+.card { padding: 20px; margin: 16px 0; border: 1px solid var(--border-color, #cbd5e1); border-radius: 12px; }
+.card p { margin: 12px 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.actions button { padding: 10px 16px; border: 1px solid currentColor; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+.actions button:disabled { opacity: .5; cursor: wait; }
+.actions pre { flex-basis: 100%; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
