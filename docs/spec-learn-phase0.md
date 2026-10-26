@@ -66,7 +66,7 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
 
 1. 추가만 한다. CREATE TABLE / CREATE INDEX / CREATE POLICY / CREATE FUNCTION / ALTER TABLE ... ADD COLUMN 만 허용.
 2. learn_ 접두사가 없는 기존 테이블·정책·함수·트리거·뷰는 수정·삭제하지 않는다. (예외: 없음. 필요하면 명세에 적고 대표 승인)
-3. DROP / TRUNCATE / DELETE / ALTER COLUMN TYPE 금지. 롤백 SQL은 같은 파일 하단에 주석(-- ROLLBACK:)으로 동봉한다.
+3. 삭제 문장 금지: DROP, TRUNCATE, DELETE FROM, ALTER COLUMN TYPE. 외래키 정의의 ON DELETE CASCADE / ON DELETE SET NULL 절은 삭제 문장이 아니므로 허용한다(원격 스키마 재현·FK 무결성에 필요). 롤백 SQL은 같은 파일 하단에 주석(-- ROLLBACK:)으로 동봉한다.
 4. 적용은 대표가 Supabase MCP apply_migration 또는 SQL Editor로 한다. 적용 직전 대시보드 백업(또는 supabase db dump) 1회.
 5. 모든 learn_ 테이블은 RLS ENABLE. 정책은 "본인 행 읽기 + 본인 insert" 또는 "admin 전체"만. 학습자에게 UPDATE/DELETE 정책을 주지 않는다.
 6. 테스트 계정은 /dev-login으로 만들고 profiles.name을 "[TEST] "로 시작한다. 코칭 과정 cohort는 is_active=false로 두어 공개 목록에 노출하지 않는다.
@@ -91,7 +91,7 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
 3. `lib/database.types.ts`에 `payments` 테이블 타입과 `enrollment_status`의 `'pending'`을 수동 추가(현재 `app/api/payments/checkout/route.ts`가 `as never`로 우회 중 — 그 우회는 **건드리지 않는다**, 타입만 추가).
 4. ~~`.env.local.example`에 LLM 키 이름 추가~~ — **이미 완료됨**(커밋 `109e28a`). 건드리지 않는다.
 
-**완료 기준**: `039b`의 테이블·컬럼·enum·정책이 `docs/db/remote-schema-2026-10-26.md`와 일치(검수에서 대조). 파일에 `DROP`·`DELETE` 없음. `npx tsc --noEmit` 통과.
+**완료 기준**: `039b`의 테이블·컬럼·enum·정책이 `docs/db/remote-schema-2026-10-26.md`와 일치(검수에서 대조). 파일에 삭제 문장(`DROP`, `TRUNCATE`, `DELETE FROM`) 없음 — 외래키의 `ON DELETE CASCADE`는 원격과 동일하게 보존한다. `npx tsc --noEmit` 통과.
 ### P0-3. Vitest 도입
 
 1. `npm i -D vitest` (버전은 설치 시점 최신 안정). `package.json` scripts에 `"test": "vitest run"`, `"test:watch": "vitest"`.
@@ -146,7 +146,7 @@ lib/learn/
 | # | 확인 | 방법 | 수행 |
 |---|---|---|---|
 | 1 | `docs/learn-db-rules.md` 9개 항목 | 파일 읽기 | Claude |
-| 2 | `039b`에 `DROP`·`DELETE`·`TRUNCATE` 없음 | 파일 검색 | Claude |
+| 2 | `039b`에 삭제 문장 없음 (`DROP`, `TRUNCATE`, `DELETE FROM`; FK의 `ON DELETE …` 절은 제외) | 파일 검색 | Claude |
 | 3 | `039b` 내용이 `docs/db/remote-schema-2026-10-26.md`와 일치 | 표 vs 파일 대조 | Claude |
 | 4 | `039b`가 적용되지 않았음 | Supabase MCP `list_migrations`에 없음 | Claude |
 | 5 | `npm test`, `npx tsc --noEmit`, `npm run build` 통과 | 로그 | Codex 로그 + Claude 재실행 |
