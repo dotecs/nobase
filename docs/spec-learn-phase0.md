@@ -81,14 +81,17 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
 
 목적: 레포 파일만으로 운영 스키마를 재현할 수 없는 상태를 기록으로 메운다. **적용하지 않는다.**
 
-1. `scripts/learn-db-introspect.mjs` 작성 — `SUPABASE_SERVICE_ROLE_KEY`로 `information_schema.columns`, `pg_policies`, `pg_type`(enum 값)을 SELECT해 아래 대상의 정의를 콘솔에 출력. 쓰기 쿼리 없음. `dotenv`로 `.env.local` 로드(이미 의존성에 있음).
-   - 대상: `public.payments`(컬럼·PK·FK·인덱스·RLS 정책), `enrollment_status` enum 값 목록, `migrated_profiles`/`migrated_enrollments`/`migrated_lesson_progress`의 RLS 정책, `lessons_public` 뷰 정의(`pg_get_viewdef`).
-2. 출력을 바탕으로 `supabase/migrations/039b_remote_only_schema.sql` 작성. 상단 주석: `-- 원격(nobase911)에 MCP/대시보드로 기적용된 스키마의 역추적본. 새 환경 재현용. 운영에 다시 적용하지 말 것.` 각 블록에 원격 마이그레이션 이름(`20260810070703_create_payments_table` 등)을 주석으로.
-3. `database/README.md`에 "마이그레이션 적용 이력" 절 추가: 레포 001~039b 중 어느 것이 수동 적용, 어느 것이 MCP 적용인지 표로. 모르는 것은 "미확인"으로 두고 추측하지 않는다.
-4. ~~`.env.local.example`에 LLM 키 이름 추가~~ — **이미 완료됨**(커밋 `109e28a`, 자리표시자 값). 건드리지 않는다.
+> 2026-10-26 개정: Data API(PostgREST)로는 `information_schema`·`pg_catalog`를 조회할 수 없으므로 스크립트 작성 항목을 삭제한다. 대신 Claude가 Supabase MCP로 읽기 전용 조회한 결과를 `docs/db/remote-schema-2026-10-26.md`에 넣어 두었다. Codex는 **이 파일만 근거로** 작성하고 추측하지 않는다.
 
-**완료 기준**: 스크립트가 읽기만 하고(코드에 insert/update/delete/rpc 호출 없음), `039b` 파일의 테이블·컬럼·enum·정책이 스크립트 출력과 일치. 보고서에 스크립트 출력 전문 첨부(값에 개인정보 없음 — 스키마만).
+1. `supabase/migrations/039b_remote_only_schema.sql` 작성. 상단 주석: `-- 원격(nobase911)에 MCP/대시보드로 기적용된 스키마의 역추적본. 새 환경 재현용. 운영에 다시 적용하지 말 것. 근거: docs/db/remote-schema-2026-10-26.md`. 내용 3블록, 각 블록에 원격 마이그레이션 이름을 주석으로:
+   - `ALTER TYPE enrollment_status ADD VALUE IF NOT EXISTS 'pending' BEFORE 'active';` (`20260707063000_add_pending_to_enrollment_status`)
+   - `ALTER TABLE migrated_profiles ENABLE ROW LEVEL SECURITY;` 외 2개 테이블 (`20260707062847_enable_rls_migrated_tables`, 정책 없음이 의도)
+   - `CREATE TABLE IF NOT EXISTS payments (...)` + 인덱스 2개 + RLS ENABLE + 정책 `payments_select_own` + 코멘트 (`20260810070703_create_payments_table`). 컬럼·제약·기본값은 문서의 표와 글자 단위로 일치시킨다.
+2. `database/README.md`에 "마이그레이션 적용 이력" 절 추가: 레포 001~039b 각각 수동(SQL Editor)/MCP/미확인 표. 034~036은 파일 주석에 MCP 적용이라 적혀 있고, 037·038은 "수동 적용" 주석이 있다. 그 외는 "미확인"으로 둔다.
+3. `lib/database.types.ts`에 `payments` 테이블 타입과 `enrollment_status`의 `'pending'`을 수동 추가(현재 `app/api/payments/checkout/route.ts`가 `as never`로 우회 중 — 그 우회는 **건드리지 않는다**, 타입만 추가).
+4. ~~`.env.local.example`에 LLM 키 이름 추가~~ — **이미 완료됨**(커밋 `109e28a`). 건드리지 않는다.
 
+**완료 기준**: `039b`의 테이블·컬럼·enum·정책이 `docs/db/remote-schema-2026-10-26.md`와 일치(검수에서 대조). 파일에 `DROP`·`DELETE` 없음. `npx tsc --noEmit` 통과.
 ### P0-3. Vitest 도입
 
 1. `npm i -D vitest` (버전은 설치 시점 최신 안정). `package.json` scripts에 `"test": "vitest run"`, `"test:watch": "vitest"`.
@@ -100,12 +103,13 @@ Phase 1 이후 모든 학습 모듈 작업이 따르는 규칙. 내용은 아래
 
 ### P0-4. 수식 마크다운 파서 통합 `lib/math-markdown.tsx`
 
-1. `AnswerForm.tsx`와 `QuestionCard.tsx`의 `$$…$$` 블록 / `$…$` 인라인 / 파싱 실패 표시 로직을 `lib/math-markdown.tsx`의 `renderMathMarkdown(text: string): React.ReactNode[]`로 추출. 에러 표시용 className은 호출 측에서 주입할 수 있게 옵션 `{ blockClassName, errorClassName }`.
-2. 두 파일은 새 함수를 호출하도록만 바꾼다. 렌더 결과 동일해야 한다.
-3. `lib/math-markdown.test.tsx`: (a) `$$` 블록 1개, (b) `$` 인라인 2개가 섞인 문장, (c) 닫히지 않은 `$`가 에러 표시로 떨어지는 경우, (d) 수식 없는 일반 텍스트 — 4개 테스트. 테스트 환경은 `jsdom`이 필요하면 해당 테스트 파일에만 `// @vitest-environment jsdom` 주석과 `jsdom` devDependency 추가(이 경우만 의존성 1개 추가 허용).
+> 2026-10-26 개정: "기존 렌더 유지"가 우선이다. 닫히지 않은 `$`는 두 화면 모두 지금처럼 **일반 텍스트로** 둔다. KaTeX 파싱 실패 시의 차이(관리자=오류 문구, 수강생=원문)는 옵션으로 보존한다.
 
-**완료 기준**: 테스트 4개 통과. 기존 관리자 답변 화면·수강생 질문 카드 스크린샷 전/후 동일(보고서에 첨부).
+1. `renderMathMarkdown(text: string, opts?: { onError?: 'message' | 'raw'; blockClassName?: string; errorClassName?: string }): React.ReactNode[]`. 기본 `onError: 'raw'`(수강생 화면 동작). 관리자 `AnswerForm.tsx`는 `onError: 'message'`로 호출.
+2. 두 파일은 새 함수를 호출하도록만 바꾼다. 각 화면의 렌더 결과는 변경 전과 동일해야 한다.
+3. `lib/math-markdown.test.tsx` 4개: (a) `$$` 블록 1개, (b) `$` 인라인 2개가 섞인 문장, (c) 닫히지 않은 `$`가 **일반 텍스트로** 그대로 출력, (d) KaTeX가 던지는 잘못된 수식(예 `$rac{$`)에서 `onError:'message'`면 오류 노드, `'raw'`면 원문 노드. jsdom이 필요하면 해당 테스트 파일에만 `// @vitest-environment jsdom` + `jsdom` devDependency(이 경우만 의존성 1개 추가 허용).
 
+**완료 기준**: 테스트 4개 통과. 관리자 답변 화면·수강생 질문 카드 스크린샷 전/후 동일(보고서 첨부).
 ### P0-5. 학습 모듈 코드 골격 (빈 껍데기)
 
 Phase 1에서 채울 자리만 만든다. 로직 없음.
@@ -142,8 +146,8 @@ lib/learn/
 | # | 확인 | 방법 | 수행 |
 |---|---|---|---|
 | 1 | `docs/learn-db-rules.md` 9개 항목 | 파일 읽기 | Claude |
-| 2 | `scripts/learn-db-introspect.mjs`에 쓰기 호출 없음 | 코드 검색: `insert(`, `update(`, `delete(`, `rpc(`, `upsert(` 0건 | Claude |
-| 3 | `039b` 내용이 스크립트 출력과 일치 | 보고서 출력 vs 파일 대조 | Claude |
+| 2 | `039b`에 `DROP`·`DELETE`·`TRUNCATE` 없음 | 파일 검색 | Claude |
+| 3 | `039b` 내용이 `docs/db/remote-schema-2026-10-26.md`와 일치 | 표 vs 파일 대조 | Claude |
 | 4 | `039b`가 적용되지 않았음 | Supabase MCP `list_migrations`에 없음 | Claude |
 | 5 | `npm test`, `npx tsc --noEmit`, `npm run build` 통과 | 로그 | Codex 로그 + Claude 재실행 |
 | 6 | 수식 렌더 전/후 동일 | 스크린샷 2쌍 | Claude |
