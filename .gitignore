@@ -37,3 +37,6 @@ brain100-evidence.tgz
 dowork-brand/
 dowork-evidence/
 dowork-output/
+
+# Claude Code 로컬 파일
+.claude/
