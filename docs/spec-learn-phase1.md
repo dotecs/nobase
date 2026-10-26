@@ -245,10 +245,13 @@ map_version: "0.2"
 
 - 승인된 초안 중 `solveItem`이 성공한 것은 `lib/learn/mathcheck/templatize.ts`가 숫자 리터럴을 매개변수로 치환해 템플릿 생성: `pattern`(예 `{a}/{b} + {c}/{d}`), `params`(각 변수의 범위·제약 — 기본값: 원본과 같은 부호, 분모 2~12, 서로 다른 분모, 결과가 기약분수가 되도록 재시도 최대 20회), `solver`(`solveItem`과 같은 경로).
 - `generateVariants(template, n)` → n개 문항(정답은 solver로 계산). 중복·원본과 동일 값 제외.
-- 검토 화면에 "변형 3~5개" 토글 목록(각각 켜고 끄기). 승인 시 켜진 변형이 `learn_items`에 `usage: practice`(2개)·`review`(1개)·`assessment`(나머지)로 저장되고 `variant_group = <template id>`.
-- 테스트: 04-3·05-3 템플릿에서 변형 20개 생성 시 전부 solver 검증 통과, 중복 0.
+- 변형은 **클라이언트가 만들거나 고치지 않는다.** 서버 액션 `generateDraftVariants(draftId, n)`이 템플릿 생성 → `generateVariants` → 각 변형을 `solveItem`으로 재검증 → `learn_item_drafts.variants`에 `[{ enabled: true, stem_md, answer_type, answer_spec, usage }]`로 저장하고 `learn_item_drafts.template`에 `{ pattern, params, solver }` 저장. 검증 실패 변형은 저장하지 않는다. usage 기본 배분: practice 2 · review 1 · assessment 나머지.
+- 검토 화면의 "변형 3~5개" 목록은 **enabled 토글만** 가능(액션 `toggleDraftVariant(draftId, index, enabled)`). 내용을 바꾸고 싶으면 재생성.
+- 승인 시 변형 저장은 `learn_approve_draft`가 같은 트랜잭션에서 처리한다(2026-10-26 P1-6b 개정 — **041을 직접 수정**한다. 041은 어디에도 적용되지 않았으므로 새 파일 대신 제자리 수정이 맞다. 파일 머리말에 "2026-10-26 개정(미적용 상태에서 수정)" 한 줄, `database/README.md`에도 기록). 시그니처는 그대로 두고 본문에 추가: 씨앗 insert 뒤 ① `draft.template`이 있으면 `learn_item_templates`에 insert(`created_from_draft_id = p_draft_id`, `status 'reviewed'`) ② `draft.variants`에서 `enabled = true`인 항목을 순서대로 `answer_spec is not null` 확인 후 `<ability>-<nn>` 연번으로 insert(`version 1`, `status 'reviewed'`, `source_draft_id = p_draft_id`, usage는 변형의 값) ③ 씨앗과 변형 모두 `variant_group = <씨앗 item id>`(템플릿 id가 아니라 씨앗 id — 같은 트랜잭션 안에서 먼저 확정되는 값). 반환은 씨앗 행 그대로. 클라이언트에서 변형 내용을 받지 않으므로 P1-6a의 "수정본은 저장 후 승인" 가드가 변형에도 그대로 적용된다.
+- 템플릿 매개변수 범위 기본값(분모 2~12, 서로 다른 분모, 원본과 같은 부호, 기약 재시도 20회)은 코드 상수가 아니라 `learn_rule_configs` `variants` 키(version 1)에 넣고 040 초기 데이터에 5번째 행으로 추가한다(040도 미적용이므로 제자리 수정, 같은 머리말 표기): `('variants', 1, '{"count_default":5,"denominator_range":[2,12],"distinct_denominators":true,"keep_sign":true,"reduced_retry":20,"usage_split":{"practice":2,"review":1}}')`.
+- 테스트: 04-3·05-3 템플릿에서 변형 20개 생성 시 전부 solver 검증 통과, 중복 0. 추가: 모의 DB에서 변형 3개 enabled·2개 disabled 상태로 승인 → 문항 4개(씨앗 1+3), 모두 같은 `variant_group`, 연번 빈틈 없음; `answer_spec null`인 변형이 섞여 있으면 RPC가 예외(모의로는 가드 함수 단위 테스트).
 
-**완료 기준**: 씨앗 1문항 승인으로 소주제 04-3에 문항 6개(기본 1 + 변형 5)가 생기고 `learn-pack-validate`의 "수행형 ≥6" 조건을 만족.
+**완료 기준**: 씨앗 1문항 승인으로 소주제 04-3에 문항 6개(기본 1 + 변형 5)가 생기고 `learn-pack-validate`의 "수행형 ≥6" 조건을 만족. P1-6b 커밋 후 §7 형식 보고·대기(6c는 검수 후).
 
 #### P1-6c. 힌트·오개념·'이유 설명' 초안 (LLM 보조)
 
