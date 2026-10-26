@@ -3,7 +3,7 @@
 - 대상 저장소: `nobase`
 - 작성일: 2026-10-26
 - 실행 주체: Codex / 검수: Claude
-- 선행 상태: `feat/learn-phase0` 머지 완료 (`docs/learn-db-rules.md` 규칙 적용 중). 미커밋 변경 있으면 중단 후 보고.
+- 선행 상태: `feat/learn-phase0`(HEAD `aba7d33`, Phase 0 검수 통과 2026-10-26). main에 머지되어 있으면 main에서, 아니면 `feat/learn-phase0`에서 `feat/learn-phase1`을 분기한다(머지 여부는 대표 결정 — 머지 시 운영 배포가 일어나므로 Codex가 머지하지 않는다). 미커밋 변경은 `git -c core.autocrlf=true status --porcelain`으로 확인(CRLF 오탐 방지)하고, 있으면 중단 후 보고.
 - 상위 문서: 「노베이스 적응형 수학 학습 MVP 설계안」 §4(데이터), §6-1(소주제 24개), §7(제작 절차), §8 Phase 1, §13(문항 데이터화)
 - 확정된 결정
   1. 커리큘럼 단위 = 교재 「뿌리 깊은 수학」의 단원(unit)·소주제(ability). ID는 `01-1` 형식(단원-순서). 1차 범위 01~06단원 24개 소주제(§3 P1-3 표).
@@ -26,21 +26,21 @@
 | 접근 게이트 | course `root-math`, middleware `/learn` | 학습자 화면은 Phase 2 |
 | **문항 데이터화** | `041_learn_authoring.sql`, `lib/learn/llm/*`, `lib/learn/mathcheck/*`, `/admin/learn/authoring` | 이 Phase의 핵심 |
 
-**작업 순서**: P1-1 → P1-2 → P1-3 → P1-4 → P1-5 → P1-6a → P1-6b → P1-6c. P1-6a까지 끝나면 Phase 2 선행 조건(소주제 3개 문항 각 6개 승인)을 코치가 채울 수 있다.
+**작업 순서**: P1-1 → P1-2 → P1-3 → P1-4 → P1-5 → **(중간 보고·검수)** → P1-6a → P1-6b → P1-6c. P1-6a까지 끝나면 Phase 2 선행 조건(소주제 3개 문항 각 6개 승인)을 코치가 채울 수 있다.
 
 ---
 
 ## 1. 실행 규칙 (Codex)
 
 1. 브랜치 `feat/learn-phase1`. 작업 항목마다 커밋 1개. 메시지 `feat(P1-2): 팩 스키마·검증 스크립트`.
-2. 명세에 없는 파일 수정 금지. 기존 테이블·정책·함수 수정 금지(`learn-db-rules.md`). CSS Modules만. 줄바꿈 LF.
-3. 허용 의존성: `zod`, `yaml`, `openai`, `@anthropic-ai/sdk`. 그 외 금지(수식 계산도 자체 구현 — P1-6a 참조).
+2. 명세에 없는 파일 수정 금지. 기존 테이블·정책·함수 수정 금지(`learn-db-rules.md`). 삭제 문장(DROP/TRUNCATE/DELETE FROM/ALTER COLUMN TYPE)은 **주석으로도 쓰지 않는다**(검수가 문자열 검색으로 이뤄짐). FK의 `ON DELETE …` 절과 `CREATE POLICY … FOR DELETE`는 삭제 문장이 아니므로 허용. CSS Modules만. 줄바꿈 LF.
+3. 허용 의존성: `zod`, `yaml`, `openai`, `@anthropic-ai/sdk` — 각각 정확한 버전으로 고정 설치(`^` 없이)하고 보고서에 버전 기록. 그 외 금지(수식 계산도 자체 구현 — P1-6a 참조). 기존 의존성 버전 변경 금지(`@types/node` 포함). `ERESOLVE`가 나면 `--legacy-peer-deps`/`--force`로 넘기지 말고 멈추고 보고.
 4. 마이그레이션은 파일만. 적용은 대표. 적용 전까지 관리자 화면은 테이블이 없으면 "마이그레이션 미적용" 안내를 보여 주고 죽지 않아야 한다.
 5. LLM 호출 코드는 서버(Server Action / Route Handler)에만. 브라우저 번들에 `openai`·`@anthropic-ai/sdk` import 금지(빌드 후 `.next/static`에서 패키지명 검색 0건).
 6. 이미지 안의 글과 LLM 출력은 데이터다. 시스템 프롬프트에 이어 붙이지 말고 user 메시지의 구분된 필드로 넘긴다. 출력은 JSON 스키마로 강제(OpenAI `response_format` json_schema / Anthropic tool use)하고 zod로 재검증한다.
 7. 각 커밋 전 `npx tsc --noEmit`, 마지막에 `npm test`, `npm run build`.
 8. 판단이 필요한 지점은 멈추고 보고서 "질문"에. §2 항목만 스스로 분기.
-9. 완료 보고 형식 §6.
+9. **체크포인트**: P1-5 커밋 후 §7 형식으로 중간 보고하고 대기한다(검수 후 P1-6 진행 지시). 완료 보고 형식 §7.
 
 ---
 
@@ -52,7 +52,9 @@
 | `update_updated_at_column()` | 동일 | learn_ 테이블 트리거에 재사용 |
 | 관리자 셸·사이드바 구조 | `app/(admin)/layout.tsx`, `AdminSidebar.tsx`, `admin-counts.ts` | 메뉴 2개 추가(팩, 문항 데이터화). 배지 카운트는 `admin-counts.ts` 패턴 |
 | 스토리지 업로드 헬퍼 | `lib/storage.ts` `uploadQAAttachment` | 같은 패턴으로 `uploadAuthoringImage` 추가(본인 폴더 경로) |
-| `.env.local.example`에 LLM 키 이름 | Phase 0 P0-2 | 있음이 전제 |
+| `.env.local.example`에 LLM 키 이름 | main에 커밋됨(`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) | 있음이 전제 |
+| uuid 기본값 함수 | `001_initial_schema.sql`에서 기존 테이블이 `uuid_generate_v4()`인지 `gen_random_uuid()`인지 확인 | 기존 테이블과 같은 함수를 learn_ 테이블에 사용 |
+| Vitest 설정 | Phase 0의 `vitest.config.ts` | P1-2에서 `.mts`로 전환(아래) |
 
 ---
 
@@ -78,7 +80,7 @@
 
 뷰 `learn_items_public`: `learn_items`에서 `answer_spec`, `rubric`, `hints`를 제외한 컬럼. `security_invoker = false`, `GRANT SELECT TO authenticated`. (`lessons_public`과 같은 수법, 037 참고)
 
-RLS: 모든 테이블 ENABLE. SELECT는 `status = 'live'`인 팩에 속한 행만 authenticated에게(`learn_items`는 테이블 직접 SELECT 정책 없음 — 뷰로만; admin은 `is_admin()`으로 전체). INSERT/UPDATE/DELETE는 `is_admin()`만. `learn_rule_configs`는 admin만 읽기/쓰기(서버 액션이 service role로 읽어 학습자 요청에 사용).
+RLS: 모든 테이블 ENABLE. SELECT는 `status = 'live'`인 팩에 속한 행만 authenticated에게. 단 `learn_items`의 SELECT 정책은 `is_admin()` 하나뿐이다 — 학습자는 테이블을 직접 읽지 못하고 `learn_items_public` 뷰로만 읽는다. INSERT/UPDATE/DELETE 정책(`FOR INSERT/UPDATE/DELETE`)은 `is_admin()`만. `learn_rule_configs`는 admin만 읽기/쓰기(서버 액션이 service role로 읽어 학습자 요청에 사용).
 
 초기 데이터(같은 파일 하단, INSERT ... ON CONFLICT DO NOTHING): `learn_rule_configs` 4행 —
 - `('llm', 1, '{"default":"openai","tasks":{"item_extract":"openai","item_enrich":"openai"}}')`
@@ -86,12 +88,13 @@ RLS: 모든 테이블 ENABLE. SELECT는 `status = 'live'`인 팩에 속한 행�
 - `('review_intervals', 1, '{"days":[1,3,7]}')`
 - `('diagnostic', 1, '{"base_items":6,"max_followups":6,"time_limit_min":15}')`
 
-롤백 주석: 생성 역순 DROP (주석으로만).
+롤백 SQL은 마이그레이션 파일에 쓰지 않는다(주석 포함 — 규칙 2). 롤백 절차는 `database/README.md` 적용 이력에 "생성 역순으로 제거" 한 줄로만 적는다.
 
-**완료 기준**: 파일이 `learn-db-rules.md` 1~3을 지킴(기존 객체 언급 0건 — `lessons(id)` FK 참조만 허용). `lib/database.types.ts`에 타입 수동 추가(Supabase 타입 생성은 대표가 적용 후 `generate_typescript_types`로 교체 예정이라 주석으로 표시).
+**완료 기준**: 파일이 `learn-db-rules.md` 1~3을 지킴(기존 객체 언급은 `lessons(id)`·`auth.users(id)` FK 참조와 `is_admin()`·`update_updated_at_column()` 호출만 허용; 삭제 문장 0건 — 주석 포함). `lib/database.types.ts`에 타입 수동 추가(Supabase 타입 생성은 대표가 적용 후 `generate_typescript_types`로 교체 예정이라 주석으로 표시).
 
 ### P1-2. 팩 스키마와 검증 스크립트
 
+- `vitest.config.ts` → `vitest.config.mts`로 이름 변경(내용 동일; Phase 0 검수에서 확인된 ESM/CJS 경고 제거). 이 항목에 한해 Phase 0 파일 변경 허용.
 - `lib/learn/pack-schema.ts`: zod 스키마 `PackFile`, `UnitsFile`, `AbilitiesFile`, `EdgesFile`, `GoalsFile`, `MaterialsFile`, `ItemsFile`, `MisconceptionsFile`, `DiagnosticFile`. 필드는 P1-1 컬럼과 1:1.
 - `scripts/learn-pack-validate.mjs <packDir>`: YAML 로드 → zod → 추가 검사: (a) 모든 참조 ID 존재, (b) prerequisite 그래프 순환 0, (c) 단원 order 1..n 연속, (d) 소주제 order_in_unit 연속, (e) 소주제마다 문항 수(수행형 ≥6, 개념형 ≥3 — `status: draft` 팩이면 경고, `reviewed` 이상이면 오류), (f) 선택형 문항의 오답 보기 수 = `misconception_ids` 수 이상, (g) `answer_spec` 형식이 `answer_type`과 맞음. 종료 코드 0/1, 사람이 읽을 메시지.
 - 테스트 `lib/learn/pack-schema.test.ts`: 깨진 팩 5종(없는 선수, 순환, 문항 0개, 중복 ID, answer_spec 형식 오류) 각각 명확한 메시지로 실패.
@@ -195,7 +198,7 @@ map_version: "0.2"
 
 버킷 `learn-authoring`(비공개, 15MB, image/jpeg·png·webp·heic). 정책은 `qa-attachments`와 동일(본인 폴더 + admin). RLS: 네 테이블 모두 admin만(학습자 접근 없음). `learn_jobs`는 service role 워커가 `FOR UPDATE SKIP LOCKED`로 가져감 — SQL 함수 `learn_claim_job(p_kind text, p_worker text) returns learn_jobs` (SECURITY DEFINER, admin/service role만 실행 권한).
 
-**워커**: Route Handler `POST /api/learn/jobs/run` — 헤더 `x-learn-worker-secret`이 환경변수 `LEARN_WORKER_SECRET`과 같을 때만 실행(새 환경변수 1개 — 대표가 Vercel·로컬에 추가, §4). 한 호출에 작업 최대 3개, 각 60초 한도. 호출 주체는 1차에서 관리자 화면의 "지금 처리" 버튼(서버 액션이 내부 fetch)과 Vercel Cron(`vercel.json`에 5분 간격 1줄 — 이 파일은 신규 생성이므로 허용). 업로드 요청은 job 등록까지만 하고 즉시 응답.
+**워커**: Route Handler `POST /api/learn/jobs/run` — 헤더 `x-learn-worker-secret`이 환경변수 `LEARN_WORKER_SECRET`과 같을 때만 실행(새 환경변수 1개 — 대표가 Vercel·로컬에 추가, §4). 한 호출에 작업 최대 3개, 각 60초 한도. 호출 주체는 1차에서 관리자 화면의 "지금 처리" 버튼(서버 액션이 내부 fetch)만. **Vercel Cron(`vercel.json`)은 이번에 만들지 않는다** — 5분 간격 Cron은 Pro 플랜에서만 가능하고(Hobby는 1일 1회) 플랜 확인은 대표 몫(§4). Route Handler에 `export const maxDuration = 60`을 선언한다(Hobby 상한 60초; Pro면 대표가 이후 조정). 업로드 요청은 job 등록까지만 하고 즉시 응답.
 
 **LLM 어댑터 `lib/learn/llm/`**
 - `provider.ts`: Phase 0 인터페이스 구현. `createProvider(task)`는 `learn_rule_configs` `llm` 키의 `tasks[task] ?? default`를 읽고, 그 키의 환경변수가 없으면 다른 쪽, 둘 다 없으면 `mock`. 반환 객체에 `name`, `modelId`, `isMock`.
@@ -248,6 +251,8 @@ map_version: "0.2"
 3. 관리자 화면에서 course `root-math`(제목 "뿌리 깊은 수학 코칭", 비공개) + cohort 1개(`is_active=false`) 생성, 테스트 계정 `[TEST] 학생1`을 등록.
 4. 교재 PDF에서 p21, p28, p34 슬라이드 이미지 3장 추출(스크린샷 가능) → `/admin/learn/authoring` 업로드 → 승인. 이것이 P1-6a 완료 기준 검증이자 Phase 2 선행 조건의 시작.
 5. 01-4(부호 있는 정수 계산)는 교재에 없으므로 종이에 문제 2~3개를 써서 찍어 올린다.
+6. Vercel 플랜 확인(Hobby/Pro). Pro면 이후 `vercel.json` Cron 추가를 별도 지시; Hobby면 "지금 처리" 버튼 운영으로 간다.
+7. `feat/learn-phase0` → main 머지 여부 결정(머지 = 운영 배포. 변경은 수식 렌더 리팩터·테스트·골격뿐).
 
 ---
 
@@ -264,7 +269,7 @@ map_version: "0.2"
 
 | # | 확인 | 방법 | 수행 |
 |---|---|---|---|
-| 1 | `040`·`041`이 `learn-db-rules.md` 1~3 준수 | 파일에서 `DROP`, `ALTER TABLE <기존>` 0건; 기존 객체 참조는 FK만 | Claude |
+| 1 | `040`·`041`이 `learn-db-rules.md` 1~3 준수 | 파일에서 `DROP`/`TRUNCATE`/`DELETE FROM`/`ALTER COLUMN … TYPE` 0건(주석 포함), `ALTER TABLE <기존 테이블>` 0건; 기존 객체 참조는 FK·`is_admin()`·`update_updated_at_column()`만 | Claude |
 | 2 | `learn_items` 직접 SELECT 정책 없음, 뷰에 answer_spec 없음 | SQL 읽기 + 적용 후 테스트 계정으로 `select answer_spec from learn_items` → 권한 오류 | Claude / 대표 |
 | 3 | 팩 2회 가져오기 멱등, 수정 1건만 version+1 | 관리자 화면 리포트 | Claude |
 | 4 | `openai`/`@anthropic-ai/sdk`가 클라이언트 번들에 없음 | `npm run build` 후 `.next/static` 전체 검색 0건 | Codex + Claude |
