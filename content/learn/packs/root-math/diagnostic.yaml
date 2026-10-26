@@ -1,0 +1,13 @@
+id: 23d653e9-5aba-47f1-9bc5-fddb368c926c
+goal_id: g-linear-eq-basic
+version: 1
+base_abilities:
+  - 01-4
+  - 02-5
+  - 03-1
+  - 04-3
+  - 05-4
+  - 06-3
+followup_rule: same_unit_previous
+base_items: []
+followups: []

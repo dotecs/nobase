@@ -1,0 +1,36 @@
+- id: u01
+  pack_id: root-math
+  order: 1
+  title: 수 체계
+  slide_pages: p1-6
+  tier: mvp1
+- id: u02
+  pack_id: root-math
+  order: 2
+  title: 문자와 식
+  slide_pages: p7-14
+  tier: mvp1
+- id: u03
+  pack_id: root-math
+  order: 3
+  title: 분배법칙
+  slide_pages: p15-17
+  tier: mvp1
+- id: u04
+  pack_id: root-math
+  order: 4
+  title: 분수의 성질
+  slide_pages: p18-23
+  tier: mvp1
+- id: u05
+  pack_id: root-math
+  order: 5
+  title: 등식의 성질
+  slide_pages: p24-28
+  tier: mvp1
+- id: u06
+  pack_id: root-math
+  order: 6
+  title: 부등식의 성질
+  slide_pages: p29-34
+  tier: mvp1
