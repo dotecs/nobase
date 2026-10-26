@@ -13,6 +13,136 @@ export type SubjectVisibility = 'public' | 'restricted'
 export interface Database {
   public: {
     Tables: {
+      // Manual authoring types: regenerate after migration 041 is applied.
+      learn_item_sources: {
+        Row: {
+          id: string
+          uploader_id: string
+          storage_path: string
+          origin: string
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          uploader_id: string
+          storage_path: string
+          origin: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_item_sources']['Insert']>
+        Relationships: []
+      }
+      learn_item_drafts: {
+        Row: {
+          id: string
+          source_id: string
+          crop: Json | null
+          extract: Json
+          stem_md: string
+          answer_type: string | null
+          answer_spec: Json | null
+          answer_verified_by: string | null
+          ability_candidates: string[]
+          ability_id: string | null
+          usage_suggested: string | null
+          template: Json | null
+          variants: Json
+          hints: Json
+          misconceptions: Json
+          status: string
+          provider: string
+          model_id: string
+          prompt_version: string
+          is_mock: boolean
+          reviewed_by: string | null
+          reviewed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          source_id: string
+          crop?: Json | null
+          extract: Json
+          stem_md: string
+          answer_type?: string | null
+          answer_spec?: Json | null
+          answer_verified_by?: string | null
+          ability_candidates?: string[]
+          ability_id?: string | null
+          usage_suggested?: string | null
+          template?: Json | null
+          variants?: Json
+          hints?: Json
+          misconceptions?: Json
+          status?: string
+          provider: string
+          model_id: string
+          prompt_version: string
+          is_mock?: boolean
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_item_drafts']['Insert']>
+        Relationships: []
+      }
+      learn_item_templates: {
+        Row: {
+          id: string
+          ability_id: string
+          pattern: string
+          params: Json
+          solver: string
+          status: string
+          created_from_draft_id: string | null
+        }
+        Insert: {
+          id?: string
+          ability_id: string
+          pattern: string
+          params: Json
+          solver: string
+          status?: string
+          created_from_draft_id?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['learn_item_templates']['Insert']>
+        Relationships: []
+      }
+      learn_jobs: {
+        Row: {
+          id: string
+          kind: string
+          ref_id: string
+          status: string
+          attempts: number
+          max_attempts: number
+          locked_at: string | null
+          locked_by: string | null
+          result: Json | null
+          error: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          kind: string
+          ref_id: string
+          status?: string
+          attempts?: number
+          max_attempts?: number
+          locked_at?: string | null
+          locked_by?: string | null
+          result?: Json | null
+          error?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_jobs']['Insert']>
+        Relationships: []
+      }
+
       // Manual learn types: replace with generated types after migration 040 is applied.
       learn_packs: {
         Row: {
@@ -809,6 +939,14 @@ export interface Database {
       }
     }
     Functions: {
+      learn_approve_draft: {
+        Args: { p_draft_id: string; p_ability_id: string; p_usage: string; p_item: Json }
+        Returns: Database['public']['Tables']['learn_items']['Row']
+      }
+      learn_claim_job: {
+        Args: { p_kind: string; p_worker: string }
+        Returns: Database['public']['Tables']['learn_jobs']['Row']
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean

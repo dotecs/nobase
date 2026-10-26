@@ -6,6 +6,7 @@ export const STORAGE_BUCKETS = {
   COURSE_THUMBNAILS: 'course-thumbnails',
   LESSON_RESOURCES: 'lesson-resources',
   QA_ATTACHMENTS: 'qa-attachments',
+  LEARN_AUTHORING: 'learn-authoring',
 } as const
 
 type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS]
@@ -399,6 +400,17 @@ export async function uploadQAAttachment(
   }
 
   return { url: urlData.signedUrl, storagePath: data.path, error: null }
+}
+
+export async function uploadAuthoringImage(userId: string, file: File): Promise<{ storagePath: string | null; error: Error | null }> {
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type) || file.size > 15 * 1024 * 1024 || file.size === 0) {
+    return { storagePath: null, error: new Error('JPEG·PNG·WebP·HEIC 이미지(15MB 이하)를 선택해 주세요.') }
+  }
+  const supabase = createClientSupabaseClient()
+  const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+  const path = `${userId}/authoring/${crypto.randomUUID()}_${safeName}`
+  const { data, error } = await supabase.storage.from(STORAGE_BUCKETS.LEARN_AUTHORING).upload(path, file, { upsert: false, contentType: file.type })
+  return { storagePath: data?.path ?? null, error }
 }
 
 /**

@@ -1,0 +1,111 @@
+'use client';
+
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { uploadAuthoringImage } from '@/lib/storage';
+import { renderMathMarkdown } from '@/lib/math-markdown';
+import { solveItem } from '@/lib/learn/mathcheck/solve';
+import { AnswerSpec } from '@/lib/learn/answer-spec';
+import type { Ability, ApprovalValue, Draft, Source } from '@/lib/learn/llm/authoring';
+import type { AnswerType } from '@/lib/learn/types';
+import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft } from './actions';
+import styles from './authoring.module.css';
+
+type Result = { message?: string; error?: string };
+type SourceView = Source & { url: string | null };
+type Approve = (value: ApprovalValue) => Promise<Result>;
+export type AuthoringProps = { userId: string; sources: SourceView[]; drafts: Draft[]; abilities: Ability[]; jobs: { id: string; ref_id: string; status: string; error: string | null }[] };
+
+export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft; source: SourceView; abilities: Ability[]; approve: Approve }) {
+  const [stem, setStem] = useState(draft.stem_md), [answerType, setAnswerType] = useState<AnswerType>((draft.answer_type ?? 'photo') as AnswerType);
+  const [ability, setAbility] = useState(draft.ability_id ?? draft.ability_candidates[0] ?? ''), [usage, setUsage] = useState<ApprovalValue['usage']>((draft.usage_suggested ?? 'assessment') as ApprovalValue['usage']);
+  const savedAnswer = AnswerSpec.safeParse(draft.answer_spec);
+  const saved = savedAnswer.success ? savedAnswer.data : undefined;
+  const [answer, setAnswer] = useState(saved && 'value' in saved ? `${saved.type === 'number' && saved.variable ? saved.variable + saved.relation : ''}${saved.value}` : saved && 'model_answer_md' in saved ? saved.model_answer_md ?? '' : '');
+  const [choices, setChoices] = useState(saved?.type === 'choice' ? saved.options.map(option => option.text_md).join('\n') : ''), [correct, setCorrect] = useState(saved?.type === 'choice' ? saved.correct.join(',') : '');
+  const [coachConfirmed, setCoachConfirmed] = useState(draft.answer_verified_by === 'coach'), [saveImage, setSaveImage] = useState(false), [zoom, setZoom] = useState(false);
+  const [result, setResult] = useState<Result>(), [pending, startTransition] = useTransition();
+  const router = useRouter();
+  const extract = draft.extract as { original?: { needs_figure?: boolean }; warning?: string } | null;
+  const needsFigure = extract?.original?.needs_figure ?? false;
+  const program = needsFigure ? { ok: false as const } : solveItem(stem, answerType);
+  const spec = (() => {
+    if (answerType === 'number') { const match = answer.trim().match(/^([a-z])\s*(<=|>=|=|<|>)\s*(.+)$/); return match ? { type: 'number', variable: match[1], relation: match[2], value: match[3] } : { type: 'number', value: answer.trim() }; }
+    if (answerType === 'fraction' || answerType === 'expression') return { type: answerType, value: answer.trim() };
+    if (answerType === 'choice') return { type: 'choice', options: choices.split('\n').filter(Boolean).map((text, index) => ({ id: String(index + 1), text_md: text })), correct: correct.split(',').map(value => value.trim()).filter(Boolean) };
+    return { type: answerType, model_answer_md: answer };
+  })();
+  const coachValid = AnswerSpec.safeParse(spec).success && (answerType === 'photo' || !!answer.trim() || answerType === 'choice');
+  const locked = ['approved', 'rejected'].includes(draft.status);
+  const allowed = !pending && !locked && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
+  const crop = draft.crop as { x: number; y: number; width: number; height: number } | null;
+  const ordered = [...abilities].sort((a, b) => Number(draft.ability_candidates.includes(b.id)) - Number(draft.ability_candidates.includes(a.id)));
+  const run = (action: () => Promise<Result>) => startTransition(async () => { try { setResult(await action()); router.refresh(); } catch { setResult({ error: '요청을 처리하지 못했습니다.' }); } });
+  return <article className={styles.review}>
+    <div><button onClick={() => setZoom(!zoom)}>원본 {zoom ? '축소' : '확대'}</button>
+      <div className={`${styles.imageScroll} ${zoom ? styles.zoom : ''}`}><div className={styles.imageFrame}>
+        {source.url ? <img src={source.url} alt="문제 원본 이미지" loading="lazy" /> : <p>이미지 URL을 만들지 못했습니다.</p>}
+        {crop && <svg className={styles.highlight} viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="문제 영역"><rect x={crop.x * 1000} y={crop.y * 1000} width={crop.width * 1000} height={crop.height * 1000} /></svg>}
+      </div></div>
+    </div>
+    <div className={styles.editor}>
+      <p>{draft.status} · {draft.is_mock ? '모의 추출' : '이미지 추출'} · {draft.model_id}</p>
+      {extract?.warning === 'llm_mismatch' && <p role="status">⚠ LLM 불일치 — 프로그램 정답과 추정 답이 다릅니다.</p>}
+      <label>문제<textarea value={stem} onChange={event => { setStem(event.target.value); setCoachConfirmed(false); }} disabled={locked} /></label>
+      <div className={styles.preview}>{renderMathMarkdown(stem)}</div>
+      <label>정답 형식<select value={answerType} onChange={event => { setAnswerType(event.target.value as AnswerType); setCoachConfirmed(false); }} disabled={locked}>
+        <option value="number">수·방정식·부등식의 해</option><option value="fraction">분수</option><option value="expression">식 정리</option><option value="choice">선택형</option><option value="photo">사진 풀이</option><option value="text">서술형</option>
+      </select></label>
+      <p>{coachConfirmed && coachValid ? '코치 확인 ✓' : program.ok ? '프로그램 검증 ✓' : '미확인 — 코치 정답 확인 필요'}</p>
+      {program.ok && 'value' in program.answer_spec && <p>계산한 정답: {program.answer_spec.type === 'number' && program.answer_spec.variable ? `${program.answer_spec.variable}${program.answer_spec.relation}` : ''}{program.answer_spec.value}</p>}
+      {answerType === 'choice' ? <><label>보기 (한 줄에 하나, 위에서부터 1번)<textarea value={choices} onChange={event => { setChoices(event.target.value); setCoachConfirmed(false); }} /></label><label>정답 번호 (여러 개면 쉼표로 구분)<input value={correct} onChange={event => { setCorrect(event.target.value); setCoachConfirmed(false); }} /></label></> : <label>코치 정답 / 모범 답안{answerType === 'number' && ' (예: -3/4, x<=-7)'}<textarea value={answer} onChange={event => { setAnswer(event.target.value); setCoachConfirmed(false); }} disabled={locked} /></label>}
+      <label><input type="checkbox" checked={coachConfirmed} onChange={event => setCoachConfirmed(event.target.checked)} disabled={locked} />입력한 정답을 코치가 확인했습니다.</label>
+      <label>소주제 (추천 우선)<select value={ability} onChange={event => setAbility(event.target.value)} disabled={locked}><option value="">선택하세요</option>{ordered.map(row => <option key={row.id} value={row.id}>{draft.ability_candidates.includes(row.id) ? '추천 · ' : ''}{row.id} {row.name}</option>)}</select></label>
+      <label>용도<select value={usage} onChange={event => setUsage(event.target.value as ApprovalValue['usage'])} disabled={locked}><option value="diagnostic">진단</option><option value="practice">연습</option><option value="assessment">평가</option><option value="review">복습</option></select></label>
+      <label><input type="checkbox" checked={saveImage} onChange={event => setSaveImage(event.target.checked)} disabled={locked} />원본을 예제 자료로 함께 저장</label>
+      {source.origin === 'reference_only' && <p>참고용 이미지는 승인할 수 없습니다.</p>}
+      <div className={styles.buttons}>
+        <button disabled={!allowed} onClick={() => run(() => approve({ draftId: draft.id, stem_md: stem, answer_type: answerType, ability_id: ability, usage, coachConfirmed, coachAnswer: spec, saveImage }))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
+        <button disabled={locked || pending} onClick={() => { setAnswerType('photo'); setCoachConfirmed(false); setSaveImage(true); }}>이미지 문항으로 등록 준비</button>
+        <button disabled={locked || pending} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>
+      </div>
+      {result && <p role="status">{result.error ?? result.message}</p>}
+    </div>
+  </article>;
+}
+
+export default function AuthoringClient({ userId, sources, drafts, abilities, jobs }: AuthoringProps) {
+  const [files, setFiles] = useState<File[]>([]), [origin, setOrigin] = useState(''), [note, setNote] = useState(''), [filter, setFilter] = useState('all');
+  const [pending, startTransition] = useTransition(), [message, setMessage] = useState('');
+  const router = useRouter();
+  const approve: Approve = async value => {
+    const saved = await saveDraftReview(value);
+    if (saved.error) return saved;
+    return approveDraft({ draftId: value.draftId, saveImage: value.saveImage });
+  };
+  const upload = () => startTransition(async () => {
+    try {
+      for (const file of files) {
+        const result = await uploadAuthoringImage(userId, file);
+        if (result.error || !result.storagePath) throw result.error ?? new Error('업로드 실패');
+        const registered = await registerSource({ storagePath: result.storagePath, origin, note });
+        if (registered.error) throw new Error(registered.error);
+      }
+      setMessage(`${files.length}개 이미지를 대기열에 등록했습니다.`); setFiles([]); router.refresh();
+    } catch (error) { setMessage(error instanceof Error ? error.message : '업로드 실패'); }
+  });
+  return <>
+    <div className={styles.upload}>
+      <label>이미지 선택 (각 15MB 이하)<input type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic" onChange={event => setFiles(Array.from(event.target.files ?? []))} /></label>
+      <label>출처<select value={origin} onChange={event => setOrigin(event.target.value)} required><option value="">선택하세요</option><option value="own">직접 제작</option><option value="book">교재</option><option value="licensed">사용 허가</option><option value="reference_only">참고용 (승인 불가)</option></select></label>
+      <label>메모<input value={note} onChange={event => setNote(event.target.value)} /></label>
+      <div className={styles.buttons}><button disabled={pending || !origin || !files.length} onClick={upload}>업로드·대기열 등록</button><button disabled={pending} onClick={() => startTransition(async () => { const result = await processNow(); setMessage(result.error ?? result.message ?? ''); router.refresh(); })}>지금 처리 (최대 3개)</button></div>
+      <p role="status">{pending ? '처리 중…' : message}</p>
+    </div>
+    <label>초안 상태<select value={filter} onChange={event => setFilter(event.target.value)}><option value="all">전체</option>{['extracted', 'needs_coach', 'approved', 'rejected'].map(status => <option key={status}>{status}</option>)}</select></label>
+    {sources.map(source => <section key={source.id} className={styles.source}><h2>{source.note || source.storage_path.split('/').at(-1)}</h2><p>{source.origin} · {source.created_at}</p>
+      {jobs.filter(job => job.ref_id === source.id).map(job => <p key={job.id}>작업: {job.status}{job.error ? ` — ${job.error}` : ''}</p>)}
+      {drafts.filter(draft => draft.source_id === source.id && (filter === 'all' || draft.status === filter)).map(draft => <ReviewCard key={draft.id} {...{ draft, source, abilities, approve }} />)}
+    </section>)}
+  </>;
+}
