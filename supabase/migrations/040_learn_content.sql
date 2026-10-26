@@ -1,4 +1,5 @@
 -- Purpose: learn content packs, policies and answer-safe view.
+-- 2026-10-26 개정(미적용 상태에서 수정): 변형 생성 규칙 추가.
 -- Application: not applied; application date: pending human review.
 
 begin;
@@ -215,7 +216,8 @@ insert into public.learn_rule_configs (key, version, config) values
 ('llm', 1, '{"default":"openai","tasks":{"item_extract":"openai","item_enrich":"openai"}}'::jsonb),
 ('evidence', 1, '{"independent_correct_needed":2,"distinct_variants":true,"unexposed_needed":1,"retained_after_days":3,"retained_reviews":3}'::jsonb),
 ('review_intervals', 1, '{"days":[1,3,7]}'::jsonb),
-('diagnostic', 1, '{"base_items":6,"max_followups":6,"time_limit_min":15}'::jsonb)
+('diagnostic', 1, '{"base_items":6,"max_followups":6,"time_limit_min":15}'::jsonb),
+('variants', 1, '{"count_default":5,"denominator_range":[2,12],"distinct_denominators":true,"keep_sign":true,"reduced_retry":20,"usage_split":{"practice":2,"review":1}}'::jsonb)
 on conflict (key, version) do nothing;
 
 commit;

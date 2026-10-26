@@ -5,11 +5,15 @@ import { evaluate, polynomial, formatPolynomial, solveRelation } from './evaluat
 import { Rational } from './rational';
 
 export type SolveResult = { ok: true; answer_spec: AnswerSpecValue } | { ok: false; reason: 'unsupported' | 'parse_error' };
+export function normalizeStem(stem: string) {
+  let text = stem.trim().replace(/\$\$|\$|\\\(|\\\)|\\\[|\\\]/g, '');
+  text = text.replace(/^(?:다음을 계산하시오[.:]?|다음 식을 정리하시오[.:]?)\s*/, '').replace(/\s*(?:을|를)?\s*(?:계산하시오|구하시오|풀어라|정리하시오)[.!]?$/, '').trim();
+  return normalizeMath(text);
+}
 export function solveItem(stem: string, answerType: AnswerType): SolveResult {
   try {
     if (!['number', 'fraction', 'expression'].includes(answerType)) throw new UnsupportedError('Coach grading required');
-    let text = stem.trim().replace(/\$\$|\$|\\\(|\\\)|\\\[|\\\]/g, '');
-    text = text.replace(/^(?:다음을 계산하시오[.:]?|다음 식을 정리하시오[.:]?)\s*/, '').replace(/\s*(?:을|를)?\s*(?:계산하시오|구하시오|풀어라|정리하시오)[.!]?$/, '').trim();
+    let text = normalizeStem(stem);
     const assignment = text.match(/^([a-z])\s*=\s*([+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?)\s*(?:;|일\s*때,?)\s*(.+)$/);
     const values: Record<string, Rational> = {};
     if (assignment) { values[assignment[1]] = Rational.parse(assignment[2]); text = assignment[3]; }

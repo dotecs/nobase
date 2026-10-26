@@ -17,4 +17,7 @@
 .highlight rect { fill: rgba(0, 114, 198, .08); stroke: #0072c6; stroke-width: 4; }
 .preview { padding: 16px; border: 1px solid var(--border-color, #cbd5e1); overflow-x: auto; }
 .page pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.variants { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 8px; }
+.variants ul { list-style: none; padding: 0; display: grid; gap: 16px; }
+.variants li { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color, #cbd5e1); overflow-wrap: anywhere; }
 @media (max-width: 767px) { .page { padding: 12px; } .review { grid-template-columns: 1fr; } }

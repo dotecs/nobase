@@ -1,4 +1,5 @@
 -- Purpose: image authoring sources, drafts and worker queue.
+-- 2026-10-26 개정(미적용 상태에서 수정): 승인 트랜잭션에 템플릿·변형 저장 통합.
 -- Application: not applied; application date: pending human review.
 
 begin;
@@ -123,6 +124,7 @@ declare
   item public.learn_items;
   next_number bigint;
   item_id text;
+  variant jsonb;
 begin
   if not public.is_admin() then raise exception '관리자만 승인할 수 있습니다' using errcode = '42501'; end if;
   select * into draft from public.learn_item_drafts where id = p_draft_id for update;
@@ -140,18 +142,46 @@ begin
   end if;
   perform pg_advisory_xact_lock(hashtext(p_ability_id));
   select count(distinct id) + 1 into next_number from public.learn_items where ability_id = p_ability_id;
-  item_id := p_ability_id || '-' || lpad(next_number::text, 2, '0');
+  item_id := p_ability_id || '-' || lpad(next_number::text, greatest(2, length(next_number::text)), '0');
   insert into public.learn_items (
     id, version, ability_id, usage, stem_md, answer_type, answer_spec, hints, rubric,
-    misconception_ids, required_abilities, status, source_draft_id
+    misconception_ids, required_abilities, status, source_draft_id, variant_group
   ) values (
     item_id, 1, p_ability_id, p_usage,
     coalesce(p_item->>'stem_md', draft.stem_md), coalesce(p_item->>'answer_type', draft.answer_type),
     coalesce(p_item->'answer_spec', draft.answer_spec), coalesce(p_item->'hints', draft.hints, '[]'::jsonb), '[]'::jsonb,
     array(select jsonb_array_elements_text(coalesce(p_item->'misconception_ids', '[]'::jsonb))),
     array(select jsonb_array_elements_text(coalesce(p_item->'required_abilities', '[]'::jsonb))),
-    'reviewed', p_draft_id
+    'reviewed', p_draft_id, item_id
   ) returning * into item;
+  if draft.template is not null and draft.template <> 'null'::jsonb then
+    if draft.template->'params'->>'source_stem' is distinct from draft.stem_md
+      or draft.template->'params'->>'answer_type' is distinct from draft.answer_type then
+      raise exception '씨앗 수정 후 변형을 다시 생성해 주세요';
+    end if;
+    insert into public.learn_item_templates (ability_id, pattern, params, solver, status, created_from_draft_id)
+    values (p_ability_id, draft.template->>'pattern', draft.template->'params', draft.template->>'solver', 'reviewed', p_draft_id);
+  elsif jsonb_array_length(draft.variants) > 0 then
+    raise exception '변형 템플릿이 없습니다';
+  end if;
+  for variant in select value from jsonb_array_elements(draft.variants) loop
+    if variant->>'enabled' = 'true' then
+      if variant->'answer_spec' is null or variant->'answer_spec' = 'null'::jsonb then
+        raise exception '변형 정답 미확인';
+      end if;
+      if variant->'answer_spec'->>'type' is distinct from variant->>'answer_type' then
+        raise exception '변형 정답 형식 불일치';
+      end if;
+      next_number := next_number + 1;
+      insert into public.learn_items (
+        id, version, ability_id, usage, stem_md, answer_type, answer_spec, status, source_draft_id, variant_group
+      ) values (
+        p_ability_id || '-' || lpad(next_number::text, greatest(2, length(next_number::text)), '0'),
+        1, p_ability_id, variant->>'usage', variant->>'stem_md', variant->>'answer_type', variant->'answer_spec',
+        'reviewed', p_draft_id, item_id
+      );
+    end if;
+  end loop;
   update public.learn_item_drafts set status = 'approved', reviewed_by = auth.uid(), reviewed_at = now() where id = p_draft_id;
   return item;
 end;

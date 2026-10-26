@@ -8,7 +8,8 @@ import { solveItem } from '@/lib/learn/mathcheck/solve';
 import { AnswerSpec } from '@/lib/learn/answer-spec';
 import type { Ability, ApprovalValue, Draft, Source } from '@/lib/learn/llm/authoring';
 import type { AnswerType } from '@/lib/learn/types';
-import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft } from './actions';
+import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, generateDraftVariants, toggleDraftVariant } from './actions';
+import type { DraftVariant } from '@/lib/learn/mathcheck/templatize';
 import styles from './authoring.module.css';
 
 type Result = { message?: string; error?: string };
@@ -25,6 +26,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const [choices, setChoices] = useState(saved?.type === 'choice' ? saved.options.map(option => option.text_md).join('\n') : ''), [correct, setCorrect] = useState(saved?.type === 'choice' ? saved.correct.join(',') : '');
   const [coachConfirmed, setCoachConfirmed] = useState(draft.answer_verified_by === 'coach'), [saveImage, setSaveImage] = useState(false), [zoom, setZoom] = useState(false);
   const [result, setResult] = useState<Result>(), [pending, startTransition] = useTransition();
+  const [variantCount, setVariantCount] = useState('');
   const router = useRouter();
   const extract = draft.extract as { original?: { needs_figure?: boolean }; warning?: string } | null;
   const needsFigure = extract?.original?.needs_figure ?? false;
@@ -37,7 +39,10 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   })();
   const coachValid = AnswerSpec.safeParse(spec).success && (answerType === 'photo' || !!answer.trim() || answerType === 'choice');
   const locked = ['approved', 'rejected'].includes(draft.status);
-  const allowed = !pending && !locked && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
+  const variants = (Array.isArray(draft.variants) ? draft.variants : []) as DraftVariant[];
+  const variantsOutdated = variants.length > 0 && (stem !== draft.stem_md || answerType !== draft.answer_type || ability !== draft.ability_id || coachConfirmed);
+  const allowed = !pending && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
+  const reviewValue = (): ApprovalValue => ({ draftId: draft.id, stem_md: stem, answer_type: answerType, ability_id: ability, usage, coachConfirmed, coachAnswer: spec, saveImage });
   const crop = draft.crop as { x: number; y: number; width: number; height: number } | null;
   const ordered = [...abilities].sort((a, b) => Number(draft.ability_candidates.includes(b.id)) - Number(draft.ability_candidates.includes(a.id)));
   const run = (action: () => Promise<Result>) => startTransition(async () => { try { setResult(await action()); router.refresh(); } catch { setResult({ error: '요청을 처리하지 못했습니다.' }); } });
@@ -64,8 +69,24 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       <label>용도<select value={usage} onChange={event => setUsage(event.target.value as ApprovalValue['usage'])} disabled={locked}><option value="diagnostic">진단</option><option value="practice">연습</option><option value="assessment">평가</option><option value="review">복습</option></select></label>
       <label><input type="checkbox" checked={saveImage} onChange={event => setSaveImage(event.target.checked)} disabled={locked} />원본을 예제 자료로 함께 저장</label>
       {source.origin === 'reference_only' && <p>참고용 이미지는 승인할 수 없습니다.</p>}
+      <section className={styles.variants} aria-label="변형 문항">
+        <h3>변형 3~5개</h3>
+        <label>생성 개수<select value={variantCount} onChange={event => setVariantCount(event.target.value)} disabled={pending || locked}><option value="">규칙의 기본 개수</option>{[3, 4, 5].map(count => <option key={count} value={count}>{count}개</option>)}</select></label>
+        <button disabled={pending || locked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
+          const saved = await saveDraftReview(reviewValue());
+          if (saved.error) return saved;
+          return generateDraftVariants(draft.id, variantCount ? Number(variantCount) : undefined);
+        })}>{variants.length ? '변형 다시 생성' : '변형 생성·검증'}</button>
+        {variantsOutdated && <p>씨앗 또는 검증 방식이 변경되었습니다. 검토 저장 후 변형을 다시 생성해 주세요.</p>}
+        <ul>{variants.map((variant, index) => <li key={`${index}-${variant.stem_md}`}>
+          <label><input type="checkbox" checked={variant.enabled} disabled={pending || locked || variantsOutdated} onChange={event => run(() => toggleDraftVariant(draft.id, index, event.target.checked))} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
+          <div>{renderMathMarkdown(variant.stem_md)}</div>
+          <p>검증한 정답: {'value' in variant.answer_spec ? `${variant.answer_spec.type === 'number' && variant.answer_spec.variable ? variant.answer_spec.variable + variant.answer_spec.relation : ''}${variant.answer_spec.value}` : ''}</p>
+        </li>)}</ul>
+      </section>
       <div className={styles.buttons}>
-        <button disabled={!allowed} onClick={() => run(() => approve({ draftId: draft.id, stem_md: stem, answer_type: answerType, ability_id: ability, usage, coachConfirmed, coachAnswer: spec, saveImage }))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
+        <button disabled={pending || locked || !ability || !(coachConfirmed ? coachValid : program.ok)} onClick={() => run(() => saveDraftReview(reviewValue()))}>검토 저장</button>
+        <button disabled={!allowed} onClick={() => run(() => approve(reviewValue()))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
         <button disabled={locked || pending} onClick={() => { setAnswerType('photo'); setCoachConfirmed(false); setSaveImage(true); }}>이미지 문항으로 등록 준비</button>
         <button disabled={locked || pending} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>
       </div>
