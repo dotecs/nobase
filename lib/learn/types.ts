@@ -17,5 +17,5 @@ export type AbilityState =
   | 'retained'
   | 'recheck';
 
-export type AnswerType = 'number' | 'fraction' | 'choice' | 'photo' | 'text';
+export type AnswerType = 'number' | 'fraction' | 'expression' | 'choice' | 'photo' | 'text';
 export type ItemUsage = 'diagnostic' | 'practice' | 'assessment' | 'review';
