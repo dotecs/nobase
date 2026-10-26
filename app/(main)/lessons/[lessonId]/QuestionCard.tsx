@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { LessonQuestionWithAnswer, LessonAnswer } from '@/lib/database.types';
 import { FaClock, FaEdit, FaTrash, FaCheckCircle, FaHourglassHalf, FaImage, FaVideo } from 'react-icons/fa';
 import styles from './question.module.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { renderMathMarkdown } from '@/lib/math-markdown';
 
 interface QuestionCardProps {
   question: LessonQuestionWithAnswer;
@@ -14,85 +14,6 @@ interface QuestionCardProps {
 }
 
 // 수식 파싱 및 렌더링 함수
-function renderContentWithMath(content: string) {
-  // 블록 수식 ($$...$$) 와 인라인 수식 ($...$) 처리
-  const parts: React.ReactNode[] = [];
-  let remaining = content;
-  let key = 0;
-
-  // 블록 수식 먼저 처리
-  while (remaining.includes('$$')) {
-    const startIdx = remaining.indexOf('$$');
-    const endIdx = remaining.indexOf('$$', startIdx + 2);
-    
-    if (endIdx === -1) break;
-    
-    // 블록 수식 이전 텍스트
-    if (startIdx > 0) {
-      parts.push(...renderInlineMath(remaining.slice(0, startIdx), key));
-      key += 100;
-    }
-    
-    // 블록 수식
-    const mathContent = remaining.slice(startIdx + 2, endIdx);
-    try {
-      parts.push(
-        <div key={`block-${key++}`} className={styles.blockMath}>
-          <BlockMath math={mathContent} />
-        </div>
-      );
-    } catch {
-      parts.push(<span key={`block-${key++}`}>{`$$${mathContent}$$`}</span>);
-    }
-    
-    remaining = remaining.slice(endIdx + 2);
-  }
-
-  // 남은 텍스트에서 인라인 수식 처리
-  if (remaining) {
-    parts.push(...renderInlineMath(remaining, key));
-  }
-
-  return parts;
-}
-
-function renderInlineMath(text: string, startKey: number): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  let remaining = text;
-  let key = startKey;
-
-  while (remaining.includes('$')) {
-    const startIdx = remaining.indexOf('$');
-    const endIdx = remaining.indexOf('$', startIdx + 1);
-    
-    if (endIdx === -1) {
-      parts.push(<span key={`text-${key++}`}>{remaining}</span>);
-      return parts;
-    }
-    
-    // 수식 이전 텍스트
-    if (startIdx > 0) {
-      parts.push(<span key={`text-${key++}`}>{remaining.slice(0, startIdx)}</span>);
-    }
-    
-    // 인라인 수식
-    const mathContent = remaining.slice(startIdx + 1, endIdx);
-    try {
-      parts.push(<InlineMath key={`inline-${key++}`} math={mathContent} />);
-    } catch {
-      parts.push(<span key={`inline-${key++}`}>{`$${mathContent}$`}</span>);
-    }
-    
-    remaining = remaining.slice(endIdx + 1);
-  }
-
-  if (remaining) {
-    parts.push(<span key={`text-${key++}`}>{remaining}</span>);
-  }
-
-  return parts;
-}
-
 // 비디오 URL에서 임베드 가능한 URL로 변환
 function getEmbedUrl(url: string): string | null {
   // YouTube
@@ -202,7 +123,7 @@ export default function QuestionCard({ question, onEdit, onDelete, isEditing }: 
           </div>
           
           <div className={styles.answerContent}>
-            {renderContentWithMath(answer.content)}
+            {renderMathMarkdown(answer.content, { blockClassName: styles.blockMath })}
           </div>
 
           {answer.video_url && (

@@ -6,7 +6,7 @@ import { uploadQAAnswerAttachment, validateImageFile } from '@/lib/storage';
 import { Button } from '@/components';
 import { FaImage, FaVideo, FaTimes, FaCalculator, FaEye } from 'react-icons/fa';
 import styles from './questions.module.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { renderMathMarkdown } from '@/lib/math-markdown';
 
 interface AnswerFormProps {
   questionId: string;
@@ -15,86 +15,6 @@ interface AnswerFormProps {
 }
 
 // 수식 미리보기 렌더링
-function renderPreview(content: string) {
-  const parts: React.ReactNode[] = [];
-  let remaining = content;
-  let key = 0;
-
-  while (remaining.includes('$$')) {
-    const startIdx = remaining.indexOf('$$');
-    const endIdx = remaining.indexOf('$$', startIdx + 2);
-    
-    if (endIdx === -1) break;
-    
-    if (startIdx > 0) {
-      parts.push(...renderInlineMath(remaining.slice(0, startIdx), key));
-      key += 100;
-    }
-    
-    const mathContent = remaining.slice(startIdx + 2, endIdx);
-    try {
-      parts.push(
-        <div key={`block-${key++}`} className={styles.blockMath}>
-          <BlockMath math={mathContent} />
-        </div>
-      );
-    } catch {
-      parts.push(
-        <div key={`block-${key++}`} className={styles.mathError}>
-          수식 오류: {mathContent}
-        </div>
-      );
-    }
-    
-    remaining = remaining.slice(endIdx + 2);
-  }
-
-  if (remaining) {
-    parts.push(...renderInlineMath(remaining, key));
-  }
-
-  return parts;
-}
-
-function renderInlineMath(text: string, startKey: number): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  let remaining = text;
-  let key = startKey;
-
-  while (remaining.includes('$')) {
-    const startIdx = remaining.indexOf('$');
-    const endIdx = remaining.indexOf('$', startIdx + 1);
-    
-    if (endIdx === -1) {
-      parts.push(<span key={`text-${key++}`}>{remaining}</span>);
-      return parts;
-    }
-    
-    if (startIdx > 0) {
-      parts.push(<span key={`text-${key++}`}>{remaining.slice(0, startIdx)}</span>);
-    }
-    
-    const mathContent = remaining.slice(startIdx + 1, endIdx);
-    try {
-      parts.push(<InlineMath key={`inline-${key++}`} math={mathContent} />);
-    } catch {
-      parts.push(
-        <span key={`inline-${key++}`} className={styles.mathError}>
-          수식 오류
-        </span>
-      );
-    }
-    
-    remaining = remaining.slice(endIdx + 1);
-  }
-
-  if (remaining) {
-    parts.push(<span key={`text-${key++}`}>{remaining}</span>);
-  }
-
-  return parts;
-}
-
 export default function AnswerForm({ questionId, onSuccess, onCancel }: AnswerFormProps) {
   const [content, setContent] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
@@ -314,7 +234,7 @@ export default function AnswerForm({ questionId, onSuccess, onCancel }: AnswerFo
           <div className={styles.preview}>
             <h5>미리보기</h5>
             <div className={styles.previewContent}>
-              {renderPreview(content)}
+              {renderMathMarkdown(content, { onError: 'message', blockClassName: styles.blockMath, errorClassName: styles.mathError })}
             </div>
           </div>
         )}
