@@ -65,6 +65,7 @@ export interface Database {
       }
       learn_attempts: {
         Row: {
+          idempotency_key: string | null
           id: string
           session_id: string
           user_id: string
@@ -82,6 +83,7 @@ export interface Database {
           created_at: string
         }
         Insert: {
+          idempotency_key?: string | null
           id?: string
           session_id: string
           user_id: string
@@ -1169,6 +1171,10 @@ export interface Database {
       }
     }
     Functions: {
+      learn_record_attempt: {
+        Args: { p_payload: Json }
+        Returns: string
+      }
       learn_apply_enrichment: {
         Args: { p_draft_id: string; p_selection: Json }
         Returns: Database['public']['Tables']['learn_items']['Row']
