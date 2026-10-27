@@ -97,6 +97,12 @@
 
 **체크포인트 1**: P2-2 커밋 후 §7 보고·대기. (규칙은 Claude가 설계안과 대조 검수)
 
+**체크포인트 1 검수 결과 (2026-10-27) — 통과, 아래 3건은 P2-3 착수 전 `fix(P2-2)` 커밋 1개로 수정**
+- **R-P2-1 진단 요약이 실제 증거를 지움**: 실측(실제 팩 엣지)에서 기본 6문항 중 01-4만 틀리고 5개를 맞혀도 `summarizeDiagnostic`이 뒤 단원 20개를 전부 `unknown`으로 초기화해 02-5·03-1·04-3·05-4·06-3의 `correct_independent` 증거가 사라진다. 명세 문구("출제 여부와 무관하게 unknown")가 원인이므로 문구를 고친다: **"needs_repair의 후속 소주제 중 시도가 없는 것은 unknown으로 두고(추정 금지), 시도가 있는 소주제의 상태·증거는 그대로 둔다."** `blocked` 목록은 trace에만 남긴다. 테스트: 위 시나리오에서 5개가 `learning`(evidence 1) 유지.
+- **R-P2-2 `retained`에서 오답**: 현재 `needs_repair`로 떨어진다. `verified`와 같이 **`recheck`**(증거 초기화)로 전이. 전이표 수정 + 테스트 1개.
+- **R-P2-3 학생 문항 조회 경로**: `learn_items_latest` 뷰는 `learn_items_public`(팩 `live`만) 위에 있어 **팩이 `draft`인 지금은 비어 있다.** 그리고 `setPackStatus('live')`는 24개 소주제 전부 문항 ≥6을 요구해 1차에선 live가 불가능하다. 따라서 P2-3 이후 학생 화면은 뷰에 의존하지 않고 **서버(service role)에서 `learn_items`를 `status in (reviewed, live)`·id별 최신 version으로 읽어 정답을 제거한 뒤 렌더**한다(규칙 엔진의 `latestItems`와 같은 기준). 뷰는 팩이 live가 된 뒤의 보조 경로로만 둔다. 팩 live 조건 완화는 Phase 3.
+- 참고(수정 불요): `planSession`이 과거 전체에서 틀린 문항을 영구 제외한다 — 소주제당 문항 6개라 2~3번 틀리면 풀이 풀이 좁아진다. 1차 기수 데이터 보고 `recommendation`에 `exclude_wrong_days` 설정으로 완화 검토.
+
 ### P2-3. 채점 엔진 + 입력 컴포넌트
 - `lib/learn/solvers/index.ts`: `getSolver(name)` 레지스트리. `mathcheck` 구현: `grade(answerType, answerSpec, input) → { result: 'correct'|'incorrect'|'input_issue', normalized, detail }`. 유리수 동치(`number`/`fraction`, `require_reduced`면 비기약은 `correct`지만 `detail.not_reduced=true` → 결과는 `correct_assisted`로 기록), 식 동치(`expression`), 관계식(`number`+`variable`: 입력 `x=-3` 또는 `-3` 모두 허용, 부등식은 방향 포함), `choice`(id 집합 일치), `photo`/`text` → `pending_review`.
 - `lib/learn/grade.ts`: 서버 전용. `gradeAttempt(item(answer_spec 포함, service role 조회), input, hintsUsed, solverName)` → `AttemptResult` + `auto_grade`. `hintsUsed > 0`이고 correct → `correct_assisted`.
