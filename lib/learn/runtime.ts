@@ -1,3 +1,4 @@
+import { LearnUserError } from './errors';
 import 'next/headers';
 import { createHash } from 'node:crypto';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -14,14 +15,14 @@ export const json = (value: unknown) => value as Json;
 export function stableId(value: string) { const hash = createHash('sha256').update(value).digest('hex'); return `${hash.slice(0,8)}-${hash.slice(8,12)}-4${hash.slice(13,16)}-8${hash.slice(17,20)}-${hash.slice(20,32)}`; }
 export async function requireLearner() {
   const client = await createServerSupabaseClient(); const {data:{user}} = await client.auth.getUser();
-  if (!user || !(await hasLearnAccess(user.id)).granted) throw new Error('코칭 과정 등록 후 이용할 수 있습니다.');
+  if (!user || !(await hasLearnAccess(user.id)).granted) throw new LearnUserError('코칭 과정 등록 후 이용할 수 있습니다.');
   return user;
 }
 export async function requireCoach() {
   const client = await createServerSupabaseClient(); const {data:{user}} = await client.auth.getUser();
-  if (!user) throw new Error('관리자 로그인이 필요합니다.');
+  if (!user) throw new LearnUserError('관리자 로그인이 필요합니다.');
   const result = await client.from('profiles').select('role').eq('user_id', user.id).single();
-  if ((result.data as {role:string}|null)?.role !== 'admin') throw new Error('관리자만 이용할 수 있습니다.');
+  if ((result.data as {role:string}|null)?.role !== 'admin') throw new LearnUserError('관리자만 이용할 수 있습니다.');
   return user;
 }
 export async function learnerRow(userId: string, create = false): Promise<Learner> {
@@ -51,6 +52,7 @@ export async function sessionAttempts(sessionId: string, userId: string): Promis
   const result = await createAdminSupabaseClient().from('learn_attempts').select('*').eq('session_id',sessionId).eq('user_id',userId).order('created_at'); if(result.error)throw result.error; return (result.data ?? []) as unknown as AttemptRow[];
 }
 export function runtimeError(error: unknown, where: string) {
+  if (error instanceof LearnUserError) return error.message;
   const original = error && typeof error === 'object' ? error as { message?: unknown; stack?: unknown } : null;
   const message = typeof original?.message === 'string' ? original.message : String(error);
   const stack = typeof original?.stack === 'string' ? original.stack : null;

@@ -1,3 +1,4 @@
+import { LearnUserError } from './errors';
 import type { Attempt, RuleContext, State, RulePack, RuleItem } from './rules/types';
 import { resetVerification, traced } from './rules/types';
 import { applyAttempt } from './rules/states';
@@ -10,7 +11,7 @@ export function prepareCoachReview(state:State,attempt:Attempt,verdict:CoachVerd
   return {...result,mapped};
 }
 export function prepareStateOverride(state:State,target:State['state'],reason:string,now:string,config:RuleContext<'evidence'>) {
-  if(!reason.trim())throw new Error('상태 변경 사유를 입력해 주세요.');
+  if(!reason.trim())throw new LearnUserError('상태 변경 사유를 입력해 주세요.');
   const next=structuredClone(state);next.state=target;
   if(target==='recheck'||target==='unknown')next.evidence=resetVerification(next.evidence);
   if(target==='verified')next.evidence.verified_at=now;

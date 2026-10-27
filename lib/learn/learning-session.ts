@@ -1,3 +1,4 @@
+import { LearnUserError } from './errors';
 import { AnswerSpec } from './answer-spec';
 import type { LearnItem } from './items';
 import type { AttemptResult } from './types';
@@ -7,7 +8,7 @@ export type LearningMeta={type:'learning';queue:PlannedItem[];config:RuleContext
 export type Feedback={type:'feedback';plan_index:number;result:AttemptResult;can_retry:boolean;hint:string|null;answer:string|null;explanation:string|null};
 export type LearningEntry=LearningMeta|LearningStep|Feedback|{type:'complete'};
 export function learningPlan(queue:PlannedItem[],config:RuleContext,packId:string,trace:unknown):LearningEntry[] {
-  if(!queue.length)throw new Error('추천할 문항이 없습니다.');
+  if(!queue.length)throw new LearnUserError('추천할 문항이 없습니다.');
   return [{type:'learning',queue,config,pack_id:packId,trace},{type:'item',item:queue[0],queue_index:0,plan_index:0,retries_used:0,hints_used:0}];
 }
 export function readLearningPlan(raw:unknown) {

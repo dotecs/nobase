@@ -1,3 +1,4 @@
+import { LearnUserError } from './errors';
 import 'next/headers';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 import { z } from 'zod';
@@ -10,7 +11,7 @@ import { requireLearner, learnerRow, runtimePack, runtimeConfigs, sessionRow, se
 
 export async function startDiagnosticRuntime() {
   const user=await requireLearner(), learner=await learnerRow(user.id,true), client=createAdminSupabaseClient();
-  if(!['diagnostic_pending','diagnostic_in_progress'].includes(learner.status))throw new Error('현재는 진단을 시작할 수 없습니다.');
+  if(!['diagnostic_pending','diagnostic_in_progress'].includes(learner.status))throw new LearnUserError('현재는 진단을 시작할 수 없습니다.');
   const reset=await client.from('learn_coach_decisions').select('id').eq('user_id',user.id).contains('payload',{action:'restart_diagnostic'}).order('created_at',{ascending:false}).limit(1);
   if(reset.error)throw reset.error;
   const resetId=(reset.data as {id:string}[]|null)?.[0]?.id??'initial';
@@ -43,16 +44,16 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   if(item.ability_id!==current.item.ability_id)throw new Error('진단 문항이 일치하지 않습니다.');
   if(!expired) {
     const required=meta.config.configs.evidence.photo_required_usages.includes(current.item.kind)||item.answer_type==='photo';
-    if(required&&!photoPath)throw new Error('풀이 사진을 첨부해 주세요.');
+    if(required&&!photoPath)throw new LearnUserError('풀이 사진을 첨부해 주세요.');
     if(photoPath) {
       if(!photoPath.startsWith(`${session.user_id}/attempts/`)||photoPath.includes('..'))throw new Error('잘못된 사진 경로');
       const slash=photoPath.lastIndexOf('/'), listing=await client.storage.from('learn-evidence').list(photoPath.slice(0,slash),{search:photoPath.slice(slash+1)});
-      if(listing.error||!listing.data?.some(file=>file.name===photoPath.slice(slash+1)))throw new Error('사진 업로드를 확인해 주세요.');
+      if(listing.error||!listing.data?.some(file=>file.name===photoPath.slice(slash+1)))throw new LearnUserError('사진 업로드를 확인해 주세요.');
     }
   }
   const learner=await learnerRow(session.user_id), solver=meta.config.configs.solvers.by_pack[learner.pack_id]??meta.config.configs.solvers.default;
   const grade=expired?{result:'no_response' as const,auto_grade:{solver,trace:{rule:'diagnostic_timeout',rule_version:{diagnostic:meta.config.rule_version.diagnostic}}}}:gradeAttempt(item,input,0,solver,meta.config);
-  if(grade.result==='input_issue')throw new Error('답 입력 형식을 확인해 주세요.');
+  if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
   const now=new Date().toISOString(), incoming:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage:'diagnostic',at:now,session_id:session.id};
   const items=await loadLearnItems(meta.pack.abilities.map(row=>row.id));
   const next=advanceDiagnostic(session.plan,prior.map(row=>asAttempt(row,session)),incoming,items,session.started_at,now);
@@ -81,9 +82,9 @@ export async function submitDiagnosticRuntime(input:unknown) {
   const session=await sessionRow(value.sessionId,user.id);if(session.kind!=='diagnostic')throw new Error('진단 세션이 아닙니다.');
   const plan=readDiagnosticPlan(session.plan), attempts=await sessionAttempts(session.id,user.id);
   if(attempts.some(row=>row.idempotency_key===`${session.id}:${value.itemId}:${value.planIndex}`)){await finalize(session);return;}
-  if((await learnerRow(user.id)).status!=='diagnostic_in_progress')throw new Error('현재 진단 제출이 허용되지 않습니다.');
-  if(plan.complete||session.ended_at)throw new Error('종료된 진단입니다.');
-  if(plan.current.item.item_id!==value.itemId||plan.current.plan_index!==value.planIndex)throw new Error('진단 진행 상태가 변경되었습니다. 새로고침해 주세요.');
+  if((await learnerRow(user.id)).status!=='diagnostic_in_progress')throw new LearnUserError('현재 진단 제출이 허용되지 않습니다.');
+  if(plan.complete||session.ended_at)throw new LearnUserError('종료된 진단입니다.');
+  if(plan.current.item.item_id!==value.itemId||plan.current.plan_index!==value.planIndex)throw new LearnUserError('진단 진행 상태가 변경되었습니다. 새로고침해 주세요.');
   if(Date.now()-Date.parse(session.started_at)>=plan.meta.config.configs.diagnostic.time_limit_min*MINUTE_MS){await expireDiagnosticRuntime(session.id);return;}
   await recordCurrent(session,value.answer,value.photoPath,value.durationMs,false);
   await finalize(await sessionRow(session.id,user.id));

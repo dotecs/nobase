@@ -1,3 +1,4 @@
+import { LearnUserError } from './errors';
 import 'next/headers';
 import { z } from 'zod';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -46,13 +47,13 @@ export async function runCoachAction(input:unknown) {
   if(!value.note.trim())throw new Error('변경 사유를 입력해 주세요.');
   const override=async(abilityId:string,target:State['state'],key:string)=>{
     if(await existing('learn_coach_decisions',key))return;
-    if(!pack.abilities.some(row=>row.id===abilityId))throw new Error('학습 팩에 없는 소주제입니다.');
+    if(!pack.abilities.some(row=>row.id===abilityId))throw new LearnUserError('학습 팩에 없는 소주제입니다.');
     const before=await currentState(value.userId,abilityId),out=prepareStateOverride(before,target,value.note,new Date().toISOString(),config),after=out.result;
     if(value.kind==='restart_diagnostic')after.evidence=emptyEvidence();
     const changes=await reviewChanges(value.userId,before,after,config);
     await recordCoachAction({...base,...changes,kind:'state_override',idempotency_key:key,decision:{kind:'state_override',payload:json({ability_id:abilityId,state:target,note:value.note,trace:out.trace,rule_version:out.trace.rule_version})},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:{from_state:before.state,to_state:after.state,reason:JSON.stringify({...out.trace,details:{before,after}}),rule_version:json(out.trace.rule_version)}});
   };
-  if(value.kind==='state_override') {if(!value.abilityId||!value.state)throw new Error('소주제와 상태를 선택해 주세요.');await override(value.abilityId,value.state,`state_override:${value.userId}:${value.abilityId}:${value.eventAt}`);return '상태와 사유를 기록했습니다.';}
+  if(value.kind==='state_override') {if(!value.abilityId||!value.state)throw new LearnUserError('소주제와 상태를 선택해 주세요.');await override(value.abilityId,value.state,`state_override:${value.userId}:${value.abilityId}:${value.eventAt}`);return '상태와 사유를 기록했습니다.';}
   const resetKey=`path_override:${value.userId}:${value.requestId}`;
   if(await existing('learn_coach_decisions',resetKey))return '새 진단을 시작할 수 있습니다.';
   // Pause first so a failed reset can be retried without accepting new student submissions.

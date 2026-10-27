@@ -3,8 +3,15 @@ vi.mock('next/headers',()=>({}));
 vi.mock('@/lib/supabase-admin',()=>({createAdminSupabaseClient:vi.fn()}));
 vi.mock('@/lib/supabase-server',()=>({createServerSupabaseClient:vi.fn()}));
 import { runtimeError } from './runtime';
+import { LearnUserError } from './errors';
 afterEach(()=>vi.restoreAllMocks());
 describe('runtime error boundary',()=>{
+  it('returns LearnUserError message unchanged without logging',()=>{
+    const log=vi.spyOn(console,'error').mockImplementation(()=>{});
+    const message='풀이 사진을 첨부해 주세요.';
+    expect(runtimeError(new LearnUserError(message),'submitAttempt')).toBe(message);
+    expect(log).not.toHaveBeenCalled();
+  });
   it('logs the original error and location without exposing details to the user',()=>{
     const log=vi.spyOn(console,'error').mockImplementation(()=>{}),error=new Error('Insufficient followup items: 02-4');
     expect(runtimeError(error,'submitAttempt')).toBe('요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.');
