@@ -177,6 +177,7 @@ export interface Database {
       }
       learn_coach_reviews: {
         Row: {
+          idempotency_key: string | null
           id: string
           attempt_id: string
           coach_id: string
@@ -185,6 +186,7 @@ export interface Database {
           created_at: string
         }
         Insert: {
+          idempotency_key?: string | null
           id?: string
           attempt_id: string
           coach_id: string
@@ -197,6 +199,7 @@ export interface Database {
       }
       learn_coach_decisions: {
         Row: {
+          idempotency_key: string | null
           id: string
           user_id: string
           kind: 'diagnostic_gate' | 'path_override' | 'state_override'
@@ -205,6 +208,7 @@ export interface Database {
           created_at: string
         }
         Insert: {
+          idempotency_key?: string | null
           id?: string
           user_id: string
           kind: 'diagnostic_gate' | 'path_override' | 'state_override'
@@ -1171,6 +1175,10 @@ export interface Database {
       }
     }
     Functions: {
+      learn_record_coach_action: {
+        Args: { p_payload: Json }
+        Returns: string
+      }
       learn_record_attempt: {
         Args: { p_payload: Json }
         Returns: string
