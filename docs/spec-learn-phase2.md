@@ -111,6 +111,12 @@
 - 테스트: 모의 단위(순서·예외), 같은 키 2회 호출 → 1행.
 - 046 미적용 상태이므로 **046·047을 함께 적용**(대표). `database/README.md` 기록.
 
+### P2-2c. 코치 저장 RPC `048_learn_record_coach_action.sql` (2026-10-27 Codex 질문으로 추가)
+코치 판정·게이트·상태 조정을 한 트랜잭션으로 저장하는 `learn_record_coach_action(p_payload jsonb) returns uuid`. 047과 같은 원칙: **service_role만 실행**, `SECURITY INVOKER`, 판단 없음.
+- payload = `{ idempotency_key, coach_id, user_id, kind: 'attempt_review' | 'diagnostic_gate' | 'state_override' | 'path_override', review: {attempt_id, verdict, note} | null, decision: {kind, payload} | null, state: {...} | null, event: {...} | null, reviews: [...], review_updates: [...], learner_status: text | null }`.
+- 순서: ① `learn_learners` 행 `for update` ② 중복 차단: `learn_coach_decisions`·`learn_coach_reviews`에 `idempotency_key text` 추가(048, 각각 `unique(idempotency_key)`; 키 = `attempt_review:<attempt_id>:<coach_id>:<verdict>` / `diagnostic_gate:<user_id>:<session_id>` / `state_override:<user_id>:<ability_id>:<event_at>`) — 이미 있으면 기존 id 반환 ③ review/decision insert ④ state upsert + event insert ⑤ reviews ⑥ learner_status ⑦ id 반환.
+- 046 → 047 → 048 순서로 적용(대표). 테스트: 모의 단위 + 같은 키 2회 → 1행.
+
 ### P2-3. 채점 엔진 + 입력 컴포넌트
 - `lib/learn/solvers/index.ts`: `getSolver(name)` 레지스트리. `mathcheck` 구현: `grade(answerType, answerSpec, input) → { result: 'correct'|'incorrect'|'input_issue', normalized, detail }`. 유리수 동치(`number`/`fraction`, `require_reduced`면 비기약은 `correct`지만 `detail.not_reduced=true` → 결과는 `correct_assisted`로 기록), 식 동치(`expression`), 관계식(`number`+`variable`: 입력 `x=-3` 또는 `-3` 모두 허용, 부등식은 방향 포함), `choice`(id 집합 일치), `photo`/`text` → `pending_review`.
 - `lib/learn/grade.ts`: 서버 전용. `gradeAttempt(item(answer_spec 포함, service role 조회), input, hintsUsed, solverName)` → `AttemptResult` + `auto_grade`. `hintsUsed > 0`이고 correct → `correct_assisted`.
