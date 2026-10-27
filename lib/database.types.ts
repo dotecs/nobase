@@ -13,6 +13,207 @@ export type SubjectVisibility = 'public' | 'restricted'
 export interface Database {
   public: {
     Tables: {
+      learn_learners: {
+        Row: {
+          user_id: string
+          pack_id: string
+          goal_id: string
+          status: 'diagnostic_pending' | 'diagnostic_in_progress' | 'awaiting_coach' | 'active' | 'paused'
+          gate_decided_by: string | null
+          gate_decided_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          pack_id: string
+          goal_id: string
+          status?: 'diagnostic_pending' | 'diagnostic_in_progress' | 'awaiting_coach' | 'active' | 'paused'
+          gate_decided_by?: string | null
+          gate_decided_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_learners']['Insert']>
+        Relationships: []
+      }
+      learn_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          kind: 'diagnostic' | 'practice' | 'review' | 'assessment'
+          plan: Json
+          rule_version: Json
+          started_at: string
+          ended_at: string | null
+          summary: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          kind: 'diagnostic' | 'practice' | 'review' | 'assessment'
+          plan: Json
+          rule_version: Json
+          started_at?: string
+          ended_at?: string | null
+          summary?: Json | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_sessions']['Insert']>
+        Relationships: []
+      }
+      learn_attempts: {
+        Row: {
+          id: string
+          session_id: string
+          user_id: string
+          item_id: string
+          item_version: number
+          ability_id: string
+          usage: 'diagnostic' | 'practice' | 'review' | 'assessment'
+          answer_input: Json
+          result: 'correct_independent' | 'correct_assisted' | 'incorrect' | 'no_response' | 'input_issue' | 'pending_review'
+          auto_grade: Json
+          hints_used: number
+          photo_path: string | null
+          duration_ms: number | null
+          rule_version: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          user_id: string
+          item_id: string
+          item_version: number
+          ability_id: string
+          usage: 'diagnostic' | 'practice' | 'review' | 'assessment'
+          answer_input: Json
+          result: 'correct_independent' | 'correct_assisted' | 'incorrect' | 'no_response' | 'input_issue' | 'pending_review'
+          auto_grade: Json
+          hints_used?: number
+          photo_path?: string | null
+          duration_ms?: number | null
+          rule_version: Json
+          created_at?: string
+        }
+        Update: never
+        Relationships: []
+      }
+      learn_ability_states: {
+        Row: {
+          user_id: string
+          ability_id: string
+          state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          evidence: Json
+          rule_version: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          ability_id: string
+          state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          evidence: Json
+          rule_version: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_ability_states']['Insert']>
+        Relationships: []
+      }
+      learn_ability_state_events: {
+        Row: {
+          id: string
+          user_id: string
+          ability_id: string
+          from_state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          to_state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          reason: string
+          attempt_id: string | null
+          rule_version: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          ability_id: string
+          from_state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          to_state: 'unknown' | 'needs_repair' | 'learning' | 'verified' | 'retained' | 'recheck'
+          reason: string
+          attempt_id?: string | null
+          rule_version: Json
+          created_at?: string
+        }
+        Update: never
+        Relationships: []
+      }
+      learn_review_schedule: {
+        Row: {
+          id: string
+          user_id: string
+          ability_id: string
+          due_at: string
+          interval_index: number
+          status: 'due' | 'done' | 'skipped'
+          session_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          ability_id: string
+          due_at: string
+          interval_index: number
+          status?: 'due' | 'done' | 'skipped'
+          session_id?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_review_schedule']['Insert']>
+        Relationships: []
+      }
+      learn_coach_reviews: {
+        Row: {
+          id: string
+          attempt_id: string
+          coach_id: string
+          verdict: 'correct' | 'incorrect' | 'partial'
+          note: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          attempt_id: string
+          coach_id: string
+          verdict: 'correct' | 'incorrect' | 'partial'
+          note: string
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['learn_coach_reviews']['Insert']>
+        Relationships: []
+      }
+      learn_coach_decisions: {
+        Row: {
+          id: string
+          user_id: string
+          kind: 'diagnostic_gate' | 'path_override' | 'state_override'
+          payload: Json
+          coach_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          kind: 'diagnostic_gate' | 'path_override' | 'state_override'
+          payload: Json
+          coach_id: string
+          created_at?: string
+        }
+        Update: never
+        Relationships: []
+      }
+
       // Manual status history types: regenerate after migration 044 is applied.
       enrollment_status_events: {
         Row: {
@@ -944,6 +1145,10 @@ export interface Database {
       }
     }
     Views: {
+      learn_items_latest: {
+        Row: Database['public']['Views']['learn_items_public']['Row']
+        Relationships: []
+      }
       learn_items_public: {
         Row: Omit<Database['public']['Tables']['learn_items']['Row'], 'answer_spec' | 'rubric' | 'hints'>
         Relationships: []
