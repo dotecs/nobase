@@ -170,3 +170,4 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 
 - `040_learn_content.sql`: 미적용 — 대표가 백업 후 적용. 롤백 절차: 생성 역순으로 제거.
 - **2026-10-27 적용 기록**: 운영(nobase911)에 `040`·`041`이 적용됐으나 P1-6a 시점 버전이었음(검수 쿼리로 확인: `variants` 설정·`enrichment` 컬럼·`learn_apply_enrichment`·보강 인덱스 없음, learn_ 테이블 전부 0행). 최종본(`be5b8e4`)과의 차이는 `042_learn_phase1_delta.sql`로 추가 보정한다. 새 환경에서는 040·041(최종본)만 적용하면 되고 042는 멱등이라 적용해도 무해하다.
+- **2026-10-27 적용 기록(Claude, MCP `apply_migration`)**: 운영(nobase911)에 `046_learn_runtime` → `047_learn_record_attempt` → `048_learn_record_coach_action` 순서로 적용. 본문은 레포 파일과 동일하되 `begin;`/`commit;` 줄만 제거(도구가 자체 트랜잭션으로 실행). 적용 후 확인: 테이블 8·뷰 1·RPC 2(service_role만 실행)·멱등 컬럼 3·설정 키 5·버킷 `learn-evidence`·append-only 3개 테이블에 UPDATE/DELETE 정책 0. 이번 3건은 `supabase_migrations.schema_migrations`에도 기록됨.
