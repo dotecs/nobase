@@ -95,8 +95,9 @@ export async function saveDraftReview(input: unknown) {
     const sourceResult = await client.from('learn_item_sources').select('*').eq('id', draft.source_id).single();
     const source = sourceResult.data as Source | null;
     if (sourceResult.error || !source) throw sourceResult.error ?? new Error('원본 없음');
-    const needsFigure = !!(draft.extract as { original?: { needs_figure?: boolean } } | null)?.original?.needs_figure;
-    const prepared = prepareApproval(input, source, needsFigure);
+    const extract = draft.extract as { original?: { needs_figure?: boolean; injection_suspected?: boolean }; warning?: string } | null;
+    const requiresCoach = !!extract?.original?.needs_figure || !!extract?.original?.injection_suspected || extract?.warning === 'injection_suspected';
+    const prepared = prepareApproval(input, source, requiresCoach);
     const { item, verified } = prepared;
     const invalidateVariants = draft.stem_md !== item.stem_md || draft.answer_type !== item.answer_type || draft.ability_id !== item.ability_id || verified !== 'program';
     const result = await client.from('learn_item_drafts').update({ stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: item.answer_spec, answer_verified_by: verified, ability_id: item.ability_id, usage_suggested: item.usage, ...(invalidateVariants ? { template: null, variants: [] } : {}) } as never)

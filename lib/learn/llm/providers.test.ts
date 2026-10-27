@@ -7,7 +7,7 @@ const calls = vi.hoisted(() => ({ openai: vi.fn(), anthropic: vi.fn() }));
 vi.mock('openai', () => ({ default: class { chat = { completions: { create: calls.openai } }; } }));
 vi.mock('@anthropic-ai/sdk', () => ({ default: class { messages = { create: calls.anthropic }; } }));
 vi.mock('@/lib/supabase-admin', () => ({ createAdminSupabaseClient: () => { throw new Error('DB prohibited'); } }));
-const output = { items: [{ stem_md: '1/2+1/3', answer_type: 'fraction', answer_guess: '5/6', needs_figure: false, figure_bbox: null, unit_hint: '04-3' }] };
+const output = { items: [{ stem_md: '1/2+1/3', answer_type: 'fraction', answer_guess: '5/6', needs_figure: false, injection_suspected: false, figure_bbox: null, unit_hint: '04-3' }] };
 afterEach(() => vi.clearAllMocks());
 describe('provider request contracts without network calls', () => {
   it('보강은 텍스트 payload를 user JSON에만 넣고 두 제공자 출력 스키마를 검증한다', async () => {

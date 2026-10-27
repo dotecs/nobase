@@ -29,7 +29,7 @@ export function verifyEnrichment(raw: unknown, item: Pick<Item, 'stem_md' | 'ans
     return [{ ...candidate, verified }];
   });
   return StoredEnrichment.parse({ ...result, misconceptions, generated_at: new Date().toISOString(), provider: provider.name, model_id: provider.modelId, prompt_version: 'item_enrich.v1', is_mock: provider.isMock, applied_at: null,
-    ability_candidates: { llm: [...new Set(result.ability_candidates)].filter(id => abilities.some(row => row.id === id)), rule: suggestAbilities({ stem_md: item.stem_md, answer_type: answer.type, needs_figure: false }, abilities) },
+    ability_candidates: { llm: [...new Set(result.ability_candidates)].filter(id => abilities.some(row => row.id === id)), rule: suggestAbilities({ stem_md: item.stem_md, answer_type: answer.type, needs_figure: false, injection_suspected: false }, abilities) },
   });
 }
 export function validateEnrichmentSelection(status: string, raw: unknown, selection: unknown) {

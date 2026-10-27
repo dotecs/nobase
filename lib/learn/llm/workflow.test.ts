@@ -162,6 +162,15 @@ function variantFixture() {
   return { ...memory, id, draft: draft as Row };
 }
 describe('server variants and transactional approval', () => {
+  it('주입 의심 초안은 본문을 수정해도 명시적 코치 확인 없이는 검증 상태를 올릴 수 없다', async () => {
+    const memory = variantFixture();
+    Object.assign(memory.draft, { extract: { original: { needs_figure: false, injection_suspected: true }, warning: 'injection_suspected' }, status: 'needs_coach', answer_spec: null, answer_verified_by: null });
+    const input = { draftId: memory.id, stem_md: '1/2+1/3', answer_type: 'fraction', ability_id: '04-3', usage: 'assessment', coachConfirmed: false, saveImage: false };
+    expect(await saveDraftReview(input)).toHaveProperty('error');
+    expect(memory.draft.answer_verified_by).toBeNull();
+    expect(await saveDraftReview({ ...input, coachConfirmed: true, coachAnswer: { type: 'fraction', value: '5/6' } })).not.toHaveProperty('error');
+    expect(memory.draft.answer_verified_by).toBe('coach');
+  });
   it('enabled 3·disabled 2 승인 시 씨앗 포함 4개·같은 그룹·연속 번호', async () => {
     const memory = variantFixture();
     expect(await generateDraftVariants(memory.id)).not.toHaveProperty('error');

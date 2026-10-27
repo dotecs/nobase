@@ -53,9 +53,10 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const [result, setResult] = useState<Result>(), [pending, startTransition] = useTransition();
   const [variantCount, setVariantCount] = useState('');
   const router = useRouter();
-  const extract = draft.extract as { original?: { needs_figure?: boolean }; warning?: string } | null;
+  const extract = draft.extract as { original?: { needs_figure?: boolean; injection_suspected?: boolean }; warning?: string } | null;
+  const injectionSuspected = !!extract?.original?.injection_suspected || extract?.warning === 'injection_suspected';
   const needsFigure = extract?.original?.needs_figure ?? false;
-  const program = needsFigure ? { ok: false as const } : solveItem(stem, answerType);
+  const program = needsFigure || injectionSuspected ? { ok: false as const } : solveItem(stem, answerType);
   const spec = (() => {
     if (answerType === 'number') { const match = answer.trim().match(/^([a-z])\s*(<=|>=|=|<|>)\s*(.+)$/); return match ? { type: 'number', variable: match[1], relation: match[2], value: match[3] } : { type: 'number', value: answer.trim() }; }
     if (answerType === 'fraction' || answerType === 'expression') return { type: answerType, value: answer.trim() };
@@ -81,6 +82,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
     <div className={styles.editor}>
       <p>{draft.status} · {draft.is_mock ? '모의 추출' : '이미지 추출'} · {draft.model_id}</p>
       {extract?.warning === 'llm_mismatch' && <p role="status">⚠ LLM 불일치 — 프로그램 정답과 추정 답이 다릅니다.</p>}
+      {injectionSuspected && <p className={styles.injectionWarning} role="alert">이미지에 지시문 포함 — 반드시 사람이 확인</p>}
       <label>문제<textarea value={stem} onChange={event => { setStem(event.target.value); setCoachConfirmed(false); }} disabled={locked} /></label>
       <div className={styles.preview}>{renderMathMarkdown(stem)}</div>
       <label>정답 형식<select value={answerType} onChange={event => { setAnswerType(event.target.value as AnswerType); setCoachConfirmed(false); }} disabled={locked}>

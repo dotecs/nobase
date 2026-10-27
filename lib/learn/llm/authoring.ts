@@ -34,17 +34,18 @@ export function guessMatches(guess: string, answer: AnswerSpecValue) {
 export async function extractDrafts(sourceId: string, image: unknown, provider: LlmProvider, abilities: Ability[]) {
   const { items } = Extraction.parse({ items: await provider.extractItemsFromImage(image) });
   return items.map((item, index) => {
-    const solved = item.needs_figure ? { ok: false as const, reason: 'unsupported' } : solveItem(item.stem_md, item.answer_type);
+    if (item.injection_suspected) item.answer_guess = null;
+    const solved = item.needs_figure || item.injection_suspected ? { ok: false as const, reason: 'unsupported' } : solveItem(item.stem_md, item.answer_type);
     const candidates = suggestAbilities(item, abilities);
     const hash = createHash('sha256').update(`${sourceId}/${index}`).digest('hex');
     const id = `${hash.slice(0, 8)}-${hash.slice(8, 12)}-4${hash.slice(13, 16)}-8${hash.slice(17, 20)}-${hash.slice(20, 32)}`;
     return {
       id, source_id: sourceId, crop: item.figure_bbox ?? null,
-      extract: { original: item, warning: solved.ok && item.answer_guess && !guessMatches(item.answer_guess, solved.answer_spec) ? 'llm_mismatch' : null } as Json,
+      extract: { original: item, warning: item.injection_suspected ? 'injection_suspected' : solved.ok && item.answer_guess && !guessMatches(item.answer_guess, solved.answer_spec) ? 'llm_mismatch' : null } as Json,
       stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: solved.ok ? solved.answer_spec as Json : null,
       answer_verified_by: solved.ok ? 'program' : null, ability_candidates: candidates, ability_id: candidates[0] ?? null,
       usage_suggested: 'assessment', status: solved.ok ? 'extracted' : 'needs_coach',
-      provider: provider.name, model_id: provider.modelId, prompt_version: 'item_extract.v1', is_mock: provider.isMock,
+      provider: provider.name, model_id: provider.modelId, prompt_version: 'item_extract.v2', is_mock: provider.isMock,
     } satisfies Database['public']['Tables']['learn_item_drafts']['Insert'];
   });
 }

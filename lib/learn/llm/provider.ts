@@ -10,8 +10,8 @@ export interface LlmProvider {
   extractItemsFromImage(input: unknown): Promise<ExtractedItemValue[]>;
   completeJson<T = unknown>(input: unknown): Promise<T>;
 }
-export const PROMPT_VERSION = 'item_extract.v1';
-export async function extractionPrompt() { return readFile(resolve(process.cwd(), 'prompts/item_extract.v1.md'), 'utf8'); }
+export const PROMPT_VERSION = 'item_extract.v2';
+export async function extractionPrompt() { return readFile(resolve(process.cwd(), 'prompts/item_extract.v2.md'), 'utf8'); }
 export async function enrichmentPrompt() { return readFile(resolve(process.cwd(), 'prompts/item_enrich.v1.md'), 'utf8'); }
 export type LlmConfig = { default?: LlmProviderName; tasks?: Record<string, LlmProviderName>; models?: { openai?: string; anthropic?: string } };
 export function selectProvider(task: string, config: LlmConfig, keys: { openai?: string; anthropic?: string }): LlmProviderName {
