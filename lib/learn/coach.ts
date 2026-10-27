@@ -4,10 +4,10 @@ import { resetVerification, traced } from './rules/types';
 import { applyAttempt } from './rules/states';
 import { planSession, type SessionLearner } from './rules/recommend';
 export type CoachVerdict='correct'|'incorrect'|'partial';
-export function prepareCoachReview(state:State,attempt:Attempt,verdict:CoachVerdict,config:RuleContext<'evidence'>) {
+export function prepareCoachReview(state:State,attempt:Attempt,verdict:CoachVerdict,config:RuleContext<'evidence'>,attempted_item_ids:readonly string[]) {
   const mapped=config.configs.evidence.coach_verdict_map[verdict];
   if(!mapped)throw new Error('코치 판정 매핑이 없습니다.');
-  const result=applyAttempt(state,{...attempt,result:mapped},config);
+  const result=applyAttempt(state,{...attempt,result:mapped},config,attempted_item_ids);
   return {...result,mapped};
 }
 export function prepareStateOverride(state:State,target:State['state'],reason:string,now:string,config:RuleContext<'evidence'>) {

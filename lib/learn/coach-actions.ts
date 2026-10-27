@@ -1,4 +1,5 @@
 import { LearnUserError } from './errors';
+import { learnerAttemptHistory } from './runtime';
 import 'next/headers';
 import { z } from 'zod';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -39,7 +40,8 @@ export async function runCoachAction(input:unknown) {
     const attempt=result.data as unknown as AttemptRow;if(attempt.result!=='pending_review')throw new Error('코치 검토 대기 시도만 판정할 수 있습니다.');
     const reviewed=await client.from('learn_coach_reviews').select('id').eq('attempt_id',attempt.id).limit(1);if(reviewed.error)throw reviewed.error;if(reviewed.data?.length)throw new Error('이미 코치 판정이 저장되었습니다.');
     const item=await client.from('learn_items').select('variant_group').eq('id',attempt.item_id).eq('version',attempt.item_version).single();if(item.error)throw item.error;
-    const before=await currentState(value.userId,attempt.ability_id),out=prepareCoachReview(before,{id:attempt.id,item_id:attempt.item_id,item_version:attempt.item_version,ability_id:attempt.ability_id,variant_group:(item.data as {variant_group:string|null}).variant_group,result:attempt.result,usage:attempt.usage,at:new Date().toISOString()},value.verdict,config);
+    const attempted_item_ids=(await learnerAttemptHistory(value.userId)).filter(row=>row.id!==attempt.id&&Date.parse(row.created_at)<=Date.parse(attempt.created_at)).map(row=>row.item_id);
+    const before=await currentState(value.userId,attempt.ability_id),out=prepareCoachReview(before,{id:attempt.id,item_id:attempt.item_id,item_version:attempt.item_version,ability_id:attempt.ability_id,variant_group:(item.data as {variant_group:string|null}).variant_group,result:attempt.result,usage:attempt.usage,at:new Date().toISOString()},value.verdict,config,attempted_item_ids);
     const after=out.result.state,changes=await reviewChanges(value.userId,before,after,config);
     await recordCoachAction({...base,...changes,kind:'attempt_review',idempotency_key:key,review:{attempt_id:attempt.id,verdict:value.verdict,note:value.note},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:{from_state:before.state,to_state:after.state,reason:JSON.stringify(out.trace),rule_version:json(out.trace.rule_version)}});
     return '코치 판정을 저장했습니다. 원래 자동 판정은 보존됩니다.';

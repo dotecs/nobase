@@ -17,10 +17,10 @@ export type RulePack = Pick<ContentPackData, 'units' | 'abilities' | 'edges' | '
 export type RuleItem = { id: string; version: number; ability_id: string; usage: ItemUsage; variant_group: string | null; stem_md: string; status: string };
 export type PlannedItem = { item_id: string; item_version: number; ability_id: string; variant_group: string; usage: ItemUsage; kind: ItemUsage };
 export type Attempt = { id: string; item_id: string; item_version: number; ability_id: string; variant_group: string | null; result: AttemptResult; usage: ItemUsage; at: string; session_id?: string };
-export type Evidence = { independent_correct: number; distinct_groups: string[]; assisted: number; incorrect: number; last_attempt_at: string | null; verified_at: string | null; reviews_passed: number };
+export type Evidence = { independent_correct: number; first_exposure_correct: number; distinct_groups: string[]; assisted: number; incorrect: number; last_attempt_at: string | null; verified_at: string | null; reviews_passed: number };
 export type State = { ability_id: string; state: AbilityState; evidence: Evidence };
-export const emptyEvidence = (): Evidence => ({ independent_correct: 0, distinct_groups: [], assisted: 0, incorrect: 0, last_attempt_at: null, verified_at: null, reviews_passed: 0 });
-export function resetVerification(evidence: Evidence): Evidence { return { ...evidence, independent_correct: 0, distinct_groups: [], reviews_passed: 0, verified_at: null }; }
+export const emptyEvidence = (): Evidence => ({ independent_correct: 0, first_exposure_correct: 0, distinct_groups: [], assisted: 0, incorrect: 0, last_attempt_at: null, verified_at: null, reviews_passed: 0 });
+export function resetVerification(evidence: Evidence): Evidence { return { ...evidence, independent_correct: 0, first_exposure_correct: 0, distinct_groups: [], reviews_passed: 0, verified_at: null }; }
 export function timestamp(value: string) { const time = Date.parse(value); if (!Number.isFinite(time)) throw new Error(`Invalid timestamp: ${value}`); return time; }
 export const DAY_MS = 24 * 60 * 60 * 1000;
 export const MINUTE_MS = 60 * 1000;

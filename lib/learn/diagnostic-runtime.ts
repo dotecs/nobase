@@ -1,4 +1,5 @@
 import { LearnUserError } from './errors';
+import { learnerAttemptHistory } from './runtime';
 import 'next/headers';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 import { z } from 'zod';
@@ -56,7 +57,8 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
   const now=new Date().toISOString(), incoming:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage:'diagnostic',at:now,session_id:session.id};
   const items=await loadLearnItems(meta.pack.abilities.map(row=>row.id));
-  const next=advanceDiagnostic(session.plan,prior.map(row=>asAttempt(row,session)),incoming,items,session.started_at,now);
+  const attempted_item_ids=(await learnerAttemptHistory(session.user_id)).filter(row=>row.session_id!==session.id).map(row=>row.item_id);
+  const next=advanceDiagnostic(session.plan,prior.map(row=>asAttempt(row,session)),incoming,items,session.started_at,now,attempted_item_ids);
   const state=next.summary.result.find(row=>row.ability_id===item.ability_id)!;
   const old=await client.from('learn_ability_states').select('*').eq('user_id',session.user_id).eq('ability_id',item.ability_id).single();if(old.error)throw old.error;
   const previous=old.data as unknown as StateRow;

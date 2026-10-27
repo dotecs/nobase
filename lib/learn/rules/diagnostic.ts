@@ -45,8 +45,9 @@ export function nextDiagnosticFollowup(state: DiagnosticProgress, lastAttempt: A
   } else reasons.push('next_base');
   return traced(nextBase(), config, ['diagnostic', 'recommendation'], 'diagnostic_followup', reasons);
 }
-export function summarizeDiagnostic(attempts: Attempt[], pack: RulePack, config: RuleContext<'diagnostic'>) {
+export function summarizeDiagnostic(attempts: Attempt[], pack: RulePack, config: RuleContext<'diagnostic'>, attempted_item_ids: readonly string[] = []) {
   const states: State[] = pack.abilities.map(ability => ({ ability_id: ability.id, state: 'unknown', evidence: emptyEvidence() }));
+  const exposed = new Set(attempted_item_ids);
   for (const attempt of [...attempts].sort((a, b) => timestamp(a.at) - timestamp(b.at))) {
     const state = states.find(row => row.ability_id === attempt.ability_id);
     if (!state) throw new Error(`Unknown ability: ${attempt.ability_id}`);
@@ -55,8 +56,10 @@ export function summarizeDiagnostic(attempts: Attempt[], pack: RulePack, config:
     else if (attempt.result === 'correct_independent') {
       if (state.state !== 'needs_repair') state.state = 'learning';
       state.evidence.independent_correct++;
+      if (!exposed.has(attempt.item_id)) state.evidence.first_exposure_correct++;
       state.evidence.distinct_groups = [...new Set([...state.evidence.distinct_groups, attempt.variant_group ?? attempt.item_id])];
     } else if (attempt.result === 'correct_assisted') state.evidence.assisted++;
+    exposed.add(attempt.item_id);
   }
   const queue = states.filter(row => row.state === 'needs_repair').map(row => row.ability_id), blocked = new Set<string>();
   while (queue.length) {

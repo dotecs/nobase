@@ -59,3 +59,13 @@ export function runtimeError(error: unknown, where: string) {
   console.error('[learn]', { where, message, stack });
   return '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.';
 }
+
+export async function learnerAttemptHistory(userId: string): Promise<AttemptRow[]> {
+  const rows: AttemptRow[] = [], size = 500, client = createAdminSupabaseClient();
+  for (let offset = 0; ; offset += size) {
+    const result = await client.from('learn_attempts').select('*').eq('user_id', userId).order('id').range(offset, offset + size - 1);
+    if (result.error) throw result.error;
+    const batch = result.data as unknown as AttemptRow[];
+    rows.push(...batch); if (batch.length < size) return rows;
+  }
+}
