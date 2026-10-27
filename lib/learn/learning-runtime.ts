@@ -86,8 +86,8 @@ export async function learningView(id:string) {
   const {user}=await activeLearner();z.uuid().parse(id);let session=await sessionRow(id,user.id);const plan=readLearningPlan(session.plan);
   const deadline=new Date(Date.parse(session.started_at)+plan.meta.config.configs.session.max_minutes*MINUTE_MS).toISOString();
   if(!session.ended_at&&(plan.complete||Date.now()>=Date.parse(deadline))){await closeLearningSession(session,!plan.complete);session=await sessionRow(id,user.id);}
-  if(session.ended_at)return {complete:true as const,summary:session.summary,feedback:plan.feedback};
+  if(session.ended_at)return {complete:true as const,kind:session.kind,summary:session.summary,feedback:plan.feedback};
   const result=await createAdminSupabaseClient().from('learn_items').select('*').eq('id',plan.current.item.item_id).eq('version',plan.current.item.item_version).in('status',['reviewed','live']).single();if(result.error)throw result.error;
   const item=result.data as unknown as LearnItem,usage=plan.current.item.kind==='review'?'review':item.usage;
-  return {complete:false as const,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.current.queue_index,total:plan.meta.queue.length,item:toStudentItem(item),deadline,photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
+  return {complete:false as const,kind:session.kind,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.current.queue_index,total:plan.meta.queue.length,item:toStudentItem(item),deadline,photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
 }
