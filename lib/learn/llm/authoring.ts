@@ -25,6 +25,7 @@ export function guessMatches(guess: string, answer: AnswerSpecValue) {
     if (answer.type === 'expression') return equivalent(parseMath(guess).left, parseMath(answer.value).left);
     if (answer.type !== 'number' && answer.type !== 'fraction') return false;
     if (answer.type === 'number' && answer.variable) {
+      try { Rational.parse(guess); guess = `${answer.variable}${answer.relation}${guess}`; } catch { /* Full relations are compared as supplied. */ }
       const result = solveItem(guess, 'number');
       return result.ok && result.answer_spec.type === 'number' && result.answer_spec.variable === answer.variable && result.answer_spec.relation === answer.relation && Rational.parse(result.answer_spec.value).compare(Rational.parse(answer.value)) === 0;
     }

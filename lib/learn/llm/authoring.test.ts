@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockProvider } from './mock';
-import { extractDrafts, prepareApproval } from './authoring';
+import { extractDrafts, prepareApproval, guessMatches } from './authoring';
 import { selectProvider } from './provider';
 import { Extraction } from './schema';
 import { verifyEnrichment } from './enrichment';
@@ -18,6 +18,9 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it.each([['-3', true], ['3', false]] as const)('숫자 추정 %s와 x=-3 비교', (guess, expected) => {
+    expect(guessMatches(guess, { type: 'number', variable: 'x', relation: '=', value: '-3' })).toBe(expected);
+  });
   it('주입 mock은 needs_coach·정답 없음·빨간 경고·승인 비활성으로 표시된다', async () => {
     const [extracted] = await extractDrafts(id, {}, new MockProvider('injection'), abilities);
     expect(extracted).toMatchObject({ status: 'needs_coach', answer_spec: null, answer_verified_by: null, prompt_version: 'item_extract.v2', extract: { warning: 'injection_suspected', original: { injection_suspected: true, needs_figure: false, answer_guess: null } } });
