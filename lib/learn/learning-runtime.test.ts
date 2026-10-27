@@ -25,4 +25,13 @@ describe('learning runtime',()=>{
   it('timeout finishes without attempts for remaining questions',async()=>{const {r,id}=await start();vi.advanceTimersByTime(20*60000);await r.expireLearningRuntime(id);expect(await r.learningView(id)).toMatchObject({complete:true,summary:{timed_out:true,attempts:0}});expect(db.rows('learn_attempts')).toHaveLength(0);});
   it('denied access and paused learner cannot create a session',async()=>{mock.access=false;const r=await import('./learning-runtime');await expect(r.startLearningRuntime()).rejects.toThrow();mock.access=true;db.rows('learn_learners')[0].status='paused';await expect(r.startLearningRuntime()).rejects.toThrow();expect(db.rows('learn_sessions')).toHaveLength(0);});
   it('foreign session is not readable or writable',async()=>{const {r,id}=await start();db.rows('learn_sessions')[0].user_id='other';await expect(r.learningView(id)).rejects.toThrow();expect(db.rows('learn_attempts')).toHaveLength(0);});
+  it.each(['1','0'])('due review answer %s updates schedule and evidence',async answer=>{
+    const ability='01-4';db.rows('learn_ability_states').push({user_id:testUser,ability_id:ability,state:'verified',evidence:{...emptyEvidence(),verified_at:'2026-10-26T00:00:00Z',independent_correct:2,distinct_groups:['a','b']}});
+    for(let i=0;i<3;i++)db.rows('learn_review_schedule').push({id:`review-${i}`,user_id:testUser,ability_id:ability,due_at:i===0?'2026-10-26T00:00:00Z':'2026-11-01T00:00:00Z',interval_index:i,status:'due'});
+    const review=await import('./review-runtime'),r=await import('./learning-runtime');expect(await review.dueReviewAbilities(testUser)).toEqual([ability]);
+    const result=await review.startReviewRuntime();expect(result.id).toBeTruthy();expect(db.rows('learn_sessions')[0].kind).toBe('review');await submit(r,result.id!,answer);
+    if(answer==='0'){expect(db.rows('learn_ability_states')[0].state).toBe('recheck');expect(db.rows('learn_review_schedule').every(row=>row.status==='skipped')).toBe(true);await submit(r,result.id!,answer);}
+    else {expect(db.rows('learn_review_schedule').map(row=>row.status)).toEqual(['done','due','due']);expect(db.rows('learn_ability_states')[0].evidence).toMatchObject({reviews_passed:1});}
+    expect(await r.learningView(result.id!)).toMatchObject({complete:true});expect(await review.dueReviewAbilities(testUser)).toEqual([]);if(answer==='0')expect(db.rows('learn_ability_states')[0].state).toBe('recheck');
+  });
 });

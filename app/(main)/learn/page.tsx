@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { learnerRow, runtimeConfigs, runtimeError } from '@/lib/learn/runtime';
 import { StartDiagnostic } from './StartDiagnostic';
 import { StartSession } from './StartSession';
+import { dueReviewAbilities } from '@/lib/learn/review-runtime';
 
 export const metadata: Metadata = { title: '뿌리 깊은 수학 코칭', robots: { index: false, follow: false } };
 
@@ -25,7 +26,7 @@ export default async function LearnPage() {
       :learner.status==='diagnostic_in_progress'?<section className={styles.card}><h2>진단이 진행 중입니다</h2><Link className={styles.button} href="/learn/diagnostic">진단 이어하기</Link></section>
       :learner.status==='awaiting_coach'?<section className={styles.card}><h2>코치가 확인 중입니다</h2><p>진단 결과와 학습 경로를 확인한 뒤 안내해 드릴게요.</p></section>
       :learner.status==='paused'?<p>학습이 일시 중지되어 있습니다. 코치에게 문의해 주세요.</p>
-      :<section className={styles.card}><h2>오늘의 학습</h2><StartSession /></section>;
+      :<section className={styles.card}><h2>오늘의 학습</h2><StartSession /><p><Link href="/learn/review">오늘 복습 {(await dueReviewAbilities(user.id)).length}개</Link></p></section>;
   }catch(error){content=<p role="alert">{runtimeError(error)}</p>;}
   return <>
     <Header isLoggedIn userName={profile?.name || user.email} userRole={profile?.role} />

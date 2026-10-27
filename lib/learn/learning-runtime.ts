@@ -68,6 +68,8 @@ export async function submitLearningRuntime(input:unknown) {
   const schedules=await ownRows<ReviewSchedule>('learn_review_schedule',user.id);
   const reviewed=usage==='review'?markReview(schedules,attempt,config):null;
   if(reviewed?.result.state){after={...after,state:reviewed.result.state,evidence:{...after.evidence,...reviewed.result.evidence_reset}};}
+  // A failed review has already skipped its schedules; retry feedback must not undo recheck.
+  if(usage==='review'&&plan.current.retries_used>0&&before.state==='recheck'&&grade.result==='incorrect')after={...after,state:'recheck'};
   const reviews=after.state==='verified'&&before.state!=='verified'?scheduleReviews(item.ability_id,after.evidence.verified_at!,config).result:[];
   const updates=schedules.flatMap(schedule=>{
     const changed=reviewed?.result.schedule.find(row=>row.id===schedule.id);
