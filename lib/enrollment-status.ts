@@ -11,3 +11,11 @@ const transitions: Readonly<Record<string, readonly string[]>> = {
 export function canTransition(from: string, to: string): boolean {
   return Object.hasOwn(transitions, from) && transitions[from].includes(to);
 }
+
+export function cohortEndFilter(cohortId: string) {
+  return { cohort_id: cohortId, status: 'active' as const };
+}
+
+export function buildCohortEndEvents(rows: { id: string; user_id: string }[], reason: string, actorId: string) {
+  return rows.map(row => ({ enrollment_id: row.id, from_status: 'active', to_status: 'ended', reason, actor_id: actorId }));
+}

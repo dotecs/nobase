@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { canTransition } from './enrollment-status';
+import { canTransition, cohortEndFilter, buildCohortEndEvents } from './enrollment-status';
 import { updateEnrollmentStatus } from '@/app/(admin)/admin/users/actions';
 
 const state = vi.hoisted(() => ({ status: 'active', role: 'admin', historyFails: false, race: false, events: [] as unknown[], updates: 0 }));
@@ -29,6 +29,16 @@ vi.mock('@/lib/supabase-server', () => ({ createServerSupabaseClient: async () =
 }) }));
 
 describe('enrollment status transitions', () => {
+  it('기수 일괄 종료 대상은 해당 기수 active만', () => {
+    const filter = cohortEndFilter('target');
+    const rows = ['active', 'on_hold', 'paused', 'pending', 'ended'].flatMap(status => ['target', 'other'].map(cohort_id => ({ status, cohort_id })));
+    expect(rows.filter(row => row.cohort_id === filter.cohort_id && row.status === filter.status)).toEqual([{ cohort_id: 'target', status: 'active' }]);
+  });
+  it('실제로 변경되어 반환된 행마다 이력 한 건 생성', () => {
+    const rows = [{ id: 'a', user_id: 'u1' }, { id: 'b', user_id: 'u2' }];
+    expect(buildCohortEndEvents(rows, '기수 수료', 'admin')).toEqual(rows.map(row => ({ enrollment_id: row.id, from_status: 'active', to_status: 'ended', reason: '기수 수료', actor_id: 'admin' })));
+    expect(buildCohortEndEvents([], '기수 수료', 'admin')).toEqual([]);
+  });
   it.each([['active', 'on_hold'], ['active', 'ended'], ['on_hold', 'active'], ['on_hold', 'ended'], ['ended', 'active'], ['paused', 'ended'], ['paused', 'active']])('%s → %s 허용', (from, to) => expect(canTransition(from, to)).toBe(true));
   it.each([['pending', 'active'], ['active', 'paused'], ['paused', 'on_hold'], ['ended', 'on_hold'], ['active', 'active']])('%s → %s 거부', (from, to) => expect(canTransition(from, to)).toBe(false));
 });

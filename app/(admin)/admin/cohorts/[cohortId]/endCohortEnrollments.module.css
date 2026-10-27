@@ -1,0 +1,35 @@
+.section {
+  max-width: 800px;
+  margin: var(--space-6) auto;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  color: var(--color-text);
+  display: grid;
+  gap: var(--space-3);
+}
+.panel { display: grid; gap: var(--space-3); padding-top: var(--space-4); }
+.panel input, .panel textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font: inherit;
+}
+.panel textarea { min-height: 80px; resize: vertical; }
+.buttons { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.section button {
+  justify-self: start;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+.section button:disabled { opacity: .5; cursor: not-allowed; }
+.section button:focus-visible, .panel input:focus-visible, .panel textarea:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
