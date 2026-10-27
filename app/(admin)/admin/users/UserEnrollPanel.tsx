@@ -46,7 +46,8 @@ const NEW_DAYS = 7;
 const statusLabel: Record<string, string> = {
   active: '수강 중',
   paused: '입금 대기',
-  pending: '대기',
+  pending: '결제 중',
+  on_hold: '일시정지',
   ended: '종료',
 };
 
