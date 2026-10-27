@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { AnswerSpec, type AnswerSpecValue } from '../answer-spec';
 import { ItemsFile } from '../pack-schema';
-import { solveItem } from '../mathcheck/solve';
+import { normalizeStem, solveItem } from '../mathcheck/solve';
 import { Rational } from '../mathcheck/rational';
 import { parseMath } from '../mathcheck/parse';
 import { equivalent } from '../mathcheck/evaluate';
@@ -22,6 +22,7 @@ export function suggestAbilities(item: ExtractedItemValue, abilities: Ability[])
 }
 export function guessMatches(guess: string, answer: AnswerSpecValue) {
   try {
+    guess = normalizeStem(guess);
     if (answer.type === 'expression') return equivalent(parseMath(guess).left, parseMath(answer.value).left);
     if (answer.type !== 'number' && answer.type !== 'fraction') return false;
     if (answer.type === 'number' && answer.variable) {

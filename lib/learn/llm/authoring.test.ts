@@ -27,8 +27,11 @@ describe('authoring verification boundary', () => {
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>선택한 변형 추가<\/button>/);
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>승인<\/button>/);
   });
-  it.each([['-3', true], ['3', false]] as const)('숫자 추정 %s와 x=-3 비교', (guess, expected) => {
+  it.each([['-3', true], ['3', false], ['$-3$', true], ['$3$', false]] as const)('숫자 추정 %s와 x=-3 비교', (guess, expected) => {
     expect(guessMatches(guess, { type: 'number', variable: 'x', relation: '=', value: '-3' })).toBe(expected);
+  });
+  it.each([['$-12x+21$', true], ['$$-12x+21$$', true], ['\\(-12x+21\\)', true], ['$-12x+20$', false]] as const)('수학 구분자로 감싼 추정 식 %s', (guess, expected) => {
+    expect(guessMatches(guess, { type: 'expression', value: '-12x+21', variables: ['x'] })).toBe(expected);
   });
   it('주입 mock은 needs_coach·정답 없음·빨간 경고·승인 비활성으로 표시된다', async () => {
     const [extracted] = await extractDrafts(id, {}, new MockProvider('injection'), abilities);
