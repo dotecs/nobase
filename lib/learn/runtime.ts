@@ -50,8 +50,10 @@ export async function sessionRow(sessionId: string, userId: string): Promise<Ses
 export async function sessionAttempts(sessionId: string, userId: string): Promise<AttemptRow[]> {
   const result = await createAdminSupabaseClient().from('learn_attempts').select('*').eq('session_id',sessionId).eq('user_id',userId).order('created_at'); if(result.error)throw result.error; return (result.data ?? []) as unknown as AttemptRow[];
 }
-export function runtimeError(error: unknown) {
-  const code = (error as {code?:string})?.code;
-  if(['42P01','PGRST205','PGRST202','42883','42703'].includes(code ?? '')) return '학습 기능 준비 중입니다. 대표가 046·047 적용 여부를 확인해 주세요.';
-  return error instanceof Error ? error.message : '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+export function runtimeError(error: unknown, where: string) {
+  const original = error && typeof error === 'object' ? error as { message?: unknown; stack?: unknown } : null;
+  const message = typeof original?.message === 'string' ? original.message : String(error);
+  const stack = typeof original?.stack === 'string' ? original.stack : null;
+  console.error('[learn]', { where, message, stack });
+  return '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.';
 }

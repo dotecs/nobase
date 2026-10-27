@@ -23,7 +23,7 @@ export default async function LearnPage() {
     const learner=await learnerRow(user.id,true),config=await runtimeConfigs();
     const [summary,due]=learner.status==='active'?await Promise.all([homeSummary(learner),dueReviewAbilities(user.id)]):[undefined,[]];
     content=<HomePanel status={learner.status} minutes={config.configs.diagnostic.time_limit_min} photoRequired={config.configs.evidence.photo_required_usages.includes('diagnostic')} summary={summary} due={due.length}/>;
-  }catch(error){content=<p role="alert">{runtimeError(error)}</p>;}
+  }catch(error){content=<p role="alert">{runtimeError(error, 'app/(main)/learn/page.tsx')}</p>;}
   return <>
     <Header isLoggedIn userName={profile?.name || user.email} userRole={profile?.role} />
     <main className={styles.page}><h1>뿌리 깊은 수학 코칭</h1>
