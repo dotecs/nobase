@@ -43,7 +43,7 @@ export async function runCoachAction(input:unknown) {
     const attempted_item_ids=(await learnerAttemptHistory(value.userId)).filter(row=>row.id!==attempt.id&&Date.parse(row.created_at)<=Date.parse(attempt.created_at)).map(row=>row.item_id);
     const before=await currentState(value.userId,attempt.ability_id),out=prepareCoachReview(before,{id:attempt.id,item_id:attempt.item_id,item_version:attempt.item_version,ability_id:attempt.ability_id,variant_group:(item.data as {variant_group:string|null}).variant_group,result:attempt.result,usage:attempt.usage,at:new Date().toISOString()},value.verdict,config,attempted_item_ids);
     const after=out.result.state,changes=await reviewChanges(value.userId,before,after,config);
-    await recordCoachAction({...base,...changes,kind:'attempt_review',idempotency_key:key,review:{attempt_id:attempt.id,verdict:value.verdict,note:value.note},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:{from_state:before.state,to_state:after.state,reason:JSON.stringify(out.trace),rule_version:json(out.trace.rule_version)}});
+    await recordCoachAction({...base,...changes,kind:'attempt_review',idempotency_key:key,review:{attempt_id:attempt.id,verdict:value.verdict,note:value.note},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify(out.trace),rule_version:json(out.trace.rule_version)}});
     return '코치 판정을 저장했습니다. 원래 자동 판정은 보존됩니다.';
   }
   if(!value.note.trim())throw new Error('변경 사유를 입력해 주세요.');
@@ -53,7 +53,7 @@ export async function runCoachAction(input:unknown) {
     const before=await currentState(value.userId,abilityId),out=prepareStateOverride(before,target,value.note,new Date().toISOString(),config),after=out.result;
     if(value.kind==='restart_diagnostic')after.evidence=emptyEvidence();
     const changes=await reviewChanges(value.userId,before,after,config);
-    await recordCoachAction({...base,...changes,kind:'state_override',idempotency_key:key,decision:{kind:'state_override',payload:json({ability_id:abilityId,state:target,note:value.note,trace:out.trace,rule_version:out.trace.rule_version})},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:{from_state:before.state,to_state:after.state,reason:JSON.stringify({...out.trace,details:{before,after}}),rule_version:json(out.trace.rule_version)}});
+    await recordCoachAction({...base,...changes,kind:'state_override',idempotency_key:key,decision:{kind:'state_override',payload:json({ability_id:abilityId,state:target,note:value.note,trace:out.trace,rule_version:out.trace.rule_version})},state:{...after,evidence:json(after.evidence),rule_version:json(out.trace.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify({...out.trace,details:{before,after}}),rule_version:json(out.trace.rule_version)}});
   };
   if(value.kind==='state_override') {if(!value.abilityId||!value.state)throw new LearnUserError('소주제와 상태를 선택해 주세요.');await override(value.abilityId,value.state,`state_override:${value.userId}:${value.abilityId}:${value.eventAt}`);return '상태와 사유를 기록했습니다.';}
   const resetKey=`path_override:${value.userId}:${value.requestId}`;

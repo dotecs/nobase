@@ -25,6 +25,12 @@ describe('learning runtime',()=>{
   it('timeout finishes without attempts for remaining questions',async()=>{const {r,id}=await start();vi.advanceTimersByTime(20*60000);await r.expireLearningRuntime(id);expect(await r.learningView(id)).toMatchObject({complete:true,summary:{timed_out:true,attempts:0}});expect(db.rows('learn_attempts')).toHaveLength(0);});
   it('denied access and paused learner cannot create a session',async()=>{mock.access=false;const r=await import('./learning-runtime');await expect(r.startLearningRuntime()).rejects.toThrow();mock.access=true;db.rows('learn_learners')[0].status='paused';await expect(r.startLearningRuntime()).rejects.toThrow();expect(db.rows('learn_sessions')).toHaveLength(0);});
   it('foreign session is not readable or writable',async()=>{const {r,id}=await start();db.rows('learn_sessions')[0].user_id='other';await expect(r.learningView(id)).rejects.toThrow();expect(db.rows('learn_attempts')).toHaveLength(0);});
+  it('unchanged verified state stores attempts and evidence without an event',async()=>{
+    const {r,id}=await start(),view=await r.learningView(id);if(view.complete)throw new Error('Expected item');
+    db.rows('learn_ability_states').push({user_id:testUser,ability_id:view.item.ability_id,state:'verified',evidence:{...emptyEvidence(),verified_at:'2026-10-26T00:00:00Z'}});
+    await submit(r,id);expect(db.rows('learn_attempts')).toHaveLength(1);expect(db.rows('learn_ability_state_events')).toHaveLength(0);
+    expect(db.rows('learn_ability_states')[0].evidence).toMatchObject({independent_correct:1,first_exposure_correct:1});
+  });
   it.each(['1','0'])('due review answer %s updates schedule and evidence',async answer=>{
     const ability='01-4';db.rows('learn_ability_states').push({user_id:testUser,ability_id:ability,state:'verified',evidence:{...emptyEvidence(),verified_at:'2026-10-26T00:00:00Z',independent_correct:2,distinct_groups:['a','b']}});
     for(let i=0;i<3;i++)db.rows('learn_review_schedule').push({id:`review-${i}`,user_id:testUser,ability_id:ability,due_at:i===0?'2026-10-26T00:00:00Z':'2026-11-01T00:00:00Z',interval_index:i,status:'due'});

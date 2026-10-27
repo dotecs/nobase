@@ -20,12 +20,14 @@ describe('state transitions', () => {
     const s = state(value); s.evidence.independent_correct = 1; s.evidence.distinct_groups = ['other'];
     const output = applyAttempt(s, attempt(), context(), []);
     expect(output.result.state.state).toBe(value === 'retained' ? 'retained' : 'verified');
-    expect(output.result.event.rule_version).toEqual({ evidence: 2 });
-    expect(JSON.parse(output.result.event.reason)).toEqual(output.trace);
+    if(value===output.result.state.state)expect(output.result.event).toBeNull();
+    else {expect(output.result.event!.rule_version).toEqual({ evidence: 2 });
+    expect(JSON.parse(output.result.event!.reason)).toEqual(output.trace);}
   });
   it.each(all)('%s + assisted never changes state', value => {
     const output = applyAttempt(state(value), attempt('correct_assisted'), context(), []);
     expect(output.result.state.state).toBe(value); expect(output.result.state.evidence.assisted).toBe(1);
+    expect(output.result.event).toBeNull();
   });
   it.each(all.flatMap(s => (['incorrect', 'no_response'] as const).map(r => [s, r] as const)))('%s + %s', (s, r) => {
     const output = applyAttempt(state(s), attempt(r), context(), []);
@@ -42,7 +44,7 @@ describe('state transitions', () => {
     const s = state('verified'); s.evidence = { ...s.evidence, independent_correct: 5, distinct_groups: ['a','b'], reviews_passed: 2, verified_at: now };
     const output = applyAttempt(s, attempt('incorrect'), context(), []);
     expect(output.result.state.evidence).toMatchObject({ independent_correct: 0, distinct_groups: [], reviews_passed: 0, verified_at: null });
-    expect(JSON.parse(output.result.event.reason).details.before.independent_correct).toBe(5); expect(s.evidence.independent_correct).toBe(5);
+    expect(JSON.parse(output.result.event!.reason).details.before.independent_correct).toBe(5); expect(s.evidence.independent_correct).toBe(5);
   });
   it('retained error enters recheck and clears verification evidence', () => {
     const s = state('retained'); s.evidence = { ...s.evidence, independent_correct: 8, distinct_groups: ['a','b'], reviews_passed: 3, verified_at: now };

@@ -25,7 +25,7 @@ export function applyAttempt(state: State, attempt: Attempt, config: RuleContext
     if (next.state === 'recheck') next.evidence = resetVerification(evidence);
   }
   const decision = traced(next, config, ['evidence'], 'apply_attempt', [attempt.result, `${state.state}->${next.state}`], { before: state.evidence, after: next.evidence });
-  const event = { ability_id: state.ability_id, attempt_id: attempt.id, from_state: state.state, to_state: next.state,
+  const event = state.state === next.state ? null : { ability_id: state.ability_id, attempt_id: attempt.id, from_state: state.state, to_state: next.state,
     reason: JSON.stringify(decision.trace), rule_version: decision.trace.rule_version, created_at: attempt.at };
   return { result: { state: next, event }, trace: decision.trace };
 }

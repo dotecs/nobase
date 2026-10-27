@@ -21,8 +21,6 @@ export async function startDiagnosticRuntime() {
   const insert=await client.from('learn_sessions').upsert({id,user_id:user.id,kind:'diagnostic',plan:json(plan),rule_version:json(config.rule_version)} as never,{onConflict:'id',ignoreDuplicates:true});if(insert.error)throw insert.error;
   const states=pack.abilities.map(row=>({user_id:user.id,ability_id:row.id,state:'unknown',evidence:emptyEvidence(),rule_version:config.rule_version}));
   const init=await client.from('learn_ability_states').upsert(states as never,{onConflict:'user_id,ability_id',ignoreDuplicates:true});if(init.error)throw init.error;
-  const events=pack.abilities.map(row=>({id:stableId(`${id}:initial:${row.id}`),user_id:user.id,ability_id:row.id,from_state:'unknown',to_state:'unknown',reason:JSON.stringify({rule:'diagnostic_start',rule_version:config.rule_version}),rule_version:config.rule_version}));
-  const audit=await client.from('learn_ability_state_events').upsert(events as never,{onConflict:'id',ignoreDuplicates:true});if(audit.error)throw audit.error;
   const update=await client.from('learn_learners').update({status:'diagnostic_in_progress'} as never).eq('user_id',user.id).eq('status','diagnostic_pending');if(update.error)throw update.error;
   return id;
 }
@@ -65,7 +63,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   await recordAttempt({session_id:session.id,user_id:session.user_id,idempotency_key:key,
     attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage:'diagnostic',answer_input:json(expired?'':input),result:grade.result,auto_grade:json({...grade.auto_grade,diagnostic_trace:next.trace}),hints_used:0,photo_path:expired?null:photoPath,duration_ms:duration,rule_version:json(meta.config.rule_version)},
     state:{...state,evidence:json(state.evidence),rule_version:json(next.summary.trace.rule_version)},
-    event:{from_state:previous.state,to_state:state.state,reason:JSON.stringify({trace:next.summary.trace,before:previous.evidence,after:state.evidence}),rule_version:json(next.summary.trace.rule_version)},
+    event:previous.state===state.state?null:{from_state:previous.state,to_state:state.state,reason:JSON.stringify({trace:next.summary.trace,before:previous.evidence,after:state.evidence}),rule_version:json(next.summary.trace.rule_version)},
     reviews:[],review_updates:[],session_plan_append:json([next.append]),learner_status:next.learner_status});
 }
 export async function expireDiagnosticRuntime(id:string) {
