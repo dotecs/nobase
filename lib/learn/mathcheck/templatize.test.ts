@@ -9,6 +9,20 @@ const sql = readFileSync('supabase/migrations/040_learn_content.sql', 'utf8');
 const rules = VariantRules.parse(JSON.parse(sql.match(/\('variants', 1, '([^']+)'::jsonb\)/)![1]));
 function seededRandom() { let seed = 20261026; return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 describe('server-generated templates and variants', () => {
+  it.each(['1/2 + 1/3', '2x+10=4', '3x-3>=4(x+3)-8'])('%s: n=5·20 각각 30회 모두 성공', stem => {
+    expect(rules.reduced_retry).toBe(200);
+    const type = stem.includes('/') ? 'fraction' : 'number';
+    const template = templatize(`다음 문제를 푸시오. $${stem}$`, type, rules);
+    for (const count of [5, 20]) {
+      for (let trial = 0; trial < 30; trial++) {
+        // Use the production random source; do not replay the same seeded sequence.
+        const variants = generateVariants(template, count);
+        expect(variants).toHaveLength(count);
+        expect(new Set(variants.map(row => row.stem_md)).size).toBe(count);
+        expect(validateStoredVariants(variants)).toEqual(variants);
+      }
+    }
+  });
   it.each([['04-3', '$\\frac{1}{2}+\\frac{1}{3}$', 'fraction'], ['05-3', '2x+10=4', 'number']] as const)('%s에서 20개 모두 검증 통과·중복 0', (_ability, stem, type) => {
     const template = templatize(stem, type, rules);
     const variants = generateVariants(template, 20, seededRandom());

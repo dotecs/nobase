@@ -5,6 +5,14 @@ import { equivalent } from './evaluate';
 import { parseMath } from './parse';
 
 describe('exact math checks', () => {
+  it.each([
+    ['2(x+3)-x', 'x+6'],
+    ['x-2x+2', '-x+2'],
+    ['3*x^2-2*x+1', '3x^2-2x+1'],
+  ])('다항식 표기 %s → %s', (input, expected) => {
+    expect(solveItem(input, 'expression')).toMatchObject({ ok: true, answer_spec: { type: 'expression', value: expected } });
+    expect(equivalent(parseMath(input).left, parseMath(expected).left)).toBe(true);
+  });
   it.each(Array.from({ length: 10 }, (_, i) => i + 1))('유리수 사칙 %i', n => {
     expect(solveItem(`-${n}/2+${n}/3`, 'fraction')).toMatchObject({ ok: true, answer_spec: { value: new Rational(-n, 6).toString() } });
   });

@@ -42,8 +42,10 @@ export function equivalent(a: Expr, b: Expr) {
 export function formatPolynomial(p: Polynomial) {
   const terms = p.coefficients.map((coefficient, degree) => {
     if (coefficient.n === BigInt(0)) return '';
-    const suffix = degree ? `*${p.variable}${degree === 2 ? '^2' : ''}` : '';
-    return `${coefficient.toString()}${suffix}`;
+    const suffix = degree ? `${p.variable}${degree === 2 ? '^2' : ''}` : '';
+    const value = degree && coefficient.d === BigInt(1) && (coefficient.n === BigInt(1) || coefficient.n === BigInt(-1))
+      ? coefficient.n < BigInt(0) ? '-' : '' : coefficient.toString();
+    return `${value}${suffix}`;
   }).reverse().filter(Boolean);
   return (terms.join('+') || '0').replace(/\+-/g, '-');
 }
