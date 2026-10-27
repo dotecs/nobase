@@ -9,11 +9,13 @@ export const VariantRules = z.object({
   count_default: z.number().int().min(3).max(5),
   denominator_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000, '잘못된 분모 범위'),
   integer_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000),
+  coefficient_range: z.tuple([z.number().int().min(2), z.number().int().min(2)]).refine(([min, max]) => min <= max && max <= 10000),
+  exclude_zero_answer: z.boolean(),
   operand_fractions: z.literal('proper_reduced'), answer_shape: z.literal('same_as_seed'), max_answer_abs: z.number().int().positive(),
   distinct_denominators: z.boolean(), keep_sign: z.boolean(), reduced_retry: z.number().int().positive().max(1000),
   usage_split: z.object({ practice: z.number().int().nonnegative(), review: z.number().int().nonnegative() }).strict(),
 }).strict();
-const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'exponent']) });
+const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'coefficient', 'exponent']) });
 export const TemplateSchema = z.object({
   pattern: z.string(), solver: z.literal('solveItem'),
   params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter) }),
@@ -29,7 +31,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
   const parameter = (value: Rational, role: z.infer<typeof Parameter>['role'] = 'number') => {
     const magnitude = Math.abs(Number(value.n) / Number(value.d));
     if (!Number.isSafeInteger(Math.ceil(magnitude))) throw new Error('변형 범위를 벗어난 수입니다.');
-    const range: [number, number] = role === 'denominator' ? [...rules.denominator_range] : role === 'exponent' ? [magnitude, magnitude] : [...rules.integer_range];
+    const range: [number, number] = role === 'denominator' ? [...rules.denominator_range] : role === 'coefficient' ? [...rules.coefficient_range] : role === 'exponent' ? [magnitude, magnitude] : [...rules.integer_range];
     const name = `p${values.length}`;
     values.push({ name, original: value.toString(), role, range });
     return `{${name}}`;
@@ -40,7 +42,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (expr.kind === 'neg') return `(-${walk(expr.value, role)})`;
     if ((expr.op === '/' || expr.op === '^') && expr.right.kind !== 'number' && !(expr.right.kind === 'neg' && expr.right.value.kind === 'number')) throw new Error('복합 분모·지수의 변형은 지원하지 않습니다.');
     if (expr.op === '/' && expr.left.kind !== 'number' && !(expr.left.kind === 'neg' && expr.left.value.kind === 'number')) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
-    return `(${walk(expr.left, expr.op === '/' ? 'numerator' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
+    return `(${walk(expr.left, expr.op === '/' ? 'numerator' : expr.op === '*' && expr.right.kind === 'variable' ? 'coefficient' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
   };
   let text = normalizeStem(stem);
   const assignment = text.match(/^([a-z])\s*=\s*([+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?)\s*(?:;|일\s*때,?)\s*(.+)$/);
@@ -55,7 +57,8 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (!param || Rational.parse(literal).compare(Rational.parse(param.original)) !== 0) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
     return `{${param.name}}`;
   });
-  const pattern = stem.includes('$') ? stem.replace(/(\$\$?)([\s\S]*?)\1/g, (_, delimiter: string, math: string) => delimiter + replaceNumbers(math) + delimiter) : replaceNumbers(stem);
+  const regions = [...stem.matchAll(/\$\$[\s\S]*?\$\$|\$[^$]*?\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g)];
+  const pattern = regions.length === 1 ? stem.slice(0, regions[0].index) + replaceNumbers(regions[0][0]) + stem.slice(regions[0].index! + regions[0][0].length) : replaceNumbers(stem);
   if (cursor !== values.length) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
   return TemplateSchema.parse({ pattern, params: { source_stem: stem, answer_type: answerType, rules, values }, solver: 'solveItem' });
 }
@@ -98,6 +101,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
       if (!result.ok) continue;
       if ((result.answer_spec.type === 'number' || result.answer_spec.type === 'fraction') && (seed.answer_spec.type === 'number' || seed.answer_spec.type === 'fraction')) {
         const answer = Rational.parse(result.answer_spec.value), original = Rational.parse(seed.answer_spec.value);
+        if (rules.exclude_zero_answer && original.n !== BigInt(0) && answer.n === BigInt(0)) continue;
         if ((answer.d === BigInt(1)) !== (original.d === BigInt(1))) continue;
         if ((answer.n < BigInt(0) ? -answer.n : answer.n) > BigInt(rules.max_answer_abs) * answer.d) continue;
       }

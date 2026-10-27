@@ -6,6 +6,9 @@ import { Rational } from './rational';
 
 export type SolveResult = { ok: true; answer_spec: AnswerSpecValue } | { ok: false; reason: 'unsupported' | 'parse_error' };
 export function normalizeStem(stem: string) {
+  const regions = [...stem.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$]*?)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g)];
+  if (regions.length > 1) throw new UnsupportedError('Multiple math regions');
+  if (regions.length === 1) return normalizeMath(regions[0].slice(1).find(value => value !== undefined)!);
   let text = stem.trim().replace(/\$\$|\$|\\\(|\\\)|\\\[|\\\]/g, '');
   text = text.replace(/^(?:다음을 계산하시오[.:]?|다음 식을 정리하시오[.:]?)\s*/, '').replace(/\s*(?:을|를)?\s*(?:계산하시오|구하시오|풀어라|정리하시오)[.!]?$/, '').trim();
   return normalizeMath(text);

@@ -217,7 +217,7 @@ insert into public.learn_rule_configs (key, version, config) values
 ('evidence', 1, '{"independent_correct_needed":2,"distinct_variants":true,"unexposed_needed":1,"retained_after_days":3,"retained_reviews":3}'::jsonb),
 ('review_intervals', 1, '{"days":[1,3,7]}'::jsonb),
 ('diagnostic', 1, '{"base_items":6,"max_followups":6,"time_limit_min":15}'::jsonb),
-('variants', 1, '{"count_default":5,"integer_range":[1,12],"operand_fractions":"proper_reduced","answer_shape":"same_as_seed","max_answer_abs":100,"denominator_range":[2,12],"distinct_denominators":true,"keep_sign":true,"reduced_retry":20,"usage_split":{"practice":2,"review":1}}'::jsonb)
+('variants', 1, '{"count_default":5,"integer_range":[1,12],"coefficient_range":[2,12],"exclude_zero_answer":true,"operand_fractions":"proper_reduced","answer_shape":"same_as_seed","max_answer_abs":100,"denominator_range":[2,12],"distinct_denominators":true,"keep_sign":true,"reduced_retry":20,"usage_split":{"practice":2,"review":1}}'::jsonb)
 on conflict (key, version) do nothing;
 
 commit;

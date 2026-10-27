@@ -44,6 +44,7 @@ describe('server-generated templates and variants', () => {
       if (row.answer_spec.type !== 'number' && row.answer_spec.type !== 'fraction') throw new Error('unexpected answer');
       const answer = Rational.parse(row.answer_spec.value);
       expect(answer.d === BigInt(1)).toBe(type === 'number');
+      if (type === 'number') { expect(row.stem_md).not.toMatch(/(?<!\d)-?1x/); expect(answer.n).not.toBe(BigInt(0)); }
       expect(Math.abs(Number(answer.n) / Number(answer.d))).toBeLessThanOrEqual(rules.max_answer_abs);
       for (const match of row.stem_md.matchAll(/(\d+)\/(\d+)/g)) {
         expect(Number(match[1])).toBeLessThan(Number(match[2]));
@@ -61,12 +62,24 @@ describe('server-generated templates and variants', () => {
     expect(() => templatize('x=-2; x+3', 'number', rules)).toThrow('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
   });
   it('정수 범위와 정답 상한은 DB 설정을 따른다', () => {
-    const variants = generateVariants(templatize('2x+10=4', 'number', { ...rules, integer_range: [2, 6], max_answer_abs: 2, reduced_retry: 100 }), 5, seededRandom());
+    const variants = generateVariants(templatize('2x+10=4', 'number', { ...rules, integer_range: [2, 6], coefficient_range: [2, 6], max_answer_abs: 2, reduced_retry: 100 }), 5, seededRandom());
     variants.forEach(row => {
       expect([...row.stem_md.matchAll(/\d+/g)].every(match => Number(match[0]) >= 2 && Number(match[0]) <= 6)).toBe(true);
       if (row.answer_spec.type !== 'number') throw new Error('unexpected answer');
       expect(Math.abs(Number(row.answer_spec.value))).toBeLessThanOrEqual(2);
     });
+  });
+  it.each(['1/2 + 1/3', '2x+10=4', '3x-3>=4(x+3)-8'])('지시문과 네 가지 수학 구간: %s', stem => {
+    for (const [open, close] of [['$', '$'], ['$$', '$$'], ['\\(', '\\)'], ['\\[', '\\]']]) {
+      const text = `다음 문제를 푸시오. ${open}${stem}${close} 답을 적으세요.`;
+      const type = stem.includes('/') ? 'fraction' : 'number';
+      expect(solveItem(text, type)).toEqual(solveItem(stem, type));
+      expect(solveItem(text, type).ok).toBe(true);
+      expect(generateVariants(templatize(text, type, rules), 5, seededRandom())[0].stem_md).toContain('답을 적으세요.');
+    }
+  });
+  it('복수 수학 구간은 unsupported', () => {
+    expect(solveItem('$1+2$와 \\(3+4\\)', 'number')).toEqual({ ok: false, reason: 'unsupported' });
   });
   it('정답 없는 변형·변조된 정답을 거부한다', () => {
     const [variant] = generateVariants(templatize('1/2+1/3', 'fraction', rules), 1, seededRandom());
