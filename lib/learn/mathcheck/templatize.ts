@@ -41,7 +41,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (expr.kind === 'variable') return expr.name;
     if (expr.kind === 'neg') return `(-${walk(expr.value, role)})`;
     if ((expr.op === '/' || expr.op === '^') && expr.right.kind !== 'number' && !(expr.right.kind === 'neg' && expr.right.value.kind === 'number')) throw new Error('복합 분모·지수의 변형은 지원하지 않습니다.');
-    if (expr.op === '/' && expr.left.kind !== 'number' && !(expr.left.kind === 'neg' && expr.left.value.kind === 'number')) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
+    if (expr.op === '/' && !['number', 'variable'].includes(expr.left.kind) && !(expr.left.kind === 'neg' && ['number', 'variable'].includes(expr.left.value.kind))) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
     return `(${walk(expr.left, expr.op === '/' ? 'numerator' : expr.op === '*' && expr.right.kind === 'variable' ? 'coefficient' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
   };
   let text = normalizeStem(stem);

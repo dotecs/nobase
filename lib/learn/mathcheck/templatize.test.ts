@@ -9,6 +9,21 @@ const sql = readFileSync('supabase/migrations/040_learn_content.sql', 'utf8');
 const rules = VariantRules.parse(JSON.parse(sql.match(/\('variants', 1, '([^']+)'::jsonb\)/)![1]));
 function seededRandom() { let seed = 20261026; return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 describe('server-generated templates and variants', () => {
+  it('dfrac 변수 분자는 유지하고 서로 다른 분모·정수해 변형 20개를 생성한다', () => {
+    const template = templatize('$\\dfrac{x}{2}+\\dfrac{x}{3}=5$', 'number', rules);
+    expect(template.params.values.map(value => value.role)).toEqual(['denominator', 'denominator', 'number']);
+    const variants = generateVariants(template, 20, seededRandom());
+    expect(new Set(variants.map(row => row.stem_md)).size).toBe(20);
+    expect(validateStoredVariants(variants)).toEqual(variants);
+    for (const variant of variants) {
+      const denominators = [...variant.stem_md.matchAll(/\\dfrac\{x\}\{(\d+)\}/g)].map(match => match[1]);
+      expect(denominators).toHaveLength(2);
+      expect(new Set(denominators).size).toBe(2);
+      expect(variant.answer_spec.type).toBe('number');
+      if (variant.answer_spec.type === 'number') expect(Rational.parse(variant.answer_spec.value).d).toBe(BigInt(1));
+    }
+    expect(templatize('x/2+x/3=5', 'number', rules).params.values.map(value => value.role)).toEqual(['denominator', 'denominator', 'number']);
+  });
   it.each(['1/2 + 1/3', '2x+10=4', '3x-3>=4(x+3)-8'])('%s: n=5·20 각각 30회 모두 성공', stem => {
     expect(rules.reduced_retry).toBe(200);
     const type = stem.includes('/') ? 'fraction' : 'number';
