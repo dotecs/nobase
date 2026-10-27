@@ -103,6 +103,14 @@
 - **R-P2-3 학생 문항 조회 경로**: `learn_items_latest` 뷰는 `learn_items_public`(팩 `live`만) 위에 있어 **팩이 `draft`인 지금은 비어 있다.** 그리고 `setPackStatus('live')`는 24개 소주제 전부 문항 ≥6을 요구해 1차에선 live가 불가능하다. 따라서 P2-3 이후 학생 화면은 뷰에 의존하지 않고 **서버(service role)에서 `learn_items`를 `status in (reviewed, live)`·id별 최신 version으로 읽어 정답을 제거한 뒤 렌더**한다(규칙 엔진의 `latestItems`와 같은 기준). 뷰는 팩이 live가 된 뒤의 보조 경로로만 둔다. 팩 live 조건 완화는 Phase 3.
 - 참고(수정 불요): `planSession`이 과거 전체에서 틀린 문항을 영구 제외한다 — 소주제당 문항 6개라 2~3번 틀리면 풀이 풀이 좁아진다. 1차 기수 데이터 보고 `recommendation`에 `exclude_wrong_days` 설정으로 완화 검토.
 
+### P2-2b. 저장 RPC `047_learn_record_attempt.sql` (2026-10-27 Codex 질문으로 추가)
+세션·시도·상태·이벤트·복습 일정을 **한 트랜잭션**으로 저장하는 함수 `learn_record_attempt(p_payload jsonb) returns uuid`.
+- 호출자는 서버 액션(service role)만: `revoke execute … from public, anon, authenticated; grant execute … to service_role`. `SECURITY INVOKER`.
+- payload = 서버가 이미 계산한 값 전부: `{ idempotency_key, session_id, user_id, attempt: {item_id, item_version, ability_id, usage, answer_input, result, auto_grade, hints_used, photo_path, duration_ms, rule_version}, state: {ability_id, state, evidence, rule_version} | null, event: {from_state, to_state, reason, rule_version} | null, reviews: [{ability_id, due_at, interval_index}], review_updates: [{id, status}], session_plan_append: jsonb | null, learner_status: text | null }`. 함수는 **판단하지 않고 저장만** 한다(규칙은 TS 엔진).
+- 순서: ① `learn_sessions` 행 `for update`(소유자 = user_id, `ended_at is null` 아니면 예외) ② **중복 제출 차단**: `learn_attempts`에 `idempotency_key text` 컬럼 추가(047, `unique(session_id, idempotency_key)`; 키 = `session_id:item_id:plan_index`) — 이미 있으면 기존 attempt id 반환(예외 아님) ③ attempt insert ④ state upsert + event insert ⑤ reviews insert / review_updates update ⑥ `plan` append, `learner_status` 갱신 ⑦ attempt id 반환.
+- 테스트: 모의 단위(순서·예외), 같은 키 2회 호출 → 1행.
+- 046 미적용 상태이므로 **046·047을 함께 적용**(대표). `database/README.md` 기록.
+
 ### P2-3. 채점 엔진 + 입력 컴포넌트
 - `lib/learn/solvers/index.ts`: `getSolver(name)` 레지스트리. `mathcheck` 구현: `grade(answerType, answerSpec, input) → { result: 'correct'|'incorrect'|'input_issue', normalized, detail }`. 유리수 동치(`number`/`fraction`, `require_reduced`면 비기약은 `correct`지만 `detail.not_reduced=true` → 결과는 `correct_assisted`로 기록), 식 동치(`expression`), 관계식(`number`+`variable`: 입력 `x=-3` 또는 `-3` 모두 허용, 부등식은 방향 포함), `choice`(id 집합 일치), `photo`/`text` → `pending_review`.
 - `lib/learn/grade.ts`: 서버 전용. `gradeAttempt(item(answer_spec 포함, service role 조회), input, hintsUsed, solverName)` → `AttemptResult` + `auto_grade`. `hintsUsed > 0`이고 correct → `correct_assisted`.
@@ -118,7 +126,7 @@
 
 ### P2-5. 코치 게이트 + 학습자 상세
 - `/admin/learn/learners`: 학생 목록(이름·상태·마지막 활동·검토 대기 사진 수·`awaiting_coach` 배지). 사이드바 "학습자".
-- `/admin/learn/learners/[userId]`: ① 소주제 24개 상태 지도(단원별 행, 상태 색) ② 진단 결과(문항·입력·판정·사진 썸네일·소요) ③ **추천 경로 미리보기**(`planSession`을 dry-run한 다음 2세션 분량과 trace) ④ 게이트 패널: "학습 열기" / 상태 수동 조정(소주제별 `state_override`, 사유 필수) / "진단 다시"(세션 새로 시작, 기존 기록 보존) ⑤ 시도 타임라인(세션별, 사진 확대, `pending_review` 항목에 채점 버튼 → `learn_coach_reviews` insert + attempt 결과 반영은 **새 행이 아니라** `auto_grade`를 건드리지 않고 `learn_coach_reviews`로만 — 상태 엔진은 coach verdict를 `correct_independent`/`incorrect`로 매핑해 `applyAttempt`).
+- `/admin/learn/learners/[userId]`: ① 소주제 24개 상태 지도(단원별 행, 상태 색) ② 진단 결과(문항·입력·판정·사진 썸네일·소요) ③ **추천 경로 미리보기**(`planSession`을 dry-run한 다음 2세션 분량과 trace) ④ 게이트 패널: "학습 열기" / 상태 수동 조정(소주제별 `state_override`, 사유 필수) / "진단 다시"(세션 새로 시작, 기존 기록 보존) ⑤ 시도 타임라인(세션별, 사진 확대, `pending_review` 항목에 채점 버튼 → `learn_coach_reviews` insert + attempt 결과 반영은 **새 행이 아니라** `auto_grade`를 건드리지 않고 `learn_coach_reviews`로만 — 상태 엔진은 coach verdict를 매핑해 `applyAttempt`: `correct` → `correct_independent`, `incorrect` → `incorrect`, **`partial` → `correct_assisted`**(도움 받아 맞힌 것과 같은 취급 — 검증 증거는 안 되지만 감점도 아님). 매핑은 `evidence` v2에 `coach_verdict_map` 키로 둔다: `{"correct":"correct_independent","partial":"correct_assisted","incorrect":"incorrect"}`).
 - 액션: `approveLearnerGate(userId, note)` → `learn_coach_decisions(diagnostic_gate)` + 학습자 `active`. `overrideAbilityState(userId, abilityId, state, reason)` → 이벤트 + decision. `reviewAttempt(attemptId, verdict, note)`.
 - 완료 기준: 테스트 계정 진단 → 코치 화면에 나타남 → 열기 → 학생 `/learn`에 세션 카드.
 
