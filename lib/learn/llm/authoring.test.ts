@@ -3,6 +3,7 @@ import { MockProvider } from './mock';
 import { extractDrafts, prepareApproval } from './authoring';
 import { selectProvider } from './provider';
 import { Extraction } from './schema';
+import { verifyEnrichment } from './enrichment';
 import { POST, maxDuration } from '@/app/api/learn/jobs/run/route';
 import { processExtraction } from './worker';
 import type { Database } from '@/lib/database.types';
@@ -17,6 +18,18 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it('보강 UI는 기본 체크 해제·선택 적용 비활성·미검증 후보 비활성', async () => {
+    const { EnrichmentCard } = await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
+    const provider = new MockProvider();
+    const item = { stem_md: '1/2+1/3', answer_type: 'fraction', answer_spec: { type: 'fraction', value: '5/6' } };
+    const raw = await provider.completeJson({ task: 'item_enrich', payload: { item, abilities: [] } });
+    const enrichment = verifyEnrichment(raw, item, abilities, provider);
+    enrichment.misconceptions[0].verified = false;
+    const html = renderToStaticMarkup(createElement(EnrichmentCard, { draft: { id, status: 'approved', enrichment } as unknown as Draft }));
+    expect(html).not.toMatch(/ checked=/);
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>선택 적용<\/button>/);
+    expect(html).toMatch(/<input[^>]*disabled=""[^>]*\/>오개념 1/);
+  });
   it('mock 워커는 원본 다운로드부터 초안 저장까지 수행하고 재시도 시 중복을 만들지 않는다', async () => {
     const bytes = await sharp({ create: { width: 8, height: 8, channels: 3, background: '#fff' } }).png().toBuffer();
     const stored = new Map<string, unknown>();
@@ -81,7 +94,7 @@ describe('authoring verification boundary', () => {
   });
   it('solver 실패·코치 미확인일 때 실제 검토 카드의 승인 버튼이 비활성이다', async () => {
     const { ReviewCard } = await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
-    const draft: Draft = { id, source_id: id, stem_md: 'sin(x)', answer_type: 'number', answer_spec: null, answer_verified_by: null, ability_id: '04-3', ability_candidates: ['04-3'], usage_suggested: 'assessment', extract: { original: { needs_figure: false } }, status: 'needs_coach', is_mock: true, crop: null, template: null, variants: [], hints: [], misconceptions: [], provider: 'mock', model_id: 'mock-p21-v1', prompt_version: 'item_extract.v1', reviewed_by: null, reviewed_at: null, created_at: '2026-10-26T00:00:00Z' };
+    const draft: Draft = { id, source_id: id, stem_md: 'sin(x)', answer_type: 'number', answer_spec: null, answer_verified_by: null, ability_id: '04-3', ability_candidates: ['04-3'], usage_suggested: 'assessment', extract: { original: { needs_figure: false } }, status: 'needs_coach', is_mock: true, crop: null, template: null, enrichment: null, variants: [], hints: [], misconceptions: [], provider: 'mock', model_id: 'mock-p21-v1', prompt_version: 'item_extract.v1', reviewed_by: null, reviewed_at: null, created_at: '2026-10-26T00:00:00Z' };
     const source = { id, origin: 'book', storage_path: 'test.png', url: null } as Source & { url: null };
     const html = renderToStaticMarkup(createElement(ReviewCard, { draft, source, abilities, approve: async () => ({ message: '' }) }));
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>승인<\/button>/);

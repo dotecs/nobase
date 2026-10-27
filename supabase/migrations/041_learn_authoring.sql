@@ -1,4 +1,5 @@
 -- Purpose: image authoring sources, drafts and worker queue.
+-- 2026-10-27 개정(미적용 상태에서 수정): 보강 초안과 선택 적용 RPC 추가.
 -- 2026-10-26 개정(미적용 상태에서 수정): 승인 트랜잭션에 템플릿·변형 저장 통합.
 -- Application: not applied; application date: pending human review.
 
@@ -30,6 +31,7 @@ create table public.learn_item_drafts (
   usage_suggested text,
   template jsonb,
   variants jsonb not null default '[]',
+  enrichment jsonb,
   hints jsonb not null default '[]',
   misconceptions jsonb not null default '[]',
   status text not null default 'extracted' check (status in ('extracted','needs_coach','approved','rejected')),
@@ -77,6 +79,7 @@ alter table public.learn_jobs enable row level security;
 create policy learn_jobs_admin on public.learn_jobs for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 create index learn_jobs_claim_idx on public.learn_jobs(kind, status, created_at);
+create unique index learn_jobs_enrich_pending_idx on public.learn_jobs(ref_id) where kind = 'item_enrich' and status in ('queued','running');
 create index learn_item_drafts_source_idx on public.learn_item_drafts(source_id);
 create trigger learn_jobs_updated_at before update on public.learn_jobs for each row execute function public.update_updated_at_column();
 
@@ -188,5 +191,75 @@ end;
 $$;
 revoke execute on function public.learn_approve_draft(uuid, text, text, jsonb) from public, anon;
 grant execute on function public.learn_approve_draft(uuid, text, text, jsonb) to authenticated;
+
+create function public.learn_apply_enrichment(p_draft_id uuid, p_selection jsonb)
+returns public.learn_items
+language plpgsql security invoker set search_path = public, pg_temp as $$
+declare
+  draft public.learn_item_drafts;
+  seed public.learn_items;
+  item public.learn_items;
+  selected_hints jsonb := '[]'::jsonb;
+  new_ids text[] := '{}';
+  idx integer;
+  chosen jsonb;
+  candidate jsonb;
+  next_number bigint;
+  misconception_id text;
+begin
+  if not public.is_admin() then raise exception '관리자만 적용할 수 있습니다' using errcode = '42501'; end if;
+  select * into draft from public.learn_item_drafts where id = p_draft_id for update;
+  if not found or draft.status <> 'approved' then raise exception '승인된 초안만 보강할 수 있습니다'; end if;
+  if draft.enrichment is null or draft.enrichment = 'null'::jsonb then raise exception '보강 없음'; end if;
+  if draft.enrichment->>'applied_at' is not null then raise exception '이미 적용된 보강'; end if;
+  if jsonb_typeof(p_selection) is distinct from 'object'
+    or jsonb_typeof(p_selection->'hints') is distinct from 'array'
+    or jsonb_typeof(p_selection->'misconceptions') is distinct from 'array'
+    or jsonb_typeof(p_selection->'reason_item') is distinct from 'boolean' then raise exception '잘못된 선택'; end if;
+  if jsonb_array_length(p_selection->'hints') + jsonb_array_length(p_selection->'misconceptions') = 0
+    and not (p_selection->>'reason_item')::boolean then raise exception '선택 없음'; end if;
+  select * into seed from public.learn_items where source_draft_id = p_draft_id and variant_group = id order by version desc limit 1 for update;
+  if not found then raise exception '씨앗 문항 없음'; end if;
+  for chosen in select value from jsonb_array_elements(p_selection->'hints') loop
+    if jsonb_typeof(chosen) <> 'number' or chosen::text !~ '^[0-9]+$' then raise exception '잘못된 힌트 선택'; end if;
+    idx := chosen::text::integer;
+    candidate := draft.enrichment->'hints'->idx;
+    if candidate is null or idx >= jsonb_array_length(draft.enrichment->'hints') then raise exception '잘못된 힌트 선택'; end if;
+    selected_hints := selected_hints || jsonb_build_array(candidate);
+  end loop;
+  if (select count(*) <> count(distinct value) from jsonb_array_elements(p_selection->'hints'))
+    or (select count(*) <> count(distinct value) from jsonb_array_elements(p_selection->'misconceptions')) then raise exception '중복 선택'; end if;
+  perform pg_advisory_xact_lock(hashtext(seed.ability_id || ':m'));
+  select count(*) + 1 into next_number from public.learn_misconceptions where ability_id = seed.ability_id;
+  for chosen in select value from jsonb_array_elements(p_selection->'misconceptions') loop
+    if jsonb_typeof(chosen) <> 'number' or chosen::text !~ '^[0-9]+$' then raise exception '잘못된 오개념 선택'; end if;
+    idx := chosen::text::integer;
+    candidate := draft.enrichment->'misconceptions'->idx;
+    if candidate is null or candidate->'verified' is distinct from 'true'::jsonb then raise exception '미검증 오개념 또는 잘못된 선택'; end if;
+    misconception_id := seed.ability_id || '-m' || lpad(next_number::text, greatest(2,length(next_number::text)), '0');
+    insert into public.learn_misconceptions(id, ability_id, pattern, suggests, coach_note)
+    values(misconception_id, seed.ability_id, candidate->>'pattern', array[seed.ability_id], candidate->>'explanation');
+    new_ids := array_append(new_ids, misconception_id);
+    next_number := next_number + 1;
+  end loop;
+  insert into public.learn_items(id, version, ability_id, usage, variant_group, stem_md, answer_type, answer_spec, hints, rubric, required_abilities, misconception_ids, status, exposure, source_draft_id)
+  values(seed.id, seed.version + 1, seed.ability_id, seed.usage, seed.variant_group, seed.stem_md, seed.answer_type, seed.answer_spec, selected_hints, seed.rubric, seed.required_abilities,
+    array(select distinct value from unnest(seed.misconception_ids || new_ids) as t(value)), seed.status, seed.exposure, seed.source_draft_id)
+  returning * into item;
+  if (p_selection->>'reason_item')::boolean then
+    candidate := draft.enrichment->'reason_item';
+    if candidate is null or candidate->>'stem_md' is null or candidate->>'model_answer_md' is null then raise exception '이유 문항 없음'; end if;
+    perform pg_advisory_xact_lock(hashtext(seed.ability_id));
+    select count(distinct id) + 1 into next_number from public.learn_items where ability_id = seed.ability_id;
+    insert into public.learn_items(id, version, ability_id, usage, variant_group, stem_md, answer_type, answer_spec, rubric, required_abilities, status, source_draft_id)
+    values(seed.ability_id || '-' || lpad(next_number::text, greatest(2,length(next_number::text)), '0'), 1, seed.ability_id, 'assessment', seed.id,
+      candidate->>'stem_md', 'text', jsonb_build_object('type','text','model_answer_md',candidate->>'model_answer_md'), candidate->'rubric', array[seed.ability_id], 'reviewed', p_draft_id);
+  end if;
+  update public.learn_item_drafts set enrichment = jsonb_set(enrichment, '{applied_at}', to_jsonb(now())) where id = p_draft_id;
+  return item;
+end;
+$$;
+revoke execute on function public.learn_apply_enrichment(uuid, jsonb) from public, anon;
+grant execute on function public.learn_apply_enrichment(uuid, jsonb) to authenticated;
 
 commit;

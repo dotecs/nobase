@@ -8,6 +8,40 @@ import type { Database } from '@/lib/database.types';
 import { runJobs } from '@/lib/learn/llm/worker';
 import { templatize, generateVariants, validateStoredVariants, VariantRules, TemplateSchema } from '@/lib/learn/mathcheck/templatize';
 import type { AnswerType } from '@/lib/learn/types';
+import { EnrichmentSelection } from '@/lib/learn/llm/schema';
+import { validateEnrichmentSelection } from '@/lib/learn/llm/enrichment';
+
+export async function enqueueEnrichment(draftId: string) {
+  try {
+    z.uuid().parse(draftId);
+    const client = await adminClient();
+    const result = await client.from('learn_item_drafts').select('*').eq('id', draftId).single();
+    const draft = result.data as Draft | null;
+    if (result.error || !draft || draft.status !== 'approved') throw new Error('승인된 초안만 보강할 수 있습니다');
+    if ((draft.enrichment as { applied_at?: string } | null)?.applied_at) throw new Error('이미 적용된 보강');
+    const pending = await client.from('learn_jobs').select('id').eq('ref_id', draftId).eq('kind', 'item_enrich').in('status', ['queued', 'running']);
+    if (pending.error) throw pending.error;
+    if (pending.data?.length) throw new Error('이미 대기·실행 중인 보강 작업이 있습니다');
+    const inserted = await client.from('learn_jobs').insert({ kind: 'item_enrich', ref_id: draftId } as never);
+    if (inserted.error) throw inserted.error;
+    revalidatePath('/admin/learn/authoring');
+    return { message: '보강 작업을 등록했습니다. 지금 처리를 눌러 주세요.' };
+  } catch (error) { return { error: message(error) }; }
+}
+export async function applyEnrichment(draftId: string, selection: unknown) {
+  try {
+    z.uuid().parse(draftId);
+    const selected = EnrichmentSelection.parse(selection), client = await adminClient();
+    const draft = await client.from('learn_item_drafts').select('*').eq('id', draftId).single();
+    const row = draft.data as Draft | null;
+    if (draft.error || !row) throw draft.error ?? new Error('초안 없음');
+    validateEnrichmentSelection(row.status, row.enrichment, selected);
+    const result = await client.rpc('learn_apply_enrichment', { p_draft_id: draftId, p_selection: selected } as never);
+    if (result.error) throw result.error;
+    revalidatePath('/admin/learn/authoring');
+    return { message: '선택한 보강을 새 문항 버전에 적용했습니다.' };
+  } catch (error) { return { error: message(error) }; }
+}
 
 function message(error: unknown) {
   const code = (error as { code?: string })?.code;

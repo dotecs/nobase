@@ -48,6 +48,7 @@ export interface Database {
           ability_id: string | null
           usage_suggested: string | null
           template: Json | null
+          enrichment: Json | null
           variants: Json
           hints: Json
           misconceptions: Json
@@ -73,6 +74,7 @@ export interface Database {
           ability_id?: string | null
           usage_suggested?: string | null
           template?: Json | null
+          enrichment?: Json | null
           variants?: Json
           hints?: Json
           misconceptions?: Json
@@ -939,6 +941,10 @@ export interface Database {
       }
     }
     Functions: {
+      learn_apply_enrichment: {
+        Args: { p_draft_id: string; p_selection: Json }
+        Returns: Database['public']['Tables']['learn_items']['Row']
+      }
       learn_approve_draft: {
         Args: { p_draft_id: string; p_ability_id: string; p_usage: string; p_item: Json }
         Returns: Database['public']['Tables']['learn_items']['Row']

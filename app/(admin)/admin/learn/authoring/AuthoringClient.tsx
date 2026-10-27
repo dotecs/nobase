@@ -8,13 +8,38 @@ import { solveItem } from '@/lib/learn/mathcheck/solve';
 import { AnswerSpec } from '@/lib/learn/answer-spec';
 import type { Ability, ApprovalValue, Draft, Source } from '@/lib/learn/llm/authoring';
 import type { AnswerType } from '@/lib/learn/types';
-import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, generateDraftVariants, toggleDraftVariant } from './actions';
+import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from './actions';
+import { StoredEnrichment } from '@/lib/learn/llm/schema';
 import type { DraftVariant } from '@/lib/learn/mathcheck/templatize';
 import styles from './authoring.module.css';
 
 type Result = { message?: string; error?: string };
 type SourceView = Source & { url: string | null };
 type Approve = (value: ApprovalValue) => Promise<Result>;
+export function EnrichmentCard({ draft }: { draft: Draft }) {
+  const parsed = StoredEnrichment.safeParse(draft.enrichment), data = parsed.success ? parsed.data : null;
+  const [hints, setHints] = useState<number[]>([]), [misconceptions, setMisconceptions] = useState<number[]>([]), [reason, setReason] = useState(false);
+  const [result, setResult] = useState<Result>(), [pending, start] = useTransition();
+  const router = useRouter();
+  const run = (action: () => Promise<Result>) => start(async () => { try { setResult(await action()); router.refresh(); } catch { setResult({ error: '요청 처리 실패' }); } });
+  const toggle = (values: number[], index: number, checked: boolean) => checked ? [...values, index] : values.filter(value => value !== index);
+  const locked = pending || !!data?.applied_at;
+  return <section className={styles.variants} aria-label="보강 검토">
+    <h3>보강 검토</h3>
+    <button disabled={locked} onClick={() => run(() => enqueueEnrichment(draft.id))}>보강 생성</button>
+    {data && <>
+      <p>{data.is_mock ? '모의 보강' : 'LLM 보강'} · {data.model_id} · {data.applied_at ? '적용 완료' : '검토 후 선택한 항목만 적용됩니다.'}</p>
+      {data.hints.map((hint, index) => <div key={`h${index}`}><label><input type="checkbox" checked={hints.includes(index)} disabled={locked} onChange={event => setHints(toggle(hints, index, event.target.checked))} />힌트 {hint.level}</label>{renderMathMarkdown(hint.text_md)}</div>)}
+      {data.misconceptions.map((candidate, index) => <div key={`m${index}`}><label><input type="checkbox" checked={misconceptions.includes(index)} disabled={locked || !candidate.verified} onChange={event => setMisconceptions(toggle(misconceptions, index, event.target.checked))} />오개념 {index + 1}{!candidate.verified && ' — 검증 불가, 적용 제외'}</label>{renderMathMarkdown(candidate.pattern)}<p>오답: {candidate.wrong_value}</p>{renderMathMarkdown(candidate.explanation)}</div>)}
+      <label><input type="checkbox" checked={reason} disabled={locked} onChange={event => setReason(event.target.checked)} />이유 설명 문항</label>
+      {renderMathMarkdown(data.reason_item.stem_md)}{renderMathMarkdown(data.reason_item.model_answer_md)}
+      <ul>{data.reason_item.rubric.map((row, index) => <li key={index}>{row.criterion} · {row.points}점</li>)}</ul>
+      <p>소주제 참고: LLM {data.ability_candidates.llm.join(', ') || '없음'} / 규칙 {data.ability_candidates.rule.join(', ') || '없음'}</p>
+      <button disabled={locked || (!hints.length && !misconceptions.length && !reason)} onClick={() => run(() => applyEnrichment(draft.id, { hints, misconceptions, reason_item: reason }))}>선택 적용</button>
+    </>}
+    {result && <p role="status">{result.error ?? result.message}</p>}
+  </section>;
+}
 export type AuthoringProps = { userId: string; sources: SourceView[]; drafts: Draft[]; abilities: Ability[]; jobs: { id: string; ref_id: string; status: string; error: string | null }[] };
 
 export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft; source: SourceView; abilities: Ability[]; approve: Approve }) {
@@ -91,6 +116,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
         <button disabled={locked || pending} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>
       </div>
       {result && <p role="status">{result.error ?? result.message}</p>}
+      {draft.status === 'approved' && <EnrichmentCard key={JSON.stringify(draft.enrichment)} draft={draft} />}
     </div>
   </article>;
 }
@@ -126,7 +152,7 @@ export default function AuthoringClient({ userId, sources, drafts, abilities, jo
     <label>초안 상태<select value={filter} onChange={event => setFilter(event.target.value)}><option value="all">전체</option>{['extracted', 'needs_coach', 'approved', 'rejected'].map(status => <option key={status}>{status}</option>)}</select></label>
     {sources.map(source => <section key={source.id} className={styles.source}><h2>{source.note || source.storage_path.split('/').at(-1)}</h2><p>{source.origin} · {source.created_at}</p>
       {jobs.filter(job => job.ref_id === source.id).map(job => <p key={job.id}>작업: {job.status}{job.error ? ` — ${job.error}` : ''}</p>)}
-      {drafts.filter(draft => draft.source_id === source.id && (filter === 'all' || draft.status === filter)).map(draft => <ReviewCard key={draft.id} {...{ draft, source, abilities, approve }} />)}
+      {drafts.filter(draft => draft.source_id === source.id && (filter === 'all' || draft.status === filter)).map(draft => <div key={draft.id}>{jobs.filter(job => job.ref_id === draft.id).map(job => <p key={job.id}>보강 작업: {job.status}{job.error ? ` — ${job.error}` : ''}</p>)}<ReviewCard {...{ draft, source, abilities, approve }} /></div>)}
     </section>)}
   </>;
 }

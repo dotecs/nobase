@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingIncludes: {
+    '/admin/learn/authoring': ['./prompts/**/*'],
+    '/admin/learn/packs': ['./content/learn/packs/**/*'],
+    '/api/learn/jobs/run': ['./prompts/**/*'],
+  },
   experimental: {
     cssChunking: 'strict',
   },

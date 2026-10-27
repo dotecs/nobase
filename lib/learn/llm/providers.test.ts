@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { OpenAIProvider } from './openai';
 import { AnthropicProvider } from './anthropic';
+import { MockProvider } from './mock';
 
 const calls = vi.hoisted(() => ({ openai: vi.fn(), anthropic: vi.fn() }));
 vi.mock('openai', () => ({ default: class { chat = { completions: { create: calls.openai } }; } }));
@@ -9,6 +10,24 @@ vi.mock('@/lib/supabase-admin', () => ({ createAdminSupabaseClient: () => { thro
 const output = { items: [{ stem_md: '1/2+1/3', answer_type: 'fraction', answer_guess: '5/6', needs_figure: false, figure_bbox: null, unit_hint: '04-3' }] };
 afterEach(() => vi.clearAllMocks());
 describe('provider request contracts without network calls', () => {
+  it('보강은 텍스트 payload를 user JSON에만 넣고 두 제공자 출력 스키마를 검증한다', async () => {
+    const input = { task: 'item_enrich', payload: { item: { stem_md: 'UNTRUSTED_OVERRIDE_42', answer_type: 'fraction', answer_spec: { type: 'fraction', value: '5/6' } }, abilities: [{ id: '04-3', name: '분수', action: '계산' }] } };
+    const enrichment = await new MockProvider().completeJson(input);
+    calls.openai.mockResolvedValue({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(enrichment) } }] });
+    expect(await new OpenAIProvider().completeJson(input)).toEqual(enrichment);
+    const request = calls.openai.mock.calls[0][0];
+    expect(request.messages[0].content).not.toContain('UNTRUSTED_OVERRIDE_42');
+    expect(JSON.parse(request.messages[1].content).payload.item.stem_md).toBe('UNTRUSTED_OVERRIDE_42');
+    expect(request.response_format.json_schema).toMatchObject({ strict: true, schema: { additionalProperties: false, required: ['hints', 'misconceptions', 'reason_item', 'ability_candidates'] } });
+    calls.anthropic.mockResolvedValue({ stop_reason: 'tool_use', content: [{ type: 'tool_use', name: 'extract_items', input: enrichment }] });
+    expect(await new AnthropicProvider().completeJson(input)).toEqual(enrichment);
+    const anthropic = calls.anthropic.mock.calls[0][0];
+    expect(anthropic.system).not.toContain('UNTRUSTED_OVERRIDE_42');
+    expect(anthropic.messages[0].content).toHaveLength(1);
+    expect(anthropic.messages[0].content[0].type).toBe('text');
+    calls.openai.mockResolvedValue({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ hints: [] }) } }] });
+    await expect(new OpenAIProvider().completeJson(input)).rejects.toThrow();
+  });
   it('strict JSON schema와 분리된 이미지 user 블록을 보낸다', async () => {
     calls.openai.mockResolvedValue({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(output) } }] });
     const provider = new OpenAIProvider();
