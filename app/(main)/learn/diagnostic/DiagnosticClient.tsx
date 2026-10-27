@@ -13,7 +13,7 @@ export function DiagnosticClient({userId,sessionId,planIndex,item,photo_required
   useEffect(()=>{started.current=Date.now();const tick=()=>{const left=Math.max(0,Date.parse(deadline)-Date.now());setRemaining(Math.ceil(left/1000));if(!left&&!expired.current){expired.current=true;start(async()=>{const result=await expireDiagnostic(sessionId);if(result.error)setError(result.error);else router.refresh();});}};tick();const timer=setInterval(tick,1000);return()=>clearInterval(timer);},[deadline,sessionId,router]);
   return <section className={styles.card}><p>문항 {planIndex+1} · 남은 시간 {remaining===null?'확인 중':`${Math.floor(remaining/60)}:${String(remaining%60).padStart(2,'0')}`}</p>
     <div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>
-    <AnswerInput type={item.answer_type} options={item.options} value={answer} onChange={setAnswer} disabled={pending||remaining===0}/>
+    <AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={setAnswer} disabled={pending||remaining===0}/>
     <PhotoCapture userId={userId} required={photo_required} onChange={setPhoto} disabled={pending||remaining===0}/>
     <button className={styles.button} disabled={pending||remaining===0||(photo_required&&!photo)} onClick={()=>start(async()=>{setError('');const result=await submitAttempt({sessionId,itemId:item.id,planIndex,answer,photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</button>
     <p>진단 중에는 정오답을 표시하지 않습니다.</p>{error&&<p role="alert">{error}</p>}

@@ -8,6 +8,11 @@ vi.mock('@/lib/supabase-admin', () => ({ createAdminSupabaseClient: () => ({ fro
 } }) }));
 import { loadLearnItems, toStudentItem, type LearnItem } from './items';
 describe('server item projection', () => {
+  it('exposes only the need for a relation and variable, never its answer or relation',()=>{
+    const row={id:'i',version:1,ability_id:'a',stem_md:'Solve',answer_type:'number',usage:'practice',answer_spec:{type:'number',value:'-7',variable:'x',relation:'<='}} as unknown as LearnItem;
+    const out=toStudentItem(row);expect(out).toMatchObject({relation_required:true,variable:'x'});expect(out).not.toHaveProperty('relation');expect(JSON.stringify(out)).not.toMatch(/-7|<=|answer_spec/);
+    expect(toStudentItem({...row,answer_spec:{type:'number',value:'-7',variable:'x',relation:'='}}).relation_required).toBe(false);
+  });
   it('uses service-role table instead of live-only views and selects latest version', async () => {
     mock.rows = [1,2].map(version => ({ id:'i', version, ability_id:'a', status:'reviewed' }));
     expect((await loadLearnItems(['a'])).map(row => row.version)).toEqual([2]); expect(mock.tables).toEqual(['learn_items']);

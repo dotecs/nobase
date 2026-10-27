@@ -6,7 +6,7 @@ import { latestItems } from './rules/types';
 import type { AnswerType, ItemUsage } from './types';
 
 export type LearnItem = Omit<Database['public']['Tables']['learn_items']['Row'], 'answer_type' | 'usage'> & { answer_type: AnswerType; usage: ItemUsage };
-export type StudentItem = { id: string; version: number; ability_id: string; stem_md: string; answer_type: AnswerType; usage: ItemUsage; options: { id: string; text_md: string }[] };
+export type StudentItem = { id: string; version: number; ability_id: string; stem_md: string; answer_type: AnswerType; usage: ItemUsage; relation_required: boolean; variable: string | null; options: { id: string; text_md: string }[] };
 // Call only after the caller authenticates and checks course access or admin status.
 export async function loadLearnItems(abilityIds: string[]): Promise<LearnItem[]> {
   if (!abilityIds.length) return [];
@@ -23,7 +23,8 @@ export async function loadLearnItems(abilityIds: string[]): Promise<LearnItem[]>
   return rows.filter(row => selected.get(row.id) === row.version);
 }
 export function toStudentItem(item: LearnItem): StudentItem {
-  const spec = item.answer_type === 'choice' ? AnswerSpec.parse(item.answer_spec) : null;
+  const spec = item.answer_type === 'choice' || item.answer_type === 'number' ? AnswerSpec.parse(item.answer_spec) : null;
   return { id: item.id, version: item.version, ability_id: item.ability_id, stem_md: item.stem_md, answer_type: item.answer_type, usage: item.usage,
+    relation_required: spec?.type === 'number' && spec.relation !== '=', variable: spec?.type === 'number' ? spec.variable ?? null : null,
     options: spec?.type === 'choice' ? spec.options.map(option => ({ id: option.id, text_md: option.text_md })) : [] };
 }
