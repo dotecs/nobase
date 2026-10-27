@@ -13,6 +13,7 @@ import {
 import AdminPageHeader from './AdminPageHeader';
 import { getAdminBadgeCounts } from '../admin-counts';
 import styles from './admin.module.css';
+import { ENROLLMENT_STATUS_LABEL } from '@/lib/enrollment-status';
 
 export const dynamic = 'force-dynamic';
 
@@ -205,7 +206,7 @@ export default async function AdminOverviewPage() {
                     <span className={styles.recentTitle}>
                       {nameMap.get(e.user_id) || '이름 없음'}
                       <span className={`${styles.badge} ${e.status === 'active' ? styles.published : styles.draft}`}>
-                        {e.status === 'active' ? '수강 중' : e.status === 'paused' ? '입금 대기' : e.status}
+                        {ENROLLMENT_STATUS_LABEL[e.status] ?? e.status}
                       </span>
                     </span>
                     <span className={styles.recentSub}>
