@@ -150,7 +150,7 @@ insert into public.learn_rule_configs (key, version, config) values
 ('gate', 1, '{"coach_gate_after_diagnostic":true}'::jsonb),
 ('session', 1, '{"items_per_session":8,"max_minutes":20,"max_hints_per_item":2,"new_ability_per_session":1,"max_review_items":2}'::jsonb),
 ('recommendation', 1, '{"order":"book","prefer_states":["needs_repair","recheck","unknown","learning"],"max_abilities_in_progress":2,"skip_duplicate_stems":true,"diagnostic_usage_order":["diagnostic","assessment","practice"],"practice_usage_order":["practice","assessment"],"review_usage_order":["review","practice"]}'::jsonb),
-('evidence', 2, '{"independent_correct_needed":2,"distinct_variants":true,"unexposed_needed":1,"retained_after_days":3,"retained_reviews":3,"photo_required_usages":["diagnostic","assessment"],"photo_optional_usages":["practice","review"],"distinct_groups_needed":2}'::jsonb),
+('evidence', 2, '{"independent_correct_needed":2,"distinct_variants":true,"unexposed_needed":1,"retained_after_days":3,"retained_reviews":3,"photo_required_usages":["diagnostic","assessment"],"photo_optional_usages":["practice","review"],"distinct_groups_needed":2,"coach_verdict_map":{"correct":"correct_independent","partial":"correct_assisted","incorrect":"incorrect"}}'::jsonb),
 ('solvers', 1, '{"default":"mathcheck","by_pack":{"root-math":"mathcheck"}}'::jsonb)
 on conflict (key, version) do nothing;
 

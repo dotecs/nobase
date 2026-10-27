@@ -25,6 +25,17 @@ export function runtimeTestDb() {
       const query={select:()=>query,eq:(key:string,value:unknown)=>{filters.push(row=>row[key]===value);return query;},in:(key:string,value:unknown[])=>{filters.push(row=>value.includes(row[key]));return query;},is:(key:string,value:unknown)=>{filters.push(row=>(row[key]??null)===value);return query;},lte:(key:string,value:string)=>{filters.push(row=>String(row[key])<=value);return query;},contains:(key:string,value:Row)=>{filters.push(row=>Object.entries(value).every(([k,v])=>(row[key] as Row)?.[k]===v));return query;},order:(key:string,options?:{ascending?:boolean})=>{orders.push({key,asc:options?.ascending??true});return query;},limit:(n:number)=>{limit=n;return query;},range:(a:number,b:number)=>{offset=a;limit=b-a+1;return query;},insert:(value:Row|Row[])=>{mode='insert';payload=Array.isArray(value)?value:[value];return query;},upsert:(value:Row|Row[],options?:{onConflict?:string;ignoreDuplicates?:boolean})=>{mode='upsert';payload=Array.isArray(value)?value:[value];conflict=options?.onConflict??'id';ignore=!!options?.ignoreDuplicates;return query;},update:(value:Row)=>{mode='update';payload=[value];return query;},single:async()=>{const result=execute();return{data:result.data[0]??null,error:result.data.length?null:{message:'not found'}};},maybeSingle:async()=>({data:execute().data[0]??null,error:null}),then:(resolve:(value:unknown)=>unknown)=>Promise.resolve(execute()).then(resolve)};return query;
     },
     async rpc(name:string,{p_payload:p}:{p_payload:Row}){
+      if(name==='learn_record_coach_action'){
+        const learner=rows('learn_learners').find(row=>row.user_id===p.user_id);if(!learner)return{data:null,error:{message:'Learner missing'}};
+        const table=p.kind==='attempt_review'?'learn_coach_reviews':'learn_coach_decisions';const old=rows(table).find(row=>row.idempotency_key===p.idempotency_key);if(old)return{data:old.id,error:null};
+        const id=randomUUID();rows(table).push({id,created_at:new Date().toISOString(),user_id:p.user_id,coach_id:p.coach_id,idempotency_key:p.idempotency_key,...(p.review??p.decision) as Row});
+        if(p.state){const value=p.state as Row,oldState=rows('learn_ability_states').find(row=>row.user_id===p.user_id&&row.ability_id===value.ability_id);if(oldState)Object.assign(oldState,structuredClone(value));else rows('learn_ability_states').push({user_id:p.user_id,...structuredClone(value)});}
+        if(p.event)rows('learn_ability_state_events').push({id:randomUUID(),user_id:p.user_id,ability_id:(p.state as Row)?.ability_id,...p.event as Row});
+        for(const review of p.reviews as Row[])rows('learn_review_schedule').push({id:randomUUID(),user_id:p.user_id,status:'due',...review});
+        for(const update of p.review_updates as Row[]){const row=rows('learn_review_schedule').find(row=>row.id===update.id);if(row)row.status=update.status;}
+        if(p.learner_status)learner.status=p.learner_status;
+        return{data:id,error:null};
+      }
       if(name!=='learn_record_attempt')throw new Error('Unexpected RPC');const session=rows('learn_sessions').find(row=>row.id===p.session_id&&row.user_id===p.user_id);
       if(!session||session.ended_at)return{data:null,error:{message:'Invalid active session'}};
       const existing=rows('learn_attempts').find(row=>row.session_id===p.session_id&&row.idempotency_key===p.idempotency_key);if(existing)return{data:existing.id,error:null};

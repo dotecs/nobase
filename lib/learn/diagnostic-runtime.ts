@@ -68,6 +68,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
 export async function expireDiagnosticRuntime(id:string) {
   const user=await requireLearner();z.uuid().parse(id);
   let session=await sessionRow(id,user.id);
+  if((await learnerRow(user.id)).status!=='diagnostic_in_progress'){if(readDiagnosticPlan(session.plan).complete)await finalize(session);return;}
   if(session.kind!=='diagnostic')throw new Error('진단 세션이 아닙니다.');
   const {meta}=readDiagnosticPlan(session.plan);
   if(Date.now()-Date.parse(session.started_at)<meta.config.configs.diagnostic.time_limit_min*MINUTE_MS)return;
@@ -93,6 +94,7 @@ export async function diagnosticView() {
   const session=(result.data as unknown as Session[])[0];if(!session)return null;
   const {meta,current,complete}=readDiagnosticPlan(session.plan);
   if(complete){await finalize(session);return {complete:true as const};}
+  if(session.ended_at)return null;
   const itemResult=await client.from('learn_items').select('*').eq('id',current.item.item_id).eq('version',current.item.item_version).in('status',['reviewed','live']).single();if(itemResult.error)throw itemResult.error;
   const item=itemResult.data as unknown as LearnItem;
   return {complete:false as const,userId:user.id,sessionId:session.id,planIndex:current.plan_index,item:toStudentItem(item),photo_required:meta.config.configs.evidence.photo_required_usages.includes('diagnostic')||item.answer_type==='photo',deadline:new Date(Date.parse(session.started_at)+meta.config.configs.diagnostic.time_limit_min*MINUTE_MS).toISOString()};

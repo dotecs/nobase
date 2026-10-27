@@ -1,0 +1,17 @@
+.page { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.page h1, .page h2, .page h3 { margin: 12px 0; }
+.list, .map { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.card { margin: 20px 0; padding: 20px; border: 1px solid var(--border-color, #c5d3e0); border-radius: 12px; background: var(--bg-card, transparent); }
+.ability { padding: 12px; border: 1px solid var(--border-color, #c5d3e0); border-left: 5px solid #7b8897; border-radius: 8px; }
+.ability[data-state="needs_repair"], .ability[data-state="recheck"] { border-left-color: #d77421; }
+.ability[data-state="learning"] { border-left-color: #0072c6; }
+.ability[data-state="verified"], .ability[data-state="retained"] { border-left-color: #1b9870; }
+.badge { padding: 4px 8px; border: 1px solid #d77421; border-radius: 6px; }
+.trace { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; max-height: 360px; overflow: auto; }
+.attempt { border-top: 1px solid var(--border-color, #c5d3e0); padding: 16px 0; }
+.photo { max-width: 180px; max-height: 160px; object-fit: contain; }
+.controls { display: grid; gap: 12px; }
+.controls input, .controls textarea, .controls select { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color, #c5d3e0); color: inherit; background: var(--bg-card, transparent); width: 100%; }
+.controls button { padding: 10px 16px; min-height: 44px; border-radius: 6px; border: 0; color: white; background: #0072c6; cursor: pointer; }
+.controls button:disabled { opacity: .5; }
+@media(max-width:767px) { .page { padding: 12px; } .card { padding: 12px; } }
