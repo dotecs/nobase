@@ -7,12 +7,35 @@ export type Json =
   | Json[]
 
 export type UserRole = 'student' | 'admin'
-export type EnrollmentStatus = 'pending' | 'active' | 'paused' | 'ended'
+export type EnrollmentStatus = 'pending' | 'active' | 'on_hold' | 'paused' | 'ended'
 export type SubjectVisibility = 'public' | 'restricted'
 
 export interface Database {
   public: {
     Tables: {
+      // Manual status history types: regenerate after migration 044 is applied.
+      enrollment_status_events: {
+        Row: {
+          id: string
+          enrollment_id: string
+          from_status: string
+          to_status: string
+          reason: string | null
+          actor_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          enrollment_id: string
+          from_status: string
+          to_status: string
+          reason?: string | null
+          actor_id?: string | null
+          created_at?: string
+        }
+        Update: never
+        Relationships: []
+      }
       // Manual authoring types: regenerate after migration 041 is applied.
       learn_item_sources: {
         Row: {
