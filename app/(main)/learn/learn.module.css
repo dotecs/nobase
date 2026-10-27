@@ -1,3 +1,8 @@
 .page { width: min(100% - 40px, 960px); margin: 64px auto; }
 .page h1 { font-size: 28px; margin-bottom: 20px; }
 .page p { line-height: 1.7; }
+.card { display: grid; gap: 20px; max-width: 640px; margin: 24px auto; padding: 24px; border: 1px solid var(--border-color, #c6d4e3); border-radius: 16px; background: var(--bg-card, transparent); }
+.button { display: inline-block; padding: 12px 20px; min-height: 44px; border: 0; border-radius: 8px; color: white; background: #0072c6; font: inherit; text-align: center; cursor: pointer; }
+.button:disabled { opacity: .55; cursor: default; }
+.stem { overflow-wrap: anywhere; overflow-x: auto; font-size: 20px; }
+@media (max-width: 767px) { .page { margin: 24px auto; } .card { padding: 16px; } }
