@@ -3,8 +3,10 @@ import { validatePack } from './pack-schema';
 import { importValidated, message, readRepositoryPack } from '../../app/(admin)/admin/learn/packs/server';
 import { hasLearnAccess } from './access';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 
 vi.mock('@/lib/supabase-server', () => ({ createServerSupabaseClient: vi.fn(() => { throw new Error('Real DB access prohibited in tests'); }) }));
+vi.mock('@/lib/supabase-admin', () => ({ createAdminSupabaseClient: vi.fn(() => { throw new Error('Real admin DB access prohibited in tests'); }) }));
 
 const uuid = '00000000-0000-4000-8000-000000000001';
 function fixture() {
@@ -90,6 +92,7 @@ describe('learn access with mocked enrollment data', () => {
       then(resolve: (value: unknown) => unknown) { return Promise.resolve({ data: rows, error: null }).then(resolve); },
     };
     vi.mocked(createServerSupabaseClient).mockResolvedValueOnce({ from: () => query } as unknown as Awaited<ReturnType<typeof createServerSupabaseClient>>);
+    if (role !== 'admin') vi.mocked(createAdminSupabaseClient).mockReturnValueOnce({ from: () => query } as unknown as ReturnType<typeof createAdminSupabaseClient>);
     expect(await hasLearnAccess('test-user')).toEqual({ granted, reason });
     if (role !== 'admin') {
       expect(filters).toContainEqual(['status', 'active']);

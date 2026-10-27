@@ -185,6 +185,8 @@ map_version: "0.2"
 
 ### P1-5. 접근 게이트
 
+- 2026-10-27 버그: courses RLS로 비공개 과정 조회 불가 → service role 조회로 수정
+
 - `lib/learn/access.ts`: `hasLearnAccess(userId): Promise<{granted: boolean; reason: 'admin'|'enrolled'|'not_enrolled'|'anonymous'}>` — `courses.slug = 'root-math'`인 course의 cohort에 `status='active'` enrollment가 있으면 granted. admin은 항상. (`lib/interview-workbook.ts` 패턴)
 - `lib/supabase-middleware.ts`의 `protectedPrefixes`에 `'/learn'` 추가 (이 한 줄만).
 - `app/(main)/learn/page.tsx`: 임시 페이지 — 접근 없으면 "코칭 과정 등록 후 이용할 수 있습니다" 안내, 있으면 "Phase 2에서 열립니다" 문구. 레이아웃·헤더는 기존 패턴.
