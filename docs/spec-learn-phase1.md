@@ -269,7 +269,8 @@ map_version: "0.2"
 5. **UI**: 승인됨 목록 → "보강 생성" → 결과 카드(힌트·오개념·이유 문항 각각 체크박스, **기본 체크 해제**, `verified:false` 오개념은 비활성) → "선택 적용"(RPC). LLM 산출물은 체크 없이는 어디에도 저장되지 않는다. `ability_candidates`는 LLM 값과 규칙 값을 나란히 표시만 한다(재분류는 Phase 3).
 6. **범위 축소**: 추출 단계의 소주제 후보 LLM 보조(원문 3번째 항목)는 Phase 3 프롬프트 v2로 미룬다. 1차는 `item_enrich` 결과의 `ability_candidates`를 참고 표시만.
 7. **테스트**: mock 제공자로 보강 생성→적용 전체 흐름; `wrong_value`가 정답과 같은 후보 자동 제외; 적용 RPC 가드(이미 적용·미승인·verified=false 선택)는 모의 단위 테스트; `runJobs`가 두 kind를 claim; 빌드 후 `.next/static` SDK 0건. 모의 적용 결과: 씨앗 version 2 생성(version 1 그대로), misconception `<ability>-m01`·`m02`, 이유 문항 1개.
-8. **Phase 2 메모**: `learn_items`에 같은 id의 여러 version이 생기므로 학습자용 조회는 "id별 최신 version" 규칙을 Phase 2 쿼리에서 정한다(`learn_items_public` 뷰는 그대로).
+8. **R7 (2026-10-27 Codex 질문으로 허용) 파일 트레이싱**: 서버 액션 경로에서 `prompts/*.md`가 Vercel 서버 번들 추적에서 빠질 수 있다(동적 import 경로). `next.config.js`에 다음 한 블록 추가를 **명세 밖 파일 수정 예외로 허용**한다(다른 키 변경 금지): `outputFileTracingIncludes: { '/admin/learn/authoring': ['./prompts/**/*'], '/admin/learn/packs': ['./content/learn/packs/**/*'], '/api/learn/jobs/run': ['./prompts/**/*'] }` (Next 15 최상위 키). 완료 기준: `npm run build` 후 `.next/server/app/(admin)/admin/learn/authoring/page.js.nft.json`과 `.next/server/app/api/learn/jobs/run/route.js.nft.json` 양쪽에 `prompts/item_extract.v1.md`·`prompts/item_enrich.v1.md`가 모두 나열됨(보고서에 grep 결과 기재).
+9. **Phase 2 메모**: `learn_items`에 같은 id의 여러 version이 생기므로 학습자용 조회는 "id별 최신 version" 규칙을 Phase 2 쿼리에서 정한다(`learn_items_public` 뷰는 그대로).
 
 **완료 기준**: 04-3 문항 1개에 힌트 2·오개념 2·이유 문항 1이 생성되어 선택 적용 가능; 오개념 보기 값이 정답과 같은 경우 자동 제외됨(테스트); 적용 후 씨앗 version 2·오개념 2행·이유 문항 1행이 생기고 version 1은 그대로. R5·R6 포함. P1-6c 커밋 후 §7 형식 최종 보고(Phase 1 완료 보고).
 
