@@ -46,19 +46,36 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
   };
   let text = normalizeStem(stem);
   const assignment = text.match(/^([a-z])\s*=\s*([+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?)\s*(?:;|일\s*때,?)\s*(.+)$/);
-  if (assignment) { parameter(Rational.parse(assignment[2])); text = assignment[3]; }
+  if (assignment) {
+    const value = Rational.parse(assignment[2]);
+    if (value.d !== BigInt(1)) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
+    parameter(value, 'number'); text = assignment[3];
+  }
   const parsed = parseMath(text);
   walk(parsed.left);
   if (parsed.right) walk(parsed.right);
   if (!values.length) throw new Error('변형할 숫자가 없습니다.');
   let cursor = 0;
-  const replaceNumbers = (text: string) => text.replace(/\d+(?:\.\d+)?/g, literal => {
+  const replaceNumbers = (text: string): string => {
+    if (assignment && cursor === 0) {
+      const prefix = text.match(/^((?:\$\$?|\\\(|\\\[)?\s*[a-z]\s*=\s*)([+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?)/);
+      if (!prefix || Rational.parse(prefix[2]).compare(Rational.parse(values[0].original)) !== 0) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
+      cursor++;
+      return prefix[1] + `{${values[0].name}}` + replaceNumbers(text.slice(prefix[0].length));
+    }
+    return text.replace(/\d+(?:\.\d+)?/g, literal => {
     const param = values[cursor++];
     if (!param || Rational.parse(literal).compare(Rational.parse(param.original)) !== 0) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
     return `{${param.name}}`;
-  });
+    });
+  };
   const regions = [...stem.matchAll(/\$\$[\s\S]*?\$\$|\$[^$]*?\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g)];
-  const pattern = regions.length === 1 ? stem.slice(0, regions[0].index) + replaceNumbers(regions[0][0]) + stem.slice(regions[0].index! + regions[0][0].length) : replaceNumbers(stem);
+  let offset = 0;
+  const pattern = regions.length ? regions.map(region => {
+    const part = stem.slice(offset, region.index) + replaceNumbers(region[0]);
+    offset = region.index! + region[0].length;
+    return part;
+  }).join('') + stem.slice(offset) : replaceNumbers(stem);
   if (cursor !== values.length) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
   return TemplateSchema.parse({ pattern, params: { source_stem: stem, answer_type: answerType, rules, values }, solver: 'solveItem' });
 }

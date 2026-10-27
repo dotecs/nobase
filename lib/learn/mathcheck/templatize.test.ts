@@ -9,6 +9,37 @@ const sql = readFileSync('supabase/migrations/040_learn_content.sql', 'utf8');
 const rules = VariantRules.parse(JSON.parse(sql.match(/\('variants', 1, '([^']+)'::jsonb\)/)![1]));
 function seededRandom() { let seed = 20261026; return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 describe('server-generated templates and variants', () => {
+  it.each([true, false])('두 구간 대입 변형 20개: 서식·역할·정수해 유지 (keep_sign=%s)', keepSign => {
+    const stem = '문제. $x=-2$일 때, 다음 식의 값을 구하시오.\n\n$3x+5$';
+    const template = templatize(stem, 'number', { ...rules, keep_sign: keepSign });
+    expect(template.pattern).toBe('문제. $x={p0}$일 때, 다음 식의 값을 구하시오.\n\n${p1}x+{p2}$');
+    expect(template.params.values.map(value => value.role)).toEqual(['number', 'coefficient', 'number']);
+    expect(template.params.values[0]).toMatchObject({ original: '-2', range: rules.integer_range });
+    expect(template.params.values[1].range).toEqual(rules.coefficient_range);
+    const variants = generateVariants(template, 20, seededRandom());
+    expect(variants).toHaveLength(20);
+    expect(new Set(variants.map(row => row.stem_md)).size).toBe(20);
+    expect(validateStoredVariants(variants)).toEqual(variants);
+    const assignments: number[] = [];
+    for (const variant of variants) {
+      const match = variant.stem_md.match(/^문제\. \$x=(-?\d+)\$일 때, 다음 식의 값을 구하시오\.\n\n\$(-?\d+)x\+(-?\d+)\$$/)!;
+      expect(match).not.toBeNull();
+      const value = Number(match[1]), coefficient = Number(match[2]);
+      assignments.push(value);
+      expect(Math.abs(value)).toBeGreaterThanOrEqual(rules.integer_range[0]);
+      expect(Math.abs(value)).toBeLessThanOrEqual(rules.integer_range[1]);
+      expect(Math.abs(coefficient)).toBeGreaterThanOrEqual(2);
+      expect(Math.abs(coefficient)).toBeLessThanOrEqual(rules.coefficient_range[1]);
+      if (variant.answer_spec.type !== 'number') throw new Error('Expected number');
+      expect(variant.answer_spec.value).toBe(String(value * coefficient + Number(match[3])));
+      expect(Rational.parse(variant.answer_spec.value).d).toBe(BigInt(1));
+    }
+    if (keepSign) expect(assignments.every(value => value < 0)).toBe(true);
+    else { expect(assignments.some(value => value > 0)).toBe(true); expect(assignments.some(value => value < 0)).toBe(true); }
+  });
+  it('수학 구간 밖 번호는 보존한다', () => {
+    expect(templatize('문제 7. $x=-2$일 때 $3x+5$', 'number', rules).pattern).toBe('문제 7. $x={p0}$일 때 ${p1}x+{p2}$');
+  });
   it('dfrac 변수 분자는 유지하고 서로 다른 분모·정수해 변형 20개를 생성한다', () => {
     const template = templatize('$\\dfrac{x}{2}+\\dfrac{x}{3}=5$', 'number', rules);
     expect(template.params.values.map(value => value.role)).toEqual(['denominator', 'denominator', 'number']);
@@ -86,9 +117,9 @@ describe('server-generated templates and variants', () => {
     const variants = generateVariants(templatize('$\\frac{1}{2}+\\frac{1}{3}$을 계산하시오.', 'fraction', rules), 20, seededRandom());
     variants.forEach(row => expect(row.stem_md).toMatch(/^\$\\frac\{\d+\}\{\d+\}\+\\frac\{\d+\}\{\d+\}\$을 계산하시오\.$/));
   });
-  it('숫자 개수·값 대응에 실패하면 unsupported로 명확히 실패한다', () => {
+  it('분수 대입값 변형은 지원 밖으로 두고 음의 정수 대입값은 매핑한다', () => {
     expect(() => templatize('x=1/2; x+3', 'fraction', rules)).toThrow(UnsupportedError);
-    expect(() => templatize('x=-2; x+3', 'number', rules)).toThrow('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
+    expect(templatize('x=-2; x+3', 'number', rules).pattern).toBe('x={p0}; x+{p1}');
   });
   it('정수 범위와 정답 상한은 DB 설정을 따른다', () => {
     const variants = generateVariants(templatize('2x+10=4', 'number', { ...rules, integer_range: [2, 6], coefficient_range: [2, 6], max_answer_abs: 2, reduced_retry: 100 }), 5, seededRandom());
