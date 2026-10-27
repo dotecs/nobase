@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import AdminPageHeader from '../AdminPageHeader';
 import styles from './enrollments.module.css';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +32,31 @@ type EnrollmentWithDetails = {
   };
 };
 
-export default async function AdminEnrollmentsPage() {
+async function processPendingEnrollment(enrollmentId: string, to: 'active' | 'ended') {
+  if (!z.uuid().safeParse(enrollmentId).success) return '잘못된 수강 정보입니다.';
+  const client = await createServerSupabaseClient();
+  const { data: { user: actor }, error: authError } = await client.auth.getUser();
+  if (authError || !actor) return '로그인이 필요합니다.';
+  const profile = await client.from('profiles').select('role').eq('user_id', actor.id).single();
+  if (profile.error || (profile.data as { role: string } | null)?.role !== 'admin') return '관리자만 처리할 수 있습니다.';
+  const current = await client.from('enrollments').select('id,status').eq('id', enrollmentId).maybeSingle();
+  if (current.error || (current.data as { status: string } | null)?.status !== 'paused') return '입금 대기 상태만 처리할 수 있습니다.';
+  const result = await client.from('enrollments').update({ status: to } as never).eq('id', enrollmentId).eq('status', 'paused').select('id');
+  if (result.error) return '수강 상태 변경에 실패했습니다.';
+  if (!result.data?.length) return '다른 곳에서 먼저 변경됨 — 새로고침 후 확인해 주세요.';
+  revalidatePath('/admin/users');
+  revalidatePath('/admin/users/[userId]', 'page');
+  revalidatePath('/admin/enrollments');
+  revalidatePath('/dashboard');
+  try {
+    const history = await client.from('enrollment_status_events').insert({ enrollment_id: enrollmentId, from_status: 'paused', to_status: to, reason: to === 'active' ? '입금 확인' : '신청 거절', actor_id: actor.id } as never);
+    if (history.error) return '상태는 변경되었으나 이력 기록 실패 — 변경된 상태를 확인해 주세요.';
+  } catch { return '상태는 변경되었으나 이력 기록 실패 — 변경된 상태를 확인해 주세요.'; }
+  return to === 'active' ? '입금 확인 후 수강을 승인했습니다.' : '신청을 거절하고 종료 처리했습니다.';
+}
+
+export default async function AdminEnrollmentsPage({ searchParams }: { searchParams: Promise<{ message?: string }> }) {
+  const { message } = await searchParams;
   const supabase = await createServerSupabaseClient();
 
   const {
@@ -106,36 +131,15 @@ export default async function AdminEnrollmentsPage() {
     'use server';
 
     const enrollmentId = formData.get('enrollmentId') as string;
-    const supabase = await createServerSupabaseClient() as any;
-
-    const result = await supabase
-      .from('enrollments')
-      .update({ status: 'active' })
-      .eq('id', enrollmentId);
-
-    if (result.error) {
-      console.error('Error approving enrollment:', result.error);
-    }
-
-    revalidatePath('/admin/enrollments');
+    const result = await processPendingEnrollment(enrollmentId, 'active');
+    redirect('/admin/enrollments?message=' + encodeURIComponent(result));
   }
 
   async function rejectEnrollment(formData: FormData) {
     'use server';
-
     const enrollmentId = formData.get('enrollmentId') as string;
-    const supabase = await createServerSupabaseClient() as any;
-
-    const result = await supabase
-      .from('enrollments')
-      .update({ status: 'cancelled' })
-      .eq('id', enrollmentId);
-
-    if (result.error) {
-      console.error('Error rejecting enrollment:', result.error);
-    }
-
-    revalidatePath('/admin/enrollments');
+    const result = await processPendingEnrollment(enrollmentId, 'ended');
+    redirect('/admin/enrollments?message=' + encodeURIComponent(result));
   }
 
   // 면접 워크북: 필기 합격 처리 / 해제 (courses.interview_workbook_enabled 코스에서만 노출)
@@ -194,10 +198,12 @@ export default async function AdminEnrollmentsPage() {
         return <span className={`${styles.statusBadge} ${styles.paused}`}>입금 대기</span>;
       case 'active':
         return <span className={`${styles.statusBadge} ${styles.active}`}>수강 중</span>;
-      case 'completed':
-        return <span className={`${styles.statusBadge} ${styles.completed}`}>수강 완료</span>;
-      case 'cancelled':
-        return <span className={`${styles.statusBadge} ${styles.cancelled}`}>취소됨</span>;
+      case 'on_hold':
+        return <span className={`${styles.statusBadge} ${styles.paused}`}>일시정지</span>;
+      case 'ended':
+        return <span className={`${styles.statusBadge} ${styles.completed}`}>종료</span>;
+      case 'pending':
+        return <span className={styles.statusBadge}>결제 중</span>;
       default:
         return <span className={styles.statusBadge}>{status}</span>;
     }
@@ -234,6 +240,7 @@ export default async function AdminEnrollmentsPage() {
         title="수강신청 관리"
         description={`입금 대기 ${pendingEnrollments.length}건 · 수강 중 ${activeEnrollments.length}건 · 필기 합격(면접 워크북) ${passedCount}명`}
       />
+      {message && <p role="status">{message}</p>}
 
       {/* 입금 대기 목록 */}
       <section className={styles.section}>
@@ -336,11 +343,11 @@ export default async function AdminEnrollmentsPage() {
         )}
       </section>
 
-      {/* 기타 (완료/취소) */}
+      {/* 기타 상태 */}
       {otherEnrollments.length > 0 && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
-            완료/취소 <span className={styles.count}>{otherEnrollments.length}</span>
+            일시정지·종료·결제 중 <span className={styles.count}>{otherEnrollments.length}</span>
           </h2>
 
           <div className={styles.tableWrapper}>
