@@ -63,6 +63,5 @@ export function summarizeDiagnostic(attempts: Attempt[], pack: RulePack, config:
       if (!blocked.has(edge.target_id)) { blocked.add(edge.target_id); queue.push(edge.target_id); }
     }
   }
-  for (const state of states) if (blocked.has(state.ability_id)) { state.state = 'unknown'; state.evidence = emptyEvidence(); }
-  return traced(states, config, ['diagnostic'], 'diagnostic_summary', ['independent_is_learning', 'unproven_dependents_unknown'], { blocked: [...blocked], script_version: pack.diagnostic.version });
+  return traced(states, config, ['diagnostic'], 'diagnostic_summary', ['independent_is_learning', 'observed_evidence_preserved', 'unattempted_remain_unknown'], { blocked: [...blocked], script_version: pack.diagnostic.version });
 }

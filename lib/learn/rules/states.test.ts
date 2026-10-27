@@ -16,7 +16,7 @@ describe('state transitions', () => {
   });
   it.each(all.flatMap(s => (['incorrect', 'no_response'] as const).map(r => [s, r] as const)))('%s + %s', (s, r) => {
     const output = applyAttempt(state(s), attempt(r), context());
-    expect(output.result.state.state).toBe(s === 'verified' ? 'recheck' : 'needs_repair'); expect(output.result.state.evidence.incorrect).toBe(1);
+    expect(output.result.state.state).toBe(s === 'verified' || s === 'retained' ? 'recheck' : 'needs_repair'); expect(output.result.state.evidence.incorrect).toBe(1);
   });
   it.each(all.flatMap(s => (['input_issue', 'pending_review'] as const).map(r => [s, r] as const)))('%s + %s leaves evidence counts alone', (s, r) => {
     const before = state(s), output = applyAttempt(before, attempt(r), context());
@@ -30,6 +30,10 @@ describe('state transitions', () => {
     const output = applyAttempt(s, attempt('incorrect'), context());
     expect(output.result.state.evidence).toMatchObject({ independent_correct: 0, distinct_groups: [], reviews_passed: 0, verified_at: null });
     expect(JSON.parse(output.result.event.reason).details.before.independent_correct).toBe(5); expect(s.evidence.independent_correct).toBe(5);
+  });
+  it('retained error enters recheck and clears verification evidence', () => {
+    const s = state('retained'); s.evidence = { ...s.evidence, independent_correct: 8, distinct_groups: ['a','b'], reviews_passed: 3, verified_at: now };
+    expect(applyAttempt(s, attempt('incorrect'), context()).result.state).toMatchObject({ state: 'recheck', evidence: { independent_correct: 0, distinct_groups: [], reviews_passed: 0, verified_at: null } });
   });
   it('reverification records a new verified timestamp', () => { const s = state('recheck'); s.evidence.independent_correct = 1; s.evidence.distinct_groups = ['old']; expect(applyAttempt(s, attempt(), context()).result.state.evidence.verified_at).toBe(now); });
   it.each([[3, 3, 'retained'], [2, 3, 'verified'], [3, 2, 'verified']] as const)('retention: %i days, %i reviews -> %s', (days, reviews, expected) => {

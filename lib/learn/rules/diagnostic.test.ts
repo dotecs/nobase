@@ -1,8 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { parse } from 'yaml';
 import { nextDiagnosticFollowup, planDiagnosticBase, summarizeDiagnostic, timeoutDiagnostic, type DiagnosticProgress } from './diagnostic';
 import { attempt, context, items, now, pack } from './test-fixtures';
 
 describe('diagnostic rules', () => {
+  it('real pack: one base failure preserves five observed successes', () => {
+    const read = (name: string) => parse(readFileSync(`content/learn/packs/root-math/${name}.yaml`, 'utf8'));
+    const p = { units: read('units'), abilities: read('abilities'), edges: read('edges'), goals: read('goals'), diagnostic: read('diagnostic') };
+    const attempts = p.diagnostic.base_abilities.map((ability_id: string, i: number) => attempt(i ? 'correct_independent' : 'incorrect', { ability_id, item_id: `${ability_id}-01` }));
+    const out = summarizeDiagnostic(attempts, p, context());
+    for (const id of ['02-5','03-1','04-3','05-4','06-3']) expect(out.result.find(row => row.ability_id === id)).toMatchObject({ state: 'learning', evidence: { independent_correct: 1 } });
+    expect(out.trace.details).toMatchObject({ blocked: expect.arrayContaining(['02-5']) });
+  });
   it('selects the configured six abilities and latest version without answers', () => {
     const input = items(); input.push({ ...input[18], version: 2 });
     const output = planDiagnosticBase(pack(), input, context());
@@ -40,11 +50,12 @@ describe('diagnostic rules', () => {
   });
   it('before timeout there are no synthetic attempts', () => expect(timeoutDiagnostic(progress().base, now, '2026-10-27T00:14:59Z', context()).result).toEqual([]));
   it('custom timeout setting is honored', () => { const c = context(); c.configs.diagnostic.time_limit_min = 1; expect(timeoutDiagnostic(progress().base, now, '2026-10-27T00:01:00Z', c).result).toHaveLength(6); });
-  it('summarizes all abilities and masks transitive dependents even if correct', () => {
+  it('summarizes all abilities and preserves observed dependent evidence', () => {
     const out = summarizeDiagnostic([attempt('incorrect', { ability_id: '01-1' }), attempt('correct_independent', { ability_id: '01-4' }), attempt('correct_independent', { ability_id: '02-4' })], pack(), context());
     expect(out.result).toHaveLength(24);
     expect(out.result.find(row => row.ability_id === '01-1')?.state).toBe('needs_repair');
-    for (const id of ['01-2', '01-3', '01-4']) expect(out.result.find(row => row.ability_id === id)?.state).toBe('unknown');
+    for (const id of ['01-2', '01-3']) expect(out.result.find(row => row.ability_id === id)?.state).toBe('unknown');
+    expect(out.result.find(row => row.ability_id === '01-4')).toMatchObject({ state: 'learning', evidence: { independent_correct: 1 } });
     expect(out.result.find(row => row.ability_id === '02-4')).toMatchObject({ state: 'learning', evidence: { independent_correct: 1 } });
   });
   it.each(['no_response', 'correct_assisted', 'input_issue', 'pending_review'] as const)('summary handles %s', result => {

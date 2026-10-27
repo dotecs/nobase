@@ -19,7 +19,7 @@ export function applyAttempt(state: State, attempt: Attempt, config: RuleContext
   } else if (attempt.result === 'correct_assisted') evidence.assisted++;
   else if (attempt.result === 'incorrect' || attempt.result === 'no_response') {
     evidence.incorrect++;
-    next.state = state.state === 'verified' ? 'recheck' : 'needs_repair';
+    next.state = state.state === 'verified' || state.state === 'retained' ? 'recheck' : 'needs_repair';
     if (next.state === 'recheck') next.evidence = resetVerification(evidence);
   }
   const decision = traced(next, config, ['evidence'], 'apply_attempt', [attempt.result, `${state.state}->${next.state}`], { before: state.evidence, after: next.evidence });
