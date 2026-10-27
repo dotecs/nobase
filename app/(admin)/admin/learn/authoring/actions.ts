@@ -114,7 +114,7 @@ async function editableDraft(id: string) {
   const result = await client.from('learn_item_drafts').select('*').eq('id', id).single();
   const draft = result.data as Draft | null;
   if (result.error || !draft) throw result.error ?? new Error('초안 없음');
-  if (!['extracted', 'needs_coach'].includes(draft.status)) throw new Error('이미 처리된 초안');
+  if (!['extracted', 'needs_coach', 'approved'].includes(draft.status)) throw new Error('이미 처리된 초안');
   return { client, draft };
 }
 
@@ -132,7 +132,7 @@ export async function generateDraftVariants(draftId: string, n?: number) {
     const variants = validateStoredVariants(generateVariants(template, n ?? rules.count_default));
     const saved = await client.from('learn_item_drafts').update({ template, variants } as never)
       .eq('id', draft.id).eq('stem_md', draft.stem_md).eq('answer_type', draft.answer_type).eq('answer_verified_by', 'program')
-      .eq('variants', JSON.stringify(draft.variants ?? [])).in('status', ['extracted', 'needs_coach']).select('id');
+      .eq('variants', JSON.stringify(draft.variants ?? [])).eq('status', draft.status).select('id');
     if (saved.error) throw saved.error;
     if (!saved.data?.length) throw new Error('검토 내용이 변경되었습니다. 새로고침 후 다시 생성해 주세요.');
     revalidatePath('/admin/learn/authoring');
@@ -150,11 +150,29 @@ export async function toggleDraftVariant(draftId: string, index: number, enabled
     if (!variants[index]) throw new Error('변형 번호가 잘못되었습니다.');
     variants[index].enabled = enabled;
     const saved = await client.from('learn_item_drafts').update({ variants } as never).eq('id', draft.id)
-      .eq('stem_md', draft.stem_md).eq('variants', JSON.stringify(draft.variants)).in('status', ['extracted', 'needs_coach']).select('id');
+      .eq('stem_md', draft.stem_md).eq('variants', JSON.stringify(draft.variants)).eq('status', draft.status).select('id');
     if (saved.error) throw saved.error;
     if (!saved.data?.length) throw new Error('변형 목록이 변경되었습니다. 새로고침 후 다시 선택해 주세요.');
     revalidatePath('/admin/learn/authoring');
     return { message: enabled ? '변형을 포함합니다.' : '변형을 제외합니다.' };
+  } catch (error) { return { error: message(error) }; }
+}
+
+export async function appendApprovedVariants(draftId: string) {
+  try {
+    const { client, draft } = await editableDraft(draftId);
+    if (draft.status !== 'approved') throw new Error('승인된 초안만 변형을 추가할 수 있습니다.');
+    const template = TemplateSchema.parse(draft.template);
+    if (template.params.source_stem !== draft.stem_md || template.params.answer_type !== draft.answer_type) throw new Error('씨앗 수정 후 변형을 다시 생성해 주세요.');
+    const variants = validateStoredVariants(draft.variants);
+    if (!variants.some(variant => variant.enabled)) throw new Error('추가할 변형을 선택해 주세요.');
+    const result = await client.rpc('learn_append_variants', { p_draft_id: draftId } as never);
+    if (result.error) {
+      if (['42883', 'PGRST202'].includes(result.error.code)) throw new Error('마이그레이션 미적용 — 대표가 045를 적용한 뒤 이용해 주세요.');
+      throw result.error;
+    }
+    revalidatePath('/admin/learn/authoring'); revalidatePath('/admin/learn/packs');
+    return { message: `${result.data}개 변형을 추가했습니다. 기존 문항은 건너뜁니다.` };
   } catch (error) { return { error: message(error) }; }
 }
 

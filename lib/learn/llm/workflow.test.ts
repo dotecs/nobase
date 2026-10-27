@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import sharp from 'sharp';
-import { registerSource, saveDraftReview, approveDraft, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from '@/app/(admin)/admin/learn/authoring/actions';
+import { registerSource, saveDraftReview, approveDraft, appendApprovedVariants, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from '@/app/(admin)/admin/learn/authoring/actions';
 import { exportPack } from '@/app/(admin)/admin/learn/packs/actions';
 import { importValidated, readRepositoryPack, validatePack } from '@/app/(admin)/admin/learn/packs/server';
 import { processExtraction, runJobs } from './worker';
@@ -97,6 +97,22 @@ function memoryDatabase(image: Uint8Array) {
           return { data: item, error: null };
         } catch (error) { return { data: null, error: { message: (error as Error).message } }; }
       }
+      if (name === 'learn_append_variants') {
+        const draft = rows('learn_item_drafts').find(row => row.id === input.p_draft_id)!;
+        const seed = rows('learn_items').find(row => row.source_draft_id === draft.id && row.id === row.variant_group);
+        const params = (draft.template as { params?: { source_stem?: string; answer_type?: string } } | null)?.params;
+        if (draft.status !== 'approved' || !seed || draft.answer_verified_by !== 'program' || !draft.answer_spec || params?.source_stem !== draft.stem_md || params?.answer_type !== draft.answer_type || seed.stem_md !== draft.stem_md) return { data: null, error: { message: 'Invalid approved template' } };
+        const enabled = (draft.variants as Row[]).filter(row => row.enabled);
+        if (enabled.some(row => !row.answer_spec)) return { data: null, error: { message: 'Unverified variant' } };
+        let added = 0;
+        for (const variant of enabled) {
+          if (rows('learn_items').some(row => row.variant_group === seed.variant_group && row.stem_md === variant.stem_md)) continue;
+          const n = Math.max(...rows('learn_items').filter(row => row.ability_id === seed.ability_id).map(row => Number(String(row.id).split('-').at(-1)))) + 1;
+          rows('learn_items').push({ ...seed, ...variant, id: `${seed.ability_id}-${String(n).padStart(2, '0')}`, version: 1 });
+          added++;
+        }
+        return { data: added, error: null };
+      }
       if (name !== 'learn_approve_draft') throw new Error('Unexpected RPC');
       const draft = rows('learn_item_drafts').find(row => row.id === input.p_draft_id)!;
       if (!['extracted', 'needs_coach'].includes(String(draft.status))) return { data: null, error: { message: '이미 처리된 초안' } };
@@ -184,8 +200,39 @@ describe('server variants and transactional approval', () => {
     expect(items.every(row => row.variant_group === '04-3-01')).toBe(true);
     expect(items.map(row => row.usage)).toEqual(['assessment', 'practice', 'review', 'assessment']);
     expect(memory.rows('learn_item_templates')).toHaveLength(1);
-    expect(await generateDraftVariants(memory.id)).toHaveProperty('error');
-    expect(await toggleDraftVariant(memory.id, 0, false)).toHaveProperty('error');
+    expect(await generateDraftVariants(memory.id)).not.toHaveProperty('error');
+    expect(await toggleDraftVariant(memory.id, 0, false)).not.toHaveProperty('error');
+  });
+  it('승인 후 enabled 3개 추가: 같은 그룹·연번·반복 적용 중복 없음', async () => {
+    const memory = variantFixture();
+    await approveDraft({ draftId: memory.id, saveImage: false });
+    expect(await generateDraftVariants(memory.id, 5)).not.toHaveProperty('error');
+    await toggleDraftVariant(memory.id, 1, false);
+    await toggleDraftVariant(memory.id, 3, false);
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('message', '3개 변형을 추가했습니다. 기존 문항은 건너뜁니다.');
+    const items = memory.rows('learn_items');
+    expect(items.map(row => row.id)).toEqual(['04-3-01', '04-3-02', '04-3-03', '04-3-04']);
+    expect(items.every(row => row.variant_group === '04-3-01')).toBe(true);
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('message', '0개 변형을 추가했습니다. 기존 문항은 건너뜁니다.');
+    expect(items).toHaveLength(4);
+    (memory.draft.variants as Row[])[0].answer_spec = null;
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('error');
+    expect(items).toHaveLength(4);
+  });
+  it('승인 전·씨앗 변경·미선택 변형은 추가 불가', async () => {
+    const memory = variantFixture();
+    await generateDraftVariants(memory.id, 3);
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('error');
+    await approveDraft({ draftId: memory.id, saveImage: false });
+    memory.draft.stem_md = '1/3+1/4';
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('error');
+    memory.draft.stem_md = '1/2+1/3';
+    for (const row of memory.draft.variants as Row[]) row.enabled = false;
+    expect(await appendApprovedVariants(memory.id)).toHaveProperty('error');
+  });
+  it('045는 관리자·잠금·원문·정답 가드와 중복 건너뛰기를 정의한다', () => {
+    const sql = readFileSync('supabase/migrations/045_learn_append_variants.sql', 'utf8');
+    for (const guard of ['security invoker', 'public.is_admin()', 'for update', "draft.status <> 'approved'", 'source_stem', "variant->'answer_spec' is null", 'pg_advisory_xact_lock(hashtext(seed.ability_id))', 'then continue', 'from public, anon', 'to authenticated']) expect(sql).toContain(guard);
   });
   it('기본 변형 5개를 모두 승인하면 수행형 6개 조건을 만족한다', async () => {
     const memory = variantFixture();

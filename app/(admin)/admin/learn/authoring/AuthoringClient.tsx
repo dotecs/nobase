@@ -8,7 +8,7 @@ import { solveItem } from '@/lib/learn/mathcheck/solve';
 import { AnswerSpec } from '@/lib/learn/answer-spec';
 import type { Ability, ApprovalValue, Draft, Source } from '@/lib/learn/llm/authoring';
 import type { AnswerType } from '@/lib/learn/types';
-import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from './actions';
+import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, appendApprovedVariants, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from './actions';
 import { StoredEnrichment } from '@/lib/learn/llm/schema';
 import type { DraftVariant } from '@/lib/learn/mathcheck/templatize';
 import styles from './authoring.module.css';
@@ -65,6 +65,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   })();
   const coachValid = AnswerSpec.safeParse(spec).success && (answerType === 'photo' || !!answer.trim() || answerType === 'choice');
   const locked = ['approved', 'rejected'].includes(draft.status);
+  const variantsLocked = draft.status === 'rejected';
   const variants = (Array.isArray(draft.variants) ? draft.variants : []) as DraftVariant[];
   const variantsOutdated = variants.length > 0 && (stem !== draft.stem_md || answerType !== draft.answer_type || ability !== draft.ability_id || coachConfirmed);
   const allowed = !pending && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
@@ -98,15 +99,18 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       {source.origin === 'reference_only' && <p>참고용 이미지는 승인할 수 없습니다.</p>}
       <section className={styles.variants} aria-label="변형 문항">
         <h3>변형 3~5개</h3>
-        <label>생성 개수<select value={variantCount} onChange={event => setVariantCount(event.target.value)} disabled={pending || locked}><option value="">규칙의 기본 개수</option>{[3, 4, 5].map(count => <option key={count} value={count}>{count}개</option>)}</select></label>
-        <button disabled={pending || locked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
-          const saved = await saveDraftReview(reviewValue());
-          if (saved.error) return saved;
+        <label>생성 개수<select value={variantCount} onChange={event => setVariantCount(event.target.value)} disabled={pending || variantsLocked}><option value="">규칙의 기본 개수</option>{[3, 4, 5].map(count => <option key={count} value={count}>{count}개</option>)}</select></label>
+        <button disabled={pending || variantsLocked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
+          if (draft.status !== 'approved') {
+            const saved = await saveDraftReview(reviewValue());
+            if (saved.error) return saved;
+          }
           return generateDraftVariants(draft.id, variantCount ? Number(variantCount) : undefined);
         })}>{variants.length ? '변형 다시 생성' : '변형 생성·검증'}</button>
+        {draft.status === 'approved' && <button disabled={pending || variantsOutdated || !program.ok || !variants.some(variant => variant.enabled)} onClick={() => run(() => appendApprovedVariants(draft.id))}>선택한 변형 추가</button>}
         {variantsOutdated && <p>씨앗 또는 검증 방식이 변경되었습니다. 검토 저장 후 변형을 다시 생성해 주세요.</p>}
         <ul>{variants.map((variant, index) => <li key={`${index}-${variant.stem_md}`}>
-          <label><input type="checkbox" checked={variant.enabled} disabled={pending || locked || variantsOutdated} onChange={event => run(() => toggleDraftVariant(draft.id, index, event.target.checked))} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
+          <label><input type="checkbox" checked={variant.enabled} disabled={pending || variantsLocked || variantsOutdated} onChange={event => run(() => toggleDraftVariant(draft.id, index, event.target.checked))} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
           <div>{renderMathMarkdown(variant.stem_md)}</div>
           <p>검증한 정답: {'value' in variant.answer_spec ? `${variant.answer_spec.type === 'number' && variant.answer_spec.variable ? variant.answer_spec.variable + variant.answer_spec.relation : ''}${variant.answer_spec.value}` : ''}</p>
         </li>)}</ul>

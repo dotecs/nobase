@@ -18,6 +18,15 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it('승인된 프로그램 검증 초안은 변형 생성 가능, 씨앗 재승인은 불가', async () => {
+    const [extracted] = await extractDrafts(id, {}, new MockProvider(), abilities);
+    const { ReviewCard } = await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
+    const draft = { ...extracted, status: 'approved', ability_id: '04-3', ability_candidates: ['04-3'], variants: [], hints: [], misconceptions: [], template: null, enrichment: null } as unknown as Draft;
+    const html = renderToStaticMarkup(createElement(ReviewCard, { draft, source: { origin: 'own', url: null } as Source & { url: null }, abilities, approve: async () => ({ message: '' }) }));
+    expect(html).toContain('<button>변형 생성·검증</button>');
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>선택한 변형 추가<\/button>/);
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>승인<\/button>/);
+  });
   it.each([['-3', true], ['3', false]] as const)('숫자 추정 %s와 x=-3 비교', (guess, expected) => {
     expect(guessMatches(guess, { type: 'number', variable: 'x', relation: '=', value: '-3' })).toBe(expected);
   });

@@ -972,6 +972,10 @@ export interface Database {
         Args: { p_draft_id: string; p_ability_id: string; p_usage: string; p_item: Json }
         Returns: Database['public']['Tables']['learn_items']['Row']
       }
+      learn_append_variants: {
+        Args: { p_draft_id: string }
+        Returns: number
+      }
       learn_claim_job: {
         Args: { p_kind: string; p_worker: string }
         Returns: Database['public']['Tables']['learn_jobs']['Row']
