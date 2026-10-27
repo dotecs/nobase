@@ -32,12 +32,14 @@ export function nextDiagnosticFollowup(state: DiagnosticProgress, lastAttempt: A
     if (state.followups < config.configs.diagnostic.max_followups) {
       const current = pack.abilities.find(row => row.id === lastAttempt.ability_id);
       if (!current) throw new Error('Unknown attempted ability');
-      const previous = pack.abilities.filter(row => row.unit_id === current.unit_id && !row.is_supplement && row.order_in_unit < current.order_in_unit).sort((a, b) => b.order_in_unit - a.order_in_unit)[0];
-      if (previous) {
+      const candidates = pack.abilities.filter(row => row.unit_id === current.unit_id && !row.is_supplement && row.order_in_unit < current.order_in_unit).sort((a, b) => b.order_in_unit - a.order_in_unit);
+      const skipped: string[] = [];
+      for (const previous of candidates) {
         const item = choose(previous.id, items, config, new Set([...state.attempted_item_ids, lastAttempt.item_id]), new Set([lastAttempt.variant_group ?? lastAttempt.item_id]));
-        if (!item) throw new Error(`Insufficient followup items: ${previous.id}`);
-        return traced({ item: planned(item, 'diagnostic'), next_base_index: state.next_base_index, followups: state.followups + 1, no_response: [] }, config, ['diagnostic', 'recommendation'], 'diagnostic_followup', ['same_unit_previous'], { from: current.id, to: previous.id });
+        if (!item) { skipped.push(previous.id); continue; }
+        return traced({ item: planned(item, 'diagnostic'), next_base_index: state.next_base_index, followups: state.followups + 1, no_response: [] }, config, ['diagnostic', 'recommendation'], 'diagnostic_followup', ['same_unit_previous', ...(skipped.length ? [`no_followup_items:${skipped.join(',')}`] : [])], { from: current.id, to: previous.id });
       }
+      if (skipped.length) reasons.push(`no_followup_items:${skipped.join(',')}`);
       reasons.push('unit_start');
     } else reasons.push('max_followups');
   } else reasons.push('next_base');

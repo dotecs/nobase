@@ -42,7 +42,19 @@ describe('diagnostic rules', () => {
   it('skips supplements', () => { const p = pack(); p.abilities.find(row => row.id === '01-3')!.is_supplement = true; expect(nextDiagnosticFollowup(progress(), attempt('incorrect'), p, items(), context()).result.item?.ability_id).toBe('01-2'); });
   it('caps followups using config', () => { const c = context(); c.configs.diagnostic.max_followups = 0; expect(nextDiagnosticFollowup(progress(), attempt('incorrect'), pack(), items(), c).trace.reasons).toContain('max_followups'); });
   it('independent success advances base', () => expect(nextDiagnosticFollowup(progress(), attempt(), pack(), items(), context()).result.item?.ability_id).toBe('02-4'));
-  it('missing previous items identifies the ability', () => expect(() => nextDiagnosticFollowup(progress(), attempt('incorrect'), pack(), items().filter(row => row.ability_id !== '01-3'), context())).toThrow('01-3'));
+  it.each([
+    { missing: ['01-3'], target: '01-2' },
+    { missing: ['01-3', '01-2'], target: '01-1' },
+    { missing: ['01-3', '01-2', '01-1'], target: '02-4' },
+  ])('skips missing followup items: $missing', ({ missing, target }) => {
+    const s = progress();
+    const output = nextDiagnosticFollowup(s, attempt('incorrect'), pack(), items().filter(row => !missing.includes(row.ability_id)), context());
+    expect(output.result.item?.ability_id).toBe(target);
+    expect(output.trace.reasons).toContain(`no_followup_items:${missing.join(',')}`);
+    expect(output.result.followups).toBe(target === '02-4' ? s.followups : s.followups + 1);
+    expect(output.result.next_base_index).toBe(target === '02-4' ? s.next_base_index + 1 : s.next_base_index);
+    expect(output.trace.rule_version).toEqual({ diagnostic: 1, recommendation: 1 });
+  });
   it('at the timeout boundary remaining items become no_response', () => {
     const s = progress(); s.now = '2026-10-27T00:15:00Z';
     const result = nextDiagnosticFollowup(s, attempt(), pack(), items(), context()).result;
