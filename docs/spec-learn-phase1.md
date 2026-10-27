@@ -3,6 +3,7 @@
 - 대상 저장소: `nobase`
 - 작성일: 2026-10-26
 - 실행 주체: Codex / 검수: Claude
+- **상태: Phase 1 코드 완료 — 2026-10-27 최종 검수 통과(HEAD `be5b8e4`). 040·041은 이 커밋의 파일을 적용한다.**
 - 선행 상태: `feat/learn-phase0`(HEAD `aba7d33`, Phase 0 검수 통과 2026-10-26). main에 머지되어 있으면 main에서, 아니면 `feat/learn-phase0`에서 `feat/learn-phase1`을 분기한다(머지 여부는 대표 결정 — 머지 시 운영 배포가 일어나므로 Codex가 머지하지 않는다). 미커밋 변경은 `git -c core.autocrlf=true status --porcelain`으로 확인(CRLF 오탐 방지)하고, 있으면 중단 후 보고.
 - 상위 문서: 「노베이스 적응형 수학 학습 MVP 설계안」 §4(데이터), §6-1(소주제 24개), §7(제작 절차), §8 Phase 1, §13(문항 데이터화)
 - 확정된 결정
