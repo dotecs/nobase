@@ -7,6 +7,16 @@ import { Rational } from './rational';
 export type SolveResult = { ok: true; answer_spec: AnswerSpecValue } | { ok: false; reason: 'unsupported' | 'parse_error' };
 export function normalizeStem(stem: string) {
   const regions = [...stem.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$]*?)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g)];
+  if (regions.length === 2) {
+    const parts = regions.map(region => normalizeMath(region.slice(1).find(value => value !== undefined)!));
+    const assignment = parts[0].match(/^([a-z])\s*=\s*(.+)$/);
+    if (assignment && /^[+-]?\s*\(*\s*\d+(?:\.\d+)?\s*\)*(?:\s*\/\s*\(*\s*[+-]?\d+\s*\)*)?$/.test(assignment[2])) {
+      const value = parseMath(assignment[2]);
+      if (!value.relation && !polynomial(value.left, {}).variable) {
+        return `${assignment[1]}=${evaluate(value.left, {}).toString()}; ${parts[1]}`;
+      }
+    }
+  }
   if (regions.length > 1) throw new UnsupportedError('Multiple math regions');
   if (regions.length === 1) return normalizeMath(regions[0].slice(1).find(value => value !== undefined)!);
   let text = stem.trim().replace(/\$\$|\$|\\\(|\\\)|\\\[|\\\]/g, '');

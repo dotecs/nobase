@@ -16,6 +16,13 @@ describe('exact math checks', () => {
   it.each(Array.from({ length: 10 }, (_, i) => i + 1))('유리수 사칙 %i', n => {
     expect(solveItem(`-${n}/2+${n}/3`, 'fraction')).toMatchObject({ ok: true, answer_spec: { value: new Rational(-n, 6).toString() } });
   });
+  it.each([
+    ['문제. $x=-2$일 때, 다음 식의 값을 구하시오. $3x+5$', '-1'],
+    ['$x=-2$일 때 $3x+5$의 값을 구하시오.', '-1'],
+    ['문제. $x=\\frac{1}{2}$일 때 $3x+5$를 계산하시오.', '13/2'],
+  ])('분리된 대입 수학 구간: %s', (stem, value) => {
+    expect(solveItem(stem, 'number')).toMatchObject({ ok: true, answer_spec: { value } });
+  });
   it.each(Array.from({ length: 10 }, (_, i) => i - 5))('대입 %i', n => {
     expect(solveItem(`x=${n}; 3x+1`, 'number')).toMatchObject({ ok: true, answer_spec: { value: String(3 * n + 1) } });
   });
