@@ -5,4 +5,18 @@
 .button { display: inline-block; padding: 12px 20px; min-height: 44px; border: 0; border-radius: 8px; color: white; background: #0072c6; font: inherit; text-align: center; cursor: pointer; }
 .button:disabled { opacity: .55; cursor: default; }
 .stem { overflow-wrap: anywhere; overflow-x: auto; font-size: 20px; }
+.homeGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.homeGrid .card { width: 100%; max-width: none; margin: 0; align-content: start; }
+.fullWidth { grid-column: 1 / -1; }
+.reviewLink { border: 1px solid var(--border-color, #c6d4e3); border-radius: 8px; padding: 12px 16px; }
+.stat { font-size: 32px; font-weight: 700; }
+.stat span { display: block; font-size: 14px; font-weight: 400; }
+.page progress { width: 100%; height: 12px; accent-color: #0072c6; }
+.units { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.units p { display: flex; justify-content: space-between; gap: 12px; }
+.activity { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; }
+.activity li { display: grid; gap: 8px; text-align: center; }
+.activity strong { font-size: 24px; color: var(--primary-color, #0072c6); }
+.activity span { font-size: 12px; }
+@media (max-width: 767px) { .homeGrid,.units { grid-template-columns: 1fr; } .activity { gap: 4px; font-size: 12px; } }
 @media (max-width: 767px) { .page { margin: 24px auto; } .card { padding: 16px; } }
