@@ -7,7 +7,7 @@ describe('session recommendation', () => {
     const c = context(); c.configs.session.new_ability_per_session = 2;
     const output = planSession(learner(), [], pack(), items(), [], c);
     expect(output.result.items).toHaveLength(8); expect(new Set(output.result.items.map(row => row.ability_id)).size).toBe(2);
-    expect(output.trace.rule_version).toEqual({ recommendation: 1, session: 1 });
+    expect(output.trace.rule_version).toEqual({ recommendation: 1, session: 2 });
   });
   it('opens no more than one unknown ability by default', () => expect(new Set(planSession(learner(), [], pack(), items(), [], context()).result.items.map(row => row.ability_id)).size).toBe(1));
   it('prioritizes repair states in book order', () => {

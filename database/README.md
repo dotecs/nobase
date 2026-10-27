@@ -158,6 +158,8 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2025-12-24**: 초기 스키마 문서화
 # 학습 콘텐츠 팩 적용 이력
 
+- **2026-10-27 작성**: `049_learn_session_rules.sql` — session v2의 재시도·복습 문항 수 설정, 학습/복습의 중복 활성 세션 방지. 미적용, 대표가 백업 후 적용. 운영 적용된 046~048 변경 없음.
+
 - **2026-10-27 P2-5 보완**: 미적용 046의 `evidence` v2에 `coach_verdict_map` 추가. `partial`은 설정에 따라 `correct_assisted`로 반영.
 
 - **2026-10-27 작성**: `048_learn_record_coach_action.sql` — service role 전용 코치 저장 트랜잭션·멱등 키. 미적용. 적용 순서 **046 → 047 → 048**, 백업 후 대표 적용.

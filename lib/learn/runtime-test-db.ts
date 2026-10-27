@@ -42,6 +42,8 @@ export function runtimeTestDb() {
       const id=randomUUID();rows('learn_attempts').push({id,created_at:new Date().toISOString(),user_id:p.user_id,session_id:p.session_id,idempotency_key:p.idempotency_key,...p.attempt as Row});
       if(p.state){const state=p.state as Row;const old=rows('learn_ability_states').find(row=>row.user_id===p.user_id&&row.ability_id===state.ability_id);if(old)Object.assign(old,state);else rows('learn_ability_states').push({user_id:p.user_id,...state});}
       if(p.event)rows('learn_ability_state_events').push({id:randomUUID(),user_id:p.user_id,ability_id:(p.state as Row)?.ability_id,attempt_id:id,...p.event as Row});
+      for(const review of (p.reviews??[]) as Row[])rows('learn_review_schedule').push({id:randomUUID(),user_id:p.user_id,status:'due',...review});
+      for(const update of (p.review_updates??[]) as Row[]){const row=rows('learn_review_schedule').find(row=>row.id===update.id&&row.user_id===p.user_id);if(row)row.status=update.status;}
       if(p.session_plan_append)session.plan=[...session.plan as Row[],...p.session_plan_append as Row[]];
       if(p.learner_status)rows('learn_learners').find(row=>row.user_id===p.user_id)!.status=p.learner_status;
       return{data:id,error:null};

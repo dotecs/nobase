@@ -4,7 +4,7 @@ import { emptyEvidence, type Attempt, type RuleContext, type RuleItem, type Rule
 export const now = '2026-10-27T00:00:00.000Z';
 export function context(): RuleContext {
   const configs: Record<string, unknown> = {}, rule_version: Record<string, number> = {};
-  for (const path of ['040_learn_content.sql', '046_learn_runtime.sql']) {
+  for (const path of ['040_learn_content.sql', '046_learn_runtime.sql', '049_learn_session_rules.sql']) {
     const sql = readFileSync(`supabase/migrations/${path}`, 'utf8');
     for (const match of sql.matchAll(/\('([^']+)', (\d+), '([^']+)'::jsonb\)/g)) {
       const key = match[1] as RuleKey;
