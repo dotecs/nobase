@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnswerInput, type AnswerValue } from '@/components/learn/AnswerInput';
@@ -15,7 +16,7 @@ export function DiagnosticClient({userId,sessionId,planIndex,item,photo_required
     <div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>
     <AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={setAnswer} disabled={pending||remaining===0}/>
     <PhotoCapture userId={userId} required={photo_required} onChange={setPhoto} disabled={pending||remaining===0}/>
-    <button className={styles.button} disabled={pending||remaining===0||(photo_required&&!photo)} onClick={()=>start(async()=>{setError('');const result=await submitAttempt({sessionId,itemId:item.id,planIndex,answer,photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</button>
+    <Button variant="primary" size="lg" fullWidth disabled={pending||remaining===0||(photo_required&&!photo)} onClick={()=>start(async()=>{setError('');const result=await submitAttempt({sessionId,itemId:item.id,planIndex,answer,photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>
     <p>진단 중에는 정오답을 표시하지 않습니다.</p>{error&&<p role="alert">{error}</p>}
   </section>;
 }
