@@ -4,6 +4,11 @@ import { MockProvider } from './mock';
 const abilities=[{id:'04-3',name:'분수 덧셈',action:'더한다'},{id:'04-6',name:'분수 혼합 계산',action:'계산한다'},{id:'04-5',name:'분수 나눗셈',action:'나눈다'}];
 const source='00000000-0000-4000-8000-000000000001';
 describe('extraction with auxiliary classifier',()=>{
+  it.each([0, .07])('second candidate probability %s falls back only below .05', async p => {
+    const classify=vi.fn().mockResolvedValue({choice:'04-6',confidence:1-p,top2:[{id:'04-6',p:1-p},{id:'04-5',p}],model:'jev-latest',input_tokens:1300,latency_ms:189});
+    const [draft]=await extractDrafts(source,{},Object.assign(new MockProvider(),{classifier:{auto_threshold:.9,classify}}),abilities);
+    expect(draft.ability_candidates).toEqual(['04-6',p < .05 ? '04-3' : '04-5']);
+  });
   it.each([.99,.59])('success confidence %s keeps confidence gate and rule evidence',async confidence=>{
     const classify=vi.fn().mockResolvedValue({choice:'04-6',confidence,probabilities:{'04-6':confidence,'04-3':1-confidence},top2:[{id:'04-6',p:confidence},{id:'04-3',p:1-confidence}],model:'jev-latest',input_tokens:1300,latency_ms:189});
     const provider=Object.assign(new MockProvider(),{classifier:{auto_threshold:.9,classify}});

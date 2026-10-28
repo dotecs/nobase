@@ -62,7 +62,8 @@ export async function extractDrafts(sourceId: string, image: unknown, provider: 
       try {
         const result=await provider.classifier.classify({stem_md:item.stem_md,abilities:abilities.map(row=>({id:row.id,name:row.name,action:row.action!}))});
         classifier={provider:'typesafe',model:result.model,choice:result.choice,confidence:result.confidence,top2:result.top2,input_tokens:result.input_tokens,latency_ms:result.latency_ms,error:null};
-        candidates=[...new Set([...result.top2.map(row=>row.id),...rule])].slice(0,2);
+        const ranked = result.top2.filter((row, index) => index === 0 || row.p >= 0.05).map(row => row.id);
+        candidates=[...new Set([...ranked,...rule])].slice(0,2);
         abilityId=result.confidence>=provider.classifier.auto_threshold?result.choice:null;
       } catch(error) {classifier={error:error instanceof Error?error.message:'Classification failed'};}
     }
