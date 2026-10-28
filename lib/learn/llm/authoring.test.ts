@@ -18,6 +18,9 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it.each([String.raw`$\dfrac{2}{3}$`, String.raw`\frac{2}{3}`, String.raw`\tfrac{2}{3}`, '2/3', '3/2'])('fraction guess %s compares its mathematical value', guess => {
+    expect(guessMatches(guess, {type:'fraction',value:'2/3',require_reduced:true})).toBe(guess !== '3/2');
+  });
   it('코치 선택은 원래 분류·추출 근거를 보존하며 병합된다',()=>{const original={original:{stem_md:'seed'},rule:['05-3'],warning:'llm_mismatch',classifier:{choice:'02-5',confidence:.99,top2:[{id:'02-5',p:.99}]}};expect(recordCoachClassification(original,'05-4')).toEqual({...original,classifier:{...original.classifier,coach_final:'05-4'}});expect(original.classifier).not.toHaveProperty('coach_final');});
   it('저신뢰 초안은 선택하세요로 시작하고 Jev 확률과 규칙을 표시한다',async()=>{
     const [extracted]=await extractDrafts(id,{},new MockProvider(),abilities);const { ReviewCard }=await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');

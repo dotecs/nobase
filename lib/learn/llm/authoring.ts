@@ -46,7 +46,8 @@ export function guessMatches(guess: string, answer: AnswerSpecValue) {
       const result = solveItem(guess, 'number');
       return result.ok && result.answer_spec.type === 'number' && result.answer_spec.variable === answer.variable && result.answer_spec.relation === answer.relation && Rational.parse(result.answer_spec.value).compare(Rational.parse(answer.value)) === 0;
     }
-    return Rational.parse(guess).compare(Rational.parse(answer.value)) === 0;
+    const result = solveItem(guess, answer.type);
+    return result.ok && (result.answer_spec.type === 'number' || result.answer_spec.type === 'fraction') && Rational.parse(result.answer_spec.value).compare(Rational.parse(answer.value)) === 0;
   } catch { return false; }
 }
 export async function extractDrafts(sourceId: string, image: unknown, provider: LlmProvider, abilities: Ability[]) {
