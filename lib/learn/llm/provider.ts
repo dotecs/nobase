@@ -2,18 +2,20 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 import type { ExtractedItemValue } from './schema';
+import type { Classifier } from './classifier';
 export type LlmProviderName = 'openai' | 'anthropic' | 'mock';
 export interface LlmProvider {
   name: LlmProviderName;
   modelId: string;
   isMock: boolean;
+  classifier?: Classifier | null;
   extractItemsFromImage(input: unknown): Promise<ExtractedItemValue[]>;
   completeJson<T = unknown>(input: unknown): Promise<T>;
 }
 export const PROMPT_VERSION = 'item_extract.v2';
 export async function extractionPrompt() { return readFile(resolve(process.cwd(), 'prompts/item_extract.v2.md'), 'utf8'); }
 export async function enrichmentPrompt() { return readFile(resolve(process.cwd(), 'prompts/item_enrich.v1.md'), 'utf8'); }
-export type LlmConfig = { default?: LlmProviderName; tasks?: Record<string, LlmProviderName>; models?: { openai?: string; anthropic?: string } };
+export type LlmConfig = { default?: LlmProviderName; tasks?: Record<string, LlmProviderName>; models?: { openai?: string; anthropic?: string }; classifier?: {provider?:'typesafe';model?:string;auto_threshold?:number;enabled?:boolean} };
 export function selectProvider(task: string, config: LlmConfig, keys: { openai?: string; anthropic?: string }): LlmProviderName {
   const requested = config.tasks?.[task] ?? config.default ?? 'openai';
   if (requested === 'mock') return 'mock';
