@@ -15,3 +15,11 @@
 
 .photo button { border-radius: var(--radius-button); }
 .keypad button:focus-visible, .choices button:focus-visible, .photo button:focus-visible, .answer:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.steps { display: grid; gap: var(--space-3); margin-block: var(--space-4); min-width: 0; }
+.stepRow { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: var(--space-2); }
+.stepRow .answer { margin-top: 0; }
+.stepButton { min-height: 48px; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-button); background: var(--color-bg-elevated); color: var(--color-text); font: inherit; cursor: pointer; }
+.stepButton:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.stepButton:disabled { opacity: .6; cursor: default; }
+.stepActions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
