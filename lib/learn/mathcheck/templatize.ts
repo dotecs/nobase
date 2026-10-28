@@ -9,6 +9,7 @@ export const VariantRules = z.object({
   count_default: z.number().int().min(3).max(5),
   denominator_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000, '잘못된 분모 범위'),
   integer_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000),
+  numerator_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000).optional(),
   coefficient_range: z.tuple([z.number().int().min(2), z.number().int().min(2)]).refine(([min, max]) => min <= max && max <= 10000),
   exclude_zero_answer: z.boolean(),
   max_lcd: z.number().int().positive().default(60),
@@ -30,10 +31,12 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
   if (!solveItem(stem, answerType).ok || !['number', 'fraction', 'expression'].includes(answerType)) throw new Error('프로그램 검증에 성공한 문제만 변형할 수 있습니다.');
   const values: ItemTemplate['params']['values'] = [];
   let integerDivision = false;
+  const literal = (expr: Expr): boolean => expr.kind === 'number' || expr.kind === 'neg' && expr.value.kind === 'number';
+  const simpleFraction = (expr: Expr): boolean => expr.kind === 'binary' && expr.op === '/' && literal(expr.left) && literal(expr.right);
   const parameter = (value: Rational, role: z.infer<typeof Parameter>['role'] = 'number') => {
     const magnitude = Math.abs(Number(value.n) / Number(value.d));
     if (!Number.isSafeInteger(Math.ceil(magnitude))) throw new Error('변형 범위를 벗어난 수입니다.');
-    const range: [number, number] = role === 'denominator' ? [...rules.denominator_range] : role === 'coefficient' ? [...rules.coefficient_range] : role === 'exponent' ? [magnitude, magnitude] : [...rules.integer_range];
+    const range: [number, number] = role === 'denominator' ? [...rules.denominator_range] : role === 'numerator' ? [...(rules.numerator_range ?? rules.integer_range)] : role === 'coefficient' ? [...rules.coefficient_range] : role === 'exponent' ? [magnitude, magnitude] : [...rules.integer_range];
     const name = `p${values.length}`;
     values.push({ name, original: value.toString(), role, range });
     return `{${name}}`;
@@ -42,6 +45,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (expr.kind === 'number') return parameter(expr.value, role);
     if (expr.kind === 'variable') return expr.name;
     if (expr.kind === 'neg') return `(-${walk(expr.value, role)})`;
+    if (expr.op === '/' && simpleFraction(expr.left) && simpleFraction(expr.right)) return `(${walk(expr.left)}/${walk(expr.right)})`;
     if ((expr.op === '/' || expr.op === '^') && expr.right.kind !== 'number' && !(expr.right.kind === 'neg' && expr.right.value.kind === 'number')) throw new Error('복합 분모·지수의 변형은 지원하지 않습니다.');
     if (expr.op === '/' && !['number', 'variable'].includes(expr.left.kind) && !(expr.left.kind === 'neg' && ['number', 'variable'].includes(expr.left.value.kind))) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
     return `(${walk(expr.left, expr.op === '/' ? integerDivision ? 'dividend' : 'numerator' : expr.op === '*' && expr.right.kind !== 'number' ? 'coefficient' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? integerDivision ? 'divisor' : 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
@@ -101,6 +105,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
   const seed = solveItem(template.params.source_stem, answer_type);
   if (!seed.ok) throw new UnsupportedError('씨앗 정답 검증 실패');
   const reducedAnswers = new Set(seed.answer_spec.type === 'fraction' ? [seed.answer_spec.value] : []);
+  const fractionDivision = /÷|\\div/.test(template.params.source_stem) && values.filter(value => value.role === 'denominator').length === 2;
   const variants: DraftVariant[] = [];
   for (let index = 0; index < count; index++) {
     let found = false;
@@ -144,6 +149,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
       if (seen.has(stem_md)) continue;
       const result = solveItem(stem_md, answer_type);
       if (!result.ok) continue;
+      if (fractionDivision && result.answer_spec.type === 'fraction' && Rational.parse(result.answer_spec.value).d > BigInt(rules.max_lcd)) continue;
       if (template.params.reduce_fraction && result.answer_spec.type === 'fraction' && reducedAnswers.has(result.answer_spec.value)) continue;
       if ((result.answer_spec.type === 'number' || result.answer_spec.type === 'fraction') && (seed.answer_spec.type === 'number' || seed.answer_spec.type === 'fraction')) {
         const answer = Rational.parse(result.answer_spec.value), original = Rational.parse(seed.answer_spec.value);

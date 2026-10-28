@@ -184,3 +184,10 @@ describe('server-generated templates and variants', () => {
     expect(() => generateVariants(template, 3, seededRandom())).toThrow('재시도 한도');
   });
 });
+
+it.each(['다음을 계산하시오. $2/3 ÷ 3/4$',String.raw`다음을 계산하시오. $\frac{2}{3}\div\frac{3}{4}$`])('단순 분수 나눗셈 %s는 기약 진분수로 변형한다', stem => {
+  const template=templatize(stem,'fraction',{...rules,numerator_range:[2,7],max_lcd:30});
+  expect(template.params.values.map(p=>p.role)).toEqual(['numerator','denominator','numerator','denominator']);
+  const rows=generateVariants(template,20,seededRandom());expect(validateStoredVariants(rows)).toEqual(rows);
+  for(const row of rows){const nums=row.stem_md.match(/\d+/g)!.map(Number);for(const [n,d] of [[nums[0],nums[1]],[nums[2],nums[3]]]){expect(n).toBeGreaterThanOrEqual(2);expect(n).toBeLessThanOrEqual(7);expect(n).toBeLessThan(d);expect(new Rational(n,d).d).toBe(BigInt(d));}expect(row.answer_spec.type==='fraction'&&Rational.parse(row.answer_spec.value).d<=BigInt(30)).toBe(true);}
+});

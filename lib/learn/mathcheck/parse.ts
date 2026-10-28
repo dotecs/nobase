@@ -8,6 +8,7 @@ export type Parsed = { left: Expr; relation?: Relation; right?: Expr };
 export function normalizeMath(input: string) {
   if (input.length > 4000) throw new UnsupportedError('Expression too long');
   let text = input.trim().replace(/\\(?:left|right)/g, '').replace(/\\(?:dfrac|tfrac)/g, '\\frac');
+  text = text.replace(/([+-]?\d+\s*\/\s*[+-]?\d+)\s*(?:÷|\\div)\s*([+-]?\d+\s*\/\s*[+-]?\d+)/g, '($1)/($2)');
   for (let count = 0; count < 20 && /\\frac\{([^{}]*)\}\{([^{}]*)\}/.test(text); count++) text = text.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))');
   return text.replace(/\\(?:times|cdot)/g, '*').replace(/\\div/g, '/').replace(/\\(?:leq|le)(?![a-z])/g, '<=').replace(/\\(?:geq|ge)(?![a-z])/g, '>=')
     .replace(/[×·]/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/≤/g, '<=').replace(/≥/g, '>=').replace(/[{}]/g, match => match === '{' ? '(' : ')');
