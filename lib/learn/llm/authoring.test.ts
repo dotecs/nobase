@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockProvider } from './mock';
-import { extractDrafts, prepareApproval, guessMatches, suggestAbilities } from './authoring';
+import { extractDrafts, prepareApproval, guessMatches, suggestAbilities, recordCoachClassification } from './authoring';
 import { selectProvider } from './provider';
 import { Extraction } from './schema';
 import { verifyEnrichment } from './enrichment';
@@ -18,6 +18,14 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it('코치 선택은 원래 분류·추출 근거를 보존하며 병합된다',()=>{const original={original:{stem_md:'seed'},rule:['05-3'],warning:'llm_mismatch',classifier:{choice:'02-5',confidence:.99,top2:[{id:'02-5',p:.99}]}};expect(recordCoachClassification(original,'05-4')).toEqual({...original,classifier:{...original.classifier,coach_final:'05-4'}});expect(original.classifier).not.toHaveProperty('coach_final');});
+  it('저신뢰 초안은 선택하세요로 시작하고 Jev 확률과 규칙을 표시한다',async()=>{
+    const [extracted]=await extractDrafts(id,{},new MockProvider(),abilities);const { ReviewCard }=await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
+    const draft={...extracted,ability_id:null,ability_candidates:['04-6','04-3'],variants:[],enrichment:null,extract:{rule:['05-3','05-4'],classifier:{choice:'04-6',confidence:.59,top2:[{id:'04-6',p:.59},{id:'04-3',p:.41}],error:null}}} as unknown as Draft;
+    const props={draft,source:{origin:'own',url:null} as Source&{url:null},abilities:[...abilities,{id:'04-6',name:'혼합계산'}],approve:async()=>({message:''})};
+    const html=renderToStaticMarkup(createElement(ReviewCard,props));expect(html).toContain('<option value="" selected="">선택하세요</option>');expect(html).toContain('04-6 0.59 · 04-3 0.41');expect(html).toContain('신뢰도 0.59');expect(html).toContain('규칙 05-3, 05-4');
+    const failed=renderToStaticMarkup(createElement(ReviewCard,{...props,draft:{...draft,extract:{classifier:{error:'timeout'}}}}));expect(failed).toContain('분류기 오류: timeout');expect(failed).toMatch(/class="[^"]*classifierError/);
+  });
   it.each([['문제. $x=-2$일 때, 다음 식의 값을 구하시오. $3x+5$','02-5'],['x=3일 때 2x+1','02-5'],['$\\frac{x}{2}=\\frac{3}{4}$','05-4'],['x/2=3/4','05-4']] as const)('분류 우선 규칙: %s', (stem_md,expected)=>{
     expect(suggestAbilities({stem_md,answer_type:'number',needs_figure:false,injection_suspected:false,unit_hint:'05-3'},['02-5','05-3','05-4'].map(id=>({id,name:id})))[0]).toBe(expected);
   });

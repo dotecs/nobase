@@ -7,7 +7,7 @@ import { uploadAuthoringImage } from '@/lib/storage';
 import { renderMathMarkdown } from '@/lib/math-markdown';
 import { solveItem } from '@/lib/learn/mathcheck/solve';
 import { AnswerSpec } from '@/lib/learn/answer-spec';
-import type { Ability, ApprovalValue, Draft, Source } from '@/lib/learn/llm/authoring';
+import type { Ability, ApprovalValue, Draft, Source, ClassifierReview } from '@/lib/learn/llm/authoring';
 import type { AnswerType } from '@/lib/learn/types';
 import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, appendApprovedVariants, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from './actions';
 import { StoredEnrichment } from '@/lib/learn/llm/schema';
@@ -45,7 +45,7 @@ export type AuthoringProps = { userId: string; sources: SourceView[]; drafts: Dr
 
 export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft; source: SourceView; abilities: Ability[]; approve: Approve }) {
   const [stem, setStem] = useState(draft.stem_md), [answerType, setAnswerType] = useState<AnswerType>((draft.answer_type ?? 'photo') as AnswerType);
-  const [ability, setAbility] = useState(draft.ability_id ?? draft.ability_candidates[0] ?? ''), [usage, setUsage] = useState<ApprovalValue['usage']>((draft.usage_suggested ?? 'assessment') as ApprovalValue['usage']);
+  const [ability, setAbility] = useState(draft.ability_id ?? ''), [usage, setUsage] = useState<ApprovalValue['usage']>((draft.usage_suggested ?? 'assessment') as ApprovalValue['usage']);
   const savedAnswer = AnswerSpec.safeParse(draft.answer_spec);
   const saved = savedAnswer.success ? savedAnswer.data : undefined;
   const [answer, setAnswer] = useState(saved && 'value' in saved ? `${saved.type === 'number' && saved.variable ? saved.variable + saved.relation : ''}${saved.value}` : saved && 'model_answer_md' in saved ? saved.model_answer_md ?? '' : '');
@@ -54,7 +54,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const [result, setResult] = useState<Result>(), [pending, startTransition] = useTransition();
   const [variantCount, setVariantCount] = useState('');
   const router = useRouter();
-  const extract = draft.extract as { original?: { needs_figure?: boolean; injection_suspected?: boolean }; warning?: string } | null;
+  const extract = draft.extract as { original?: { needs_figure?: boolean; injection_suspected?: boolean }; warning?: string; rule?:string[]; classifier?:ClassifierReview } | null;
   const injectionSuspected = !!extract?.original?.injection_suspected || extract?.warning === 'injection_suspected';
   const needsFigure = extract?.original?.needs_figure ?? false;
   const program = needsFigure || injectionSuspected ? { ok: false as const } : solveItem(stem, answerType);
@@ -101,6 +101,8 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       {answerType === 'choice' ? <><label>보기 (한 줄에 하나, 위에서부터 1번)<textarea value={choices} onChange={event => { setChoices(event.target.value); setCoachConfirmed(false); }} /></label><label>정답 번호 (여러 개면 쉼표로 구분)<input value={correct} onChange={event => { setCorrect(event.target.value); setCoachConfirmed(false); }} /></label></> : <label>코치 정답 / 모범 답안{answerType === 'number' && ' (예: -3/4, x<=-7)'}<textarea value={answer} onChange={event => { setAnswer(event.target.value); setCoachConfirmed(false); }} disabled={locked} /></label>}
       <label><input type="checkbox" checked={coachConfirmed} onChange={event => setCoachConfirmed(event.target.checked)} disabled={locked} />입력한 정답을 코치가 확인했습니다.</label>
       <label>소주제 (추천 우선)<select value={ability} onChange={event => setAbility(event.target.value)} disabled={locked}><option value="">선택하세요</option>{ordered.map(row => <option key={row.id} value={row.id}>{draft.ability_candidates.includes(row.id) ? '추천 · ' : ''}{row.id} {row.name}</option>)}</select></label>
+      {(extract?.classifier || extract?.rule) && <p>소주제 참고: {extract.classifier?.top2 && <>Jev {extract.classifier.top2.map(row=>`${row.id} ${row.p.toFixed(2)}`).join(' · ')} (신뢰도 {extract.classifier.confidence?.toFixed(2)}) / </>}규칙 {extract.rule?.join(', ') || '기록 없음'}</p>}
+      {extract?.classifier?.error && <p className={styles.classifierError}>분류기 오류: {extract.classifier.error}</p>}
       <label>용도<select value={usage} onChange={event => setUsage(event.target.value as ApprovalValue['usage'])} disabled={locked}><option value="diagnostic">진단</option><option value="practice">연습</option><option value="assessment">평가</option><option value="review">복습</option></select></label>
       <label><input type="checkbox" checked={saveImage} onChange={event => setSaveImage(event.target.checked)} disabled={locked} />원본을 예제 자료로 함께 저장</label>
       {source.origin === 'reference_only' && <p>참고용 이미지는 승인할 수 없습니다.</p>}

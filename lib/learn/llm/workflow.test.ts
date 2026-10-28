@@ -178,6 +178,12 @@ function variantFixture() {
   return { ...memory, id, draft: draft as Row };
 }
 describe('server variants and transactional approval', () => {
+  it('검토 저장에서 coach_final을 병합한 뒤 승인 RPC에 도달한다',async()=>{
+    const memory=variantFixture();Object.assign(memory.draft,{extract:{original:{needs_figure:false},rule:['04-5'],classifier:{choice:'04-5',confidence:.91,error:null}}});
+    const saved=await saveDraftReview({draftId:memory.id,stem_md:'1/2+1/3',answer_type:'fraction',ability_id:'04-3',usage:'assessment',coachConfirmed:false,saveImage:false});expect(saved).not.toHaveProperty('error');
+    expect(memory.draft.extract).toMatchObject({original:{needs_figure:false},rule:['04-5'],classifier:{choice:'04-5',coach_final:'04-3',confidence:.91}});
+    expect(await approveDraft({draftId:memory.id,saveImage:false})).not.toHaveProperty('error');
+  });
   it('연속 체크 변경을 저장한 뒤 표시 개수와 실제 승인 개수가 일치한다',async()=>{
     const { VariantSelection }=await import('../variant-selection');
     const memory=variantFixture();await generateDraftVariants(memory.id);

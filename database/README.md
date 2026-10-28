@@ -158,6 +158,8 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2025-12-24**: 초기 스키마 문서화
 # 학습 콘텐츠 팩 적용 이력
 
+- **2026-10-28 작성**: `052_learn_llm_classifier.sql` — llm v1을 보존하고 v2에 TypeSafe Jev 보조 분류 설정 추가. 미적용, Claude가 백업 후 적용. `TYPESAFE_API_KEY` 미설정 시 규칙 분류만 사용. 기존 초안 재분류·운영 DB 실행 없음.
+
 - **2026-10-28 작성·적용 기록(Claude)**: `051_learn_variants_max_lcd.sql` — variants v2에 `max_lcd: 60` 추가. 2026-10-28 09:23 KST Claude가 Supabase MCP로 운영 적용(variants v2 active). 기존 설정·템플릿은 호환 기본값 60을 사용하며 040~050은 변경하지 않음.
 
 - **2026-10-27 적용 기록(Claude)**: `050_learn_record_attempt_fix.sql` 운영 적용. 047의 `learn_record_attempt` 함수 전체를 `create or replace`로 보존하고, 세션 계획 append만 `plan || (p_payload->'session_plan_append')`로 괄호를 추가해 연산자 우선순위를 수정. 048에는 동일한 패턴 없음. 기존 047·048 파일은 변경하지 않음.

@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { adminClient, message as packMessage } from '../packs/server';
-import { prepareApproval, type Draft, type Source } from '@/lib/learn/llm/authoring';
+import { prepareApproval, recordCoachClassification, type Draft, type Source } from '@/lib/learn/llm/authoring';
 import type { Database } from '@/lib/database.types';
 import { runJobs } from '@/lib/learn/llm/worker';
 import { templatize, generateVariants, validateStoredVariants, VariantRules, TemplateSchema } from '@/lib/learn/mathcheck/templatize';
@@ -100,7 +100,7 @@ export async function saveDraftReview(input: unknown) {
     const prepared = prepareApproval(input, source, requiresCoach);
     const { item, verified } = prepared;
     const invalidateVariants = draft.stem_md !== item.stem_md || draft.answer_type !== item.answer_type || draft.ability_id !== item.ability_id || verified !== 'program';
-    const result = await client.from('learn_item_drafts').update({ stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: item.answer_spec, answer_verified_by: verified, ability_id: item.ability_id, usage_suggested: item.usage, ...(invalidateVariants ? { template: null, variants: [] } : {}) } as never)
+    const result = await client.from('learn_item_drafts').update({ stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: item.answer_spec, answer_verified_by: verified, ability_id: item.ability_id, usage_suggested: item.usage, extract:recordCoachClassification(draft.extract,item.ability_id), ...(invalidateVariants ? { template: null, variants: [] } : {}) } as never)
       .eq('id', id).eq('stem_md', draft.stem_md).eq('variants', JSON.stringify(draft.variants ?? [])).in('status', ['extracted', 'needs_coach']).select('id');
     if (result.error) throw result.error;
     if (!result.data?.length) throw new Error('이미 처리된 초안');

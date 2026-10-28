@@ -22,3 +22,4 @@
 .variants ul { list-style: none; padding: 0; display: grid; gap: 16px; }
 .variants li { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color, #cbd5e1); overflow-wrap: anywhere; }
 @media (max-width: 767px) { .page { padding: 12px; } .review { grid-template-columns: 1fr; } }
+.classifierError { color: var(--text-secondary, #64748b); }

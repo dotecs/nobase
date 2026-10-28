@@ -13,6 +13,12 @@ import type { Database, Json } from '@/lib/database.types';
 export type Draft = Database['public']['Tables']['learn_item_drafts']['Row'];
 export type Source = Database['public']['Tables']['learn_item_sources']['Row'];
 export type Ability = { id: string; name: string; action?: string };
+export type ClassifierReview = { provider?:string; model?:string; choice?:string; confidence?:number; top2?:{id:string;p:number}[]; error?:string|null; coach_final?:string };
+export function recordCoachClassification(extract:Json,abilityId:string):Json {
+  const metadata=extract&&typeof extract==='object'&&!Array.isArray(extract)?extract:{};
+  const previous=metadata.classifier&&typeof metadata.classifier==='object'&&!Array.isArray(metadata.classifier)?metadata.classifier:{};
+  return {...metadata,classifier:{...previous,coach_final:abilityId}};
+}
 export function suggestAbilities(item: ExtractedItemValue, abilities: Ability[]) {
   const hint = item.unit_hint ?? '';
   const exact = abilities.filter(row => row.id === hint || (hint.length > 1 && row.name.includes(hint))).map(row => row.id);
