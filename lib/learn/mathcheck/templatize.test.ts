@@ -198,3 +198,10 @@ it('공통인수 변형은 gcd 2~6이며 인수로 묶은 정답을 저장한다
  for(const row of rows){const match=row.stem_md.match(/\$([+-]?\d+)x\+([+-]?\d+)\$/)!;const a=BigInt(match[1]),b=BigInt(match[2]);const gcd=a/new Rational(a,b).n;expect(gcd>=BigInt(2)&&gcd<=BigInt(6)).toBe(true);expect(row.answer_spec).toMatchObject({type:'expression',factored_required:true});expect(row.answer_spec.type==='expression'&&row.answer_spec.value).toMatch(/^[2-6]\(.+\)$/);}
  expect(solveItem('6x+9','expression')).toMatchObject({ok:true,answer_spec:{value:'3(2x+3)',factored_required:true}});
 });
+
+it('지시문의 숫자는 템플릿을 잠그고 변형을 생성하지 않는다',()=>{
+ for(const stem of ['양변에 3을 더하여 다음 방정식을 푸시오. $x-3=2$','양변을 $-3$으로 나누어 다음 부등식을 푸시오. $-3x>12$','−3으로 나누어 -3x>12를 푸시오.']){
+  const template=templatize(stem,'number',rules);expect(template.params.locked).toBe(true);expect(generateVariants(template,5)).toEqual([]);
+ }
+ expect(templatize('문제. $x=-2$일 때, 다음 식의 값을 구하시오. $3x+5$','number',rules).params.locked).not.toBe(true);
+});

@@ -12,6 +12,7 @@ import type { AnswerType } from '@/lib/learn/types';
 import { registerSource, processNow, rejectDraft, saveDraftReview, approveDraft, appendApprovedVariants, generateDraftVariants, toggleDraftVariant, enqueueEnrichment, applyEnrichment } from './actions';
 import { StoredEnrichment } from '@/lib/learn/llm/schema';
 import type { DraftVariant } from '@/lib/learn/mathcheck/templatize';
+import { LOCKED_VARIANT_MESSAGE } from '@/lib/learn/mathcheck/template-lock';
 import styles from './authoring.module.css';
 
 type Result = { message?: string; error?: string };
@@ -67,6 +68,8 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const coachValid = AnswerSpec.safeParse(spec).success && (answerType === 'photo' || !!answer.trim() || answerType === 'choice');
   const locked = ['approved', 'rejected'].includes(draft.status);
   const variantsLocked = draft.status === 'rejected';
+  const savedTemplate=draft.template as {params?:{locked?:boolean;source_stem?:string}}|null;
+  const instructionLocked=savedTemplate?.params?.locked===true&&savedTemplate.params.source_stem===stem;
   const variants = (Array.isArray(draft.variants) ? draft.variants : []) as DraftVariant[];
   const [selection] = useState(() => new VariantSelection(variants.map(row=>row.enabled), (index,enabled)=>toggleDraftVariant(draft.id,index,enabled), ()=>router.refresh()));
   const selected = useSyncExternalStore(selection.subscribe, selection.getSnapshot, selection.getSnapshot);
@@ -108,8 +111,9 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       {source.origin === 'reference_only' && <p>참고용 이미지는 승인할 수 없습니다.</p>}
       <section className={styles.variants} aria-label="변형 문항">
         <h3>변형 3~5개</h3>
+        {instructionLocked&&<p role="status">{LOCKED_VARIANT_MESSAGE}</p>}
         <label>생성 개수<select value={variantCount} onChange={event => setVariantCount(event.target.value)} disabled={pending || variantsLocked}><option value="">규칙의 기본 개수</option>{[3, 4, 5].map(count => <option key={count} value={count}>{count}개</option>)}</select></label>
-        <button disabled={pending || savingSelection || variantsLocked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
+        <button disabled={pending || savingSelection || variantsLocked || instructionLocked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
           if (draft.status !== 'approved') {
             const saved = await saveDraftReview(reviewValue());
             if (saved.error) return saved;

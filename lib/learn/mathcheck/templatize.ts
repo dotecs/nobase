@@ -5,6 +5,7 @@ import { parseMath, UnsupportedError, type Expr } from './parse';
 import { normalizeStem, solveItem } from './solve';
 import { Rational } from './rational';
 import { polynomial, equivalent } from './evaluate';
+import { hasNumericInstruction } from './template-lock';
 
 export const VariantRules = z.object({
   count_default: z.number().int().min(3).max(5),
@@ -21,7 +22,7 @@ export const VariantRules = z.object({
 const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'dividend', 'divisor', 'coefficient', 'exponent']) });
 export const TemplateSchema = z.object({
   pattern: z.string(), solver: z.literal('solveItem'),
-  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter), reduce_fraction: z.boolean().default(false), factor_expression: z.boolean().default(false) }),
+  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter), reduce_fraction: z.boolean().default(false), factor_expression: z.boolean().default(false), locked: z.boolean().optional() }),
 });
 export type ItemTemplate = z.infer<typeof TemplateSchema>;
 export const DraftVariants = z.array(z.object({ enabled: z.boolean(), stem_md: z.string().min(1), answer_type: z.enum(['number', 'fraction', 'expression']), answer_spec: AnswerSpec, usage: z.enum(['practice', 'review', 'assessment']) }).strict());
@@ -29,6 +30,7 @@ export type DraftVariant = z.infer<typeof DraftVariants>[number];
 
 export function templatize(stem: string, answerType: AnswerType, config: unknown, answerSpec?: unknown): ItemTemplate {
   const rules = VariantRules.parse(config);
+  if(hasNumericInstruction(stem))return TemplateSchema.parse({pattern:stem,solver:'solveItem',params:{source_stem:stem,answer_type:answerType,rules,values:[],locked:true}});
   if (!solveItem(stem, answerType).ok || !['number', 'fraction', 'expression'].includes(answerType)) throw new Error('프로그램 검증에 성공한 문제만 변형할 수 있습니다.');
   const values: ItemTemplate['params']['values'] = [];
   let integerDivision = false;
@@ -112,6 +114,7 @@ function render(template: ItemTemplate, values: string[]) {
 export function generateVariants(input: ItemTemplate, count: number, random: () => number = Math.random): DraftVariant[] {
   const template = TemplateSchema.parse(input), { rules, values, answer_type } = template.params;
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error('잘못된 변형 개수');
+  if(template.params.locked)return [];
   const seen = new Set([render(template, values.map(value => value.original))]);
   const seed = solveItem(template.params.source_stem, answer_type);
   if (!seed.ok) throw new UnsupportedError('씨앗 정답 검증 실패');

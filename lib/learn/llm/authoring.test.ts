@@ -18,6 +18,15 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it('locked instructions show an explanation and disable variant generation',async()=>{
+    const [extracted]=await extractDrafts(id,{},new MockProvider(),abilities);
+    const stem='양변에 3을 더하여 푸시오. $x-3=2$';
+    const draft={...extracted,stem_md:stem,answer_type:'number',ability_id:'04-3',status:'extracted',variants:[],template:{params:{source_stem:stem,locked:true}},enrichment:null} as unknown as Draft;
+    const {ReviewCard}=await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
+    const html=renderToStaticMarkup(createElement(ReviewCard,{draft,source:{origin:'own',url:null} as Source & {url:null},abilities,approve:async()=>({})}));
+    expect(html).toContain('이 문항은 지시문이 식과 연동돼 변형을 만들지 않습니다');
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>변형 생성·검증<\/button>/);
+  });
   it('extracted factoring drafts retain the requirement through approval',async()=>{
     const provider=new MockProvider(),items=await provider.extractItemsFromImage();
     vi.spyOn(provider,'extractItemsFromImage').mockResolvedValue([{...items[0],stem_md:'공통인수로 묶으시오. $6x+9$',answer_type:'expression',answer_guess:'3(2x+3)'}]);

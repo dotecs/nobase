@@ -178,6 +178,13 @@ function variantFixture() {
   return { ...memory, id, draft: draft as Row };
 }
 describe('server variants and transactional approval', () => {
+  it('existing variant action persists an instruction lock without creating variants',async()=>{
+    const memory=variantFixture();
+    Object.assign(memory.draft,{stem_md:'양변에 3을 더하여 푸시오. $x-3=2$',answer_type:'number',answer_spec:{type:'number',variable:'x',relation:'=',value:'5'}});
+    expect(await generateDraftVariants(memory.id,5)).not.toHaveProperty('error');
+    expect(memory.draft.template).toMatchObject({params:{locked:true}});
+    expect(memory.draft.variants).toEqual([]);
+  });
   it('검토 저장에서 coach_final을 병합한 뒤 승인 RPC에 도달한다',async()=>{
     const memory=variantFixture();Object.assign(memory.draft,{extract:{original:{needs_figure:false},rule:['04-5'],classifier:{choice:'04-5',confidence:.91,error:null}}});
     const saved=await saveDraftReview({draftId:memory.id,stem_md:'1/2+1/3',answer_type:'fraction',ability_id:'04-3',usage:'assessment',coachConfirmed:false,saveImage:false});expect(saved).not.toHaveProperty('error');
