@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import { getUser } from '@/lib/supabase-server';
 import { hasLearnAccess } from '@/lib/learn/access';
 import { diagnosticView } from '@/lib/learn/diagnostic-runtime';

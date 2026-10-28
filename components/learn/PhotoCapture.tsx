@@ -1,21 +1,22 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { uploadAttemptPhoto } from '@/lib/storage';
+import { useEffect, useId, useRef, useState } from 'react';
+import Button from '@/components/Button/Button';
 import styles from './input.module.css';
 export function PhotoCapture({ userId, required, onChange, disabled = false }: { userId: string; required: boolean; onChange: (path: string | null) => void; disabled?: boolean }) {
-  const [preview, setPreview] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState('');
-  const request = useRef(0);
+  const [preview, setPreview] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState(''),[uploaded,setUploaded]=useState(false);
+  const request = useRef(0),input=useRef<HTMLInputElement>(null),id=useId();
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   useEffect(() => () => { request.current++; }, []);
-  return <div className={styles.photo}><label>풀이 사진 {required ? '(필수)' : '(선택)'}<input type="file" accept="image/jpeg,image/png,image/webp,image/heic" capture="environment" disabled={disabled || busy} onChange={async event => {
-    const file = event.target.files?.[0], token = ++request.current; onChange(null); setError(''); setPreview('');
+  return <div className={styles.photo}><label htmlFor={id}>풀이 사진 {required ? '(필수)' : '(선택)'}</label><input ref={input} id={id} hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic" capture="environment" disabled={disabled || busy} onChange={async event => {
+    const file = event.target.files?.[0], token = ++request.current; onChange(null); setError(''); setPreview('');setUploaded(false);event.target.value='';
     if (!file) return;
     setPreview(URL.createObjectURL(file)); setBusy(true);
-    try { const result = await uploadAttemptPhoto(userId, file); if (token !== request.current) return; if (result.error) setError(result.error.message); else onChange(result.storagePath); }
+    try { const { uploadAttemptPhoto } = await import('@/lib/storage'); const result = await uploadAttemptPhoto(userId, file); if (token !== request.current) return; if (result.error) setError(result.error.message); else {onChange(result.storagePath);setUploaded(true);} }
     catch { if (token === request.current) setError('사진 업로드에 실패했습니다. 다시 시도해 주세요.'); }
     finally { if (token === request.current) setBusy(false); }
-  }} /></label>
+  }} />
     {preview && <img src={preview} alt="선택한 풀이 사진" className={styles.photoPreview} />}
-    {busy && <p role="status">사진을 업로드하고 있습니다.</p>}{error && <p role="alert">{error}</p>}
+    <Button variant="outline" size="lg" fullWidth disabled={disabled||busy} onClick={()=>input.current?.click()}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M8 5l1-2h6l1 2h4v15H4V5z"/><circle cx="12" cy="12" r="4"/></svg>{preview?'다시 찍기':'사진 찍기 / 올리기'}</Button>
+    <p role="status">{busy?'올리는 중…':uploaded?'✓ 올렸어요':''}</p>{error && <p role="alert">{error}</p>}
   </div>;
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { Header } from '@/components';
+import Header from '@/components/Header/Header';
 import { getUser, getProfile } from '@/lib/supabase-server';
 import { hasLearnAccess } from '@/lib/learn/access';
 import type { Profile } from '@/lib/database.types';

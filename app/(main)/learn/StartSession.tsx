@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import { useState,useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { startSession } from './actions';

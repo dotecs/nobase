@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnswerInput, type AnswerValue } from '@/components/learn/AnswerInput';

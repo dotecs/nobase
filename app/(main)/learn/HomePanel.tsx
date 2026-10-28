@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import type { HomeSummary } from '@/lib/learn/home-summary';
 import { StartDiagnostic } from './StartDiagnostic';
 import { StartSession } from './StartSession';
@@ -13,7 +13,7 @@ export function HomePanel({status,minutes,photoRequired,summary,due=0,itemsPerSe
     {due>0&&<aside className={`${styles.card} ${styles.reviewBanner}`}><p>오늘 복습 {due}개가 기다리고 있어요</p><Button href="/learn/review" variant="outline" size="lg" fullWidth>복습 먼저 하기</Button></aside>}
     <section className={styles.card}><h2>오늘의 학습</h2><p>{itemsPerSession}문항 · 약 {maxMinutes}분</p>{openSessionId?<Button href={`/learn/session/${openSessionId}`} size="lg" fullWidth>이어하기</Button>:<StartSession/>}</section>
     {summary&&<><section className={styles.card}><h2>{summary.goalTitle}</h2><p className={styles.stat}>{done} / {summary.total}<span>완료한 주제</span></p><progress aria-label="목표 진행률" value={done} max={Math.max(1,summary.total)}/><p>완료 {summary.verified}개 · 유지 {summary.retained}개</p>{summary.total>0&&done===summary.total&&<p className={styles.badge}>✓ 목표를 모두 달성했어요</p>}</section>
-    <section className={styles.card}><h2>주제 지도</h2><div className={styles.units}>{summary.units.map(unit=><div key={unit.id}><p>{unit.title}<span>{unit.mastered} / {unit.total}개</span></p><div className={styles.topicDots}>{unit.abilities.map(ability=><span key={ability.id} title={ability.name} aria-label={ability.name} data-topic-dot className={`${styles.topicDot} ${ability.state==='verified'||ability.state==='retained'?styles.mastered:ability.state!=='unknown'?styles.inProgress:''}`}/>)}</div></div>)}</div><p className={styles.help}>● 완료 · 학습 중 · 아직 시작하지 않은 주제를 보여드려요</p></section>
+    <section className={styles.card}><h2>주제 지도</h2><div className={styles.units}>{summary.units.map(unit=><div key={unit.id}><p>{unit.title}<span>{unit.mastered} / {unit.total}개</span></p><div className={styles.topicDots}>{unit.abilities.map(ability=><span role="img" key={ability.id} title={ability.name} aria-label={ability.name} data-topic-dot className={`${styles.topicDot} ${ability.state==='verified'||ability.state==='retained'?styles.mastered:ability.state!=='unknown'?styles.inProgress:''}`}/>)}</div></div>)}</div><p className={styles.help}>● 완료 · 학습 중 · 아직 시작하지 않은 주제를 보여드려요</p></section>
     <section className={styles.card}><h2>최근 7일 활동</h2><ul className={styles.activity}>{summary.activity.map(row=><li key={row.date}><div className={styles.barTrack}>{row.count>0?<div className={styles.activityBar} style={{height:`${row.count/max*100}%`}}/>:<div className={styles.emptyBar}/>}</div><strong>{row.count}회</strong><time dateTime={row.date} title={row.date}>{new Intl.DateTimeFormat('ko-KR',{weekday:'narrow',timeZone:'Asia/Seoul'}).format(new Date(`${row.date}T00:00:00+09:00`))}</time></li>)}</ul></section></>}
   </div>;
 }

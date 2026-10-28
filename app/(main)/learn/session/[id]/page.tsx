@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import { learningView } from '@/lib/learn/learning-runtime';
 import { runtimeError,requireLearner } from '@/lib/learn/runtime';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';

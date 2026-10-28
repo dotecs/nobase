@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import Button from '@/components/Button/Button';
 import { FeedbackPanel } from '@/components/learn/FeedbackPanel';
 import type { Feedback } from '@/lib/learn/learning-session';
 import styles from '../../learn.module.css';
