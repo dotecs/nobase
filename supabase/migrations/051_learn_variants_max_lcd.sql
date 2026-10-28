@@ -1,5 +1,5 @@
 -- Purpose: cap the least common denominator of generated fraction operands.
--- Application: not applied; representative applies after backup. Date: pending.
+-- Application: applied to production by Claude on 2026-10-28 (Supabase MCP).
 insert into public.learn_rule_configs(key, version, config)
 select 'variants', 2, config || '{"max_lcd":60}'::jsonb
 from public.learn_rule_configs where key = 'variants' and version = 1
