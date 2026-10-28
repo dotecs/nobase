@@ -97,6 +97,7 @@ export function prepareApproval(input: unknown, source: Pick<Source, 'origin' | 
     if (answer.type !== value.answer_type) throw new Error('정답 형식이 문항과 다릅니다.');
   } else if (solved.ok) { answer = solved.answer_spec; verified = 'program'; }
   else throw new Error('프로그램 검증 실패 — 코치가 정답을 입력하고 확인해야 합니다.');
+  if (answer.type === 'expression' && solved.ok && solved.answer_spec.type === 'expression' && solved.answer_spec.factored_required) answer = {...answer,factored_required:true};
   const item = ItemsFile.parse([{ id: 'pending', version: 1, ability_id: value.ability_id, usage: value.usage, stem_md: value.stem_md, answer_type: value.answer_type, answer_spec: answer, status: 'reviewed', source_draft_id: value.draftId }])[0];
   return { value, item, verified, saveImage: value.saveImage || value.answer_type === 'photo' };
 }

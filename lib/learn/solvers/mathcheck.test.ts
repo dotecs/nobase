@@ -33,3 +33,13 @@ describe('mathcheck grading', () => {
   it('unknown solver is never silently replaced', () => expect(() => getSolver('unknown')).toThrow('Unknown solver'));
   it('grading output never contains expected answer', () => expect(JSON.stringify(getSolver('mathcheck').grade('text',{type:'text',model_answer_md:'secret'},'my answer'))).not.toContain('secret'));
 });
+
+it('factoring rejects an unfactored copy but preserves legacy expression grading',()=>{
+ const spec={type:'expression' as const,value:'3(2x+3)',factored_required:true};
+ expect(getSolver('mathcheck').grade('expression',spec,'6x+9')).toMatchObject({result:'incorrect',detail:{reason:'not_factored'}});
+ expect(getSolver('mathcheck').grade('expression',spec,'(6x+9)')).toMatchObject({result:'incorrect',detail:{reason:'not_factored'}});
+ expect(getSolver('mathcheck').grade('expression',{type:'expression',value:'6x+9'},'6x+9')).toMatchObject({result:'correct'});
+});
+it('factoring accepts equivalent products in either order',()=>{
+ for(const input of ['3(2x+3)','(2x+3)·3'])expect(getSolver('mathcheck').grade('expression',{type:'expression',value:'3(2x+3)',factored_required:true},input)).toMatchObject({result:'correct'});
+});

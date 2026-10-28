@@ -3,6 +3,7 @@ import type { AnswerType } from '../types';
 import { parseMath, normalizeMath, UnsupportedError } from './parse';
 import { evaluate, polynomial, formatPolynomial, solveRelation } from './evaluate';
 import { Rational } from './rational';
+import { commonFactor } from './factor';
 
 export type SolveResult = { ok: true; answer_spec: AnswerSpecValue } | { ok: false; reason: 'unsupported' | 'parse_error' };
 export function normalizeStem(stem: string) {
@@ -39,7 +40,9 @@ export function solveItem(stem: string, answerType: AnswerType): SolveResult {
       spec = { type: 'number', ...solveRelation(parsed) };
     } else if (answerType === 'expression') {
       const p = polynomial(parsed.left, values);
-      spec = { type: 'expression', value: formatPolynomial(p), variables: p.variable ? [p.variable] : [] };
+      const factor = commonFactor(p);
+      if (/공통인수로\s*묶/.test(stem) && !factor) throw new UnsupportedError('No nontrivial common factor');
+      spec = { type: 'expression', value: factor?.value ?? formatPolynomial(p), variables: p.variable ? [p.variable] : [], ...(factor?{factored_required:true}:{}) };
     } else {
       spec = { type: answerType, value: evaluate(parsed.left, values).toString() };
     }

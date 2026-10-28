@@ -18,6 +18,14 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it('extracted factoring drafts retain the requirement through approval',async()=>{
+    const provider=new MockProvider(),items=await provider.extractItemsFromImage();
+    vi.spyOn(provider,'extractItemsFromImage').mockResolvedValue([{...items[0],stem_md:'공통인수로 묶으시오. $6x+9$',answer_type:'expression',answer_guess:'3(2x+3)'}]);
+    const [draft]=await extractDrafts(id,{},provider,abilities);
+    expect(draft.answer_spec).toMatchObject({value:'3(2x+3)',factored_required:true});
+    const approved=prepareApproval({draftId:id,stem_md:draft.stem_md,answer_type:'expression',ability_id:'03-1',usage:'practice',coachConfirmed:true,coachAnswer:{type:'expression',value:'3(2x+3)'},saveImage:false},{origin:'own',storage_path:'test'});
+    expect(approved.item.answer_spec).toMatchObject({factored_required:true});
+  });
   it.each([String.raw`$\dfrac{2}{3}$`, String.raw`\frac{2}{3}`, String.raw`\tfrac{2}{3}`, '2/3', '3/2'])('fraction guess %s compares its mathematical value', guess => {
     expect(guessMatches(guess, {type:'fraction',value:'2/3',require_reduced:true})).toBe(guess !== '3/2');
   });

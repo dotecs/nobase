@@ -191,3 +191,10 @@ it.each(['다음을 계산하시오. $2/3 ÷ 3/4$',String.raw`다음을 계산�
   const rows=generateVariants(template,20,seededRandom());expect(validateStoredVariants(rows)).toEqual(rows);
   for(const row of rows){const nums=row.stem_md.match(/\d+/g)!.map(Number);for(const [n,d] of [[nums[0],nums[1]],[nums[2],nums[3]]]){expect(n).toBeGreaterThanOrEqual(2);expect(n).toBeLessThanOrEqual(7);expect(n).toBeLessThan(d);expect(new Rational(n,d).d).toBe(BigInt(d));}expect(row.answer_spec.type==='fraction'&&Rational.parse(row.answer_spec.value).d<=BigInt(30)).toBe(true);}
 });
+
+it('공통인수 변형은 gcd 2~6이며 인수로 묶은 정답을 저장한다',()=>{
+ const rows=generateVariants(templatize('다음 식을 공통인수로 묶으시오. $6x+9$','expression',rules),20,seededRandom());
+ expect(validateStoredVariants(rows)).toEqual(rows);
+ for(const row of rows){const match=row.stem_md.match(/\$([+-]?\d+)x\+([+-]?\d+)\$/)!;const a=BigInt(match[1]),b=BigInt(match[2]);const gcd=a/new Rational(a,b).n;expect(gcd>=BigInt(2)&&gcd<=BigInt(6)).toBe(true);expect(row.answer_spec).toMatchObject({type:'expression',factored_required:true});expect(row.answer_spec.type==='expression'&&row.answer_spec.value).toMatch(/^[2-6]\(.+\)$/);}
+ expect(solveItem('6x+9','expression')).toMatchObject({ok:true,answer_spec:{value:'3(2x+3)',factored_required:true}});
+});

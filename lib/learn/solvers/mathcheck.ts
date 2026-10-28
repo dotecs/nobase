@@ -3,6 +3,7 @@ import { Rational } from '../mathcheck/rational';
 import { parseMath } from '../mathcheck/parse';
 import { equivalent } from '../mathcheck/evaluate';
 import { solveItem } from '../mathcheck/solve';
+import { hasFactoredProduct } from '../mathcheck/factor';
 import type { Grade, Solver } from './index';
 function normalize(input: string) {
   return input.normalize('NFKC').replace(/[−–]/g, '-').replace(/≤/g, '<=').replace(/≥/g, '>=').trim().replace(/^\$\$?([\s\S]*?)\$\$?$/, '$1').replace(/^\\\(([\s\S]*)\\\)$/, '$1').replace(/\s/g, '');
@@ -25,6 +26,7 @@ export const mathcheck: Solver = {
       if (spec.type === 'expression') {
         const parsed = parseMath(text), expected = parseMath(spec.value);
         if (parsed.relation) return issue('expression_expected');
+        if (spec.factored_required && (!text.includes('(') || !hasFactoredProduct(parsed.left))) return {result:'incorrect',normalized:text,detail:{reason:'not_factored'}};
         return { result: equivalent(parsed.left, expected.left) ? 'correct' : 'incorrect', normalized: text, detail: {} };
       }
       if (spec.type !== 'number' && spec.type !== 'fraction') return issue('unsupported');

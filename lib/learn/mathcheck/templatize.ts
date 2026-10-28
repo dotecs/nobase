@@ -4,6 +4,7 @@ import type { AnswerType } from '../types';
 import { parseMath, UnsupportedError, type Expr } from './parse';
 import { normalizeStem, solveItem } from './solve';
 import { Rational } from './rational';
+import { polynomial, equivalent } from './evaluate';
 
 export const VariantRules = z.object({
   count_default: z.number().int().min(3).max(5),
@@ -20,7 +21,7 @@ export const VariantRules = z.object({
 const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'dividend', 'divisor', 'coefficient', 'exponent']) });
 export const TemplateSchema = z.object({
   pattern: z.string(), solver: z.literal('solveItem'),
-  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter), reduce_fraction: z.boolean().default(false) }),
+  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter), reduce_fraction: z.boolean().default(false), factor_expression: z.boolean().default(false) }),
 });
 export type ItemTemplate = z.infer<typeof TemplateSchema>;
 export const DraftVariants = z.array(z.object({ enabled: z.boolean(), stem_md: z.string().min(1), answer_type: z.enum(['number', 'fraction', 'expression']), answer_spec: AnswerSpec, usage: z.enum(['practice', 'review', 'assessment']) }).strict());
@@ -58,6 +59,16 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     parameter(value, 'number'); text = assignment[3];
   }
   const parsed = parseMath(text);
+  const seedAnswer=solveItem(stem,answerType);
+  if(seedAnswer.ok&&seedAnswer.answer_spec.type==='expression'&&seedAnswer.answer_spec.factored_required){
+    const p=polynomial(parsed.left),[b,a]=p.coefficients;
+    parameter(a,'coefficient');parameter(b,'number');
+    const expression=`{p0}${p.variable}+{p1}`;
+    const regions=[...stem.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$]*?)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g)];
+    const target=regions.find(r=>normalizeStem(r[0])===text);
+    const pattern=target?stem.slice(0,target.index)+target[0].replace(target.slice(1).find(v=>v!==undefined)!,expression)+stem.slice(target.index!+target[0].length):expression;
+    return TemplateSchema.parse({pattern,params:{source_stem:stem,answer_type:answerType,rules,values,factor_expression:true},solver:'solveItem'});
+  }
   const hasVariable = (expr: Expr): boolean => expr.kind === 'variable' || (expr.kind === 'neg' ? hasVariable(expr.value) : expr.kind === 'binary' ? hasVariable(expr.left) || hasVariable(expr.right) : false);
   integerDivision = /÷|\\div/.test(stem) && !parsed.relation && !hasVariable(parsed.left) && answerType === 'number';
   walk(parsed.left);
@@ -116,6 +127,11 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
         const negative = rules.keep_sign ? Rational.parse(parameter.original).n < BigInt(0) : parameter.role !== 'exponent' && random() < .5;
         return String(negative ? -value : value);
       });
+      if(template.params.factor_expression){
+        const a=BigInt(sampled[0]),b=BigInt(sampled[1]);
+        if(new Rational(a,b).d!==(b<BigInt(0)?-b:b))continue;
+        const k=BigInt(2+Math.floor(random()*5));sampled[0]=String(a*k);sampled[1]=String(b*k);
+      }
       // Integer division uses exact pairs, independently of proper-fraction operands.
       for (let i = 0; i < values.length; i++) {
         if (values[i].role !== 'dividend' || values[i + 1]?.role !== 'divisor') continue;
@@ -145,7 +161,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
         sampled[0] = String(Number(sampled[0]) * factor);
         sampled[1] = String(Number(sampled[1]) * factor);
       }
-      const stem_md = render(template, sampled);
+      const stem_md = template.params.factor_expression ? render(template,sampled).replace(/\+-/g,'-') : render(template, sampled);
       if (seen.has(stem_md)) continue;
       const result = solveItem(stem_md, answer_type);
       if (!result.ok) continue;
@@ -173,6 +189,7 @@ export function validateStoredVariants(input: unknown): DraftVariant[] {
   const variants = DraftVariants.parse(input);
   for (const variant of variants) {
     const result = solveItem(variant.stem_md, variant.answer_type);
+    if(result.ok&&result.answer_spec.type==='expression'&&variant.answer_spec.type==='expression'&&variant.answer_spec.factored_required===undefined&&equivalent(parseMath(result.answer_spec.value).left,parseMath(variant.answer_spec.value).left))continue;
     if (!result.ok || JSON.stringify(result.answer_spec) !== JSON.stringify(variant.answer_spec)) throw new Error('변형 정답 검증 실패');
   }
   return variants;
