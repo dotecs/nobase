@@ -23,3 +23,5 @@
 .stepButton:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .stepButton:disabled { opacity: .6; cursor: default; }
 .stepActions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.keypad button { min-height: var(--learn-key-height, 48px); }
