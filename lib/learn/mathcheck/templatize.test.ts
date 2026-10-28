@@ -9,6 +9,20 @@ const sql = readFileSync('supabase/migrations/040_learn_content.sql', 'utf8');
 const rules = VariantRules.parse(JSON.parse(sql.match(/\('variants', 1, '([^']+)'::jsonb\)/)![1]));
 function seededRandom() { let seed = 20261026; return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 describe('server-generated templates and variants', () => {
+  it('괄호 바로 앞 숫자는 coefficient 범위이며 1(x+...)를 만들지 않는다',()=>{
+    const template=templatize('2(x+10)=24','number',rules);expect(template.params.values[0]).toMatchObject({role:'coefficient',range:rules.coefficient_range});
+    for(const row of generateVariants(template,20,seededRandom())){expect(row.stem_md).not.toMatch(/^1\(/);expect(Number(row.stem_md.match(/^\d+/)![0])).toBeGreaterThanOrEqual(2);}
+  });
+  it('분수 덧셈·뺄셈 분모의 최소공배수는 설정 상한 이하이다',()=>{
+    for(const sign of ['+','-'])for(const row of generateVariants(templatize(`1/2${sign}1/3`,'fraction',{...rules,max_lcd:30}),20,seededRandom())){
+      const ds=[...row.stem_md.matchAll(/\/(\d+)/g)].map(m=>BigInt(m[1]));const lcd=ds.reduce((a,b)=>a*new Rational(b,a).n,BigInt(1));expect(lcd<=BigInt(30)).toBe(true);
+    }
+    expect(VariantRules.parse({...rules,max_lcd:undefined}).max_lcd).toBe(60);
+  });
+  it('혼합 정수 계산의 나눗셈은 나누어떨어지는 쌍으로 20개 생성한다',()=>{
+    const template=templatize('(-4)×3-(-6)÷2','number',rules),rows=generateVariants(template,20,seededRandom());expect(validateStoredVariants(rows)).toEqual(rows);
+    for(const row of rows){const m=row.stem_md.match(/\(-([0-9]+)\)÷([0-9]+)/)!;expect(Number(m[1])%Number(m[2])).toBe(0);expect(row.answer_spec.type==='number'&&Rational.parse(row.answer_spec.value).d===BigInt(1)).toBe(true);}
+  });
   it.each([true, false])('두 구간 대입 변형 20개: 서식·역할·정수해 유지 (keep_sign=%s)', keepSign => {
     const stem = '문제. $x=-2$일 때, 다음 식의 값을 구하시오.\n\n$3x+5$';
     const template = templatize(stem, 'number', { ...rules, keep_sign: keepSign });

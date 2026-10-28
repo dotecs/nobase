@@ -11,11 +11,12 @@ export const VariantRules = z.object({
   integer_range: z.tuple([z.number().int().positive(), z.number().int().positive()]).refine(([min, max]) => min <= max && max <= 10000),
   coefficient_range: z.tuple([z.number().int().min(2), z.number().int().min(2)]).refine(([min, max]) => min <= max && max <= 10000),
   exclude_zero_answer: z.boolean(),
+  max_lcd: z.number().int().positive().default(60),
   operand_fractions: z.literal('proper_reduced'), answer_shape: z.literal('same_as_seed'), max_answer_abs: z.number().int().positive(),
   distinct_denominators: z.boolean(), keep_sign: z.boolean(), reduced_retry: z.number().int().positive().max(1000),
   usage_split: z.object({ practice: z.number().int().nonnegative(), review: z.number().int().nonnegative() }).strict(),
 }).strict();
-const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'coefficient', 'exponent']) });
+const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'dividend', 'divisor', 'coefficient', 'exponent']) });
 export const TemplateSchema = z.object({
   pattern: z.string(), solver: z.literal('solveItem'),
   params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter) }),
@@ -28,6 +29,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
   const rules = VariantRules.parse(config);
   if (!solveItem(stem, answerType).ok || !['number', 'fraction', 'expression'].includes(answerType)) throw new Error('프로그램 검증에 성공한 문제만 변형할 수 있습니다.');
   const values: ItemTemplate['params']['values'] = [];
+  let integerDivision = false;
   const parameter = (value: Rational, role: z.infer<typeof Parameter>['role'] = 'number') => {
     const magnitude = Math.abs(Number(value.n) / Number(value.d));
     if (!Number.isSafeInteger(Math.ceil(magnitude))) throw new Error('변형 범위를 벗어난 수입니다.');
@@ -42,7 +44,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (expr.kind === 'neg') return `(-${walk(expr.value, role)})`;
     if ((expr.op === '/' || expr.op === '^') && expr.right.kind !== 'number' && !(expr.right.kind === 'neg' && expr.right.value.kind === 'number')) throw new Error('복합 분모·지수의 변형은 지원하지 않습니다.');
     if (expr.op === '/' && !['number', 'variable'].includes(expr.left.kind) && !(expr.left.kind === 'neg' && ['number', 'variable'].includes(expr.left.value.kind))) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
-    return `(${walk(expr.left, expr.op === '/' ? 'numerator' : expr.op === '*' && expr.right.kind === 'variable' ? 'coefficient' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
+    return `(${walk(expr.left, expr.op === '/' ? integerDivision ? 'dividend' : 'numerator' : expr.op === '*' && expr.right.kind !== 'number' ? 'coefficient' : 'number')}${expr.op}${walk(expr.right, expr.op === '/' ? integerDivision ? 'divisor' : 'denominator' : expr.op === '^' ? 'exponent' : 'number')})`;
   };
   let text = normalizeStem(stem);
   const assignment = text.match(/^([a-z])\s*=\s*([+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?)\s*(?:;|일\s*때,?)\s*(.+)$/);
@@ -52,6 +54,8 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     parameter(value, 'number'); text = assignment[3];
   }
   const parsed = parseMath(text);
+  const hasVariable = (expr: Expr): boolean => expr.kind === 'variable' || (expr.kind === 'neg' ? hasVariable(expr.value) : expr.kind === 'binary' ? hasVariable(expr.left) || hasVariable(expr.right) : false);
+  integerDivision = /÷|\\div/.test(stem) && !parsed.relation && !hasVariable(parsed.left) && answerType === 'number';
   walk(parsed.left);
   if (parsed.right) walk(parsed.right);
   if (!values.length) throw new Error('변형할 숫자가 없습니다.');
@@ -63,9 +67,10 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
       cursor++;
       return prefix[1] + `{${values[0].name}}` + replaceNumbers(text.slice(prefix[0].length));
     }
-    return text.replace(/\d+(?:\.\d+)?/g, literal => {
+    return text.replace(/\d+(?:\.\d+)?/g, (literal, index: number) => {
     const param = values[cursor++];
     if (!param || Rational.parse(literal).compare(Rational.parse(param.original)) !== 0) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
+    if (param.role === 'number' && /^\s*(?:\\left\s*)?\(/.test(text.slice(index + literal.length))) { param.role = 'coefficient'; param.range = [...rules.coefficient_range]; }
     return `{${param.name}}`;
     });
   };
@@ -100,6 +105,14 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
         const negative = rules.keep_sign ? Rational.parse(parameter.original).n < BigInt(0) : parameter.role !== 'exponent' && random() < .5;
         return String(negative ? -value : value);
       });
+      // Integer division uses exact pairs, independently of proper-fraction operands.
+      for (let i = 0; i < values.length; i++) {
+        if (values[i].role !== 'dividend' || values[i + 1]?.role !== 'divisor') continue;
+        const divisor = Math.abs(Number(sampled[i + 1])), [min, max] = values[i].range;
+        const first = Math.ceil(min / divisor), last = Math.floor(max / divisor);
+        sampled[i] = first <= last ? String((first + Math.floor(random() * (last - first + 1))) * divisor * (Number(sampled[i]) < 0 ? -1 : 1)) : '0';
+      }
+      if (values.some((parameter, i) => parameter.role === 'dividend' && sampled[i] === '0')) continue;
       // Choose only proper, reduced operand pairs within the configured ranges.
       for (let i = 0; i < values.length; i++) {
         if (values[i].role !== 'numerator' || values[i + 1]?.role !== 'denominator') continue;
@@ -112,6 +125,8 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
       if (values.some((parameter, i) => parameter.role === 'numerator' && sampled[i] === '0')) continue;
       const denominators = values.flatMap((parameter, i) => parameter.role === 'denominator' ? [Math.abs(Number(sampled[i]))] : []);
       if (rules.distinct_denominators && new Set(denominators).size !== denominators.length) continue;
+      const lcd = denominators.reduce((multiple, denominator) => multiple * new Rational(denominator, multiple).n, BigInt(1));
+      if (lcd > BigInt(rules.max_lcd)) continue;
       const stem_md = render(template, sampled);
       if (seen.has(stem_md)) continue;
       const result = solveItem(stem_md, answer_type);
