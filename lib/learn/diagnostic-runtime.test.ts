@@ -9,6 +9,13 @@ describe('diagnostic server flow with mock service database',()=>{
   let db:ReturnType<typeof runtimeTestDb>;
   beforeEach(()=>{vi.resetModules();vi.useFakeTimers();vi.setSystemTime(new Date('2026-10-27T00:00:00Z'));db=runtimeTestDb();mock.client=db.client;mock.access=true;});
   afterEach(()=>vi.useRealTimers());
+  it('diagnostic steps are stored without exposing feedback',async()=>{
+    const r=await import('./diagnostic-runtime');await r.startDiagnosticRuntime();const v=await r.diagnosticView();if(!v||v.complete)throw new Error('Expected question');
+    db.rows('learn_items').find(row=>row.id===v.item.id)!.stem_md='2-1';
+    await r.submitDiagnosticRuntime({sessionId:v.sessionId,itemId:v.item.id,planIndex:v.planIndex,answer:'1',steps:['1'],photoPath:`${testUser}/attempts/proof.png`,durationMs:100});
+    expect(db.rows('learn_attempts')[0]).toMatchObject({steps:['1'],auto_grade:{step_check:{checked:1,first_error_index:null}}});
+    expect(JSON.stringify(await r.diagnosticView())).not.toMatch(/step_check|feedback|auto_grade/);
+  });
   it('six answers finish with 24 states and coach gate; response has no grading data',async()=>{
     const runtime=await import('./diagnostic-runtime');await runtime.startDiagnosticRuntime();
     expect(db.rows('learn_ability_state_events')).toHaveLength(0);

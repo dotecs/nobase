@@ -12,6 +12,14 @@ describe('learning runtime',()=>{
   afterEach(()=>vi.useRealTimers());
   async function start(){const r=await import('./learning-runtime'),s=await r.startLearningRuntime();if(!s.id)throw new Error('Missing session');return {r,id:s.id};}
   async function submit(r:typeof import('./learning-runtime'),id:string,answer='1'){const v=await r.learningView(id);if(v.complete)throw new Error('Expected question');const input={sessionId:id,itemId:v.item.id,planIndex:v.planIndex,answer,photoPath:v.photo_required?`${testUser}/attempts/proof.png`:null,durationMs:100};await r.submitLearningRuntime(input);return input;}
+  it('optional steps are stored without changing final-answer grading or idempotency',async()=>{
+    const {r,id}=await start(),v=await r.learningView(id);if(v.complete)throw new Error('Expected question');
+    db.rows('learn_items').find(row=>row.id===v.item.id)!.stem_md='2-1';
+    const input={sessionId:id,itemId:v.item.id,planIndex:v.planIndex,answer:'1',steps:['3','1'],photoPath:v.photo_required?`${testUser}/attempts/proof.png`:null,durationMs:100};
+    await r.submitLearningRuntime(input);await r.submitLearningRuntime(input);
+    expect(db.rows('learn_attempts')).toHaveLength(1);
+    expect(db.rows('learn_attempts')[0]).toMatchObject({result:'correct_independent',steps:['3','1'],auto_grade:{step_check:{checked:2,first_error_index:0}}});
+  });
   it('two sessions verify one ability, save three reviews and versioned traces',async()=>{
     (db.rows('learn_rule_configs').find(row=>row.key==='session')!.config as {items_per_session:number}).items_per_session=1;
     for(const row of db.rows('learn_goal_requirements'))if(row.ability_id!=='01-4')db.rows('learn_ability_states').push({user_id:testUser,ability_id:row.ability_id,state:'verified',evidence:emptyEvidence()});

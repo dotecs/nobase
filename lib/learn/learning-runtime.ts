@@ -1,3 +1,4 @@
+import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
 import { attemptedItemIds } from './runtime';
 import 'next/headers';
@@ -51,7 +52,7 @@ async function validatePhoto(userId:string,path:string|null,required:boolean) {
   if(result.error||!result.data?.some(row=>row.name===path.slice(slash+1)))throw new LearnUserError('사진 업로드를 확인해 주세요.');
 }
 export async function submitLearningRuntime(input:unknown) {
-  const {user}=await activeLearner(),value=z.object({sessionId:z.uuid(),itemId:z.string(),planIndex:z.number().int().nonnegative(),answer:z.union([z.string().max(4000),z.array(z.string().max(100)).max(100)]),photoPath:z.string().max(1000).nullable(),durationMs:z.number().int().nonnegative().max(2147483647).nullable()}).parse(input);
+  const {user}=await activeLearner(),value=z.object({sessionId:z.uuid(),itemId:z.string(),planIndex:z.number().int().nonnegative(),answer:z.union([z.string().max(4000),z.array(z.string().max(100)).max(100)]),steps:z.array(z.string().max(200)).max(12).optional(),photoPath:z.string().max(1000).nullable(),durationMs:z.number().int().nonnegative().max(2147483647).nullable()}).parse(input);
   const session=await sessionRow(value.sessionId,user.id),plan=readLearningPlan(session.plan),key=`${session.id}:${value.itemId}:${value.planIndex}`;
   const attempts=await sessionAttempts(session.id,user.id);if(attempts.some(row=>row.idempotency_key===key)){await closeLearningSession(session);return;}
   if(session.ended_at||plan.complete)throw new LearnUserError('종료된 세션입니다.');
@@ -63,6 +64,7 @@ export async function submitLearningRuntime(input:unknown) {
   await validatePhoto(user.id,value.photoPath,config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo');
   const solver=config.configs.solvers.by_pack[plan.meta.pack_id]??config.configs.solvers.default;
   const grade=gradeAttempt(item,value.answer,Math.max(plan.current.hints_used,plan.current.retries_used),solver,config);if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
+  const stepCheck=value.steps?.length?checkSteps(item.stem_md,item.answer_type,value.steps):null;
   const stateResult=await client.from('learn_ability_states').select('*').eq('user_id',user.id).eq('ability_id',item.ability_id).maybeSingle();if(stateResult.error)throw stateResult.error;
   const row=stateResult.data as unknown as StateRow|null,before:State=row?{ability_id:row.ability_id,state:row.state,evidence:row.evidence as unknown as Evidence}:{ability_id:item.ability_id,state:'unknown',evidence:emptyEvidence()};
   const attempt:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage,at:new Date().toISOString()};
@@ -80,7 +82,7 @@ export async function submitLearningRuntime(input:unknown) {
     return schedule.id&&status!==schedule.status&&status!=='due'?[{id:schedule.id,status}]:[];
   });
   const outcome=learningOutcome(session.plan,item,grade.result);
-  await recordAttempt({user_id:user.id,session_id:session.id,idempotency_key:key,attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage,answer_input:json(value.answer),result:grade.result,auto_grade:json({...grade.auto_grade,state_trace:transition.trace,review_trace:reviewed?.trace??null}),hints_used:plan.current.hints_used,photo_path:value.photoPath,duration_ms:value.durationMs,rule_version:json(config.rule_version)},state:{...after,evidence:json(after.evidence),rule_version:json(config.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify({state:transition.trace,review:reviewed?.trace??null,before,after}),rule_version:json(config.rule_version)},reviews,review_updates:updates,session_plan_append:json(outcome.append),learner_status:null});
+  await recordAttempt({user_id:user.id,session_id:session.id,idempotency_key:key,attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage,answer_input:json(value.answer),result:grade.result,steps:value.steps??null,auto_grade:json({...grade.auto_grade,...(stepCheck?{step_check:stepCheck}:{}),state_trace:transition.trace,review_trace:reviewed?.trace??null}),hints_used:plan.current.hints_used,photo_path:value.photoPath,duration_ms:value.durationMs,rule_version:json(config.rule_version)},state:{...after,evidence:json(after.evidence),rule_version:json(config.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify({state:transition.trace,review:reviewed?.trace??null,before,after}),rule_version:json(config.rule_version)},reviews,review_updates:updates,session_plan_append:json(outcome.append),learner_status:null});
   await closeLearningSession(await sessionRow(session.id,user.id));
 }
 export async function learningView(id:string) {

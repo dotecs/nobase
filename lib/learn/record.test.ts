@@ -14,6 +14,11 @@ import { recordAttempt, type RecordPayload } from './record';
 const payload = () => ({idempotency_key:'s:i:0',session_id:'s',user_id:'u',attempt:{item_id:'i',item_version:1,ability_id:'a',usage:'diagnostic',answer_input:'1',result:'correct_independent',auto_grade:{},rule_version:{solvers:1}},state:null,event:null,reviews:[],review_updates:[],session_plan_append:null,learner_status:null}) as RecordPayload;
 function reset() { db.role='service_role';db.user='u';db.ended=false;db.fail=false;db.attempts.clear();db.writes=[]; }
 describe('attempt persistence RPC contract', () => {
+  it('055 only adds steps to the 050 insert and preserves all other function lines',()=>{
+    const baseline=readFileSync('supabase/migrations/050_learn_record_attempt_fix.sql','utf8').split('create or replace')[1];
+    const updated=readFileSync('supabase/migrations/055_learn_record_attempt_steps.sql','utf8').split('create or replace')[1];
+    expect(updated).toBe(baseline.replace('rule_version, idempotency_key)','rule_version, idempotency_key, steps)').replace("attempt_data->'rule_version', idem)","attempt_data->'rule_version', idem, attempt_data->'steps')"));
+  });
   it('same key twice returns one existing attempt', async () => { reset(); expect(await recordAttempt(payload())).toBe(await recordAttempt(payload())); expect(db.attempts.size).toBe(1); expect(db.writes).toEqual(['attempt','state','event','reviews','plan']); });
   it.each(['owner','closed','role','failure'])('%s failure leaves no writes', async mode => { reset(); if(mode==='owner')db.user='other';if(mode==='closed')db.ended=true;if(mode==='role')db.role='authenticated';if(mode==='failure')db.fail=true;await expect(recordAttempt(payload())).rejects.toThrow();expect(db.attempts.size).toBe(0); });
   it('SQL enforces invoker role, ownership, lock and duplicate ordering', () => {

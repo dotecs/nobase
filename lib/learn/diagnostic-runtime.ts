@@ -1,3 +1,4 @@
+import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
 import { attemptedItemIds } from './runtime';
 import 'next/headers';
@@ -33,7 +34,7 @@ function asAttempt(row:AttemptRow, session:Session):Attempt {
   const step=readDiagnosticPlan(session.plan).steps.find(step=>step.item.item_id===row.item_id&&step.item.item_version===row.item_version);
   return {id:row.id,item_id:row.item_id,item_version:row.item_version,ability_id:row.ability_id,variant_group:step?.item.variant_group??row.item_id,result:row.result,usage:row.usage,at:row.created_at,session_id:row.session_id};
 }
-async function recordCurrent(session:Session,input:unknown,photoPath:string|null,duration:number|null,expired:boolean) {
+async function recordCurrent(session:Session,input:unknown,photoPath:string|null,duration:number|null,expired:boolean,steps?:string[]) {
   const {meta,current,complete}=readDiagnosticPlan(session.plan);if(complete)return;
   const client=createAdminSupabaseClient(), key=`${session.id}:${current.item.item_id}:${current.plan_index}`;
   const prior=await sessionAttempts(session.id,session.user_id);
@@ -53,6 +54,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   const learner=await learnerRow(session.user_id), solver=meta.config.configs.solvers.by_pack[learner.pack_id]??meta.config.configs.solvers.default;
   const grade=expired?{result:'no_response' as const,auto_grade:{solver,trace:{rule:'diagnostic_timeout',rule_version:{diagnostic:meta.config.rule_version.diagnostic}}}}:gradeAttempt(item,input,0,solver,meta.config);
   if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
+  const stepCheck=steps?.length?checkSteps(item.stem_md,item.answer_type,steps):null;
   const now=new Date().toISOString(), incoming:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage:'diagnostic',at:now,session_id:session.id};
   const items=await loadLearnItems(meta.pack.abilities.map(row=>row.id));
   const attempted_item_ids=await attemptedItemIds(session.user_id,{excludeSessionId:session.id});
@@ -61,7 +63,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   const old=await client.from('learn_ability_states').select('*').eq('user_id',session.user_id).eq('ability_id',item.ability_id).single();if(old.error)throw old.error;
   const previous=old.data as unknown as StateRow;
   await recordAttempt({session_id:session.id,user_id:session.user_id,idempotency_key:key,
-    attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage:'diagnostic',answer_input:json(expired?'':input),result:grade.result,auto_grade:json({...grade.auto_grade,diagnostic_trace:next.trace}),hints_used:0,photo_path:expired?null:photoPath,duration_ms:duration,rule_version:json(meta.config.rule_version)},
+    attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage:'diagnostic',answer_input:json(expired?'':input),result:grade.result,steps:steps??null,auto_grade:json({...grade.auto_grade,...(stepCheck?{step_check:stepCheck}:{}),diagnostic_trace:next.trace}),hints_used:0,photo_path:expired?null:photoPath,duration_ms:duration,rule_version:json(meta.config.rule_version)},
     state:{...state,evidence:json(state.evidence),rule_version:json(next.summary.trace.rule_version)},
     event:previous.state===state.state?null:{from_state:previous.state,to_state:state.state,reason:JSON.stringify({trace:next.summary.trace,before:previous.evidence,after:state.evidence}),rule_version:json(next.summary.trace.rule_version)},
     reviews:[],review_updates:[],session_plan_append:json([next.append]),learner_status:next.learner_status});
@@ -78,7 +80,7 @@ export async function expireDiagnosticRuntime(id:string) {
 }
 export async function submitDiagnosticRuntime(input:unknown) {
   const user=await requireLearner();
-  const value=z.object({sessionId:z.uuid(),itemId:z.string().min(1),planIndex:z.number().int().nonnegative(),answer:z.union([z.string().max(4000),z.array(z.string().max(100)).max(100)]),photoPath:z.string().max(1000).nullable(),durationMs:z.number().int().nonnegative().max(2147483647).nullable()}).parse(input);
+  const value=z.object({sessionId:z.uuid(),itemId:z.string().min(1),planIndex:z.number().int().nonnegative(),answer:z.union([z.string().max(4000),z.array(z.string().max(100)).max(100)]),steps:z.array(z.string().max(200)).max(12).optional(),photoPath:z.string().max(1000).nullable(),durationMs:z.number().int().nonnegative().max(2147483647).nullable()}).parse(input);
   const session=await sessionRow(value.sessionId,user.id);if(session.kind!=='diagnostic')throw new Error('진단 세션이 아닙니다.');
   const plan=readDiagnosticPlan(session.plan), attempts=await sessionAttempts(session.id,user.id);
   if(attempts.some(row=>row.idempotency_key===`${session.id}:${value.itemId}:${value.planIndex}`)){await finalize(session);return;}
@@ -86,7 +88,7 @@ export async function submitDiagnosticRuntime(input:unknown) {
   if(plan.complete||session.ended_at)throw new LearnUserError('종료된 진단입니다.');
   if(plan.current.item.item_id!==value.itemId||plan.current.plan_index!==value.planIndex)throw new LearnUserError('진단 진행 상태가 변경되었습니다. 새로고침해 주세요.');
   if(Date.now()-Date.parse(session.started_at)>=plan.meta.config.configs.diagnostic.time_limit_min*MINUTE_MS){await expireDiagnosticRuntime(session.id);return;}
-  await recordCurrent(session,value.answer,value.photoPath,value.durationMs,false);
+  await recordCurrent(session,value.answer,value.photoPath,value.durationMs,false,value.steps);
   await finalize(await sessionRow(session.id,user.id));
 }
 export async function diagnosticView() {
