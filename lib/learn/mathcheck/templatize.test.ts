@@ -9,6 +9,23 @@ const sql = readFileSync('supabase/migrations/040_learn_content.sql', 'utf8');
 const rules = VariantRules.parse(JSON.parse(sql.match(/\('variants', 1, '([^']+)'::jsonb\)/)![1]));
 function seededRandom() { let seed = 20261026; return () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }; }
 describe('server-generated templates and variants', () => {
+  it('약분 문항 5개는 공약수가 있고 기약 정답이 중복되지 않는다', () => {
+    const template = templatize('다음을 약분하시오. $12/18$', 'fraction', rules, {type:'fraction',value:'2/3',require_reduced:true});
+    const rows = generateVariants(template, 5, seededRandom());
+    expect(validateStoredVariants(rows)).toEqual(rows);
+    const answers = rows.map(row => {
+      const match = row.stem_md.match(/\$(\d+)\/(\d+)\$/)!;
+      const n = BigInt(match[1]), d = BigInt(match[2]), reduced = new Rational(n,d);
+      expect(n / reduced.n >= BigInt(2)).toBe(true);
+      expect(n / reduced.n <= BigInt(6)).toBe(true);
+      expect(Number(reduced.d)).toBeGreaterThanOrEqual(rules.denominator_range[0]);
+      expect(Number(reduced.d)).toBeLessThanOrEqual(rules.denominator_range[1]);
+      expect(row.answer_spec).toMatchObject({type:'fraction',value:reduced.toString(),require_reduced:true});
+      return reduced.toString();
+    });
+    expect(new Set(answers).size).toBe(5);
+    expect(templatize('$12/18$','fraction',rules,{type:'fraction',value:'2/3',require_reduced:false}).params.reduce_fraction).toBe(false);
+  });
   it('괄호 바로 앞 숫자는 coefficient 범위이며 1(x+...)를 만들지 않는다',()=>{
     const template=templatize('2(x+10)=24','number',rules);expect(template.params.values[0]).toMatchObject({role:'coefficient',range:rules.coefficient_range});
     for(const row of generateVariants(template,20,seededRandom())){expect(row.stem_md).not.toMatch(/^1\(/);expect(Number(row.stem_md.match(/^\d+/)![0])).toBeGreaterThanOrEqual(2);}

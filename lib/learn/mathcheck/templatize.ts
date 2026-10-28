@@ -19,13 +19,13 @@ export const VariantRules = z.object({
 const Parameter = z.object({ name: z.string(), original: z.string(), range: z.tuple([z.number(), z.number()]), role: z.enum(['number', 'numerator', 'denominator', 'dividend', 'divisor', 'coefficient', 'exponent']) });
 export const TemplateSchema = z.object({
   pattern: z.string(), solver: z.literal('solveItem'),
-  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter) }),
+  params: z.object({ source_stem: z.string(), answer_type: z.enum(['number', 'fraction', 'expression']), rules: VariantRules, values: z.array(Parameter), reduce_fraction: z.boolean().default(false) }),
 });
 export type ItemTemplate = z.infer<typeof TemplateSchema>;
 export const DraftVariants = z.array(z.object({ enabled: z.boolean(), stem_md: z.string().min(1), answer_type: z.enum(['number', 'fraction', 'expression']), answer_spec: AnswerSpec, usage: z.enum(['practice', 'review', 'assessment']) }).strict());
 export type DraftVariant = z.infer<typeof DraftVariants>[number];
 
-export function templatize(stem: string, answerType: AnswerType, config: unknown): ItemTemplate {
+export function templatize(stem: string, answerType: AnswerType, config: unknown, answerSpec?: unknown): ItemTemplate {
   const rules = VariantRules.parse(config);
   if (!solveItem(stem, answerType).ok || !['number', 'fraction', 'expression'].includes(answerType)) throw new Error('프로그램 검증에 성공한 문제만 변형할 수 있습니다.');
   const values: ItemTemplate['params']['values'] = [];
@@ -82,7 +82,12 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     return part;
   }).join('') + stem.slice(offset) : replaceNumbers(stem);
   if (cursor !== values.length) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
-  return TemplateSchema.parse({ pattern, params: { source_stem: stem, answer_type: answerType, rules, values }, solver: 'solveItem' });
+  const solved = solveItem(stem, answerType);
+  const answer = AnswerSpec.parse(answerSpec ?? (solved.ok ? solved.answer_spec : null));
+  const reduce_fraction = answer.type === 'fraction' && answer.require_reduced && !assignment && !parsed.relation &&
+    parsed.left.kind === 'binary' && parsed.left.op === '/' && values.length === 2 &&
+    values[0].role === 'numerator' && values[1].role === 'denominator';
+  return TemplateSchema.parse({ pattern, params: { source_stem: stem, answer_type: answerType, rules, values, reduce_fraction }, solver: 'solveItem' });
 }
 
 function render(template: ItemTemplate, values: string[]) {
@@ -95,6 +100,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
   const seen = new Set([render(template, values.map(value => value.original))]);
   const seed = solveItem(template.params.source_stem, answer_type);
   if (!seed.ok) throw new UnsupportedError('씨앗 정답 검증 실패');
+  const reducedAnswers = new Set(seed.answer_spec.type === 'fraction' ? [seed.answer_spec.value] : []);
   const variants: DraftVariant[] = [];
   for (let index = 0; index < count; index++) {
     let found = false;
@@ -127,10 +133,18 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
       if (rules.distinct_denominators && new Set(denominators).size !== denominators.length) continue;
       const lcd = denominators.reduce((multiple, denominator) => multiple * new Rational(denominator, multiple).n, BigInt(1));
       if (lcd > BigInt(rules.max_lcd)) continue;
+      if (template.params.reduce_fraction) {
+        const reduced = new Rational(Number(sampled[0]), Number(sampled[1])).toString();
+        if (reducedAnswers.has(reduced)) continue;
+        const factor = 2 + Math.floor(random() * 5);
+        sampled[0] = String(Number(sampled[0]) * factor);
+        sampled[1] = String(Number(sampled[1]) * factor);
+      }
       const stem_md = render(template, sampled);
       if (seen.has(stem_md)) continue;
       const result = solveItem(stem_md, answer_type);
       if (!result.ok) continue;
+      if (template.params.reduce_fraction && result.answer_spec.type === 'fraction' && reducedAnswers.has(result.answer_spec.value)) continue;
       if ((result.answer_spec.type === 'number' || result.answer_spec.type === 'fraction') && (seed.answer_spec.type === 'number' || seed.answer_spec.type === 'fraction')) {
         const answer = Rational.parse(result.answer_spec.value), original = Rational.parse(seed.answer_spec.value);
         if (rules.exclude_zero_answer && original.n !== BigInt(0) && answer.n === BigInt(0)) continue;
@@ -141,6 +155,7 @@ export function generateVariants(input: ItemTemplate, count: number, random: () 
       if (result.answer_spec.type === 'fraction' && Rational.parse(result.answer_spec.value).toString() !== result.answer_spec.value) continue;
       const usage = index < rules.usage_split.practice ? 'practice' : index < rules.usage_split.practice + rules.usage_split.review ? 'review' : 'assessment';
       variants.push({ enabled: true, stem_md, answer_type, answer_spec: result.answer_spec, usage });
+      if (template.params.reduce_fraction && result.answer_spec.type === 'fraction') reducedAnswers.add(result.answer_spec.value);
       seen.add(stem_md); found = true; break;
     }
     if (!found) throw new Error(`재시도 한도 안에 ${count}개 변형을 만들지 못했습니다. 범위를 확인하거나 다시 생성해 주세요.`);

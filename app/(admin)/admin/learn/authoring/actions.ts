@@ -128,7 +128,7 @@ export async function generateDraftVariants(draftId: string, n?: number) {
     const row = ruleResult.data as { config: unknown } | null;
     if (!row) throw new Error('variants 규칙이 없습니다. 개정된 040 적용을 확인해 주세요.');
     const rules = VariantRules.parse(row.config);
-    const template = templatize(draft.stem_md, draft.answer_type as AnswerType, rules);
+    const template = templatize(draft.stem_md, draft.answer_type as AnswerType, rules, draft.answer_spec);
     const variants = validateStoredVariants(generateVariants(template, n ?? rules.count_default));
     const saved = await client.from('learn_item_drafts').update({ template, variants } as never)
       .eq('id', draft.id).eq('stem_md', draft.stem_md).eq('answer_type', draft.answer_type).eq('answer_verified_by', 'program')
