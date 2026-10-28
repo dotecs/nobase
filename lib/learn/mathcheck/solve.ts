@@ -6,7 +6,9 @@ import { Rational } from './rational';
 
 export type SolveResult = { ok: true; answer_spec: AnswerSpecValue } | { ok: false; reason: 'unsupported' | 'parse_error' };
 export function normalizeStem(stem: string) {
-  const regions = [...stem.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$]*?)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g)];
+  const allRegions = [...stem.matchAll(/\$\$([\s\S]*?)\$\$|\$([^$]*?)\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g)];
+  const substantive = allRegions.filter(region => !/^(?:[a-z]|[+-]?\s*\d+(?:\.\d+)?)$/.test(normalizeMath(region.slice(1).find(value => value !== undefined)!)));
+  const regions = substantive.length ? substantive : allRegions;
   if (regions.length === 2) {
     const parts = regions.map(region => normalizeMath(region.slice(1).find(value => value !== undefined)!));
     const assignment = parts[0].match(/^([a-z])\s*=\s*(.+)$/);

@@ -45,3 +45,10 @@ describe('exact math checks', () => {
     expect(solveItem('1/0', 'number')).toEqual({ ok: false, reason: 'parse_error' });
   });
 });
+
+it('ignores explanatory variable and signed-number math spans', () => {
+  expect(solveItem('양변을 $-3$으로 나누어 $x$의 범위를 구하시오. $-3x>12$', 'number')).toMatchObject({ok:true,answer_spec:{value:'-4',variable:'x',relation:'<'}});
+});
+it('two substantive expressions are still unsupported', () => {
+  expect(solveItem('$x$에 대해 $2x+3$과 $4x+5$를 비교하시오.', 'expression')).toMatchObject({ok:false,reason:'unsupported'});
+});
