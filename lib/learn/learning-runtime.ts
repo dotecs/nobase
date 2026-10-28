@@ -1,4 +1,5 @@
 import { LearnUserError } from './errors';
+import { attemptedItemIds } from './runtime';
 import 'next/headers';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -65,8 +66,8 @@ export async function submitLearningRuntime(input:unknown) {
   const stateResult=await client.from('learn_ability_states').select('*').eq('user_id',user.id).eq('ability_id',item.ability_id).maybeSingle();if(stateResult.error)throw stateResult.error;
   const row=stateResult.data as unknown as StateRow|null,before:State=row?{ability_id:row.ability_id,state:row.state,evidence:row.evidence as unknown as Evidence}:{ability_id:item.ability_id,state:'unknown',evidence:emptyEvidence()};
   const attempt:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage,at:new Date().toISOString()};
-  const history=await ownRows<AttemptRow>('learn_attempts',user.id);
-  const transition=applyAttempt(before,attempt,config,history.map(row=>row.item_id));let after=transition.result.state;
+  const history=await attemptedItemIds(user.id);
+  const transition=applyAttempt(before,attempt,config,history);let after=transition.result.state;
   const schedules=await ownRows<ReviewSchedule>('learn_review_schedule',user.id);
   const reviewed=usage==='review'?markReview(schedules,attempt,config):null;
   if(reviewed?.result.state){after={...after,state:reviewed.result.state,evidence:{...after.evidence,...reviewed.result.evidence_reset}};}
