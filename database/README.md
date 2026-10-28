@@ -182,3 +182,5 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2026-10-27 적용 기록(Claude, MCP)**: `049_learn_session_rules` 운영 적용(설정 `session` v2, 진행 중 세션 1개 제한 인덱스). 이로써 040~049 전부 운영 적용 완료.
 
 - **2026-10-28 작성·적용 기록(Claude)**: `053_learn_attempt_steps.sql`·`055_learn_record_attempt_steps.sql` — 2026-10-28 15:35 KST Claude가 Supabase MCP로 운영 적용(053 → 055). 050 이후 **053 → 055** 순서. 선택 풀이 단계 컬럼과 저장만 추가, 054는 2단계용으로 비움.
+
+- **2026-10-28 작성**: `054_learn_pad_drafts.sql` — 미적용, Claude 적용. 패드 초안용 테이블에만 대표 승인으로 본인 SELECT·INSERT·UPDATE 정책 허용.
