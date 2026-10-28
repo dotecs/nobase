@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useSyncExternalStore } from 'react';
+import { VariantSelection } from '@/lib/learn/variant-selection';
 import { useRouter } from 'next/navigation';
 import { uploadAuthoringImage } from '@/lib/storage';
 import { renderMathMarkdown } from '@/lib/math-markdown';
@@ -67,8 +68,14 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const locked = ['approved', 'rejected'].includes(draft.status);
   const variantsLocked = draft.status === 'rejected';
   const variants = (Array.isArray(draft.variants) ? draft.variants : []) as DraftVariant[];
+  const [selection] = useState(() => new VariantSelection(variants.map(row=>row.enabled), (index,enabled)=>toggleDraftVariant(draft.id,index,enabled), ()=>router.refresh()));
+  const selected = useSyncExternalStore(selection.subscribe, selection.getSnapshot, selection.getSnapshot);
+  const variantsSignature = JSON.stringify(variants);
+  useEffect(()=>{selection.reset((JSON.parse(variantsSignature) as DraftVariant[]).map(row=>row.enabled));},[selection,variantsSignature]);
+  const savingSelection = selected.pending > 0;
+  const includedCount = selected.flags.filter(Boolean).length;
   const variantsOutdated = variants.length > 0 && (stem !== draft.stem_md || answerType !== draft.answer_type || ability !== draft.ability_id || coachConfirmed);
-  const allowed = !pending && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
+  const allowed = !pending && !savingSelection && !selected.error && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
   const reviewValue = (): ApprovalValue => ({ draftId: draft.id, stem_md: stem, answer_type: answerType, ability_id: ability, usage, coachConfirmed, coachAnswer: spec, saveImage });
   const crop = draft.crop as { x: number; y: number; width: number; height: number } | null;
   const ordered = [...abilities].sort((a, b) => Number(draft.ability_candidates.includes(b.id)) - Number(draft.ability_candidates.includes(a.id)));
@@ -100,26 +107,28 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       <section className={styles.variants} aria-label="변형 문항">
         <h3>변형 3~5개</h3>
         <label>생성 개수<select value={variantCount} onChange={event => setVariantCount(event.target.value)} disabled={pending || variantsLocked}><option value="">규칙의 기본 개수</option>{[3, 4, 5].map(count => <option key={count} value={count}>{count}개</option>)}</select></label>
-        <button disabled={pending || variantsLocked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
+        <button disabled={pending || savingSelection || variantsLocked || !program.ok || coachConfirmed || !ability || source.origin === 'reference_only'} onClick={() => run(async () => {
           if (draft.status !== 'approved') {
             const saved = await saveDraftReview(reviewValue());
             if (saved.error) return saved;
           }
           return generateDraftVariants(draft.id, variantCount ? Number(variantCount) : undefined);
         })}>{variants.length ? '변형 다시 생성' : '변형 생성·검증'}</button>
-        {draft.status === 'approved' && <button disabled={pending || variantsOutdated || !program.ok || !variants.some(variant => variant.enabled)} onClick={() => run(() => appendApprovedVariants(draft.id))}>선택한 변형 추가</button>}
+        {draft.status === 'approved' && <><button disabled={pending || savingSelection || !!selected.error || variantsOutdated || !program.ok || !includedCount} onClick={() => run(() => appendApprovedVariants(draft.id))}>선택한 변형 추가</button><span>포함 {includedCount}개{savingSelection && ' · 저장 중…'}</span></>}
         {variantsOutdated && <p>씨앗 또는 검증 방식이 변경되었습니다. 검토 저장 후 변형을 다시 생성해 주세요.</p>}
         <ul>{variants.map((variant, index) => <li key={`${index}-${variant.stem_md}`}>
-          <label><input type="checkbox" checked={variant.enabled} disabled={pending || variantsLocked || variantsOutdated} onChange={event => run(() => toggleDraftVariant(draft.id, index, event.target.checked))} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
+          <label><input type="checkbox" checked={selected.flags[index] ?? variant.enabled} disabled={pending || variantsLocked || variantsOutdated} onChange={event => { const enabled=event.currentTarget.checked; void selection.toggle(index,enabled); }} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
           <div>{renderMathMarkdown(variant.stem_md)}</div>
           <p>검증한 정답: {'value' in variant.answer_spec ? `${variant.answer_spec.type === 'number' && variant.answer_spec.variable ? variant.answer_spec.variable + variant.answer_spec.relation : ''}${variant.answer_spec.value}` : ''}</p>
         </li>)}</ul>
       </section>
+      {selected.error && <p role="alert">{selected.error}</p>}
       <div className={styles.buttons}>
-        <button disabled={pending || locked || !ability || !(coachConfirmed ? coachValid : program.ok)} onClick={() => run(() => saveDraftReview(reviewValue()))}>검토 저장</button>
+        <button disabled={pending || savingSelection || locked || !ability || !(coachConfirmed ? coachValid : program.ok)} onClick={() => run(() => saveDraftReview(reviewValue()))}>검토 저장</button>
         <button disabled={!allowed} onClick={() => run(() => approve(reviewValue()))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
+        <span aria-live="polite">포함 {includedCount}개{savingSelection && ' · 저장 중…'}</span>
         <button disabled={locked || pending} onClick={() => { setAnswerType('photo'); setCoachConfirmed(false); setSaveImage(true); }}>이미지 문항으로 등록 준비</button>
-        <button disabled={locked || pending} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>
+        <button disabled={locked || pending || savingSelection} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>
       </div>
       {result && <p role="status">{result.error ?? result.message}</p>}
       {draft.status === 'approved' && <EnrichmentCard key={JSON.stringify(draft.enrichment)} draft={draft} />}

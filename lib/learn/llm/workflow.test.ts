@@ -178,6 +178,16 @@ function variantFixture() {
   return { ...memory, id, draft: draft as Row };
 }
 describe('server variants and transactional approval', () => {
+  it('연속 체크 변경을 저장한 뒤 표시 개수와 실제 승인 개수가 일치한다',async()=>{
+    const { VariantSelection }=await import('../variant-selection');
+    const memory=variantFixture();await generateDraftVariants(memory.id);
+    const selection=new VariantSelection((memory.draft.variants as Row[]).map(row=>row.enabled as boolean),(index,enabled)=>toggleDraftVariant(memory.id,index,enabled),()=>{});
+    await Promise.all([selection.toggle(0,false),selection.toggle(1,false),selection.toggle(0,true)]);
+    expect(selection.getSnapshot()).toMatchObject({pending:0,error:null});
+    const included=selection.getSnapshot().flags.filter(Boolean).length;expect(included).toBe(4);
+    expect((memory.draft.variants as Row[]).filter(row=>row.enabled)).toHaveLength(included);
+    expect(await approveDraft({draftId:memory.id,saveImage:false})).not.toHaveProperty('error');expect(memory.rows('learn_items')).toHaveLength(included+1);
+  });
   it('주입 의심 초안은 본문을 수정해도 명시적 코치 확인 없이는 검증 상태를 올릴 수 없다', async () => {
     const memory = variantFixture();
     Object.assign(memory.draft, { extract: { original: { needs_figure: false, injection_suspected: true }, warning: 'injection_suspected' }, status: 'needs_coach', answer_spec: null, answer_verified_by: null });

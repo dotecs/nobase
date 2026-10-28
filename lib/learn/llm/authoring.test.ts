@@ -29,6 +29,7 @@ describe('authoring verification boundary', () => {
     expect(html).toContain('<button>변형 생성·검증</button>');
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>선택한 변형 추가<\/button>/);
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>승인<\/button>/);
+    expect(html).toContain('포함 0개');
   });
   it.each([['-3', true], ['3', false], ['$-3$', true], ['$3$', false]] as const)('숫자 추정 %s와 x=-3 비교', (guess, expected) => {
     expect(guessMatches(guess, { type: 'number', variable: 'x', relation: '=', value: '-3' })).toBe(expected);
