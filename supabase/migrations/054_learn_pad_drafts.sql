@@ -1,5 +1,5 @@
 -- Purpose: learner-owned input pad drafts. Owner update explicitly approved for this table.
--- Application: 미적용, Claude 적용. 작성일 2026-10-28.
+-- Application: applied to production by Claude on 2026-10-28 16:45 KST (Supabase MCP).
 create table public.learn_pad_drafts (
   user_id uuid not null references auth.users(id) on delete cascade,
   session_id uuid not null references public.learn_sessions(id) on delete cascade,
