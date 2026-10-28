@@ -30,3 +30,9 @@
 .emptyBar { width: 60%; border-bottom: 1px dashed var(--color-border); }
 :global([data-theme="dark"]) .reviewBanner { background: color-mix(in srgb, var(--color-warning-700) 15%, transparent); }
 @media(prefers-color-scheme:dark) { :global(:root:not([data-theme="light"])) .reviewBanner { background: color-mix(in srgb, var(--color-warning-700) 15%, transparent); } }
+.results { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-3); }
+.results dt { font-size: var(--text-sm); color: var(--color-text-secondary); }
+.results dd { font-size: var(--text-3xl); font-weight: var(--font-bold); }
+.results small { font-size: var(--text-sm); margin-left: var(--space-1); font-weight: var(--font-normal); }
+.results .date { font-size: var(--text-lg); }
+.badges { display: flex; flex-wrap: wrap; gap: var(--space-2); }
