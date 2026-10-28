@@ -9,7 +9,7 @@ import type { RulePack, RuleContext } from './rules/types';
 import { loadRuleConfigs } from './rules/config';
 export type Learner = Database['public']['Tables']['learn_learners']['Row'];
 export type Session = Database['public']['Tables']['learn_sessions']['Row'];
-export type AttemptRow = Database['public']['Tables']['learn_attempts']['Row'];
+export type AttemptRow = Database['public']['Tables']['learn_attempts']['Row'] & { steps?: string[] | null };
 export type StateRow = Database['public']['Tables']['learn_ability_states']['Row'];
 export const json = (value: unknown) => value as Json;
 export function stableId(value: string) { const hash = createHash('sha256').update(value).digest('hex'); return `${hash.slice(0,8)}-${hash.slice(8,12)}-4${hash.slice(13,16)}-8${hash.slice(17,20)}-${hash.slice(20,32)}`; }

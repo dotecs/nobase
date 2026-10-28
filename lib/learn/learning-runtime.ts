@@ -82,6 +82,7 @@ export async function submitLearningRuntime(input:unknown) {
     return schedule.id&&status!==schedule.status&&status!=='due'?[{id:schedule.id,status}]:[];
   });
   const outcome=learningOutcome(session.plan,item,grade.result);
+  if(stepCheck)outcome.feedback.step_check=stepCheck;
   await recordAttempt({user_id:user.id,session_id:session.id,idempotency_key:key,attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage,answer_input:json(value.answer),result:grade.result,steps:value.steps??null,auto_grade:json({...grade.auto_grade,...(stepCheck?{step_check:stepCheck}:{}),state_trace:transition.trace,review_trace:reviewed?.trace??null}),hints_used:plan.current.hints_used,photo_path:value.photoPath,duration_ms:value.durationMs,rule_version:json(config.rule_version)},state:{...after,evidence:json(after.evidence),rule_version:json(config.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify({state:transition.trace,review:reviewed?.trace??null,before,after}),rule_version:json(config.rule_version)},reviews,review_updates:updates,session_plan_append:json(outcome.append),learner_status:null});
   await closeLearningSession(await sessionRow(session.id,user.id));
 }

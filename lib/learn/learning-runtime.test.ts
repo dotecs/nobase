@@ -19,6 +19,7 @@ describe('learning runtime',()=>{
     await r.submitLearningRuntime(input);await r.submitLearningRuntime(input);
     expect(db.rows('learn_attempts')).toHaveLength(1);
     expect(db.rows('learn_attempts')[0]).toMatchObject({result:'correct_independent',steps:['3','1'],auto_grade:{step_check:{checked:2,first_error_index:0}}});
+    expect(await r.learningView(id)).toMatchObject({feedback:{result:'correct_independent',step_check:{checked:2,first_error_index:0}}});
   });
   it('two sessions verify one ability, save three reviews and versioned traces',async()=>{
     (db.rows('learn_rule_configs').find(row=>row.key==='session')!.config as {items_per_session:number}).items_per_session=1;
