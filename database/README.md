@@ -181,4 +181,4 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2026-10-27 적용 기록(Claude, MCP `apply_migration`)**: 운영(nobase911)에 `046_learn_runtime` → `047_learn_record_attempt` → `048_learn_record_coach_action` 순서로 적용. 본문은 레포 파일과 동일하되 `begin;`/`commit;` 줄만 제거(도구가 자체 트랜잭션으로 실행). 적용 후 확인: 테이블 8·뷰 1·RPC 2(service_role만 실행)·멱등 컬럼 3·설정 키 5·버킷 `learn-evidence`·append-only 3개 테이블에 UPDATE/DELETE 정책 0. 이번 3건은 `supabase_migrations.schema_migrations`에도 기록됨.
 - **2026-10-27 적용 기록(Claude, MCP)**: `049_learn_session_rules` 운영 적용(설정 `session` v2, 진행 중 세션 1개 제한 인덱스). 이로써 040~049 전부 운영 적용 완료.
 
-- **2026-10-28 작성**: `053_learn_attempt_steps.sql`·`055_learn_record_attempt_steps.sql` — 미적용, Claude 적용. 050 이후 **053 → 055** 순서. 선택 풀이 단계 컬럼과 저장만 추가, 054는 2단계용으로 비움.
+- **2026-10-28 작성·적용 기록(Claude)**: `053_learn_attempt_steps.sql`·`055_learn_record_attempt_steps.sql` — 2026-10-28 15:35 KST Claude가 Supabase MCP로 운영 적용(053 → 055). 050 이후 **053 → 055** 순서. 선택 풀이 단계 컬럼과 저장만 추가, 054는 2단계용으로 비움.

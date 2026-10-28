@@ -1,5 +1,5 @@
 -- Purpose: persist optional attempt steps. 050 이후 적용 (053 컬럼 추가 후).
--- Application: 미적용, Claude 적용. 작성일 2026-10-28.
+-- Application: applied to production by Claude on 2026-10-28 15:36 KST (Supabase MCP), after 053.
 create or replace function public.learn_record_attempt(p_payload jsonb) returns uuid
 language plpgsql security invoker set search_path = public, pg_temp as $$
 declare
