@@ -38,7 +38,7 @@ export async function processExtraction(job: Job, client: Client, provider: LlmP
   signal.throwIfAborted();
   const bytes = Buffer.from(await file.arrayBuffer());
   const jpeg = await sharp(bytes, { limitInputPixels: 40_000_000 }).rotate().resize({ width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 90 }).toBuffer();
-  const abilityResult = await client.from('learn_abilities').select('id,name').eq('pack_id', 'root-math').abortSignal(signal);
+  const abilityResult = await client.from('learn_abilities').select('id,name,action').eq('pack_id', 'root-math').abortSignal(signal);
   if (abilityResult.error || !abilityResult.data?.length) throw new Error('Import root-math pack first');
   const drafts = await extractDrafts(source.id, { base64: jpeg.toString('base64'), mediaType: 'image/jpeg', signal }, provider, abilityResult.data as Ability[]);
   signal.throwIfAborted();

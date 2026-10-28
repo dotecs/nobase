@@ -12,7 +12,7 @@ import type { Database, Json } from '@/lib/database.types';
 
 export type Draft = Database['public']['Tables']['learn_item_drafts']['Row'];
 export type Source = Database['public']['Tables']['learn_item_sources']['Row'];
-export type Ability = { id: string; name: string };
+export type Ability = { id: string; name: string; action?: string };
 export function suggestAbilities(item: ExtractedItemValue, abilities: Ability[]) {
   const hint = item.unit_hint ?? '';
   const exact = abilities.filter(row => row.id === hint || (hint.length > 1 && row.name.includes(hint))).map(row => row.id);
@@ -45,21 +45,32 @@ export function guessMatches(guess: string, answer: AnswerSpecValue) {
 }
 export async function extractDrafts(sourceId: string, image: unknown, provider: LlmProvider, abilities: Ability[]) {
   const { items } = Extraction.parse({ items: await provider.extractItemsFromImage(image) });
-  return items.map((item, index) => {
+  return Promise.all(items.map(async (item, index) => {
     if (item.injection_suspected) item.answer_guess = null;
     const solved = item.needs_figure || item.injection_suspected ? { ok: false as const, reason: 'unsupported' } : solveItem(item.stem_md, item.answer_type);
-    const candidates = suggestAbilities(item, abilities);
+    const rule = suggestAbilities(item, abilities);
+    let candidates = rule;
+    let abilityId: string | null = candidates[0] ?? null;
+    let classifier: Record<string, Json> | undefined;
+    if(provider.classifier) {
+      try {
+        const result=await provider.classifier.classify({stem_md:item.stem_md,abilities:abilities.map(row=>({id:row.id,name:row.name,action:row.action!}))});
+        classifier={provider:'typesafe',model:result.model,choice:result.choice,confidence:result.confidence,top2:result.top2,input_tokens:result.input_tokens,latency_ms:result.latency_ms,error:null};
+        candidates=[...new Set([...result.top2.map(row=>row.id),...rule])].slice(0,2);
+        abilityId=result.confidence>=provider.classifier.auto_threshold?result.choice:null;
+      } catch(error) {classifier={error:error instanceof Error?error.message:'Classification failed'};}
+    }
     const hash = createHash('sha256').update(`${sourceId}/${index}`).digest('hex');
     const id = `${hash.slice(0, 8)}-${hash.slice(8, 12)}-4${hash.slice(13, 16)}-8${hash.slice(17, 20)}-${hash.slice(20, 32)}`;
     return {
       id, source_id: sourceId, crop: item.figure_bbox ?? null,
-      extract: { original: item, warning: item.injection_suspected ? 'injection_suspected' : solved.ok && item.answer_guess && !guessMatches(item.answer_guess, solved.answer_spec) ? 'llm_mismatch' : null } as Json,
+      extract: { original: item, rule, ...(classifier?{classifier}:{}), warning: item.injection_suspected ? 'injection_suspected' : solved.ok && item.answer_guess && !guessMatches(item.answer_guess, solved.answer_spec) ? 'llm_mismatch' : null } as Json,
       stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: solved.ok ? solved.answer_spec as Json : null,
-      answer_verified_by: solved.ok ? 'program' : null, ability_candidates: candidates, ability_id: candidates[0] ?? null,
+      answer_verified_by: solved.ok ? 'program' : null, ability_candidates: candidates, ability_id: abilityId,
       usage_suggested: 'assessment', status: solved.ok ? 'extracted' : 'needs_coach',
       provider: provider.name, model_id: provider.modelId, prompt_version: 'item_extract.v2', is_mock: provider.isMock,
     } satisfies Database['public']['Tables']['learn_item_drafts']['Insert'];
-  });
+  }));
 }
 export const ApprovalInput = z.object({
   draftId: z.uuid(), stem_md: z.string().min(1).max(12000), answer_type: z.enum(['number', 'fraction', 'expression', 'choice', 'photo', 'text']),

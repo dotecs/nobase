@@ -29,7 +29,15 @@ export async function createProvider(task: string): Promise<LlmProvider> {
   if (result.error) throw result.error;
   const config = ((result.data as { config: LlmConfig } | null)?.config ?? {});
   const name = selectProvider(task, config, { openai: process.env.OPENAI_API_KEY, anthropic: process.env.ANTHROPIC_API_KEY });
-  if (name === 'mock') { const { MockProvider } = await import('./mock'); return new MockProvider(); }
-  if (name === 'openai') { const { OpenAIProvider } = await import('./openai'); return new OpenAIProvider(config.models?.openai); }
-  const { AnthropicProvider } = await import('./anthropic'); return new AnthropicProvider(config.models?.anthropic);
+  const attach = async (provider:LlmProvider) => {
+    if(task==='item_extract') {
+      const { configuredClassifier }=await import('./classifier');
+      try {provider.classifier=configuredClassifier(config.classifier);}
+      catch(error){provider.classifier={auto_threshold:1,classify:async()=>{throw error;}};}
+    }
+    return provider;
+  };
+  if (name === 'mock') { const { MockProvider } = await import('./mock'); return attach(new MockProvider()); }
+  if (name === 'openai') { const { OpenAIProvider } = await import('./openai'); return attach(new OpenAIProvider(config.models?.openai)); }
+  const { AnthropicProvider } = await import('./anthropic'); return attach(new AnthropicProvider(config.models?.anthropic));
 }
