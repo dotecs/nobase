@@ -4,7 +4,7 @@ import { AnswerSpec, type AnswerSpecValue } from '../answer-spec';
 import { ItemsFile } from '../pack-schema';
 import { normalizeStem, solveItem } from '../mathcheck/solve';
 import { Rational } from '../mathcheck/rational';
-import { parseMath } from '../mathcheck/parse';
+import { parseMath, type Expr } from '../mathcheck/parse';
 import { equivalent } from '../mathcheck/evaluate';
 import { Extraction, type ExtractedItemValue } from './schema';
 import type { LlmProvider } from './provider';
@@ -17,8 +17,18 @@ export function suggestAbilities(item: ExtractedItemValue, abilities: Ability[])
   const hint = item.unit_hint ?? '';
   const exact = abilities.filter(row => row.id === hint || (hint.length > 1 && row.name.includes(hint))).map(row => row.id);
   const text = item.stem_md;
+  let priority: string[] = [];
+  try {
+    const normalized = normalizeStem(text);
+    if (/^[a-z]\s*=\s*[+-]?\d+(?:\.\d+)?(?:\/[+-]?\d+)?\s*(?:;|일\s*때)/.test(normalized)) priority = ['02-5'];
+    else {
+      const parsed = parseMath(normalized);
+      const denominator = (expr: Expr): boolean => expr.kind === 'binary' ? expr.op === '/' || denominator(expr.left) || denominator(expr.right) : expr.kind === 'neg' && denominator(expr.value);
+      if (parsed.relation === '=' && parsed.right && denominator(parsed.left) && denominator(parsed.right)) priority = ['05-4'];
+    }
+  } catch { /* Unsupported notation retains the broad classification below. */ }
   const rule = /[<>≤≥]|\\(?:le|ge)/.test(text) ? ['06-3', '06-2'] : /=/.test(text) ? ['05-3', '05-4'] : /\\frac|\//.test(text) ? ['04-3', '04-5'] : /[a-z]/.test(text.replace(/\\[a-z]+/g, '')) ? ['03-1', '02-4'] : ['01-4', '01-3'];
-  return [...new Set([...exact, ...rule])].filter(id => abilities.some(row => row.id === id)).slice(0, 2);
+  return [...new Set([...priority, ...exact, ...rule])].filter(id => abilities.some(row => row.id === id)).slice(0, 2);
 }
 export function guessMatches(guess: string, answer: AnswerSpecValue) {
   try {

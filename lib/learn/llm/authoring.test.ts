@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockProvider } from './mock';
-import { extractDrafts, prepareApproval, guessMatches } from './authoring';
+import { extractDrafts, prepareApproval, guessMatches, suggestAbilities } from './authoring';
 import { selectProvider } from './provider';
 import { Extraction } from './schema';
 import { verifyEnrichment } from './enrichment';
@@ -18,6 +18,9 @@ vi.mock('@/app/(admin)/admin/learn/authoring/actions', () => ({ registerSource: 
 const abilities = [{ id: '04-3', name: '분수 덧셈' }, { id: '04-5', name: '분수 나눗셈' }];
 const id = '00000000-0000-4000-8000-000000000001';
 describe('authoring verification boundary', () => {
+  it.each([['문제. $x=-2$일 때, 다음 식의 값을 구하시오. $3x+5$','02-5'],['x=3일 때 2x+1','02-5'],['$\\frac{x}{2}=\\frac{3}{4}$','05-4'],['x/2=3/4','05-4']] as const)('분류 우선 규칙: %s', (stem_md,expected)=>{
+    expect(suggestAbilities({stem_md,answer_type:'number',needs_figure:false,injection_suspected:false,unit_hint:'05-3'},['02-5','05-3','05-4'].map(id=>({id,name:id})))[0]).toBe(expected);
+  });
   it('승인된 프로그램 검증 초안은 변형 생성 가능, 씨앗 재승인은 불가', async () => {
     const [extracted] = await extractDrafts(id, {}, new MockProvider(), abilities);
     const { ReviewCard } = await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');
