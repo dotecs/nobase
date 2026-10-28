@@ -1,3 +1,4 @@
+import { readDiagnosticPlan } from '@/lib/learn/diagnostic-session';
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/supabase-server';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -19,6 +20,8 @@ export default async function PadPage() {
     const view=session.kind==='diagnostic'?await diagnosticView():await learningView(session.id);
     if(!view||view.complete)return <PadEmpty/>;
     const saved=await readPadDraftRuntime({sessionId:view.sessionId,planIndex:view.planIndex});
-    return <PadClient key={`${view.sessionId}:${view.planIndex}`} {...view} kind={session.kind} current={'queueIndex' in view&&typeof view.queueIndex==='number'?view.queueIndex+1:view.planIndex+1} total={'total' in view&&typeof view.total==='number'?view.total:undefined} initialDraft={saved.draft}/>;
+    const diagnostic=session.kind==='diagnostic'?readDiagnosticPlan(session.plan):null;
+    const total=diagnostic?diagnostic.meta.base.length+diagnostic.current.followups:'total' in view&&typeof view.total==='number'?view.total:undefined;
+    return <PadClient key={`${view.sessionId}:${view.planIndex}`} {...view} kind={session.kind} current={'queueIndex' in view&&typeof view.queueIndex==='number'?view.queueIndex+1:view.planIndex+1} total={total} initialDraft={saved.draft}/>;
   }catch(error){return <FocusShell title="입력 패드"><p role="alert">{runtimeError(error,'pad')}</p></FocusShell>;}
 }

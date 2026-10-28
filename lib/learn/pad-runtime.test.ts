@@ -26,4 +26,11 @@ describe('pad draft ownership and limits',()=>{
     await expect(r.savePadDraftRuntime({...input,planIndex:1})).rejects.toThrow('진행 상태');
   });
   it('rejects foreign photo paths',async()=>{const input=await setup();await expect((await import('./pad-runtime')).savePadDraftRuntime({...input,draft:{...input.draft,photo_path:'other/attempts/p.png'}})).rejects.toThrow('사진 경로');});
+  it('returns changed plan index and closed state without needing a saved draft',async()=>{
+    const input=await setup(),r=await import('./pad-runtime'),session=db.rows('learn_sessions')[0];
+    const plan=session.plan as {type:string;plan_index?:number}[];plan[1].plan_index=1;
+    expect(await r.readPadDraftRuntime(input)).toMatchObject({plan_index:1,ended:false,draft:null});session.ended_at=new Date().toISOString();
+    expect(await r.readPadDraftRuntime(input)).toMatchObject({ended:true});
+    await expect(r.savePadDraftRuntime({...input,planIndex:1})).rejects.toThrow('진행 상태');
+  });
 });

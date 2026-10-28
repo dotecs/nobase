@@ -1,5 +1,8 @@
 'use client';
 import { StepInput,nonemptySteps } from '@/components/learn/StepInput';
+import { usePadSync } from '@/components/learn/usePadSync';
+import { PadReceiver,usePadReceiver } from '@/components/learn/PadReceiver';
+import { photoPromptRequired } from '@/lib/learn/steps-photo';
 import Button from '@/components/Button/Button';
 import { useEffect,useRef,useState,useTransition } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,11 +16,18 @@ import { FeedbackPanel } from '@/components/learn/FeedbackPanel';
 import { FocusShell } from '@/components/learn/FocusShell';
 import { submissionHelp } from '@/components/learn/submission-help';
 import styles from '../../learn.module.css';
-export function LearningClient({userId,sessionId,planIndex,queueIndex,total,item,photo_required,deadline,feedback,kind}:{userId:string;sessionId:string;planIndex:number;queueIndex:number;total:number;item:StudentItem;photo_required:boolean;deadline:string;feedback:Feedback|null;kind?:string}){
+export function LearningClient({userId,sessionId,planIndex,queueIndex,total,item,photo_required,steps_photo_min_lines,deadline,feedback,kind}:{userId:string;sessionId:string;planIndex:number;queueIndex:number;total:number;item:StudentItem;photo_required:boolean;steps_photo_min_lines?:number|null;deadline:string;feedback:Feedback|null;kind?:string}){
   const [answer,setAnswer]=useState<AnswerValue>(item.answer_type==='choice'?[]:''),[photo,setPhoto]=useState<string|null>(null),[error,setError]=useState(''),[pending,start]=useTransition(),[remaining,setRemaining]=useState<number|null>(null);
   const [steps,setSteps]=useState<string[]>([]);
   const router=useRouter(),started=useRef(0),expired=useRef(false);
   useEffect(()=>{started.current=Date.now();const tick=()=>{const left=Math.max(0,Date.parse(deadline)-Date.now());setRemaining(Math.ceil(left/1000));if(!left&&!expired.current){expired.current=true;start(async()=>{const result=await expireSession(sessionId);if(result.error)setError(result.error);else router.refresh();});}};tick();const timer=setInterval(tick,1000);return()=>clearInterval(timer);},[deadline,sessionId,router]);
-  const help=submissionHelp(item.answer_type,answer,photo_required,photo,nonemptySteps(steps));
-  return <FocusShell title={kind==='review'?'오늘의 복습':'오늘의 학습'} current={queueIndex+1} total={total} remaining={remaining}><FeedbackPanel feedback={feedback} currentPlanIndex={planIndex}/><section className={styles.card}><div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>{feedback?.can_retry&&<p className={styles.help}>다시 풀기</p>}<StepInput value={steps} onChange={setSteps} onCopy={setAnswer} disabled={pending||remaining===0}/><AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={setAnswer} disabled={pending||remaining===0}/><PhotoCapture userId={userId} required={photo_required} onChange={setPhoto} disabled={pending||remaining===0}/><Button variant="primary" size="lg" fullWidth disabled={pending||remaining===0||!!help} onClick={()=>start(async()=>{setError('');const result=await submitLearningAttempt({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>{help&&<p className={styles.help}>{help}</p>}{error&&<p role="alert">{error}</p>}</section></FocusShell>;
+  const latestInput=useRef({answer,steps,photo_path:photo});latestInput.current={answer,steps,photo_path:photo};
+  const receiver=usePadReceiver();
+  const sync=usePadSync({sessionId,planIndex,source:'screen',enabled:receiver.enabled,onDraft:draft=>{setAnswer(draft.answer);setSteps(draft.steps);setPhoto(draft.photo_path);}});
+  const changeAnswer=(value:AnswerValue)=>{setAnswer(value);sync.edit({...latestInput.current,answer:value,source:'screen'});};
+  const changeSteps=(value:string[])=>{setSteps(value);sync.edit({...latestInput.current,steps:value,source:'screen'});};
+  const changePhoto=(value:string|null)=>{setPhoto(value);sync.edit({...latestInput.current,photo_path:value,source:'screen'});};
+  const photoRequired=photoPromptRequired(photo_required,steps_photo_min_lines,steps);
+  const help=submissionHelp(item.answer_type,answer,photoRequired,photo,nonemptySteps(steps));
+  return <FocusShell title={kind==='review'?'오늘의 복습':'오늘의 학습'} current={queueIndex+1} total={total} remaining={remaining} toolbar={<PadReceiver enabled={receiver.enabled} onToggle={receiver.toggle} status={sync.status}/>}><FeedbackPanel feedback={feedback} currentPlanIndex={planIndex}/><section className={styles.card}><div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>{feedback?.can_retry&&<p className={styles.help}>다시 풀기</p>}<StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={pending||remaining===0}/><AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={changeAnswer} disabled={pending||remaining===0}/><PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={pending||remaining===0}/><Button variant="primary" size="lg" fullWidth disabled={pending||remaining===0||!!help} onClick={()=>start(async()=>{setError('');await sync.flush();const result=await submitLearningAttempt({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>{help&&<p className={styles.help}>{help}</p>}{(error||sync.error)&&<p role="alert">{error||sync.error}</p>}</section></FocusShell>;
 }

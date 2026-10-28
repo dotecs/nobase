@@ -4,7 +4,7 @@ import { requireLearner, sessionRow, type Session } from './runtime';
 import { readDiagnosticPlan } from './diagnostic-session';
 import { readLearningPlan } from './learning-session';
 import { LearnUserError } from './errors';
-import { padAddressSchema, savePadSchema, type SavedPadDraft, type PadSnapshot } from './pad-draft';
+import { padAddressSchema, savePadSchema, padDraftSchema, type SavedPadDraft, type PadSnapshot } from './pad-draft';
 
 export function padProgress(session:Session) {
   const plan=session.kind==='diagnostic'?readDiagnosticPlan(session.plan):readLearningPlan(session.plan);
@@ -27,5 +27,5 @@ export async function readPadDraftRuntime(input:unknown):Promise<PadSnapshot> {
   const result=await createAdminSupabaseClient().from('learn_pad_drafts' as never).select('draft,updated_at').eq('user_id',user.id).eq('session_id',value.sessionId).eq('plan_index',value.planIndex).maybeSingle();
   if(result.error)throw result.error;
   const saved=result.data as SavedPadDraft|null;
-  return {...progress,draft:saved?.draft??null,updated_at:saved?.updated_at??null};
+  return {...progress,draft:saved?padDraftSchema.parse(saved.draft):null,updated_at:saved?.updated_at??null};
 }

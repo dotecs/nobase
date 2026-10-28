@@ -1,3 +1,4 @@
+import { requiresPhoto,stepsPhotoMinimum } from './steps-photo';
 import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
 import { attemptedItemIds } from './runtime';
@@ -42,8 +43,9 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   const itemResult=await client.from('learn_items').select('*').eq('id',current.item.item_id).eq('version',current.item.item_version).in('status',['reviewed','live']).single();if(itemResult.error)throw itemResult.error;
   const item=itemResult.data as unknown as LearnItem;
   if(item.ability_id!==current.item.ability_id)throw new Error('진단 문항이 일치하지 않습니다.');
+  const stepCheck=steps?.length?checkSteps(item.stem_md,item.answer_type,steps):null;
   if(!expired) {
-    const required=meta.config.configs.evidence.photo_required_usages.includes(current.item.kind)||item.answer_type==='photo';
+    const required=requiresPhoto(meta.config.configs.evidence.photo_required_usages.includes(current.item.kind)||item.answer_type==='photo',meta.config.configs.evidence,stepCheck);
     if(required&&!photoPath)throw new LearnUserError('풀이 사진을 첨부해 주세요.');
     if(photoPath) {
       if(!photoPath.startsWith(`${session.user_id}/attempts/`)||photoPath.includes('..'))throw new Error('잘못된 사진 경로');
@@ -54,7 +56,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   const learner=await learnerRow(session.user_id), solver=meta.config.configs.solvers.by_pack[learner.pack_id]??meta.config.configs.solvers.default;
   const grade=expired?{result:'no_response' as const,auto_grade:{solver,trace:{rule:'diagnostic_timeout',rule_version:{diagnostic:meta.config.rule_version.diagnostic}}}}:gradeAttempt(item,input,0,solver,meta.config);
   if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
-  const stepCheck=steps?.length?checkSteps(item.stem_md,item.answer_type,steps):null;
+
   const now=new Date().toISOString(), incoming:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage:'diagnostic',at:now,session_id:session.id};
   const items=await loadLearnItems(meta.pack.abilities.map(row=>row.id));
   const attempted_item_ids=await attemptedItemIds(session.user_id,{excludeSessionId:session.id});
@@ -100,5 +102,5 @@ export async function diagnosticView() {
   if(session.ended_at)return null;
   const itemResult=await client.from('learn_items').select('*').eq('id',current.item.item_id).eq('version',current.item.item_version).in('status',['reviewed','live']).single();if(itemResult.error)throw itemResult.error;
   const item=itemResult.data as unknown as LearnItem;
-  return {complete:false as const,userId:user.id,sessionId:session.id,planIndex:current.plan_index,item:toStudentItem(item),photo_required:meta.config.configs.evidence.photo_required_usages.includes('diagnostic')||item.answer_type==='photo',deadline:new Date(Date.parse(session.started_at)+meta.config.configs.diagnostic.time_limit_min*MINUTE_MS).toISOString()};
+  return {complete:false as const,userId:user.id,sessionId:session.id,planIndex:current.plan_index,item:toStudentItem(item),steps_photo_min_lines:stepsPhotoMinimum(meta.config.configs.evidence),photo_required:meta.config.configs.evidence.photo_required_usages.includes('diagnostic')||item.answer_type==='photo',deadline:new Date(Date.parse(session.started_at)+meta.config.configs.diagnostic.time_limit_min*MINUTE_MS).toISOString()};
 }

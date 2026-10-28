@@ -2,6 +2,7 @@ import { describe,it,expect,vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PadEmpty } from '@/app/(main)/learn/pad/PadEmpty';
 import { shouldEnterPad,PadModeCard } from '@/components/learn/PadModeCard';
+import { PhotoCapture } from '@/components/learn/PhotoCapture';
 vi.mock('next/navigation',()=>({useRouter:()=>({push:vi.fn(),replace:vi.fn()})}));
 describe('pad entry',()=>{
   it('enters only on narrow screen with an open session and preference',()=>{
@@ -13,5 +14,9 @@ describe('pad entry',()=>{
   it('shows an entry card only for an open session',()=>{
     expect(renderToStaticMarkup(<PadModeCard hasOpenSession={false}/>)).toBe('');
     expect(renderToStaticMarkup(<PadModeCard hasOpenSession/>)).toContain('이 폰을 입력 패드로 쓰기');
+  });
+  it('shared photo input reflects a remotely synced path',()=>{
+    expect(renderToStaticMarkup(<PhotoCapture userId="u" required value="u/attempts/p.png" onChange={()=>{}}/>)).toContain('✓ 올렸어요');
+    expect(renderToStaticMarkup(<PhotoCapture userId="u" required value={null} onChange={()=>{}}/>)).not.toContain('✓ 올렸어요');
   });
 });

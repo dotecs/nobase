@@ -184,3 +184,5 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2026-10-28 작성·적용 기록(Claude)**: `053_learn_attempt_steps.sql`·`055_learn_record_attempt_steps.sql` — 2026-10-28 15:35 KST Claude가 Supabase MCP로 운영 적용(053 → 055). 050 이후 **053 → 055** 순서. 선택 풀이 단계 컬럼과 저장만 추가, 054는 2단계용으로 비움.
 
 - **2026-10-28 작성**: `054_learn_pad_drafts.sql` — 미적용, Claude 적용. 패드 초안용 테이블에만 대표 승인으로 본인 SELECT·INSERT·UPDATE 정책 허용.
+
+- **2026-10-28 작성**: `056_learn_steps_photo_config.sql` — 미적용, Claude 적용. 최신 evidence 설정을 보존한 v5에 `steps_replace_photo: false`, `steps_min_lines: 2` 추가. 현재는 사진 필수 조건 유지.

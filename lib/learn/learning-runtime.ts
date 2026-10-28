@@ -1,3 +1,4 @@
+import { requiresPhoto,stepsPhotoMinimum } from './steps-photo';
 import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
 import { attemptedItemIds } from './runtime';
@@ -61,10 +62,11 @@ export async function submitLearningRuntime(input:unknown) {
   const client=createAdminSupabaseClient(),itemResult=await client.from('learn_items').select('*').eq('id',value.itemId).eq('version',plan.current.item.item_version).in('status',['reviewed','live']).single();if(itemResult.error)throw itemResult.error;
   const item=itemResult.data as unknown as LearnItem,config=plan.meta.config;
   const usage=plan.current.item.kind==='review'?'review':item.usage;
-  await validatePhoto(user.id,value.photoPath,config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo');
+  const stepCheck=value.steps?.length?checkSteps(item.stem_md,item.answer_type,value.steps):null;
+  await validatePhoto(user.id,value.photoPath,requiresPhoto(config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',config.configs.evidence,stepCheck));
   const solver=config.configs.solvers.by_pack[plan.meta.pack_id]??config.configs.solvers.default;
   const grade=gradeAttempt(item,value.answer,Math.max(plan.current.hints_used,plan.current.retries_used),solver,config);if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
-  const stepCheck=value.steps?.length?checkSteps(item.stem_md,item.answer_type,value.steps):null;
+
   const stateResult=await client.from('learn_ability_states').select('*').eq('user_id',user.id).eq('ability_id',item.ability_id).maybeSingle();if(stateResult.error)throw stateResult.error;
   const row=stateResult.data as unknown as StateRow|null,before:State=row?{ability_id:row.ability_id,state:row.state,evidence:row.evidence as unknown as Evidence}:{ability_id:item.ability_id,state:'unknown',evidence:emptyEvidence()};
   const attempt:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage,at:new Date().toISOString()};
@@ -93,5 +95,5 @@ export async function learningView(id:string) {
   if(session.ended_at)return {complete:true as const,kind:session.kind,summary:session.summary,feedback:plan.feedback};
   const result=await createAdminSupabaseClient().from('learn_items').select('*').eq('id',plan.current.item.item_id).eq('version',plan.current.item.item_version).in('status',['reviewed','live']).single();if(result.error)throw result.error;
   const item=result.data as unknown as LearnItem,usage=plan.current.item.kind==='review'?'review':item.usage;
-  return {complete:false as const,kind:session.kind,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.current.queue_index,total:plan.meta.queue.length,item:toStudentItem(item),deadline,photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
+  return {complete:false as const,kind:session.kind,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.current.queue_index,total:plan.meta.queue.length,item:toStudentItem(item),deadline,steps_photo_min_lines:stepsPhotoMinimum(plan.meta.config.configs.evidence),photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
 }
