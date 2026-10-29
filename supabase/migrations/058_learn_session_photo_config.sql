@@ -1,5 +1,5 @@
 -- Purpose: evidence v6, session-level photo requirements (v5 preserved).
--- Application: 미적용, Claude 적용. 작성일 2026-10-29.
+-- Application: applied to production by Claude on 2026-10-29 11:13 KST (Supabase MCP).
 insert into public.learn_rule_configs(key,version,config)
 select 'evidence',6,config || '{"photo_required_usages":[],"session_photo":{"diagnostic":"required","learning":"optional","review":"optional"}}'::jsonb
 from public.learn_rule_configs where key='evidence' and version=5

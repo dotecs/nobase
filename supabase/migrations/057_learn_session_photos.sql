@@ -1,5 +1,5 @@
 -- Purpose: immutable session photos and atomic service-role-only append (approved).
--- Application: 미적용, Claude 적용. 작성일 2026-10-29.
+-- Application: applied to production by Claude on 2026-10-29 11:13 KST (Supabase MCP).
 create table public.learn_session_photos (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references public.learn_sessions(id) on delete cascade,
