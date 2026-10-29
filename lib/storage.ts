@@ -1,3 +1,4 @@
+import { resizeLearnPhoto } from './learn/photo-resize';
 import * as tus from 'tus-js-client'
 import { createClientSupabaseClient } from './supabase-client'
 
@@ -403,9 +404,11 @@ export async function uploadQAAttachment(
 }
 
 export async function uploadAttemptPhoto(userId: string, file: File): Promise<{ storagePath: string | null; error: Error | null }> {
-  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type) || file.size > 10 * 1024 * 1024 || file.size === 0) {
-    return { storagePath: null, error: new Error('JPEG·PNG·WebP·HEIC 이미지(10MB 이하)를 선택해 주세요.') }
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type) || file.size === 0) {
+    return { storagePath: null, error: new Error('JPEG·PNG·WebP·HEIC 이미지를 선택해 주세요.') }
   }
+  file = await resizeLearnPhoto(file)
+  if (file.size > 8 * 1024 * 1024) return { storagePath: null, error: new Error('사진 용량이 커요. 다시 찍어 주세요.') }
   const client = createClientSupabaseClient()
   const { data: { user }, error: authError } = await client.auth.getUser()
   if (authError || user?.id !== userId) return { storagePath: null, error: new Error('로그인 정보를 확인해 주세요.') }
@@ -415,10 +418,12 @@ export async function uploadAttemptPhoto(userId: string, file: File): Promise<{ 
 }
 
 export async function uploadSessionPhoto(userId: string, sessionId: string, file: File): Promise<{ storagePath: string | null; error: Error | null }> {
-  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type) || file.size > 10 * 1024 * 1024 || file.size === 0) {
-    return { storagePath: null, error: new Error('JPEG·PNG·WebP·HEIC 이미지(10MB 이하)를 선택해 주세요.') }
+  if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type) || file.size === 0) {
+    return { storagePath: null, error: new Error('JPEG·PNG·WebP·HEIC 이미지를 선택해 주세요.') }
   }
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) return { storagePath: null, error: new Error('세션 정보를 확인해 주세요.') }
+  file = await resizeLearnPhoto(file)
+  if (file.size > 8 * 1024 * 1024) return { storagePath: null, error: new Error('사진 용량이 커요. 다시 찍어 주세요.') }
   const client = createClientSupabaseClient()
   const { data: { user }, error: authError } = await client.auth.getUser()
   if (authError || user?.id !== userId) return { storagePath: null, error: new Error('로그인 정보를 확인해 주세요.') }

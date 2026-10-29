@@ -18,3 +18,6 @@ export async function readPadDraft(input:unknown) {try{return await readPadDraft
 
 import { addSessionPhotoRuntime } from '@/lib/learn/session-photos';
 export async function addSessionPhoto(input:unknown) {try{const photos=await addSessionPhotoRuntime(input);revalidatePath('/learn','layout');revalidatePath('/admin/learn/learners','layout');return {photos};}catch(error){return {error:runtimeError(error,'addSessionPhoto')};}}
+
+import { signedSessionPhotoUrlRuntime } from '@/lib/learn/session-photos';
+export async function signedSessionPhotoUrl(photoId:string) {try{return {url:await signedSessionPhotoUrlRuntime(photoId)};}catch(error){return {error:runtimeError(error,'signedSessionPhotoUrl')};}}

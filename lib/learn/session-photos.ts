@@ -39,3 +39,14 @@ export async function addSessionPhotoRuntime(input:unknown) {
   if(result.error){if(result.error.message==='사진은 4장까지 올릴 수 있어요')throw new LearnUserError(result.error.message);throw result.error;}
   return sessionPhotos(session.id);
 }
+
+export async function signedSessionPhotoUrlRuntime(photoId:string) {
+ z.uuid().parse(photoId);
+ const auth=await createServerSupabaseClient(),{data:{user}}=await auth.auth.getUser();if(!user)throw new LearnUserError('로그인이 필요합니다.');
+ const client=createAdminSupabaseClient(),result=await client.from('learn_session_photos' as never).select('*').eq('id',photoId).single();if(result.error)throw result.error;
+ const photo=result.data as Omit<SessionPhoto,'url'>;
+ if(photo.user_id!==user.id)await requireCoach();
+ const session=await client.from('learn_sessions').select('user_id').eq('id',photo.session_id).single();if(session.error)throw session.error;
+ if((session.data as {user_id:string}).user_id!==photo.user_id||!photo.path.startsWith(photo.user_id+'/sessions/'+photo.session_id+'/')||photo.path.includes('..'))throw new Error('잘못된 세션 사진 경로');
+ const signed=await client.storage.from('learn-evidence').createSignedUrl(photo.path,300);if(signed.error)throw signed.error;return signed.data.signedUrl;
+}

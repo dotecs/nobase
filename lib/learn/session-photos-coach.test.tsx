@@ -1,7 +1,7 @@
 import { describe,it,expect,vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 vi.mock('next/navigation',()=>({useRouter:()=>({refresh:vi.fn()})}));
-vi.mock('@/app/(main)/learn/actions',()=>({}));
+vi.mock('@/app/(main)/learn/actions',()=>({signedSessionPhotoUrl:vi.fn()}));
 import { CoachSessionHeader } from '@/components/learn/CoachSessionHeader';
 import { CoachGateControls } from '@/app/(admin)/admin/learn/learners/CoachControls';
 describe('coach session photo evidence',()=>{
