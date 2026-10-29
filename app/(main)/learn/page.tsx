@@ -1,3 +1,4 @@
+import { AdminLearnNotice } from '@/components/learn/AdminLearnNotice';
 import { pendingPhotoSessions } from '@/lib/learn/session-photos';
 import { SessionPhotoReminder } from '@/components/learn/SessionPhotoReminder';
 import { PadModeCard } from '@/components/learn/PadModeCard';
@@ -24,6 +25,7 @@ export default async function LearnPage() {
   const profile = profileData as Profile | null;
   let content;
   if(!access.granted) content=<section className={styles.card}><h2>등록 후 시작할 수 있어요</h2><p>코칭 과정 등록 후 이용할 수 있습니다.</p></section>;
+  else if(access.reason==='admin'&&!(await hasLearnAccess(user.id,{requireEnrollment:true})).granted)content=<AdminLearnNotice/>;
   else try {
     const learner=await learnerRow(user.id,true),config=await runtimeConfigs();
     const [summary,due,open]=learner.status==='active'?await Promise.all([homeSummary(learner),dueReviewAbilities(user.id),openLearningSession(user.id)]):[undefined,[],null];

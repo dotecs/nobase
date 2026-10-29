@@ -331,3 +331,7 @@
 @media (prefers-reduced-motion: reduce) {
   .header::before { transition: none; }
 }
+
+.sidebarFooter button.sidebarLink { width: 100%; border: 0; background: transparent; text-align: left; cursor: pointer; font: inherit; color: var(--color-error); }
+.sidebarFooter button:disabled { cursor: wait; opacity: .6; }
+.sidebarFooter [role="alert"] { color: var(--color-error); font-size: 14px; }

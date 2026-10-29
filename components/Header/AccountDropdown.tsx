@@ -55,9 +55,7 @@ export default function AccountDropdown({ userName, userRole, onLogout }: {
     finally { setPending(false); }
   };
 
-  return <div ref={root} className={styles.root} onBlur={event => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false);
-  }}>
+  return <div ref={root} className={styles.root}>
     <button ref={trigger} type="button" className={styles.trigger} aria-label={`${name} 계정 메뉴`}
       aria-expanded={open} aria-controls={id} onClick={() => setOpen(value => !value)}>
       <span className={styles.avatar} aria-hidden="true">{initial}</span>

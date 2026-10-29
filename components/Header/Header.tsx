@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { createClientSupabaseClient } from '@/lib/supabase-client';
+import { signOutLocal } from '@/lib/logout';
+import { MobileAccountFooter } from './MobileAccountFooter';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import BrandLogo from '@/components/BrandLogo/BrandLogo';
 import AccountDropdown from './AccountDropdown';
@@ -66,8 +67,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
     return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', keydown); trigger?.focus(); };
   }, [isMobileMenuOpen]);
   const handleLogout = async () => {
-    const { error } = await createClientSupabaseClient().auth.signOut();
-    if (error) throw error;
+    await signOutLocal();
     setIsMobileMenuOpen(false); router.push('/login'); router.refresh();
   };
   const isActive = (href: string) => href.includes('#')
@@ -93,7 +93,7 @@ export default function Header({ userName, isLoggedIn, userRole, landingNavigati
       <aside ref={sidebar} id="mobile-navigation" className={`${styles.sidebar} ${styles.sidebarOpen}`} role="dialog" aria-modal="true" aria-label="전체 메뉴">
         <div className={styles.sidebarHeader}><span className={styles.sidebarUserName}>{userName}</span><button className={styles.closeButton} onClick={() => setIsMobileMenuOpen(false)} aria-label="메뉴 닫기"><FiX size={24} /></button></div>
         <nav className={styles.sidebarNav} aria-label="모바일 메뉴">{links(true)}</nav>
-        {!isLoggedIn && <div className={styles.sidebarFooter}><Link href="/login" className={styles.sidebarLink}>로그인</Link></div>}
+        <MobileAccountFooter isLoggedIn={!!isLoggedIn}/>
       </aside></>}
   </>;
 }

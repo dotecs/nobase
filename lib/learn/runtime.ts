@@ -27,6 +27,7 @@ export async function requireCoach() {
 }
 export async function learnerRow(userId: string, create = false): Promise<Learner> {
   const client = createAdminSupabaseClient();
+  if (create && !(await hasLearnAccess(userId,{requireEnrollment:true})).granted) throw new LearnUserError('코칭 과정 등록 후 이용할 수 있습니다.');
   if (create) { const result = await client.from('learn_learners').upsert({user_id:userId,pack_id:'root-math',goal_id:'g-linear-eq-basic'} as never,{onConflict:'user_id',ignoreDuplicates:true}); if(result.error)throw result.error; }
   const result = await client.from('learn_learners').select('*').eq('user_id',userId).single(); if(result.error)throw result.error; return result.data as unknown as Learner;
 }
