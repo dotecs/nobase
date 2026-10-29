@@ -1,24 +1,16 @@
-import React, { useState } from 'react';
+
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { StepInput, appendStep, nonemptySteps } from '@/components/learn/StepInput';
-import { Keypad } from '@/components/learn/Keypad';
+import { Keypad,keypadKeys } from '@/components/learn/Keypad';
 import { submissionHelp } from '@/components/learn/submission-help';
-vi.mock('react',async original=>{const actual=await original<typeof React>();return {...actual,useState:vi.fn(actual.useState)};});
 
 describe('solution step input',()=>{
   it('starts collapsed without input rows',()=>{
     const html=renderToStaticMarkup(<StepInput value={[]} onChange={()=>{}} onCopy={()=>{}}/>);
     expect(html).toContain('풀이 과정 적기 ▸');expect(html).toContain('aria-expanded="false"');expect(html).not.toContain('<input');
   });
-  it('switches keypad to the second page with variables and relations',()=>{
-    const setPage=vi.fn();vi.mocked(useState).mockImplementationOnce(()=>[0,setPage]);
-    const tree=Keypad({extended:true,onKey:()=>{}});
-    tree.props.children[0].props.children[1].props.onClick();expect(setPage).toHaveBeenCalledWith(1);
-    vi.mocked(useState).mockImplementationOnce(()=>[1,setPage]);
-    const html=renderToStaticMarkup(<Keypad extended onKey={()=>{}}/>);
-    for(const key of ['x','(',')','=','≤','≥','^'])expect(html).toContain(`>${key}</button>`);
-  });
+  it('shares three keypad pages with variables and relations',()=>{const html=renderToStaticMarkup(<Keypad onKey={()=>{}}/>);for(const label of ['숫자','기호','함수'])expect(html).toContain(label);for(const key of ['x','(',')','=','≤','≥','^'])expect(keypadKeys(1)).toContain(key);});
   it('does not add a thirteenth row',()=>{
     expect(appendStep(Array(11).fill('x')).length).toBe(12);
     expect(appendStep(Array(12).fill('x')).length).toBe(12);

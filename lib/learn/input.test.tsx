@@ -4,12 +4,12 @@ import { describe, expect, it, vi } from 'vitest';
 const mock = vi.hoisted(() => ({ uploads: 0 }));
 vi.mock('@/lib/supabase-client', () => ({createClientSupabaseClient: () => ({auth:{getUser:async()=>({data:{user:{id:'user'}},error:null})},storage:{from:()=>({upload:async(path:string)=>{mock.uploads++;return{data:{path},error:null};}})}})}));
 import { AnswerInput } from '@/components/learn/AnswerInput';
-import { composeRelationAnswer } from '@/components/learn/AnswerInput';
+
 import { PhotoCapture } from '@/components/learn/PhotoCapture';
 import { uploadAttemptPhoto } from '@/lib/storage';
 describe('learner inputs', () => {
   it.each([['>=','≥'],['<=','≤']])('inequality preview renders %s without changing the submission', (relation, glyph) => {
-    const value=composeRelationAnswer('x',relation,'7'), onChange=vi.fn();
+    const value=`x${relation}7`, onChange=vi.fn();
     const html=renderToStaticMarkup(createElement(AnswerInput,{type:'number',relation_required:true,variable:'x',value,onChange}));
     const preview=html.slice(html.indexOf('aria-label="입력 미리보기"'));
     expect(preview).toContain(glyph);

@@ -1,4 +1,5 @@
 'use client';
+import { MathInputScope } from '@/components/learn/MathInputScope';
 import { StepInput,nonemptySteps } from '@/components/learn/StepInput';
 import { usePadSync } from '@/components/learn/usePadSync';
 import { PadReceiver,usePadReceiver } from '@/components/learn/PadReceiver';
@@ -30,7 +31,7 @@ export function DiagnosticClient({userId,sessionId,planIndex,item,photo_required
   const help=submissionHelp(item.answer_type,answer,photoRequired,photo,nonemptySteps(steps));
   return <FocusShell title="출발점 진단" diagnostic current={planIndex+1} remaining={remaining} toolbar={<PadReceiver enabled={receiver.enabled} onToggle={receiver.toggle} status={sync.status}/>}><DiagnosticNotice planIndex={planIndex}/><section className={`${styles.card} ${styles.diagnosticCard}`}>
     <div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>
-    <StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={pending||remaining===0}/><AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={changeAnswer} disabled={pending||remaining===0}/>
+    <MathInputScope type={item.answer_type} variable={item.variable} relationRequired={item.relation_required} disabled={pending||remaining===0}><StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={pending||remaining===0}/><AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={changeAnswer} disabled={pending||remaining===0}/></MathInputScope>
     {item.answer_type==='photo'&&<PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={pending||remaining===0}/>}
     <Button variant="primary" size="lg" fullWidth disabled={pending||remaining===0||!!help} onClick={()=>start(async()=>{setError('');await sync.flush();const result=await submitAttempt({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>
     {help&&<p className={styles.help}>{help}</p>}{(error||sync.error)&&<p role="alert">{error||sync.error}</p>}

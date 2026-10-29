@@ -8,9 +8,7 @@
 .photoPreview { display: block; max-width: 100%; max-height: 160px; object-fit: contain; }
 .photo input[hidden] { display: none; }
 
-.relations { grid-template-columns: repeat(4,minmax(0,1fr)); }
 .choices button { padding: var(--space-3); text-align: left; }
-.relations button { text-align: center; }
 .keypad button:disabled { opacity: .6; }
 
 .photo button { border-radius: var(--radius-button); }
@@ -25,3 +23,9 @@
 .stepActions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 .keypad button { min-height: var(--learn-key-height, 48px); }
+
+.keypadTabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-2); }
+.keypadTabs button { min-height: 44px; font: inherit; border: 1px solid var(--color-border); border-radius: var(--radius-button); color: var(--color-text); background: var(--color-surface); cursor: pointer; }
+.keypadTabs button[aria-pressed="true"] { background: var(--color-primary); color: var(--color-text-inverse); }
+.keypadTabs button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.stepPreview { grid-column: 2 / -1; }

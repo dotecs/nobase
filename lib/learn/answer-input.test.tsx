@@ -1,10 +1,10 @@
-import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe,it,expect,vi } from 'vitest';
-import { AnswerInput,composeRelationAnswer } from '@/components/learn/AnswerInput';
-vi.mock('@/lib/math-markdown',()=>({renderMathMarkdown:(text:string)=>text}));
-describe('inequality input',()=>{
-  it('renders four unselected relation buttons and the variable prefix',()=>{const html=renderToStaticMarkup(<AnswerInput type="number" relation_required variable="x" value="" onChange={()=>{}}/>);expect(html.match(/aria-pressed="false"/g)).toHaveLength(4);for(const label of ['&lt;','≤','&gt;','≥'])expect(html).toContain(`>${label}</button>`);expect(html).toContain('aria-label="변수"> x');});
-  it('renders no relation buttons for equations',()=>{const html=renderToStaticMarkup(<AnswerInput type="number" relation_required={false} variable="x" value="" onChange={()=>{}}/>);expect(html).not.toContain('aria-pressed');expect(html).not.toContain('부등호를 선택');});
-  it('assembles the selected relation with an ASCII minus for submission',()=>{expect(composeRelationAnswer('x','<=','−7')).toBe('x<=-7');});
+import { AnswerInput } from '@/components/learn/AnswerInput';
+import { insertMathKey,keypadKeys,Keypad } from '@/components/learn/Keypad';
+describe('one-field math input',()=>{
+ it('keeps the full relation in one text field',()=>{const onChange=vi.fn(),html=renderToStaticMarkup(<AnswerInput type="number" relation_required variable="x" value="x<=-7" onChange={onChange}/>);expect(html).toContain('value="x&lt;=-7"');expect(html).toContain('placeholder="예: x&lt;=3"');expect(html).not.toContain('<fieldset');expect(onChange).not.toHaveBeenCalled();});
+ it('hides relation keys only for scalar number/fraction answers',()=>{expect(keypadKeys(1,'number',false)).not.toContain('≤');expect(keypadKeys(1,'number',true)).toContain('≤');expect(keypadKeys(1,'expression')).toContain('=');expect(keypadKeys(1,'number',true,'y')[0]).toBe('y');});
+ it('inserts unicode exactly and positions shortcut cursors',()=>{expect(insertMathKey('x',1,1,'≤')).toEqual({text:'x≤',cursor:2});expect(insertMathKey('2',1,1,'sqrt(')).toEqual({text:'2sqrt(',cursor:6});expect(insertMathKey('',0,0,'|x|')).toEqual({text:'||',cursor:1});});
+ it('renders expression keypads and omits collapse on the pad',()=>{expect(renderToStaticMarkup(<AnswerInput type="expression" value="x" onChange={()=>{}}/>)).toContain('숫자 키패드');const html=renderToStaticMarkup(<Keypad alwaysExpanded onKey={()=>{}}/>);expect(html).not.toContain('키패드 접기');expect(html).toContain('함수');});
 });

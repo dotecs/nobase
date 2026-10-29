@@ -5,6 +5,7 @@ import { usePadSync } from '@/components/learn/usePadSync';
 import { photoPromptRequired } from '@/lib/learn/steps-photo';
 import Button from '@/components/Button/Button';
 import { FocusShell } from '@/components/learn/FocusShell';
+import { MathInputScope } from '@/components/learn/MathInputScope';
 import { StepInput, nonemptySteps } from '@/components/learn/StepInput';
 import { AnswerInput, type AnswerValue } from '@/components/learn/AnswerInput';
 import { PhotoCapture } from '@/components/learn/PhotoCapture';
@@ -33,8 +34,8 @@ export function PadClient({userId,sessionId,planIndex,item,photo_required,steps_
     <div className={padStyles.controls}><Button size="sm" variant="outline" onClick={()=>{try{localStorage.removeItem('learn:pad-mode');}catch{/* Optional preference. */}router.push('/learn');}}>패드 모드 끄기</Button></div>
     <section className={`${styles.card} ${padStyles.pad}`}>
       <details className={padStyles.stem}><summary>문제 보기 ▸</summary><div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div></details>
-      <StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={disabled}/>
-      <AnswerInput type={item.answer_type} options={item.options} relation_required={item.relation_required} variable={item.variable} value={answer} onChange={changeAnswer} disabled={disabled}/>
+      <MathInputScope type={item.answer_type} variable={item.variable} relationRequired={item.relation_required} disabled={pending||remaining===0} alwaysExpanded><StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={disabled}/>
+      <AnswerInput type={item.answer_type} options={item.options} relation_required={item.relation_required} variable={item.variable} value={answer} onChange={changeAnswer} disabled={disabled}/></MathInputScope>
       {item.answer_type==='photo'&&<PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={disabled}/>}
       <Button fullWidth size="lg" disabled={disabled||!!help} onClick={()=>start(async()=>{setError('');await sync.flush();const result=await (kind==='diagnostic'?submitAttempt:submitLearningAttempt)({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>
       {help&&<p className={styles.help}>{help}</p>}{(error||sync.error)&&<p role="alert">{error||sync.error}</p>}
