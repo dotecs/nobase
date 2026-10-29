@@ -1,3 +1,4 @@
+import { sessionPhotoRows } from './session-photos';
 import 'next/headers';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 import { requireLearner, sessionRow, type Session } from './runtime';
@@ -27,5 +28,5 @@ export async function readPadDraftRuntime(input:unknown):Promise<PadSnapshot> {
   const result=await createAdminSupabaseClient().from('learn_pad_drafts' as never).select('draft,updated_at').eq('user_id',user.id).eq('session_id',value.sessionId).eq('plan_index',value.planIndex).maybeSingle();
   if(result.error)throw result.error;
   const saved=result.data as SavedPadDraft|null;
-  return {...progress,draft:saved?padDraftSchema.parse(saved.draft):null,updated_at:saved?.updated_at??null};
+  return {...progress,session_photo_count:progress.ended?(await sessionPhotoRows(session.id)).length:0,draft:saved?padDraftSchema.parse(saved.draft):null,updated_at:saved?.updated_at??null};
 }

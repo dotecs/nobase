@@ -26,16 +26,16 @@ export function PadClient({userId,sessionId,planIndex,item,photo_required,steps_
   const sync=usePadSync({sessionId,planIndex,source:'pad',enabled:true,onDraft:draft=>{setAnswer(draft.answer);setSteps(draft.steps);setPhoto(draft.photo_path);}});
   const changeSteps=(value:string[])=>{setSteps(value);sync.edit({...latestInput.current,steps:value,source:'pad'});};
   const changePhoto=(value:string|null)=>{setPhoto(value);sync.edit({...latestInput.current,photo_path:value,source:'pad'});};
-  const photoRequired=photoPromptRequired(photo_required,steps_photo_min_lines,steps);
+  const photoRequired=item.answer_type==='photo'&&photoPromptRequired(photo_required,steps_photo_min_lines,steps);
   const help=submissionHelp(item.answer_type,answer,photoRequired,photo,nonemptySteps(steps)),disabled=pending||remaining===0;
   const changeAnswer=(value:AnswerValue)=>{setAnswer(value);sync.edit({...latestInput.current,answer:value,source:'pad'});};
-  return <FocusShell title={`입력 패드 · 문항 ${current}${total===undefined?'':`/${total}`}`} current={current} total={total} diagnostic={kind==='diagnostic'} remaining={remaining}>
+  return <FocusShell tone={kind==='diagnostic'?'diagnostic':kind==='review'?'review':'learning'} title={`입력 패드 · 문항 ${current}${total===undefined?'':`/${total}`}`} current={current} total={total} diagnostic={kind==='diagnostic'} remaining={remaining}>
     <div className={padStyles.controls}><Button size="sm" variant="outline" onClick={()=>{try{localStorage.removeItem('learn:pad-mode');}catch{/* Optional preference. */}router.push('/learn');}}>패드 모드 끄기</Button></div>
     <section className={`${styles.card} ${padStyles.pad}`}>
       <details className={padStyles.stem}><summary>문제 보기 ▸</summary><div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div></details>
       <StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={disabled}/>
       <AnswerInput type={item.answer_type} options={item.options} relation_required={item.relation_required} variable={item.variable} value={answer} onChange={changeAnswer} disabled={disabled}/>
-      <PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={disabled}/>
+      {item.answer_type==='photo'&&<PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={disabled}/>}
       <Button fullWidth size="lg" disabled={disabled||!!help} onClick={()=>start(async()=>{setError('');await sync.flush();const result=await (kind==='diagnostic'?submitAttempt:submitLearningAttempt)({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>
       {help&&<p className={styles.help}>{help}</p>}{(error||sync.error)&&<p role="alert">{error||sync.error}</p>}
     </section>

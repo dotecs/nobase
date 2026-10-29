@@ -19,7 +19,7 @@ describe('pad draft ownership and limits',()=>{
     expect(savePadSchema.safeParse(input).success).toBe(false);
     await expect((await import('./pad-runtime')).savePadDraftRuntime(input)).rejects.toBeTruthy();expect(db.rows('learn_pad_drafts')).toHaveLength(0);
   });
-  it('missing draft returns null with current progress',async()=>{const input=await setup();expect(await (await import('./pad-runtime')).readPadDraftRuntime(input)).toEqual({draft:null,updated_at:null,plan_index:0,ended:false});});
+  it('missing draft returns null with current progress',async()=>{const input=await setup();expect(await (await import('./pad-runtime')).readPadDraftRuntime(input)).toEqual({session_photo_count:0,draft:null,updated_at:null,plan_index:0,ended:false});});
   it('upserts only the authenticated owner and rejects stale plan index',async()=>{
     const input=await setup(),r=await import('./pad-runtime');await r.savePadDraftRuntime(input);await r.savePadDraftRuntime({...input,draft:{...input.draft,answer:'2'}});
     expect(db.rows('learn_pad_drafts')).toHaveLength(1);expect(db.rows('learn_pad_drafts')[0]).toMatchObject({user_id:testUser,draft:{answer:'2'}});
@@ -29,8 +29,8 @@ describe('pad draft ownership and limits',()=>{
   it('returns changed plan index and closed state without needing a saved draft',async()=>{
     const input=await setup(),r=await import('./pad-runtime'),session=db.rows('learn_sessions')[0];
     const plan=session.plan as {type:string;plan_index?:number}[];plan[1].plan_index=1;
-    expect(await r.readPadDraftRuntime(input)).toMatchObject({plan_index:1,ended:false,draft:null});session.ended_at=new Date().toISOString();
-    expect(await r.readPadDraftRuntime(input)).toMatchObject({ended:true});
+    expect(await r.readPadDraftRuntime(input)).toMatchObject({plan_index:1,ended:false,draft:null});session.ended_at=new Date().toISOString();db.rows('learn_session_photos').push({session_id:input.sessionId,path:'test'});
+    expect(await r.readPadDraftRuntime(input)).toMatchObject({ended:true,session_photo_count:1});
     await expect(r.savePadDraftRuntime({...input,planIndex:1})).rejects.toThrow('진행 상태');
   });
 });

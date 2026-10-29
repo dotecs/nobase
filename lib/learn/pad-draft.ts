@@ -11,4 +11,4 @@ export const savePadSchema=padAddressSchema.extend({draft:padDraftSchema});
 export type PadDraft=z.infer<typeof padDraftSchema>;
 export type SavedPadDraft={draft:PadDraft;updated_at:string};
 
-export type PadSnapshot={draft:PadDraft|null;updated_at:string|null;plan_index:number;ended:boolean};
+export type PadSnapshot={draft:PadDraft|null;updated_at:string|null;plan_index:number;ended:boolean;session_photo_count:number};

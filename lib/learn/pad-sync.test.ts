@@ -2,7 +2,7 @@ import { beforeEach,afterEach,describe,it,expect,vi } from 'vitest';
 import { createPadSync,padConnectionLabel } from './pad-sync';
 import type { PadDraft,PadSnapshot } from './pad-draft';
 const draft:PadDraft={answer:'3',steps:['x=3'],photo_path:null,source:'pad'};
-const snapshot:PadSnapshot={draft,updated_at:'2026-10-28T00:00:01Z',plan_index:0,ended:false};
+const snapshot:PadSnapshot={session_photo_count:0,draft,updated_at:'2026-10-28T00:00:01Z',plan_index:0,ended:false};
 describe('two-device polling',()=>{
   beforeEach(()=>vi.useFakeTimers());afterEach(()=>vi.useRealTimers());
   function setup(){const options={source:'screen' as const,planIndex:0,read:vi.fn(async()=>snapshot),save:vi.fn<(draft:PadDraft)=>Promise<{updated_at:string}>>(async()=>({updated_at:'2026-10-28T00:00:03Z'})),onDraft:vi.fn(),onProgress:vi.fn(),onStatus:vi.fn(),onError:vi.fn()};return {options,sync:createPadSync(options)};}
@@ -18,7 +18,7 @@ describe('two-device polling',()=>{
     await vi.advanceTimersByTimeAsync(2000);expect(options.onDraft).not.toHaveBeenCalled();sync.stop();
   });
   it.each([{plan_index:1,ended:false},{plan_index:0,ended:true}])('refreshes for progress %j even without a draft',async progress=>{
-    const {options,sync}=setup();options.read.mockResolvedValue({...progress,draft:null,updated_at:null});await vi.advanceTimersByTimeAsync(2000);expect(options.onProgress).toHaveBeenCalledOnce();expect(options.onDraft).not.toHaveBeenCalled();await vi.advanceTimersByTimeAsync(4000);expect(options.read).toHaveBeenCalledOnce();sync.stop();
+    const {options,sync}=setup();options.read.mockResolvedValue({...progress,session_photo_count:0,draft:null,updated_at:null});await vi.advanceTimersByTimeAsync(2000);expect(options.onProgress).toHaveBeenCalledOnce();expect(options.onDraft).not.toHaveBeenCalled();await vi.advanceTimersByTimeAsync(4000);expect(options.read).toHaveBeenCalledOnce();sync.stop();
   });
   it('flushes a pending edit before submission and stops polling after cleanup',async()=>{
     const {options,sync}=setup();sync.edit(draft);await sync.flush();expect(options.save).toHaveBeenCalledOnce();sync.stop();await vi.advanceTimersByTimeAsync(5000);expect(options.read).not.toHaveBeenCalled();
