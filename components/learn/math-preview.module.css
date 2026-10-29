@@ -1,7 +1,10 @@
-.preview { line-height: 22px; font-size: var(--text-sm); color: var(--color-text-secondary); overflow-wrap: anywhere; overflow-x: auto; min-width: 0; word-break: keep-all; }
+.preview { line-height: 28px; font-size: var(--text-base); color: var(--color-text); overflow-wrap: anywhere; overflow-x: auto; min-width: 0; word-break: keep-all; }
 .stale { opacity: var(--opacity-disabled, .6); }
 .raw { display: block; font-size: var(--text-xs); white-space: pre-wrap; }
 .preview details { margin-top: var(--space-2); }
 .preview summary { min-height: 44px; cursor: pointer; padding-block: var(--space-2); }
 .preview summary:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .preview ul { padding-left: var(--space-5); }
+
+.preview :global(.katex) { font-size: 1.15em; white-space: nowrap; }
+.caption { font-size: var(--text-sm); line-height: 22px; color: var(--color-text-secondary); }
