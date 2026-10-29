@@ -17,7 +17,7 @@ export function prepareStateOverride(state:State,target:State['state'],reason:st
   if(target==='verified')next.evidence.verified_at=now;
   return traced(next,config,['evidence'],'coach_override',[reason.trim()],{before:state,after:next});
 }
-export function previewSessions(learner:SessionLearner,states:State[],pack:RulePack,items:RuleItem[],history:Attempt[],config:RuleContext<'recommendation'|'session'>) {
+export function previewSessions(learner:SessionLearner,states:State[],pack:RulePack,items:RuleItem[],history:Attempt[],config:RuleContext<'recommendation'|'session'|'evidence'>) {
   const first=planSession({...learner,status:'active'},states,pack,items,history,config);
   const exposed=first.result.items.map((item,index)=>({id:`preview-${index}`,item_id:item.item_id,item_version:item.item_version,ability_id:item.ability_id,variant_group:item.variant_group,result:'pending_review' as const,usage:item.kind,at:learner.now}));
   const reviews=new Set(first.result.items.filter(row=>row.kind==='review').map(row=>row.ability_id));

@@ -6,8 +6,8 @@ describe('session recommendation', () => {
   it('uses configured session size and active ability limits', () => {
     const c = context(); c.configs.session.new_ability_per_session = 2;
     const output = planSession(learner(), [], pack(), items(), [], c);
-    expect(output.result.items).toHaveLength(8); expect(new Set(output.result.items.map(row => row.ability_id)).size).toBe(2);
-    expect(output.trace.rule_version).toEqual({ recommendation: 1, session: 2 });
+    expect(output.result.items).toHaveLength(6); expect(new Set(output.result.items.map(row => row.ability_id)).size).toBe(2);
+    expect(output.trace.rule_version).toEqual({ recommendation: 1, session: 2, evidence: 2 });
   });
   it('opens no more than one unknown ability by default', () => expect(new Set(planSession(learner(), [], pack(), items(), [], context()).result.items.map(row => row.ability_id)).size).toBe(1));
   it('prioritizes repair states in book order', () => {
@@ -71,4 +71,11 @@ describe('group diversity',()=>{
  it('selects the group missing from evidence before an earlier id',()=>{const a=state('learning');a.evidence.distinct_groups=['01-4-A'];const out=planSession(learner(),[a],pack(),grouped().filter(row=>row.ability_id==='01-4'),[],context());expect(out.result.items[0].variant_group).toBe('01-4-B');expect(out.trace.reasons).toContain('group_diversity');});
  it('falls back to existing groups when a new group is unavailable',()=>{const a=state('learning');a.evidence.distinct_groups=['01-4-A'];expect(planSession(learner(),[a],pack(),grouped().filter(row=>row.ability_id==='01-4'&&!row.variant_group.endsWith('-B')),[],context()).result.items[0].variant_group).toBe('01-4-A');});
  it('diversifies each ability across alternating selections',()=>{const out=planSession(learner(),[state('learning','01-4'),state('learning','02-4')],pack(),grouped(),[],context()).result.items;for(const id of ['01-4','02-4']){const group=out.filter(row=>row.ability_id===id);expect(group.length).toBeGreaterThanOrEqual(2);expect(group[1].variant_group).not.toBe(group[0].variant_group);}});
+});
+
+describe('per ability planning cap',()=>{
+ it('plans three unknown and two learning items using current evidence',()=>{const a=state('learning','02-4');a.evidence.independent_correct=1;const out=planSession(learner(),[a],pack(),items(),[],context());expect(out.result.items).toHaveLength(5);expect(out.result.items.filter(i=>i.ability_id==='01-4')).toHaveLength(3);expect(out.trace.reasons).toContain('per_ability_cap:02-4=2');});
+ it('ends with available items and never opens a third ability to fill space',()=>{const c=context();c.configs.session.new_ability_per_session=3;const out=planSession(learner(),[],pack(),items().filter(i=>i.id.endsWith('-1')||i.id.endsWith('-2')),[],c);expect(out.result.items).toHaveLength(4);expect(new Set(out.result.items.map(i=>i.ability_id)).size).toBe(2);});
+ it('does not charge a due review against the practice cap',()=>{const l=learner();l.due_reviews=[{ability_id:'01-4',due_at:now,interval_index:0,status:'due'}];const out=planSession(l,[],pack(),items(),[],context()).result.items;expect(out.filter(i=>i.kind==='review')).toHaveLength(1);expect(out.filter(i=>i.kind==='practice')).toHaveLength(3);});
+ it('uses optional configured buffer with old configs still accepted',()=>{const c=context();c.configs.session.per_ability_buffer=0;expect(planSession(learner(),[],pack(),items(),[],c).result.items).toHaveLength(2);});
 });

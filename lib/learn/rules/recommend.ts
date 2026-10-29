@@ -1,10 +1,10 @@
 import { bookOrder, latestItems, planned, timestamp, traced, type Attempt, type PlannedItem, type RuleContext, type RuleItem, type RulePack, type State } from './types';
 import type { ReviewSchedule } from './review';
-type Config = RuleContext<'recommendation' | 'session'>;
+type Config = RuleContext<'recommendation' | 'session' | 'evidence'>;
 export type SessionLearner = { goal_id: string; status: string; now: string; due_reviews: ReviewSchedule[] };
 export function planSession(learner: SessionLearner, states: State[], pack: RulePack, items: RuleItem[], history: Attempt[], config: Config) {
   const { recommendation: rule, session } = config.configs, selected: PlannedItem[] = [], reasons: string[] = [], selectedAbilities = new Set<string>();
-  const finish = (empty_reason: string | null) => traced({ items: selected, empty_reason }, config, ['recommendation', 'session'], 'plan_session', reasons, { selected_abilities: [...selectedAbilities] });
+  const finish = (empty_reason: string | null) => traced({ items: selected, empty_reason }, config, ['recommendation', 'session', 'evidence'], 'plan_session', reasons, { selected_abilities: [...selectedAbilities] });
   if (learner.status !== 'active') { reasons.push('learner_not_active'); return finish('learner_not_active'); }
   const status = (id: string) => states.find(row => row.ability_id === id)?.state ?? 'unknown';
   const available = latestItems(items), used = new Set<string>(), stems = new Set<string>();
@@ -50,10 +50,13 @@ export function planSession(learner: SessionLearner, states: State[], pack: Rule
     if (repairs.length) reasons.push(`prerequisite:${target}->${repairs.join(',')}`);
     for (const id of repairs.length ? repairs.filter(ability => prereqs(ability).length === 0) : [target]) if (!candidates.includes(id)) candidates.push(id);
   }
+  const cap=(ability:string)=>Math.max(1,config.configs.evidence.independent_correct_needed-(states.find(row=>row.ability_id===ability)?.evidence.independent_correct??0))+(session.per_ability_buffer??1);
+  for(const ability of candidates)reasons.push(`per_ability_cap:${ability}=${cap(ability)}`);
   // Only count an ability as opened after an eligible item is found.
   while (selected.length < session.items_per_session) {
     let added = false;
     for (const ability of candidates) {
+      if(selected.filter(row=>row.kind!=='review'&&row.ability_id===ability).length>=cap(ability))continue;
       const item = choose(ability, rule.practice_usage_order);
       if (!item || !admit(ability)) continue;
       add(item, 'practice'); added = true;

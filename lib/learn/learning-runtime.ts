@@ -7,7 +7,7 @@ import 'next/headers';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
-import { requireLearner,learnerRow,runtimePack,runtimeConfigs,sessionRow,sessionAttempts,json,stableId,type Session,type StateRow,type AttemptRow } from './runtime';
+import { requireLearner,learnerRow,runtimePack,runtimeConfigs,sessionRow,sessionAttempts,json,stableId,type Learner,type Session,type StateRow,type AttemptRow } from './runtime';
 import { loadLearnItems,toStudentItem,type LearnItem } from './items';
 import { planSession } from './rules/recommend';
 import { applyAttempt } from './rules/states';
@@ -33,17 +33,21 @@ export async function createLearningSession(userId:string,kind:'practice'|'revie
 }
 export async function startLearningRuntime() {
   const {user,learner}=await activeLearner(),existing=await openLearningSession(user.id);if(existing)return {id:existing.id};
-  const pack=await runtimePack(learner),config=await runtimeConfigs(),items=await loadLearnItems(pack.abilities.map(row=>row.id));
-  const [states,attempts,reviews]=await Promise.all([ownRows<StateRow>('learn_ability_states',user.id),ownRows<AttemptRow>('learn_attempts',user.id),ownRows<ReviewSchedule>('learn_review_schedule',user.id)]);
-  const plan=planSession({goal_id:learner.goal_id,status:learner.status,now:new Date().toISOString(),due_reviews:reviews},states.map(row=>({...row,evidence:row.evidence as unknown as Evidence})),pack,items,historyAttempts(attempts,items),config);
+  const config=await runtimeConfigs(),plan=await recommendLearningSession(user.id,learner,config);
   if(!plan.result.items.length)return {empty_reason:plan.result.empty_reason};
   return {id:await createLearningSession(user.id,'practice',plan.result.items,config,learner.pack_id,plan.trace)};
+}
+export async function recommendLearningSession(userId:string,learner:Learner,config:RuleContext) {
+  const pack=await runtimePack(learner),items=await loadLearnItems(pack.abilities.map(row=>row.id));
+  const [states,attempts,reviews]=await Promise.all([ownRows<StateRow>('learn_ability_states',userId),ownRows<AttemptRow>('learn_attempts',userId),ownRows<ReviewSchedule>('learn_review_schedule',userId)]);
+  const plan=planSession({goal_id:learner.goal_id,status:learner.status,now:new Date().toISOString(),due_reviews:reviews},states.map(row=>({...row,evidence:row.evidence as unknown as Evidence})),pack,items,historyAttempts(attempts,items),config);
+  return plan;
 }
 export async function closeLearningSession(session:Session,timedOut=false) {
   const plan=readLearningPlan(session.plan);if(!plan.complete&&!timedOut)return;
   const client=createAdminSupabaseClient(),attempts=await sessionAttempts(session.id,session.user_id);
   const ids=new Set(attempts.map(row=>row.id)),[events,reviews]=await Promise.all([ownRows<{attempt_id:string|null;ability_id:string;from_state:string;to_state:string}>('learn_ability_state_events',session.user_id),ownRows<ReviewSchedule>('learn_review_schedule',session.user_id)]);
-  const summary={correct:attempts.filter(row=>row.result==='correct_independent'||row.result==='correct_assisted').length,attempts:attempts.length,newly_verified:[...new Set(events.filter(row=>row.attempt_id&&ids.has(row.attempt_id)&&row.to_state==='verified'&&row.from_state!=='verified').map(row=>row.ability_id))],next_review_at:reviews.filter(row=>row.status==='due').map(row=>row.due_at).sort()[0]??null,timed_out:timedOut,rule_version:plan.meta.config.rule_version};
+  const summary={skipped:plan.skipped.length,correct:attempts.filter(row=>row.result==='correct_independent'||row.result==='correct_assisted').length,attempts:attempts.length,newly_verified:[...new Set(events.filter(row=>row.attempt_id&&ids.has(row.attempt_id)&&row.to_state==='verified'&&row.from_state!=='verified').map(row=>row.ability_id))],next_review_at:reviews.filter(row=>row.status==='due').map(row=>row.due_at).sort()[0]??null,timed_out:timedOut,rule_version:plan.meta.config.rule_version};
   const result=await client.from('learn_sessions').update({ended_at:new Date().toISOString(),summary:json(summary)} as never).eq('id',session.id).eq('user_id',session.user_id).is('ended_at',null);if(result.error)throw result.error;
 }
 export async function expireLearningRuntime(id:string) {const {user}=await activeLearner();z.uuid().parse(id);const session=await sessionRow(id,user.id),plan=readLearningPlan(session.plan);if(Date.now()-Date.parse(session.started_at)>=plan.meta.config.configs.session.max_minutes*MINUTE_MS)await closeLearningSession(session,true);}
@@ -84,7 +88,7 @@ export async function submitLearningRuntime(input:unknown) {
     const status=after.state==='recheck'&&schedule.ability_id===item.ability_id&&schedule.status==='due'?'skipped':changed?.status??schedule.status;
     return schedule.id&&status!==schedule.status&&status!=='due'?[{id:schedule.id,status}]:[];
   });
-  const outcome=learningOutcome(session.plan,item,grade.result);
+  const outcome=learningOutcome(session.plan,item,grade.result,{verifiedAbilities:after.state==='verified'&&before.state!=='verified'?[item.ability_id]:[]});
   outcome.feedback.input=value.answer;
   if(typeof grade.auto_grade.detail.reason==='string')outcome.feedback.reason=grade.auto_grade.detail.reason;
   if(stepCheck)outcome.feedback.step_check=stepCheck;
@@ -98,5 +102,5 @@ export async function learningView(id:string) {
   if(session.ended_at)return {complete:true as const,kind:session.kind,summary:session.summary,feedback:plan.feedback};
   const result=await createAdminSupabaseClient().from('learn_items').select('*').eq('id',plan.current.item.item_id).eq('version',plan.current.item.item_version).in('status',['reviewed','live']).single();if(result.error)throw result.error;
   const item=result.data as unknown as LearnItem,usage=plan.current.item.kind==='review'?'review':item.usage;
-  return {complete:false as const,kind:session.kind,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.current.queue_index,total:plan.meta.queue.length,item:toStudentItem(item),deadline,steps_photo_min_lines:stepsPhotoMinimum(plan.meta.config.configs.evidence),photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
+  return {complete:false as const,kind:session.kind,userId:user.id,sessionId:id,planIndex:plan.current.plan_index,queueIndex:plan.position,total:plan.total,item:toStudentItem(item),deadline,steps_photo_min_lines:stepsPhotoMinimum(plan.meta.config.configs.evidence),photo_required:plan.meta.config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',feedback:plan.feedback};
 }
