@@ -10,7 +10,7 @@ const unsupported=(symbol:string):never=>{throw new UnsupportedError(`Unsupporte
 export function normalizeMath(input:string):string {
   if(input.length>4000)throw new UnsupportedError('Expression too long');
   const bad=input.match(/∫|∑|Σ|lim|→/);if(bad)unsupported(bad[0]);
-  const text=input.replace(/([+-]?\d+\s*\/\s*[+-]?\d+)\s*(?:÷|\\div)\s*([+-]?\d+\s*\/\s*[+-]?\d+)/g,'($1)/($2)').trim().replace(/^\$\$?([\s\S]*?)\$\$?$/,'$1').replace(/\\(?:left|right)/g,'').replace(/\\(?:dfrac|tfrac)/g,'\\frac')
+  const text=input.replace(/[！-～]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xfee0)).replace(/([+-]?\d+\s*\/\s*[+-]?\d+)\s*(?:÷|\\div)\s*([+-]?\d+\s*\/\s*[+-]?\d+)/g,'($1)/($2)').trim().replace(/^\$\$?([\s\S]*?)\$\$?$/,'$1').replace(/\\(?:left|right)/g,'').replace(/\\(?:dfrac|tfrac)/g,'\\frac')
     .replace(/\^\s*\{\\circ\}|\^?\\circ/g,'°').replace(/\\(?:times|cdot)/g,'*').replace(/\\div/g,'/').replace(/\\(?:leq|le)(?![a-z])/g,'<=').replace(/\\(?:geq|ge)(?![a-z])/g,'>=')
     .replace(/[×·]/g,'*').replace(/÷/g,'/').replace(/[−–]/g,'-').replace(/≤/g,'<=').replace(/≥/g,'>=').replace(/²/g,'^2').replace(/³/g,'^3').replace(/√/g,'sqrt').replace(/π/g,'pi');
   // Keep the established plain-fraction division convention.

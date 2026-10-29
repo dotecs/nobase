@@ -13,3 +13,6 @@ export function hasNumericInstruction(stem: string) {
   prose+=stem.slice(offset);
   return /\d/.test(prose.replace(/^\s*(?:문제\s*)?\d+\s*[.)]\s*/,''));
 }
+
+export function hasFunctionNotation(stem:string){return /sqrt|root|abs|log|ln|exp|sin|cos|tan|pi|√|π/.test(stem);}
+export function variantLockMessage(stem:string){return hasFunctionNotation(stem)?'함수·상수가 포함된 문항은 변형을 만들지 않아요':LOCKED_VARIANT_MESSAGE;}

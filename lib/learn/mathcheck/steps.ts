@@ -1,17 +1,17 @@
 import type { AnswerType } from '../types';
-import { equivalent } from './evaluate';
+import { equivalent,equivalentWithMethod } from './evaluate';
 import { parseMath } from './parse';
 import { normalizeStem, solveItem } from './solve';
 
-export type StepCheck = { checked: number; first_error_index: number | null; lines: { input: string; status: 'ok' | 'error' | 'unparsed' }[] };
+export type StepCheck = { checked: number; first_error_index: number | null; lines: { input: string; status: 'ok' | 'error' | 'unparsed';method?:'numeric' }[] };
 
 /** Advisory only: never changes the final-answer grade. */
 export function checkSteps(stem: string, answerType: AnswerType, steps: string[]): StepCheck {
   const result: StepCheck = { checked: 0, first_error_index: null, lines: [] };
   const seed = solveItem(stem, answerType);
-  let previous = seed;
+  let previous = seed, previousInput=stem;
   for (const input of steps.slice(0, 12)) {
-    let status: StepCheck['lines'][number]['status'] = 'unparsed';
+    let status: StepCheck['lines'][number]['status'] = 'unparsed';let method:'numeric'|undefined;
     try {
       if (input.length > 200) throw new Error('Line too long');
       const text = normalizeStem(input).replace(/\s/g, '');
@@ -30,10 +30,13 @@ export function checkSteps(stem: string, answerType: AnswerType, steps: string[]
         status = same ? 'ok' : 'error';
         result.checked++;
         if (!same && result.first_error_index === null) result.first_error_index = result.lines.length;
-        previous = current;
+        previous = current;previousInput=text;
+      }else if((!previous.ok&&previous.reason==='unsupported')||(!current.ok&&current.reason==='unsupported')){
+        const a=parseMath(normalizeStem(previousInput)),b=parseMath(text);if(a.relation||b.relation)throw new Error('Unsupported relation step');
+        const compared=equivalentWithMethod(a.left,b.left);status=compared.equal?'ok':'error';if(compared.method==='numeric')method='numeric';result.checked++;if(!compared.equal&&result.first_error_index===null)result.first_error_index=result.lines.length;previous=current;previousInput=text;
       }
     } catch { /* An unparsed line leaves the previous comparison intact. */ }
-    result.lines.push({ input, status });
+    result.lines.push({ input, status,...(method?{method}:{}) });
   }
   return result;
 }

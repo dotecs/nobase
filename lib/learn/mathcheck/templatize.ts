@@ -5,7 +5,7 @@ import { parseMath, UnsupportedError, type Expr } from './parse';
 import { normalizeStem, solveItem } from './solve';
 import { Rational } from './rational';
 import { polynomial, equivalent } from './evaluate';
-import { hasNumericInstruction } from './template-lock';
+import { hasNumericInstruction,hasFunctionNotation } from './template-lock';
 
 export const VariantRules = z.object({
   count_default: z.number().int().min(3).max(5),
@@ -30,7 +30,7 @@ export type DraftVariant = z.infer<typeof DraftVariants>[number];
 
 export function templatize(stem: string, answerType: AnswerType, config: unknown, answerSpec?: unknown): ItemTemplate {
   const rules = VariantRules.parse(config);
-  if(hasNumericInstruction(stem))return TemplateSchema.parse({pattern:stem,solver:'solveItem',params:{source_stem:stem,answer_type:answerType,rules,values:[],locked:true}});
+  if(hasFunctionNotation(stem)||hasNumericInstruction(stem))return TemplateSchema.parse({pattern:stem,solver:'solveItem',params:{source_stem:stem,answer_type:answerType,rules,values:[],locked:true}});
   if (!solveItem(stem, answerType).ok || !['number', 'fraction', 'expression'].includes(answerType)) throw new Error('프로그램 검증에 성공한 문제만 변형할 수 있습니다.');
   const values: ItemTemplate['params']['values'] = [];
   let integerDivision = false;

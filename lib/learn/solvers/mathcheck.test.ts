@@ -14,7 +14,7 @@ describe('mathcheck grading', () => {
     [fraction,'3/4','correct'],[fraction,'6/8','correct'],[fraction,'0.75','correct'],[fraction,'3/5','incorrect'],[fraction,'2//3','input_issue'],
     [equation,'-3','correct'],[equation,'x=-3','correct'],[equation,'２ｘ＝−６','correct'],[equation,'x=3','incorrect'],[equation,'y=-3','incorrect'],
     [inequality,'x<=-3','correct'],[inequality,'x≤−3','correct'],[inequality,'x>=-3','incorrect'],[inequality,'-3','input_issue'],[inequality,'x=-3','incorrect'],
-    [expression,'3(7-4x)','correct'],[expression,'$-12x+21$','correct'],[expression,'21-12x','correct'],[expression,'-12x+20','incorrect'],[expression,'x=1','input_issue'],[expression,'sin(x)','input_issue'],
+    [expression,'3(7-4x)','correct'],[expression,'$-12x+21$','correct'],[expression,'21-12x','correct'],[expression,'-12x+20','incorrect'],[expression,'x=1','input_issue'],[expression,'sin(x)','incorrect'],
   ] as const)('grades %j / %s as %s', (spec,input,result) => expect(getSolver('mathcheck').grade(spec.type, spec, input).result).toBe(result));
   it('nonreduced answer is marked assisted and stamped with rule version', () => {
     const result = gradeAttempt({answer_type:'fraction',answer_spec:fraction},'6/8',0,'mathcheck',{ configs:{solvers:{default:'mathcheck',by_pack:{}}},rule_version:{solvers:1} });
