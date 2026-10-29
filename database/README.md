@@ -188,3 +188,11 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 - **2026-10-28 작성·적용 기록(Claude)**: `056_learn_steps_photo_config.sql` — 2026-10-28 16:45 KST Claude가 Supabase MCP로 운영 적용(evidence v5, v2 기반). 최신 evidence 설정을 보존한 v5에 `steps_replace_photo: false`, `steps_min_lines: 2` 추가. 현재는 사진 필수 조건 유지.
 
 - **2026-10-29 작성·적용 기록(Claude)**: `057_learn_session_photos.sql`·`058_learn_session_photo_config.sql` — 2026-10-29 11:13 KST Claude가 Supabase MCP로 운영 적용(057 → 058, evidence v6). 대표 승인 저장 RPC는 세션 잠금으로 중복·4장 제한을 보장. 기존 스토리지 정책 변경 없음. `steps_replace_photo`는 세트 사진 도입 후 사실상 미사용으로 보존.
+
+### 운영 보수 N — 059 적용 대기
+
+| 파일 | 내용 | 상태 | 적용일 | 적용자 |
+|---|---|---|---|---|
+| 059_learn_session_cap_config.sql | session v2 복사 → v3, per_ability_buffer=1·stop_when_verified=true | 미적용(파일만 작성) | | |
+
+기존 규칙 행은 유지한다. 적용 및 적용일·적용자 기록은 Claude가 수행한다.

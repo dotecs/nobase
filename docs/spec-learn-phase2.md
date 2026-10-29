@@ -12,7 +12,7 @@
 ---
 
 ## 0. 요약
-**Phase 2가 끝나면 등록 학생이 `/learn`에서 진단(15분)을 보고, 코치가 승인하면 매일 추천 세션(8문항)을 풀고, 1·3·7일 뒤 복습을 받는다.** 모든 시도·판정·상태 변화는 규칙 버전과 함께 append-only로 남는다.
+**Phase 2가 끝나면 등록 학생이 `/learn`에서 진단(15분)을 보고, 코치가 승인하면 매일 추천 세션(최대 8문항)[^session-cap]을 풀고, 1·3·7일 뒤 복습을 받는다.** 모든 시도·판정·상태 변화는 규칙 버전과 함께 append-only로 남는다.
 
 | 만드는 것 | 위치 |
 |---|---|
@@ -89,7 +89,7 @@
   1. 대상 소주제 = 목표(`learn_goal_requirements`) 중 `prefer_states` 순서(`needs_repair` → `recheck` → `unknown` → `learning`), 같은 상태면 교재 순서(`order`). 동시 진행 소주제 ≤ `max_abilities_in_progress`. 새로 여는 `unknown` 소주제는 세션당 `new_ability_per_session`개.
   2. **선수 조건**: 소주제 X의 prerequisite 중 `needs_repair`가 있으면 X 대신 그 선수를 먼저.
   3. 문항 선택: 해당 소주제의 `practice` → `assessment` 순, **아직 안 푼 문항** 우선, 같은 `variant_group` 연속 금지, `stem_md` 중복 제거, 틀린 문항은 같은 세션에 재출제하지 않음(다음 세션에서 다른 변형).
-  4. 세션 길이 `items_per_session`. 복습 기한이 지난 소주제(`learn_review_schedule.due`)가 있으면 세션 앞에 복습 문항을 최대 2개 끼운다(`review` usage 우선, 없으면 practice).
+  4. 세션 최대 길이 `items_per_session`[^session-cap]. 복습 기한이 지난 소주제(`learn_review_schedule.due`)가 있으면 세션 앞에 복습 문항을 최대 2개 끼운다(`review` usage 우선, 없으면 practice).
   5. 추천할 문항이 없으면(모든 소주제 verified/retained 또는 문항 부족) `plan.empty_reason`에 사유.
 - `review.ts`: `scheduleReviews(ability, verifiedAt, config)` → `review_intervals.days`마다 `due_at` 행 생성. `markReview(schedule, attempt)`: 통과 → `done` + 다음 interval 유지, 실패 → 해당 소주제 `recheck` + 남은 일정 `skipped` + verified 후 재스케줄.
 - `grade` 연계: 규칙 엔진은 `result`만 받는다(채점은 P2-3).
@@ -182,3 +182,5 @@
 ## 사람이 해야 할 것 (046 등)
 ## 질문 / 명세와 다르게 한 것
 ```
+
+[^session-cap]: 2026-10-29 운영 보수 N: 소주제별 상한과 verified 조기 종료로 세션은 더 짧을 수 있다. session v3(059)의 `per_ability_buffer`·`stop_when_verified` 및 `skipped` 계획 엔트리를 사용하며, 복습 문항은 연습 상한에서 제외한다.
