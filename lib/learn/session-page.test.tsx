@@ -1,3 +1,5 @@
+vi.mock('./session-photos',()=>({sessionPhotos:async()=>[]}));
+vi.mock('next/navigation',()=>({useRouter:()=>({refresh:vi.fn()})}));
 import { describe,it,expect,vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 const mock=vi.hoisted(()=>({kind:'practice',complete:false}));

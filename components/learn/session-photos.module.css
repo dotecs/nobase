@@ -1,0 +1,10 @@
+.panel { display: grid; gap: 16px; margin-top: 24px; padding: 24px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); box-shadow: var(--shadow-card); word-break: keep-all; }
+.panel h2 { font-size: 22px; line-height: 1.4; margin: 0; }
+.panel p { margin: 0; line-height: 24px; color: var(--color-text-secondary); }
+.thumbnails { display: flex; flex-wrap: wrap; gap: 8px; }
+.thumbnails:empty { display: none; }
+.thumbnails a { border-radius: var(--radius-button); overflow: hidden; }
+.thumbnails img { display: block; object-fit: cover; }
+.stepper { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 8px; color: var(--color-text-secondary); font-size: 13px; line-height: 22px; }
+.stepper li { flex: 1; border-bottom: 2px solid var(--color-border-brand); padding-bottom: 8px; }
+.stepper [aria-current] { color: var(--color-secondary-700); font-weight: 700; border-color: var(--color-secondary); }

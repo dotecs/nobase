@@ -5,6 +5,17 @@ import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { requireLearner,requireCoach,sessionRow,type Session } from './runtime';
 import { LearnUserError } from './errors';
 export type SessionPhoto={id:string;session_id:string;user_id:string;path:string;position:number;url:string};
+/** Caller has authenticated userId; results are never exposed without that guard. */
+export async function pendingPhotoSessions(userId:string) {
+  const client=createAdminSupabaseClient(),latest=await client.from('learn_sessions').select('*').eq('user_id',userId).eq('kind','diagnostic').order('started_at',{ascending:false}).limit(1);
+  if(latest.error)throw latest.error;
+  const diagnostic=(latest.data?.[0]??null) as Session|null;
+  const diagnosticPending=diagnostic?.ended_at&&(await sessionPhotoRows(diagnostic.id)).length===0?diagnostic:null;
+  const recent=await client.from('learn_sessions').select('*').eq('user_id',userId).in('kind',['practice','review']).gte('ended_at',new Date(Date.now()-24*60*60*1000).toISOString()).order('ended_at',{ascending:false});if(recent.error)throw recent.error;
+  let learning:Session|null=null;
+  for(const session of (recent.data??[]) as Session[])if(!(await sessionPhotoRows(session.id)).length){learning=session;break;}
+  return {diagnostic,diagnosticPending,learning};
+}
 export async function sessionPhotoRows(sessionId:string) {
   const result=await createAdminSupabaseClient().from('learn_session_photos' as never).select('*').eq('session_id',sessionId).order('position');
   if(result.error)throw result.error;return (result.data??[]) as Omit<SessionPhoto,'url'>[];

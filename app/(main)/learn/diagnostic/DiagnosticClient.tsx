@@ -26,12 +26,12 @@ export function DiagnosticClient({userId,sessionId,planIndex,item,photo_required
   const changeAnswer=(value:AnswerValue)=>{setAnswer(value);sync.edit({...latestInput.current,answer:value,source:'screen'});};
   const changeSteps=(value:string[])=>{setSteps(value);sync.edit({...latestInput.current,steps:value,source:'screen'});};
   const changePhoto=(value:string|null)=>{setPhoto(value);sync.edit({...latestInput.current,photo_path:value,source:'screen'});};
-  const photoRequired=photoPromptRequired(photo_required,steps_photo_min_lines,steps);
+  const photoRequired=item.answer_type==='photo'&&photoPromptRequired(photo_required,steps_photo_min_lines,steps);
   const help=submissionHelp(item.answer_type,answer,photoRequired,photo,nonemptySteps(steps));
   return <FocusShell title="출발점 진단" diagnostic current={planIndex+1} remaining={remaining} toolbar={<PadReceiver enabled={receiver.enabled} onToggle={receiver.toggle} status={sync.status}/>}><DiagnosticNotice planIndex={planIndex}/><section className={styles.card}>
     <div className={styles.stem}>{renderMathMarkdown(item.stem_md)}</div>
     <StepInput value={steps} onChange={changeSteps} onCopy={changeAnswer} disabled={pending||remaining===0}/><AnswerInput type={item.answer_type} relation_required={item.relation_required} variable={item.variable} options={item.options} value={answer} onChange={changeAnswer} disabled={pending||remaining===0}/>
-    <PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={pending||remaining===0}/>
+    {item.answer_type==='photo'&&<PhotoCapture userId={userId} required={photoRequired} value={photo} onChange={changePhoto} disabled={pending||remaining===0}/>}
     <Button variant="primary" size="lg" fullWidth disabled={pending||remaining===0||!!help} onClick={()=>start(async()=>{setError('');await sync.flush();const result=await submitAttempt({sessionId,itemId:item.id,planIndex,answer,steps:nonemptySteps(steps),photoPath:photo,durationMs:Math.min(2147483647,Math.max(0,Date.now()-started.current))});if(result.error)setError(result.error);else router.refresh();})}>{pending?'저장 중…':'답 제출'}</Button>
     {help&&<p className={styles.help}>{help}</p>}{(error||sync.error)&&<p role="alert">{error||sync.error}</p>}
   </section></FocusShell>;
