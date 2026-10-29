@@ -13,9 +13,16 @@ describe('coach runtime transactions with mock database',()=>{
   const input=(kind:string,extra:Record<string,unknown>={})=>({kind,userId:testUser,requestId:randomUUID(),eventAt:new Date().toISOString(),note:'[TEST] reviewed',...extra});
   it('diagnostic to gate approval opens active with one decision on retry',async()=>{
     const r=await import('./diagnostic-runtime'),c=await import('./coach-actions');const id=await r.startDiagnosticRuntime();vi.advanceTimersByTime(15*60000);await r.expireDiagnosticRuntime(id);
+    db.rows('learn_session_photos').push({id:randomUUID(),session_id:id,user_id:testUser,path:testUser+'/sessions/'+id+'/paper.png',position:0});
     const before=structuredClone(db.rows('learn_attempts')),value=input('diagnostic_gate');await c.runCoachAction(value);await c.runCoachAction(value);
     expect(db.rows('learn_learners')[0].status).toBe('active');expect(db.rows('learn_coach_decisions')).toHaveLength(1);expect(db.rows('learn_attempts')).toEqual(before);
     const view=await (await import('./coach-runtime')).learnerDetail(testUser);expect(view.states).toHaveLength(24);expect(view.preview).toHaveLength(2);
+  });
+  it('normal gate requires photos; override requires a note and records without_photo',async()=>{
+    const r=await import('./diagnostic-runtime'),c=await import('./coach-actions');const id=await r.startDiagnosticRuntime();vi.advanceTimersByTime(15*60000);await r.expireDiagnosticRuntime(id);
+    await expect(c.runCoachAction(input('diagnostic_gate'))).rejects.toThrow('풀이 사진');
+    await expect(c.runCoachAction(input('diagnostic_gate',{withoutPhoto:true,note:'   '}))).rejects.toThrow('사유를 입력해 주세요');expect(db.rows('learn_coach_decisions')).toHaveLength(0);
+    await c.runCoachAction(input('diagnostic_gate',{withoutPhoto:true}));expect(db.rows('learn_coach_decisions')[0].payload).toMatchObject({without_photo:true});expect(db.rows('learn_learners')[0].status).toBe('active');
   });
   it('partial saves once, preserves original attempt, adds assisted evidence',async()=>{
     const r=await import('./diagnostic-runtime'),c=await import('./coach-actions');const session=await r.startDiagnosticRuntime(),id=randomUUID();

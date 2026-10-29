@@ -1,3 +1,4 @@
+import { sessionPhotoRows } from './session-photos';
 import { LearnUserError } from './errors';
 import { attemptedItemIds } from './runtime';
 import 'next/headers';
@@ -9,7 +10,7 @@ import { prepareCoachReview,prepareStateOverride } from './coach';
 import { emptyEvidence,type State,type Evidence,type RuleContext } from './rules/types';
 import { scheduleReviews } from './rules/review';
 const stateEnum=z.enum(['unknown','needs_repair','learning','verified','retained','recheck']);
-const inputSchema=z.object({kind:z.enum(['diagnostic_gate','state_override','restart_diagnostic','review_attempt']),userId:z.uuid(),requestId:z.uuid(),eventAt:z.iso.datetime(),note:z.string().max(4000),abilityId:z.string().optional(),state:stateEnum.optional(),attemptId:z.uuid().optional(),verdict:z.enum(['correct','incorrect','partial']).optional()});
+const inputSchema=z.object({kind:z.enum(['diagnostic_gate','state_override','restart_diagnostic','review_attempt']),userId:z.uuid(),requestId:z.uuid(),eventAt:z.iso.datetime(),note:z.string().max(4000),withoutPhoto:z.boolean().optional(),abilityId:z.string().optional(),state:stateEnum.optional(),attemptId:z.uuid().optional(),verdict:z.enum(['correct','incorrect','partial']).optional()});
 async function currentState(userId:string,abilityId:string):Promise<State> {
   const result=await createAdminSupabaseClient().from('learn_ability_states').select('*').eq('user_id',userId).eq('ability_id',abilityId).maybeSingle();if(result.error)throw result.error;
   const row=result.data as unknown as StateRow|null;return row?{ability_id:row.ability_id,state:row.state,evidence:row.evidence as unknown as Evidence}:{ability_id:abilityId,state:'unknown',evidence:emptyEvidence()};
@@ -29,7 +30,9 @@ export async function runCoachAction(input:unknown) {
     const session=(result.data as unknown as Session[])[0];if(!session?.ended_at)throw new Error('진단 완료 후 학습을 열 수 있습니다.');
     const key=`diagnostic_gate:${value.userId}:${session.id}`;if(await existing('learn_coach_decisions',key))return '이미 학습을 열었습니다.';
     if(learner.status!=='awaiting_coach')throw new Error('코치 확인 대기 상태가 아닙니다.');
-    await recordCoachAction({...base,kind:'diagnostic_gate',idempotency_key:key,decision:{kind:'diagnostic_gate',payload:json({note:value.note,session_id:session.id,rule_version:config.rule_version,trace:{rule:'coach_gate',reasons:['coach_approved'],rule_version:config.rule_version}})},learner_status:'active'});
+    if(value.withoutPhoto&&!value.note.trim())throw new LearnUserError('사유를 입력해 주세요');
+    if(!(await sessionPhotoRows(session.id)).length&&!value.withoutPhoto)throw new LearnUserError('학생이 풀이 사진을 올리면 열 수 있어요');
+    await recordCoachAction({...base,kind:'diagnostic_gate',idempotency_key:key,decision:{kind:'diagnostic_gate',payload:json({note:value.note,...(value.withoutPhoto?{without_photo:true}:{}),session_id:session.id,rule_version:config.rule_version,trace:{rule:'coach_gate',reasons:['coach_approved'],rule_version:config.rule_version}})},learner_status:'active'});
     return '학습을 열었습니다.';
   }
   const pack=await runtimePack(learner);

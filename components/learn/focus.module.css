@@ -1,5 +1,5 @@
 .shell { color: var(--color-text); min-height: 100vh; background: var(--color-bg-secondary); }
-.bar { min-height: 76px; position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) 6px; border-bottom: 2px solid var(--color-primary); background: var(--color-surface); font-size: var(--text-sm); }
+.bar { height: 84px; position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) 6px; border-bottom: 2px solid var(--color-primary); background: var(--color-surface); font-size: var(--text-sm); }
 .bar a { display: inline-flex; align-items: center; min-height: 44px; justify-self: start; }
 .body { word-break: keep-all; width: min(100% - 32px, 640px); margin: var(--space-6) auto; }
 .body h1 { font-size: var(--text-2xl); margin-bottom: var(--space-5); }
@@ -14,7 +14,7 @@
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 :global(body):has(.shell) :global(footer) { display: none; }
 
-.toolbar { position: sticky; top: 76px; z-index: 19; padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--color-border); background: var(--color-surface); font-size: var(--text-sm); }
+.toolbar { position: sticky; top: 84px; z-index: 19; padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--color-border); background: var(--color-surface); font-size: var(--text-sm); }
 
 .toneBadge { grid-column: 1 / -1; justify-self: start; border-radius: var(--radius-full); padding: 2px 10px; font-size: 12px; line-height: 20px; font-weight: 600; background: var(--color-info-subtle); color: var(--color-primary-700); }
 .shell[data-tone="diagnostic"] .bar { border-color: var(--color-secondary); }

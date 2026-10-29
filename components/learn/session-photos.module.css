@@ -8,3 +8,13 @@
 .stepper { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 8px; color: var(--color-text-secondary); font-size: 13px; line-height: 22px; }
 .stepper li { flex: 1; border-bottom: 2px solid var(--color-border-brand); padding-bottom: 8px; }
 .stepper [aria-current] { color: var(--color-secondary-700); font-weight: 700; border-color: var(--color-secondary); }
+.sessionHeader { padding: 16px 0; }
+.sessionHeader p { margin: 8px 0; }
+.sessionHeader h3 { font-size: 16px; }
+.kindBadge { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); background: var(--color-info-subtle); color: var(--color-primary-700); }
+.kindBadge[data-kind="diagnostic"] { background: var(--color-secondary-50); color: var(--color-secondary-700); }
+.kindBadge[data-kind="review"] { background: var(--color-success-subtle); color: var(--color-success-700); }
+.warning { color: var(--color-warning); }
+.muted { color: var(--color-text-secondary); }
+:global([data-theme="dark"]) .kindBadge[data-kind="diagnostic"] { background: color-mix(in srgb, var(--color-secondary-700) 15%, transparent); }
+@media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .kindBadge[data-kind="diagnostic"] { background: color-mix(in srgb, var(--color-secondary-700) 15%, transparent); } }

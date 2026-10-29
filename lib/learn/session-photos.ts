@@ -26,7 +26,7 @@ export async function sessionPhotos(sessionId:string):Promise<SessionPhoto[]> {
   const result=await createAdminSupabaseClient().from('learn_sessions').select('*').eq('id',sessionId).single();if(result.error)throw result.error;
   const session=result.data as unknown as Session;if(session.user_id===user.id)await requireLearner();else await requireCoach();
   const rows=await sessionPhotoRows(sessionId);
-  return Promise.all(rows.map(async row=>{const signed=await createAdminSupabaseClient().storage.from('learn-evidence').createSignedUrl(row.path,600);if(signed.error)throw signed.error;return {...row,url:signed.data.signedUrl};}));
+  return Promise.all(rows.map(async row=>{if(row.user_id!==session.user_id||!row.path.startsWith(session.user_id+'/sessions/'+session.id+'/')||row.path.includes('..'))throw new Error('잘못된 세션 사진 경로');const signed=await createAdminSupabaseClient().storage.from('learn-evidence').createSignedUrl(row.path,600);if(signed.error)throw signed.error;return {...row,url:signed.data.signedUrl};}));
 }
 export async function addSessionPhotoRuntime(input:unknown) {
   const user=await requireLearner(),value=z.object({sessionId:z.uuid(),path:z.string().min(1).max(1000)}).parse(input),session=await sessionRow(value.sessionId,user.id);

@@ -1,3 +1,4 @@
+import { sessionPhotos } from './session-photos';
 import 'next/headers';
 import { z } from 'zod';
 import { createAdminSupabaseClient } from '@/lib/supabase-admin';
@@ -30,5 +31,8 @@ export async function learnerDetail(userId:string) {
     const signed=row.photo_path?await client.storage.from('learn-evidence').createSignedUrl(row.photo_path,300):null;
     return {...row,stem_md:(exact.data as {stem_md:string}|null)?.stem_md??row.item_id,photo_url:signed?.data?.signedUrl??null,review:reviews.find(review=>review.attempt_id===row.id)??null};
   }));
-  return {learner,name:(profile.data as {name:string|null}|null)?.name??userId,pack,states,timeline,sessions,preview,items};
+  const photosBySession=Object.fromEntries(await Promise.all(sessions.map(async session=>[session.id,await sessionPhotos(session.id)] as const)));
+  const latestDiagnostic=[...sessions].sort((a,b)=>b.started_at.localeCompare(a.started_at)).find(session=>session.kind==='diagnostic');
+  const latestDiagnosticPhotoCount=latestDiagnostic?photosBySession[latestDiagnostic.id].length:0;
+  return {photosBySession,latestDiagnosticPhotoCount,learner,name:(profile.data as {name:string|null}|null)?.name??userId,pack,states,timeline,sessions,preview,items};
 }
