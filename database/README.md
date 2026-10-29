@@ -189,10 +189,10 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 
 - **2026-10-29 작성·적용 기록(Claude)**: `057_learn_session_photos.sql`·`058_learn_session_photo_config.sql` — 2026-10-29 11:13 KST Claude가 Supabase MCP로 운영 적용(057 → 058, evidence v6). 대표 승인 저장 RPC는 세션 잠금으로 중복·4장 제한을 보장. 기존 스토리지 정책 변경 없음. `steps_replace_photo`는 세트 사진 도입 후 사실상 미사용으로 보존.
 
-### 운영 보수 N — 059 적용 대기
+### 운영 보수 N — 059 적용 완료
 
 | 파일 | 내용 | 상태 | 적용일 | 적용자 |
 |---|---|---|---|---|
-| 059_learn_session_cap_config.sql | session v2 복사 → v3, per_ability_buffer=1·stop_when_verified=true | 미적용(파일만 작성) | | |
+| 059_learn_session_cap_config.sql | session v2 복사 → v3, per_ability_buffer=1·stop_when_verified=true | 적용 완료 | 2026-10-30 08:42 KST | Claude(Supabase MCP) |
 
 기존 규칙 행은 유지한다. 적용 및 적용일·적용자 기록은 Claude가 수행한다.
