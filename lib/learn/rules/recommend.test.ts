@@ -65,3 +65,10 @@ describe('session recommendation', () => {
     planSession(l,s,p,i,h,c); expect({ l,p,i,s,h,c }).toEqual(before);
   });
 });
+
+describe('group diversity',()=>{
+ const grouped=()=>items().filter(row=>['01-4','02-4'].includes(row.ability_id)).map((row,index)=>({...row,usage:'practice' as const,variant_group:row.ability_id+(index%6===5?'-B':'-A')}));
+ it('selects the group missing from evidence before an earlier id',()=>{const a=state('learning');a.evidence.distinct_groups=['01-4-A'];const out=planSession(learner(),[a],pack(),grouped().filter(row=>row.ability_id==='01-4'),[],context());expect(out.result.items[0].variant_group).toBe('01-4-B');expect(out.trace.reasons).toContain('group_diversity');});
+ it('falls back to existing groups when a new group is unavailable',()=>{const a=state('learning');a.evidence.distinct_groups=['01-4-A'];expect(planSession(learner(),[a],pack(),grouped().filter(row=>row.ability_id==='01-4'&&!row.variant_group.endsWith('-B')),[],context()).result.items[0].variant_group).toBe('01-4-A');});
+ it('diversifies each ability across alternating selections',()=>{const out=planSession(learner(),[state('learning','01-4'),state('learning','02-4')],pack(),grouped(),[],context()).result.items;for(const id of ['01-4','02-4']){const group=out.filter(row=>row.ability_id===id);expect(group.length).toBeGreaterThanOrEqual(2);expect(group[1].variant_group).not.toBe(group[0].variant_group);}});
+});

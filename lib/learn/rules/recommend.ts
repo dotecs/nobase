@@ -11,10 +11,11 @@ export function planSession(learner: SessionLearner, states: State[], pack: Rule
   const seen = new Set(history.map(row => row.item_id));
   const wrong = new Set(history.filter(row => row.result === 'incorrect' || row.result === 'no_response').map(row => row.item_id));
   const choose = (ability: string, usageOrder: Config['configs']['recommendation']['practice_usage_order']) => {
+    const groups=new Set([...(states.find(row=>row.ability_id===ability)?.evidence.distinct_groups??[]),...selected.filter(row=>row.ability_id===ability).map(row=>row.variant_group)]);
     const previousGroup = selected.at(-1)?.variant_group;
     return available.filter(row => row.ability_id === ability && usageOrder.includes(row.usage) && !used.has(row.id) && !wrong.has(row.id)
       && (!rule.skip_duplicate_stems || !stems.has(row.stem_md)) && (row.variant_group ?? row.id) !== previousGroup)
-      .sort((a, b) => Number(seen.has(a.id)) - Number(seen.has(b.id)) || usageOrder.indexOf(a.usage) - usageOrder.indexOf(b.usage) || a.id.localeCompare(b.id))[0];
+      .sort((a, b) => Number(seen.has(a.id)) - Number(seen.has(b.id)) || Number(groups.has(a.variant_group??a.id))-Number(groups.has(b.variant_group??b.id)) || usageOrder.indexOf(a.usage) - usageOrder.indexOf(b.usage) || a.id.localeCompare(b.id))[0];
   };
   const add = (item: RuleItem, kind: 'practice' | 'review') => {
     selected.push(planned(item, kind)); used.add(item.id); stems.add(item.stem_md);
@@ -60,7 +61,7 @@ export function planSession(learner: SessionLearner, states: State[], pack: Rule
     }
     if (!added) break;
   }
-  reasons.push('unseen_first', 'latest_version', 'no_adjacent_group', 'incorrect_items_excluded');
+  reasons.push('group_diversity', 'unseen_first', 'latest_version', 'no_adjacent_group', 'incorrect_items_excluded');
   if (rule.skip_duplicate_stems) reasons.push('unique_stems');
   return finish(selected.length ? null : goals.length && goals.every(id => status(id) === 'verified' || status(id) === 'retained') ? 'all_goals_mastered' : 'insufficient_items');
 }
