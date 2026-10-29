@@ -173,7 +173,7 @@ function variantFixture() {
   const id = randomUUID(), sourceId = randomUUID();
   memory.rows('learn_item_sources').push({ id: sourceId, origin: 'own', storage_path: 'test.png' });
   memory.rows('learn_rule_configs').push({ key: 'variants', version: 1, config: variantRules, active_from: '2020-01-01T00:00:00Z' });
-  const draft = { id, source_id: sourceId, stem_md: '1/2+1/3', answer_type: 'fraction', answer_spec: { type: 'fraction', value: '5/6', require_reduced: true }, answer_verified_by: 'program', status: 'extracted', ability_id: '04-3', usage_suggested: 'assessment', variants: [], template: null, extract: { original: { needs_figure: false } } };
+  const draft = { id, source_id: sourceId, stem_md: '다음을 계산하시오. $1/2+1/3$', answer_type: 'fraction', answer_spec: { type: 'fraction', value: '5/6', require_reduced: true }, answer_verified_by: 'program', status: 'extracted', ability_id: '04-3', usage_suggested: 'assessment', variants: [], template: null, extract: { original: { needs_figure: false } } };
   memory.rows('learn_item_drafts').push(draft);
   return { ...memory, id, draft: draft as Row };
 }
@@ -187,7 +187,7 @@ describe('server variants and transactional approval', () => {
   });
   it('검토 저장에서 coach_final을 병합한 뒤 승인 RPC에 도달한다',async()=>{
     const memory=variantFixture();Object.assign(memory.draft,{extract:{original:{needs_figure:false},rule:['04-5'],classifier:{choice:'04-5',confidence:.91,error:null}}});
-    const saved=await saveDraftReview({draftId:memory.id,stem_md:'1/2+1/3',answer_type:'fraction',ability_id:'04-3',usage:'assessment',coachConfirmed:false,saveImage:false});expect(saved).not.toHaveProperty('error');
+    const saved=await saveDraftReview({draftId:memory.id,stem_md:'다음을 계산하시오. $1/2+1/3$',answer_type:'fraction',ability_id:'04-3',usage:'assessment',coachConfirmed:false,saveImage:false});expect(saved).not.toHaveProperty('error');
     expect(memory.draft.extract).toMatchObject({original:{needs_figure:false},rule:['04-5'],classifier:{choice:'04-5',coach_final:'04-3',confidence:.91}});
     expect(await approveDraft({draftId:memory.id,saveImage:false})).not.toHaveProperty('error');
   });
@@ -204,7 +204,7 @@ describe('server variants and transactional approval', () => {
   it('주입 의심 초안은 본문을 수정해도 명시적 코치 확인 없이는 검증 상태를 올릴 수 없다', async () => {
     const memory = variantFixture();
     Object.assign(memory.draft, { extract: { original: { needs_figure: false, injection_suspected: true }, warning: 'injection_suspected' }, status: 'needs_coach', answer_spec: null, answer_verified_by: null });
-    const input = { draftId: memory.id, stem_md: '1/2+1/3', answer_type: 'fraction', ability_id: '04-3', usage: 'assessment', coachConfirmed: false, saveImage: false };
+    const input = { draftId: memory.id, stem_md: '다음을 계산하시오. $1/2+1/3$', answer_type: 'fraction', ability_id: '04-3', usage: 'assessment', coachConfirmed: false, saveImage: false };
     expect(await saveDraftReview(input)).toHaveProperty('error');
     expect(memory.draft.answer_verified_by).toBeNull();
     expect(await saveDraftReview({ ...input, coachConfirmed: true, coachAnswer: { type: 'fraction', value: '5/6' } })).not.toHaveProperty('error');
@@ -352,4 +352,9 @@ describe('enrichment generation and selected application', () => {
     const result = verifyEnrichment(raw, memory.rows('learn_items')[0] as Database['public']['Tables']['learn_items']['Row'], [], provider);
     expect(result.misconceptions).toEqual([{ pattern: '파싱 불가', wrong_value: '모르겠다', explanation: '확인 필요', verified: false }]);
   });
+});
+
+describe('instruction approval guard',()=>{
+ it('blocks a bare stem before the approval RPC',async()=>{const memory=variantFixture();memory.draft.stem_md='$1/2+1/3$';expect(await approveDraft({draftId:memory.id,saveImage:false})).toMatchObject({error:expect.stringContaining('지시문이 없는')});expect(memory.rpcCalls).toHaveLength(0);expect(memory.rows('learn_items')).toHaveLength(0);});
+ it('also blocks appending variants to an old approved bare seed',async()=>{const memory=variantFixture();Object.assign(memory.draft,{status:'approved',stem_md:'$1/2+1/3$'});expect(await appendApprovedVariants(memory.id)).toMatchObject({error:expect.stringContaining('지시문이 없는')});expect(memory.rpcCalls).toHaveLength(0);});
 });

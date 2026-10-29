@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { MockProvider } from './mock';
 import { extractDrafts, prepareApproval, guessMatches, suggestAbilities, recordCoachClassification } from './authoring';
 import { selectProvider } from './provider';
-import { Extraction } from './schema';
+import { Extraction,extractionJsonSchema } from './schema';
 import { verifyEnrichment } from './enrichment';
 import { POST, maxDuration } from '@/app/api/learn/jobs/run/route';
 import { processExtraction } from './worker';
@@ -157,4 +157,9 @@ describe('authoring verification boundary', () => {
     const html = renderToStaticMarkup(createElement(ReviewCard, { draft, source, abilities, approve: async () => ({ message: '' }) }));
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>승인<\/button>/);
   });
+});
+
+describe('missing instructions in OCR',()=>{
+ it('keeps a program-solved draft in needs_coach when OCR supplied an instruction',async()=>{const [draft]=await extractDrafts(id,{},new MockProvider('missing_instruction'),abilities);expect(draft).toMatchObject({status:'needs_coach',answer_verified_by:'program',extract:{original:{needs_coach:true}}});expect(extractionJsonSchema.properties.items.items.required).toContain('needs_coach');});
+ it('shows the missing-instruction badge and disables approval',async()=>{const [extracted]=await extractDrafts(id,{},new MockProvider(),abilities);const draft={...extracted,stem_md:'$1/2+1/3$',ability_id:'04-3',variants:[],template:null,enrichment:null} as unknown as Draft;const {ReviewCard}=await import('@/app/(admin)/admin/learn/authoring/AuthoringClient');const html=renderToStaticMarkup(createElement(ReviewCard,{draft,source:{origin:'own',url:null} as Source & {url:null},abilities,approve:async()=>({})}));expect(html).toContain('지시문 없음');expect(html).toMatch(/<button[^>]*disabled=""[^>]*title="[^"]+"[^>]*>승인<\/button>/);});
 });

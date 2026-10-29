@@ -75,7 +75,7 @@ export async function extractDrafts(sourceId: string, image: unknown, provider: 
       extract: { original: item, rule, ...(classifier?{classifier}:{}), warning: item.injection_suspected ? 'injection_suspected' : solved.ok && item.answer_guess && !guessMatches(item.answer_guess, solved.answer_spec) ? 'llm_mismatch' : null } as Json,
       stem_md: item.stem_md, answer_type: item.answer_type, answer_spec: solved.ok ? solved.answer_spec as Json : null,
       answer_verified_by: solved.ok ? 'program' : null, ability_candidates: candidates, ability_id: abilityId,
-      usage_suggested: 'assessment', status: solved.ok ? 'extracted' : 'needs_coach',
+      usage_suggested: 'assessment', status: solved.ok && !item.needs_coach ? 'extracted' : 'needs_coach',
       provider: provider.name, model_id: provider.modelId, prompt_version: 'item_extract.v2', is_mock: provider.isMock,
     } satisfies Database['public']['Tables']['learn_item_drafts']['Insert'];
   }));

@@ -1,4 +1,5 @@
 'use client';
+import { hasInstruction,INSTRUCTION_REQUIRED } from '@/lib/learn/authoring/instruction';
 
 import { useState, useTransition, useEffect, useSyncExternalStore } from 'react';
 import { VariantSelection } from '@/lib/learn/variant-selection';
@@ -78,7 +79,8 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
   const savingSelection = selected.pending > 0;
   const includedCount = selected.flags.filter(Boolean).length;
   const variantsOutdated = variants.length > 0 && (stem !== draft.stem_md || answerType !== draft.answer_type || ability !== draft.ability_id || coachConfirmed);
-  const allowed = !pending && !savingSelection && !selected.error && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
+  const instructionPresent=hasInstruction(stem);
+  const allowed = instructionPresent && !pending && !savingSelection && !selected.error && !locked && !variantsOutdated && source.origin !== 'reference_only' && !!ability && (coachConfirmed ? coachValid : program.ok);
   const reviewValue = (): ApprovalValue => ({ draftId: draft.id, stem_md: stem, answer_type: answerType, ability_id: ability, usage, coachConfirmed, coachAnswer: spec, saveImage });
   const crop = draft.crop as { x: number; y: number; width: number; height: number } | null;
   const ordered = [...abilities].sort((a, b) => Number(draft.ability_candidates.includes(b.id)) - Number(draft.ability_candidates.includes(a.id)));
@@ -92,6 +94,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
     </div>
     <div className={styles.editor}>
       <p>{draft.status} · {draft.is_mock ? '모의 추출' : '이미지 추출'} · {draft.model_id}</p>
+      {!instructionPresent&&<p className={styles.injectionWarning} role="status" title={INSTRUCTION_REQUIRED}>지시문 없음</p>}
       {extract?.warning === 'llm_mismatch' && <p role="status">⚠ LLM 불일치 — 프로그램 정답과 추정 답이 다릅니다.</p>}
       {injectionSuspected && <p className={styles.injectionWarning} role="alert">이미지에 지시문 포함 — 반드시 사람이 확인</p>}
       <label>문제<textarea value={stem} onChange={event => { setStem(event.target.value); setCoachConfirmed(false); }} disabled={locked} /></label>
@@ -120,7 +123,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
           }
           return generateDraftVariants(draft.id, variantCount ? Number(variantCount) : undefined);
         })}>{variants.length ? '변형 다시 생성' : '변형 생성·검증'}</button>
-        {draft.status === 'approved' && <><button disabled={pending || savingSelection || !!selected.error || variantsOutdated || !program.ok || !includedCount} onClick={() => run(() => appendApprovedVariants(draft.id))}>선택한 변형 추가</button><span>포함 {includedCount}개{savingSelection && ' · 저장 중…'}</span></>}
+        {draft.status === 'approved' && <><button title={!instructionPresent?INSTRUCTION_REQUIRED:undefined} disabled={!instructionPresent || pending || savingSelection || !!selected.error || variantsOutdated || !program.ok || !includedCount} onClick={() => run(() => appendApprovedVariants(draft.id))}>선택한 변형 추가</button><span>포함 {includedCount}개{savingSelection && ' · 저장 중…'}</span></>}
         {variantsOutdated && <p>씨앗 또는 검증 방식이 변경되었습니다. 검토 저장 후 변형을 다시 생성해 주세요.</p>}
         <ul>{variants.map((variant, index) => <li key={`${index}-${variant.stem_md}`}>
           <label><input type="checkbox" checked={selected.flags[index] ?? variant.enabled} disabled={pending || variantsLocked || variantsOutdated} onChange={event => { const enabled=event.currentTarget.checked; void selection.toggle(index,enabled); }} />변형 {index + 1} 포함 · {variant.usage === 'practice' ? '연습' : variant.usage === 'review' ? '복습' : '평가'}</label>
@@ -131,7 +134,7 @@ export function ReviewCard({ draft, source, abilities, approve }: { draft: Draft
       {selected.error && <p role="alert">{selected.error}</p>}
       <div className={styles.buttons}>
         <button disabled={pending || savingSelection || locked || !ability || !(coachConfirmed ? coachValid : program.ok)} onClick={() => run(() => saveDraftReview(reviewValue()))}>검토 저장</button>
-        <button disabled={!allowed} onClick={() => run(() => approve(reviewValue()))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
+        <button disabled={!allowed} title={!instructionPresent?INSTRUCTION_REQUIRED:undefined} onClick={() => run(() => approve(reviewValue()))}>{stem === draft.stem_md ? '승인' : '수정 후 승인'}</button>
         <span aria-live="polite">포함 {includedCount}개{savingSelection && ' · 저장 중…'}</span>
         <button disabled={locked || pending} onClick={() => { setAnswerType('photo'); setCoachConfirmed(false); setSaveImage(true); }}>이미지 문항으로 등록 준비</button>
         <button disabled={locked || pending || savingSelection} onClick={() => run(() => rejectDraft(draft.id))}>버림</button>

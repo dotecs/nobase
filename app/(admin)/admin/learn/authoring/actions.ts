@@ -1,4 +1,5 @@
 'use server';
+import { requireInstruction } from '@/lib/learn/authoring/instruction';
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
@@ -162,6 +163,7 @@ export async function appendApprovedVariants(draftId: string) {
   try {
     const { client, draft } = await editableDraft(draftId);
     if (draft.status !== 'approved') throw new Error('승인된 초안만 변형을 추가할 수 있습니다.');
+    requireInstruction(draft.stem_md);
     const template = TemplateSchema.parse(draft.template);
     if (template.params.source_stem !== draft.stem_md || template.params.answer_type !== draft.answer_type) throw new Error('씨앗 수정 후 변형을 다시 생성해 주세요.');
     const variants = validateStoredVariants(draft.variants);
@@ -183,6 +185,7 @@ export async function approveDraft(input: { draftId: string; saveImage: boolean 
     const draftResult = await client.from('learn_item_drafts').select('*').eq('id', value.draftId).single();
     const draft = draftResult.data as Draft | null;
     if (draftResult.error || !draft) throw draftResult.error ?? new Error('초안 없음');
+    requireInstruction(draft.stem_md);
     if (!draft.ability_id || !draft.usage_suggested) throw new Error('소주제와 용도를 선택해 주세요.');
     const result = await client.rpc('learn_approve_draft', {
       p_draft_id: draft.id, p_ability_id: draft.ability_id, p_usage: draft.usage_suggested,
