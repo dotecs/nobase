@@ -17,6 +17,7 @@ export function polynomial(expr: Expr, values: Record<string, Rational> = {}): P
   if (expr.kind === 'number') return { coefficients: [expr.value] };
   if (expr.kind === 'variable') return values[expr.name] ? { coefficients: [values[expr.name]] } : { variable: expr.name, coefficients: [zero(), new Rational(1)] };
   if (expr.kind === 'neg') { const p = polynomial(expr.value, values); return { ...p, coefficients: p.coefficients.map(value => value.neg()) }; }
+  if (expr.kind === 'call' || expr.kind === 'constant') throw new UnsupportedError('Functions and constants require numeric evaluation');
   const a = polynomial(expr.left, values), b = polynomial(expr.right, values);
   if (expr.op === '+') return combine(a, b);
   if (expr.op === '-') return combine(a, { ...b, coefficients: b.coefficients.map(value => value.neg()) });

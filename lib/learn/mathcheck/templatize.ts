@@ -48,6 +48,7 @@ export function templatize(stem: string, answerType: AnswerType, config: unknown
     if (expr.kind === 'number') return parameter(expr.value, role);
     if (expr.kind === 'variable') return expr.name;
     if (expr.kind === 'neg') return `(-${walk(expr.value, role)})`;
+  if (expr.kind === 'call' || expr.kind === 'constant') throw new UnsupportedError('Functions and constants require numeric evaluation');
     if (expr.op === '/' && simpleFraction(expr.left) && simpleFraction(expr.right)) return `(${walk(expr.left)}/${walk(expr.right)})`;
     if ((expr.op === '/' || expr.op === '^') && expr.right.kind !== 'number' && !(expr.right.kind === 'neg' && expr.right.value.kind === 'number')) throw new Error('복합 분모·지수의 변형은 지원하지 않습니다.');
     if (expr.op === '/' && !['number', 'variable'].includes(expr.left.kind) && !(expr.left.kind === 'neg' && ['number', 'variable'].includes(expr.left.value.kind))) throw new UnsupportedError('이 문항은 서식이 복잡해 자동 변형이 안 됩니다');
