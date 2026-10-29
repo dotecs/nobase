@@ -141,7 +141,7 @@ export type Expr =
 ## M-6 문서·타입
 
 - `docs/spec-learn-ui-v1.md`에 "입력 문법·미리보기" 절 추가(지원 기호 표, 미지원 목록, 보이는 식 원칙).
-- `lib/learn/types.ts`·`StudentItem` DTO는 변경 없음(`relation_required`, `variable`은 키패드·placeholder 결정에 계속 사용). `answer_spec` 스키마 변경 없음(`number.value`는 문자열 그대로이며 이제 상수식도 허용된다는 주석만).
+- `lib/learn/types.ts`·`StudentItem` DTO는 변경 없음(`relation_required`, `variable`은 키패드·placeholder 결정에 계속 사용). `answer_spec`은 2026-10-29 대표 승인 예외로 `number.value`·`fraction.value`의 기존 유리수 검증을 유지하고 변수 없는 유한 상수식 검증만 추가한다. 값의 저장 형식은 문자열 그대로다.
 - 성능: `toLatex`는 입력 글자마다 호출 — 600토큰 상한 그대로, 재귀 깊이 40 그대로.
 
 ---
