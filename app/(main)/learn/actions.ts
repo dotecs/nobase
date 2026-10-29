@@ -15,3 +15,6 @@ export async function expireDiagnostic(id:string) {try{await expireDiagnosticRun
 import { savePadDraftRuntime, readPadDraftRuntime } from '@/lib/learn/pad-runtime';
 export async function savePadDraft(input:unknown) {try{return await savePadDraftRuntime(input);}catch(error){return {error:runtimeError(error,'savePadDraft')};}}
 export async function readPadDraft(input:unknown) {try{return await readPadDraftRuntime(input);}catch(error){return {error:runtimeError(error,'readPadDraft')};}}
+
+import { addSessionPhotoRuntime } from '@/lib/learn/session-photos';
+export async function addSessionPhoto(input:unknown) {try{const photos=await addSessionPhotoRuntime(input);revalidatePath('/learn','layout');revalidatePath('/admin/learn/learners','layout');return {photos};}catch(error){return {error:runtimeError(error,'addSessionPhoto')};}}
