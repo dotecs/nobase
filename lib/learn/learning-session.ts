@@ -6,7 +6,7 @@ import type { AttemptResult } from './types';
 import type { PlannedItem, RuleContext } from './rules/types';
 export type LearningStep={type:'item';item:PlannedItem;queue_index:number;plan_index:number;retries_used:number;hints_used:number};
 export type LearningMeta={type:'learning';queue:PlannedItem[];config:RuleContext;pack_id:string;trace:unknown};
-export type Feedback={step_check?:StepCheck;type:'feedback';plan_index:number;result:AttemptResult;can_retry:boolean;hint:string|null;answer:string|null;explanation:string|null};
+export type Feedback={input?:string|string[];reason?:string;step_check?:StepCheck;type:'feedback';plan_index:number;result:AttemptResult;can_retry:boolean;hint:string|null;answer:string|null;explanation:string|null};
 export type LearningEntry=LearningMeta|LearningStep|Feedback|{type:'complete'};
 export function learningPlan(queue:PlannedItem[],config:RuleContext,packId:string,trace:unknown):LearningEntry[] {
   if(!queue.length)throw new LearnUserError('추천할 문항이 없습니다.');

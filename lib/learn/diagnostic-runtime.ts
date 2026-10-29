@@ -1,3 +1,4 @@
+import { inputIssueMessage } from './input-messages';
 import { requiresPhoto,stepsPhotoMinimum } from './steps-photo';
 import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
@@ -55,7 +56,7 @@ async function recordCurrent(session:Session,input:unknown,photoPath:string|null
   }
   const learner=await learnerRow(session.user_id), solver=meta.config.configs.solvers.by_pack[learner.pack_id]??meta.config.configs.solvers.default;
   const grade=expired?{result:'no_response' as const,auto_grade:{solver,trace:{rule:'diagnostic_timeout',rule_version:{diagnostic:meta.config.rule_version.diagnostic}}}}:gradeAttempt(item,input,0,solver,meta.config);
-  if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
+  if(grade.result==='input_issue')throw new LearnUserError(inputIssueMessage(grade.auto_grade.detail?.reason));
 
   const now=new Date().toISOString(), incoming:Attempt={id:stableId(key),item_id:item.id,item_version:item.version,ability_id:item.ability_id,variant_group:item.variant_group,result:grade.result,usage:'diagnostic',at:now,session_id:session.id};
   const items=await loadLearnItems(meta.pack.abilities.map(row=>row.id));

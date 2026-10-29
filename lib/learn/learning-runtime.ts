@@ -1,3 +1,4 @@
+import { inputIssueMessage } from './input-messages';
 import { requiresPhoto,stepsPhotoMinimum } from './steps-photo';
 import { checkSteps } from './mathcheck/steps';
 import { LearnUserError } from './errors';
@@ -65,7 +66,7 @@ export async function submitLearningRuntime(input:unknown) {
   const stepCheck=value.steps?.length?checkSteps(item.stem_md,item.answer_type,value.steps):null;
   await validatePhoto(user.id,value.photoPath,requiresPhoto(config.configs.evidence.photo_required_usages.includes(usage)||item.answer_type==='photo',config.configs.evidence,stepCheck));
   const solver=config.configs.solvers.by_pack[plan.meta.pack_id]??config.configs.solvers.default;
-  const grade=gradeAttempt(item,value.answer,Math.max(plan.current.hints_used,plan.current.retries_used),solver,config);if(grade.result==='input_issue')throw new LearnUserError('답 입력 형식을 확인해 주세요.');
+  const grade=gradeAttempt(item,value.answer,Math.max(plan.current.hints_used,plan.current.retries_used),solver,config);if(grade.result==='input_issue')throw new LearnUserError(inputIssueMessage(grade.auto_grade.detail?.reason));
 
   const stateResult=await client.from('learn_ability_states').select('*').eq('user_id',user.id).eq('ability_id',item.ability_id).maybeSingle();if(stateResult.error)throw stateResult.error;
   const row=stateResult.data as unknown as StateRow|null,before:State=row?{ability_id:row.ability_id,state:row.state,evidence:row.evidence as unknown as Evidence}:{ability_id:item.ability_id,state:'unknown',evidence:emptyEvidence()};
@@ -84,6 +85,8 @@ export async function submitLearningRuntime(input:unknown) {
     return schedule.id&&status!==schedule.status&&status!=='due'?[{id:schedule.id,status}]:[];
   });
   const outcome=learningOutcome(session.plan,item,grade.result);
+  outcome.feedback.input=value.answer;
+  if(typeof grade.auto_grade.detail.reason==='string')outcome.feedback.reason=grade.auto_grade.detail.reason;
   if(stepCheck)outcome.feedback.step_check=stepCheck;
   await recordAttempt({user_id:user.id,session_id:session.id,idempotency_key:key,attempt:{item_id:item.id,item_version:item.version,ability_id:item.ability_id,usage,answer_input:json(value.answer),result:grade.result,steps:value.steps??null,auto_grade:json({...grade.auto_grade,...(stepCheck?{step_check:stepCheck}:{}),state_trace:transition.trace,review_trace:reviewed?.trace??null}),hints_used:plan.current.hints_used,photo_path:value.photoPath,duration_ms:value.durationMs,rule_version:json(config.rule_version)},state:{...after,evidence:json(after.evidence),rule_version:json(config.rule_version)},event:before.state===after.state?null:{from_state:before.state,to_state:after.state,reason:JSON.stringify({state:transition.trace,review:reviewed?.trace??null,before,after}),rule_version:json(config.rule_version)},reviews,review_updates:updates,session_plan_append:json(outcome.append),learner_status:null});
   await closeLearningSession(await sessionRow(session.id,user.id));
