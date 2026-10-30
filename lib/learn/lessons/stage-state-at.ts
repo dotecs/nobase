@@ -7,6 +7,7 @@ type Track={from:number;to:number;start:number;duration:number;easing?:'linear'|
 function ease(p:number,kind:Track['easing']){if(!kind||kind==='linear'||p===0||p===1)return p;const [x1,y1,x2,y2]=kind==='ease'?[.25,.1,.25,1]:[.42,0,.58,1];const cubic=(t:number,a:number,b:number)=>3*(1-t)**2*t*a+3*(1-t)*t*t*b+t**3;let low=0,high=1;for(let i=0;i<20;i++){const t=(low+high)/2;if(cubic(t,x1,x2)<p)low=t;else high=t;}return cubic((low+high)/2,y1,y2);}
 /** Rebuild from the scene origin, never from a previous render or a wall clock. */
 export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[]):StageState{
+ if(sentenceStarts.length!==scene.narration.length||sentenceStarts.some((value,i)=>!Number.isFinite(value)||value<0||(i>0&&value<sentenceStarts[i-1])))throw new Error('Invalid sentence timeline');
  const stage=scene.stage,isGraph=stage.type==='graph'||stage.type==='slider',fns=stage.type==='graph'?stage.fns:stage.type==='slider'?[{expr:stage.expr}]:[];
  const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{}};
  let points:Array<Omit<StagePoint,'y'>&{y?:number;on?:string}>=stage.type==='graph'&&!stage.initial?.hidden_points?(stage.points??[]).map((p,i)=>({...p,id:'point:'+i})):[];
@@ -21,12 +22,12 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[]):Sta
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,on:action.on,c:action.c,label:action.label});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
-   case 'reveal':if(!state.revealed[action.target].includes(action.index))state.revealed[action.target].push(action.index);break;
+   case 'reveal':state.revealed[action.target]=[...state.revealed[action.target].filter(i=>i!==action.index),action.index];break;
    case 'camera':for(const axis of ['x','y'] as const)for(const index of [0,1] as const)tracks.set('camera:'+axis+index,{from:state.camera[axis][index],to:action[axis][index],start,duration:action.duration_ms??800,set:value=>{state.camera[axis][index]=value;}});break;
    case 'label':state.labels.push({text:action.text,tex:action.tex,at:{...action.at},anchor:action.anchor});break;
    case 'band':state.band=action.y?[...action.y]:null;break;
    case 'pulse':pulses.set(action.target,start);break;
-   case 'clear':if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
+   case 'clear':if(!action.what||action.what==='all')state.band=null;if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
   }
  }
  advance(time);
