@@ -1,0 +1,7 @@
+.drawer { position:absolute; top:72px; right:24px; bottom:80px; z-index:5; width:min(440px,calc(100% - 32px)); background:var(--studio-bg); color:var(--studio-text); border:1px solid var(--studio-grid); border-radius:var(--radius-card); box-shadow:0 16px 60px var(--studio-shadow); overflow:auto; animation:slideIn 220ms ease; outline:none; }
+.drawer>aside { margin:0; border:0; background:transparent; }
+.drawer button { min-height:40px; color:var(--studio-text); background:var(--studio-panel); border:1px solid var(--studio-grid); border-radius:var(--radius-button); padding:8px 12px; }
+.drawer a { color:var(--studio-accent); }
+@keyframes slideIn { from { transform:translateX(32px); opacity:0; } to { transform:none; opacity:1; } }
+@media(max-width:767px) { .drawer { top:56px; bottom:60px; right:16px; } }
+@media(prefers-reduced-motion:reduce) { .drawer { animation:none; } }

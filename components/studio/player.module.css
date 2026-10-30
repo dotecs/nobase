@@ -20,3 +20,7 @@
 .mode { display: block; margin-top: 4px; color: var(--studio-muted); font-size: 10px; }
 @media (max-width: 1023px) { .player { padding: 14px 18px; gap: 14px; } .play { flex-basis: 48px; width: 48px; height: 48px; } .lower { margin-top: 8px; } }
 @media (max-width: 767px) { .player { padding: 12px; gap: 10px; border-radius: 18px; } .play { flex-basis: 40px; width: 40px; height: 40px; font-size: 20px !important; } .lower { gap: 6px; } .time { font-size: 10px; } .speed { font-size: 10px; padding: 5px 2px; } .bars { gap: 1px; } .caption { font-size: 13px; } }
+
+.role[data-role="think"] { color:var(--color-lesson); }
+.role[data-role="write"] { color:var(--studio-accent); }
+.role[data-role="say"] { color:var(--color-secondary-400); }

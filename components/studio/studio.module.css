@@ -68,3 +68,6 @@
 .stage { animation:sceneIn 200ms ease; }
 @keyframes sceneIn { from { opacity:0; } to { opacity:1; } }
 @media(prefers-reduced-motion:reduce) { .stage { animation:none; } }
+
+.studio { --color-text:var(--studio-text); --color-text-secondary:var(--studio-muted); --color-bg-elevated:var(--studio-bg); --color-bg-secondary:var(--studio-panel); --color-border:var(--studio-grid); --color-border-brand:var(--studio-grid); }
+.studio[data-has-player="false"] .stage { padding-bottom:0; }

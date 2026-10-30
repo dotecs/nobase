@@ -18,3 +18,10 @@
 @media (prefers-reduced-motion: reduce) { .next[data-ended="true"] { animation: none; } }
 @media (max-width: 1023px) { .formula { font-size: 23px; margin-bottom: 8px; } .value { font-size: 16px; margin-bottom: 8px; } }
 @media (max-width: 767px) { .formula { font-size: 22px; margin-bottom: 6px; } .value { font-size: 15px; margin-bottom: 4px; } .value input { padding: 4px; font-size: 14px; } .nav { gap: 6px; } .nav button, .home { min-height: 40px; padding: 8px 10px; gap: 6px; font-size: 12px; } .progress { font-size: 12px; gap: 6px; } .dots { display: none; } }
+
+.legend { list-style:none; padding:0; margin:0; display:grid; gap:16px; color:var(--studio-text); }
+.legend li { display:flex; gap:10px; align-items:center; }
+.legend i { width:24px; height:3px; background:var(--studio-accent); }
+.legend [data-color="c2"] i { background:var(--color-secondary-400); }
+.legend [data-color="c3"] i { background:var(--color-warning); }
+.verdict { margin-top:12px; font-size:13px; color:var(--studio-muted); }
