@@ -634,6 +634,7 @@ ol {
 
 /* Learning Studio: isolated dark canvas; explicit light theme is also supported. */
 [data-studio] {
+ --studio-chalk: color-mix(in srgb,var(--color-gray-50) 94%,var(--color-warning));
  --studio-bg: color-mix(in srgb, var(--color-gray-900) 65%, var(--color-gray-950));
  --studio-panel: color-mix(in srgb, var(--color-gray-800) 50%, transparent);
  --studio-grid: color-mix(in srgb, var(--color-gray-500) 32%, transparent);
@@ -645,6 +646,7 @@ ol {
  --studio-shadow: color-mix(in srgb, var(--color-gray-950) 30%, transparent);
 }
 [data-studio][data-theme="light"] {
+ --studio-chalk:var(--color-gray-800);
  --studio-bg: var(--color-gray-50);
  --studio-panel: color-mix(in srgb, var(--color-primary-50) 75%, transparent);
  --studio-grid: color-mix(in srgb, var(--color-primary-500) 20%, transparent);

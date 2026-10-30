@@ -13,5 +13,5 @@ export async function checkedLesson(file,conceptDirectory='content/concepts'){
  return validateLesson(lesson,ids);
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- try{if(!process.argv[2])throw new Error('Usage: npm run lesson:check -- <file>');const lesson=await checkedLesson(process.argv[2]);console.log(`PASS ${lesson.id}: ${lesson.scenes.length} scenes, ${lesson.scenes.flatMap(s=>s.narration).length} sentences`);}catch(error){console.error(error.message);process.exitCode=1;}
+ try{if(!process.argv[2])throw new Error('Usage: npm run lesson:check -- <file>');const lesson=await checkedLesson(process.argv[2]);const {actionWarnings}=await import('../lib/learn/lessons/action-validation.ts');for(const scene of lesson.scenes)for(const warning of actionWarnings(scene))console.warn('WARN '+warning);console.log(`PASS ${lesson.id}: ${lesson.scenes.length} scenes, ${lesson.scenes.flatMap(s=>s.narration).length} sentences`);}catch(error){console.error(error.message);process.exitCode=1;}
 }
