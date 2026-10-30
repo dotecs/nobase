@@ -1,0 +1,36 @@
+{
+  "pack_id": "root-math",
+  "concepts": [
+    {"id":"c.equation","ability_id":"05-1","name":"방정식","one_line":"미지수에 어떤 값을 넣느냐에 따라 참이 되기도 거짓이 되기도 하는 등식. 참이 되게 하는 값이 '해'.","lesson_id":"rm-16",
+     "check_question":{"stem_md":"다음 중 방정식인 것은?","options":[{"id":"a","text_md":"$2+3=5$"},{"id":"b","text_md":"$x+3=5$"},{"id":"c","text_md":"$2x+3x=5x$"}],"correct":"b"}},
+    {"id":"c.quadratic-expr","ability_id":"02-3","name":"이차식","one_line":"문자의 가장 높은 차수가 2인 식. $ax^2+bx+c$ 꼴($a\\neq0$).","lesson_id":"rm-02",
+     "check_question":{"stem_md":"$3x^2-5x+1$ 에서 이차항의 계수는?","options":[{"id":"a","text_md":"$3$"},{"id":"b","text_md":"$-5$"},{"id":"c","text_md":"$1$"}],"correct":"a"}},
+    {"id":"c.quadratic-eq","ability_id":"05-3","name":"이차방정식","one_line":"정리했을 때 (이차식)$=0$ 꼴이 되는 방정식. $ax^2+bx+c=0$ ($a\\neq0$).","lesson_id":"rm-10",
+     "check_question":{"stem_md":"$2x^2+x+3=0$ 에서 $a,b,c$는?","options":[{"id":"a","text_md":"$a=2,\\ b=1,\\ c=3$"},{"id":"b","text_md":"$a=1,\\ b=2,\\ c=3$"},{"id":"c","text_md":"$a=2,\\ b=3,\\ c=1$"}],"correct":"a"}},
+    {"id":"c.equality-props","ability_id":"05-2","name":"등식의 성질","one_line":"등식의 양변에 같은 수를 더하거나 빼거나 곱하거나 (0이 아닌 수로) 나누어도 등식은 성립한다. '이항'은 이 성질의 줄임말.","lesson_id":"rm-05",
+     "check_question":{"stem_md":"$x^2+\\frac{b}{a}x+\\frac{c}{a}=0$ 에서 $x^2+\\frac{b}{a}x=-\\frac{c}{a}$ 로 바꿀 때 쓴 성질은?","options":[{"id":"a","text_md":"양변에서 $\\frac{c}{a}$를 뺐다"},{"id":"b","text_md":"양변에 $a$를 곱했다"},{"id":"c","text_md":"양변을 제곱했다"}],"correct":"a"}},
+    {"id":"c.perfect-square","ability_id":"09-1","name":"완전제곱식","one_line":"$x^2+px+\\left(\\frac p2\\right)^2=\\left(x+\\frac p2\\right)^2$. 일차항 계수의 절반을 제곱해 더하면 제곱 꼴이 된다.","lesson_id":"rm-09",
+     "check_question":{"stem_md":"$x^2+6x$ 를 완전제곱식으로 만들려면 무엇을 더해야 하나?","options":[{"id":"a","text_md":"$36$"},{"id":"b","text_md":"$9$"},{"id":"c","text_md":"$3$"}],"correct":"b"}},
+    {"id":"c.fraction-props","ability_id":"04-2","name":"분수의 성질(통분)","one_line":"분모와 분자에 같은 0 아닌 수를 곱해도 값은 같다. 분모를 맞추는 것이 통분.","lesson_id":"rm-04",
+     "check_question":{"stem_md":"$-\\frac{c}{a}$ 를 분모가 $4a^2$인 분수로 고치면?","options":[{"id":"a","text_md":"$-\\frac{4ac}{4a^2}$"},{"id":"b","text_md":"$-\\frac{c}{4a^2}$"},{"id":"c","text_md":"$-\\frac{4c}{4a^2}$"}],"correct":"a"}},
+    {"id":"c.sqrt-props","ability_id":"08-1","name":"제곱근의 성질","one_line":"$X^2=k$ ($k\\ge0$)이면 $X=\\pm\\sqrt k$. 제곱해서 음수가 되는 실수는 없다.","lesson_id":"rm-08",
+     "check_question":{"stem_md":"$(x+1)^2=5$ 의 해는?","options":[{"id":"a","text_md":"$x=\\sqrt5-1$ 하나"},{"id":"b","text_md":"$x=-1\\pm\\sqrt5$"},{"id":"c","text_md":"$x=\\pm\\sqrt5$"}],"correct":"b"}},
+    {"id":"c.quadratic-formula","ability_id":"05-3","name":"근의 공식","one_line":"$ax^2+bx+c=0$ 의 근은 $x=\\dfrac{-b\\pm\\sqrt{b^2-4ac}}{2a}$. 세 계수만 알면 근을 언제나 쓸 수 있다.","lesson_id":"rm-11",
+     "check_question":{"stem_md":"근의 공식에서 루트 안에 들어 있는 식은?","options":[{"id":"a","text_md":"$b^2-4ac$"},{"id":"b","text_md":"$b^2+4ac$"},{"id":"c","text_md":"$4ac-b^2$"}],"correct":"a"}},
+    {"id":"c.discriminant","ability_id":"05-3","name":"판별식의 정의","one_line":"$D=b^2-4ac$. 근의 공식의 루트 안 식에 붙인 이름(Discriminant).","lesson_id":"rm-11",
+     "check_question":{"stem_md":"$x^2+x-3=0$ 의 판별식 $D$의 값은?","options":[{"id":"a","text_md":"$13$"},{"id":"b","text_md":"$-11$"},{"id":"c","text_md":"$1$"}],"correct":"a"}},
+    {"id":"c.discriminant-meaning","ability_id":"05-3","name":"판별식의 의미","one_line":"$D>0$ 서로 다른 두 실근, $D=0$ 중근, $D<0$ 실근 없음. 루트 안이 음수면 실수 범위에서 풀 수 없기 때문.","lesson_id":"rm-11",
+     "check_question":{"stem_md":"\"이차방정식이 실근을 갖지 않는다\"를 판별식으로 쓰면?","options":[{"id":"a","text_md":"$D<0$"},{"id":"b","text_md":"$D=0$"},{"id":"c","text_md":"$D>0$"}],"correct":"a"}},
+    {"id":"c.graph-xaxis","ability_id":"06-1","name":"그래프와 x축의 교점","one_line":"$y=f(x)$ 의 그래프가 $x$축과 만나는 점의 $x$좌표 = 방정식 $f(x)=0$ 의 실근. 교점 개수 = 실근 개수.","lesson_id":"rm-16",
+     "check_question":{"stem_md":"이차함수의 그래프가 $x$축과 만나지 않는다. 이차방정식 $f(x)=0$ 의 실근은?","options":[{"id":"a","text_md":"없다"},{"id":"b","text_md":"하나"},{"id":"c","text_md":"둘"}],"correct":"a"}},
+    {"id":"c.ineq-props","ability_id":"06-2","name":"부등식의 성질","one_line":"양변에 같은 수를 더하거나 빼도 부등호 방향은 그대로. 음수를 곱하거나 나누면 방향이 바뀐다.","lesson_id":"rm-06",
+     "check_question":{"stem_md":"$9-4k<0$ 을 $k$에 대해 풀면?","options":[{"id":"a","text_md":"$k>\\frac94$"},{"id":"b","text_md":"$k<\\frac94$"},{"id":"c","text_md":"$k<-\\frac94$"}],"correct":"a"}}
+  ],
+  "edges": [
+    ["c.equation","c.quadratic-eq"],["c.quadratic-expr","c.quadratic-eq"],
+    ["c.quadratic-eq","c.quadratic-formula"],["c.equality-props","c.quadratic-formula"],["c.perfect-square","c.quadratic-formula"],["c.fraction-props","c.quadratic-formula"],["c.sqrt-props","c.quadratic-formula"],
+    ["c.quadratic-formula","c.discriminant"],["c.discriminant","c.discriminant-meaning"],["c.sqrt-props","c.discriminant-meaning"],
+    ["c.quadratic-eq","c.graph-xaxis"],["c.discriminant-meaning","c.graph-xaxis"],
+    ["c.equality-props","c.ineq-props"]
+  ]
+}
