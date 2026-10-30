@@ -1,0 +1,9 @@
+import { beforeEach,it,expect,vi } from 'vitest';
+const mocks=vi.hoisted(()=>({auth:vi.fn(),published:vi.fn(),db:vi.fn(),hash:vi.fn(()=> 'current-hash')}));
+vi.mock('@/lib/learn/runtime',()=>({requireLearner:mocks.auth,runtimeError:()=> '오류'}));
+vi.mock('@/lib/learn/lessons/data',()=>({lessonDb:mocks.db,publishedLesson:mocks.published,audioUrls:vi.fn(),conceptCardData:vi.fn()}));
+vi.mock('@/lib/learn/lessons/audio',()=>({audioHash:mocks.hash,LESSON_VOICE:'voice'}));
+import { recordLessonAudioDuration } from '@/app/(main)/learn/lesson/actions';
+beforeEach(()=>{vi.clearAllMocks();mocks.auth.mockResolvedValue({id:'learner'});mocks.published.mockResolvedValue({body:{scenes:[{narration:[{id:'s',role:'say',text:'문장'}]}]}});});
+it('records only an empty duration for the authenticated published sentence and current audio hash',async()=>{const query={update:vi.fn(),eq:vi.fn(),is:vi.fn().mockResolvedValue({error:null})};query.update.mockReturnValue(query);query.eq.mockReturnValue(query);mocks.db.mockReturnValue({from:vi.fn(()=>query)});expect(await recordLessonAudioDuration('lesson',2,'s',4000)).toEqual({});expect(mocks.auth).toHaveBeenCalledOnce();expect(query.update).toHaveBeenCalledWith({duration_ms:4000});for(const pair of [['lesson_id','lesson'],['lesson_version',2],['sentence_id','s'],['text_hash','current-hash']])expect(query.eq).toHaveBeenCalledWith(...pair);expect(query.is).toHaveBeenCalledWith('duration_ms',null);});
+it('does not write when authentication fails or the sentence does not exist',async()=>{mocks.auth.mockRejectedValueOnce(new Error('Unauthorized'));expect(await recordLessonAudioDuration('lesson',2,'s',4000)).toHaveProperty('error');expect(mocks.db).not.toHaveBeenCalled();expect(await recordLessonAudioDuration('lesson',2,'missing',4000)).toHaveProperty('error');expect(mocks.db).not.toHaveBeenCalled();});

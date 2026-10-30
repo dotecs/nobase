@@ -1,0 +1,20 @@
+.formula { font-size: 30px; color: var(--studio-text); margin-bottom: 20px; }
+.value { display: flex; justify-content: space-between; align-items: center; font-size: 19px; margin-bottom: 22px; }
+.value strong { color: var(--studio-text); font-weight: 500; }
+.value input { width: 72px; padding: 7px 8px; border: 1px solid var(--studio-grid); border-radius: 7px; background: var(--studio-bg); color: var(--studio-text); text-align: center; font-size: 17px; }
+.value input:focus-visible, .slider:focus-visible { outline: 2px solid var(--studio-accent); outline-offset: 4px; }
+.slider { width: 100%; accent-color: var(--studio-accent); height: 20px; cursor: pointer; }
+.range { display: flex; justify-content: space-between; margin-top: 4px; font-size: 13px; color: var(--studio-muted); }
+.nav { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 16px; }
+.nav button, .home { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 46px; border: 1px solid var(--studio-grid); border-radius: 12px; padding: 12px 24px; background: var(--studio-panel); color: var(--studio-text); font-size: 15px; }
+.nav .next, .home { background: var(--color-primary-500); border-color: var(--color-primary-400); color: var(--color-gray-50); }
+.progress { display: flex; align-items: center; gap: 24px; font-size: 15px; color: var(--studio-text); font-variant-numeric: tabular-nums; }
+.progress span span { color: var(--studio-muted); }
+.dots { display: inline-flex; gap: 10px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--studio-grid); }
+.dots i[data-active="true"] { background: var(--studio-accent); box-shadow: 0 0 12px var(--studio-glow); }
+.next[data-ended="true"] { animation: nextPulse 700ms ease 1; }
+@keyframes nextPulse { 50% { box-shadow: 0 0 0 8px var(--studio-glow); } }
+@media (prefers-reduced-motion: reduce) { .next[data-ended="true"] { animation: none; } }
+@media (max-width: 1023px) { .formula { font-size: 23px; margin-bottom: 8px; } .value { font-size: 16px; margin-bottom: 8px; } }
+@media (max-width: 767px) { .formula { font-size: 22px; margin-bottom: 6px; } .value { font-size: 15px; margin-bottom: 4px; } .value input { padding: 4px; font-size: 14px; } .nav { gap: 6px; } .nav button, .home { min-height: 40px; padding: 8px 10px; gap: 6px; font-size: 12px; } .progress { font-size: 12px; gap: 6px; } .dots { display: none; } }

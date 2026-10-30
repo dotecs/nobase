@@ -14,10 +14,12 @@ export async function publishedLesson(id:string,version?:number){
  const {data,error}=await query.order('version',{ascending:false}).limit(1).maybeSingle();if(error)throw error;
  return data?{...data,body:normalizeLessonActions(lessonSchema.parse(data.body))}:null;
 }
-export async function audioUrls(id:string,version:number){
+export async function audioUrls(id:string,version:number){return (await audioPlayback(id,version)).urls;}
+export async function audioPlayback(id:string,version:number){
+ const empty={urls:{} as Record<string,string>,durations:{} as Record<string,number|null>};
  const client=lessonDb(),rows=await client.from('learn_lesson_audio').select('*').eq('lesson_id',id).eq('lesson_version',version);if(rows.error)throw rows.error;
- const lesson=await publishedLesson(id,version);if(!lesson)return {};const sentences=new Map(lesson.body.scenes.flatMap(s=>s.narration).map(s=>[s.id,s]));
- const valid=(rows.data??[]).filter(row=>row.path.startsWith(`${id}/${version}/`)&&sentences.has(row.sentence_id)&&row.text_hash===audioHash(sentences.get(row.sentence_id)!,process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE));if(!valid.length)return {};
+ const lesson=await publishedLesson(id,version);if(!lesson)return empty;const sentences=new Map(lesson.body.scenes.flatMap(s=>s.narration).map(s=>[s.id,s]));
+ const valid=(rows.data??[]).filter(row=>row.path.startsWith(`${id}/${version}/`)&&sentences.has(row.sentence_id)&&row.text_hash===audioHash(sentences.get(row.sentence_id)!,process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE));if(!valid.length)return empty;
  const signed=await client.storage.from('learn-lessons').createSignedUrls(valid.map(r=>r.path),600);if(signed.error)throw signed.error;
- return Object.fromEntries(valid.flatMap((row,i)=>signed.data?.[i]?.signedUrl?[[row.sentence_id,signed.data[i].signedUrl]]:[]));
+ return {urls:Object.fromEntries(valid.flatMap((row,i)=>signed.data?.[i]?.signedUrl?[[row.sentence_id,signed.data[i].signedUrl]]:[])),durations:Object.fromEntries(valid.map(row=>[row.sentence_id,row.duration_ms]))};
 }
