@@ -10,9 +10,9 @@
 - 개념 JSON 계약: {pack_id,nodes:[{id,name,one_line,ability_id?,check_question?,lesson_id?}],edges:[{source_id,target_id,type?:'prerequisite'}]}. 노드 pack_id는 생략 가능하며 최상위 pack_id와 같아야 합니다. check_question은 {stem_md,options:[{id,text_md}],correct}입니다. 자기순환·중복·없는 ID·순환 간선을 검증합니다.
 - npm run lesson:check -- <file>: 스키마·그래프 AST·저작 TeX 구문·문장 ID·같은 팩의 로컬 개념 참조를 검증합니다. Node 24 환경에서 실행합니다.
 - Claude가 060 → 061 적용 및 개념 데이터 등록을 마친 뒤 npm run lesson:seed -- <file>을 실행합니다. DB 개념·소주제 ID를 재검증하고 기존 버전을 수정하지 않은 채 다음 draft 버전만 insert합니다. 동시 버전 충돌은 새 번호로 재시도합니다. 이 구현 작업에서는 실제 seed를 실행하지 않았습니다.
-- 음성: ELEVENLABS_API_KEY는 서버 전용. 미설정 시 '키 없음'을 표시하고 호출하지 않습니다. ELEVENLABS_VOICE_ID 기본값은 명세의 복제 음성 ID, 모델은 eleven_v4입니다. 대본·역할 연출·음성·모델 해시가 같은 문장은 건너뜁니다. 60문장/45초 작업 예산 안에서 순차 처리하고 남은 문장은 반복 실행합니다. 실패한 문장만 다시 대상이 됩니다. 예상 크레딧은 [공식 TTS 기본 기준](https://elevenlabs.io/pricing)의 약 1자=1크레딧으로 계산합니다. [v4 안내](https://elevenlabs.io/v4)의 동일 크레딧 체계를 함께 확인했습니다(2026-10-30). 계정별 실청구 차이를 화면에 명시합니다.
+- 음성: ELEVENLABS_API_KEY는 서버 전용. 미설정 시 '키 없음'을 표시하고 호출하지 않습니다. ELEVENLABS_VOICE_ID 기본값은 명세의 복제 음성 ID, 모델은 eleven_v4입니다. 대본·역할 연출·음성·모델 해시가 같은 문장은 건너뜁니다. 60문장/45초 작업 예산 안에서 순차 처리하고 남은 문장은 반복 실행합니다. 실패한 문장만 다시 대상이 됩니다. 대표 결정에 따라 문자 수만 계산하며 예상 크레딧은 “계정·모델 요율 미확인”으로 표시합니다.
 - [공식 음성 API](https://elevenlabs.io/docs/api-reference/text-to-speech/convert): output_format=mp3_44100_128은 쿼리 인자입니다(2026-10-30 확인). 저장소 learn-lessons는 비공개이며 10분 서명 URL로 재생합니다. 공개된 현재 버전과 해시가 맞는 음성만 제공하며 URL 만료 시 갱신합니다.
 - 명시한 tts는 그대로 사용합니다. 없으면 say는 기본 대본, think는 [slower, thinking aloud], write는 [clear, deliberate]를 붙입니다. 저작자는 복잡한 공식의 tts를 직접 검수해야 합니다.
 - cue의 step/node/row는 0부터 시작합니다. graph highlight는 fn:0·point:0 형태의 인덱스 또는 범례 label·c1/c2/c3입니다.
-- 재생 전 음성은 시작하지 않습니다. 음성이 없거나 재생 실패 시 글자 수 기반 타이머로 자막을 진행합니다. 자막 수식은 기존 MathPreview, 무대의 저작 TeX는 기존 KaTeX 표시를 사용합니다.
+- 재생 전 음성은 시작하지 않습니다. 음성이 없거나 재생 실패 시 글자 수 기반 타이머로 자막을 진행합니다. 자막에서 해석 가능한 수식은 기존 MathPreview의 AST 경로를 사용합니다. 입력 파서가 해석하지 못하는 저작 수식(±·프라임 등)에만 기존 KaTeX 표시를 허용합니다. 무대의 저작 TeX도 기존 KaTeX를 사용하며, 그래프와 학생 답안의 AST 경로는 변경하지 않습니다.
 - 활동은 서버 액션으로 묶어 기록합니다. 문장 이벤트는 10개 단위이며 정지·완료·화면 종료 때 남은 기록을 전송합니다. 코치 화면은 최근 500건의 레슨별 방문 경과(미완료 포함)·근거 클릭·gap을 요약합니다.

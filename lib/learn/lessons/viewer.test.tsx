@@ -6,6 +6,8 @@ import { prototypeLesson } from './prototype-fixture';
 import { captionDuration,chooseTodayLesson,lessonEventsSchema,summarizeLessonActivity } from './events';
 import type { EventRow,LessonRow } from './types';
 describe('lesson viewing without grading',()=>{
+ it.each(['x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}',"b=2b'"])('renders read-only caption TeX %s when the input parser cannot',math=>{const html=renderToStaticMarkup(<LessonText text={'설명 $'+math+'$'}/>);expect(html).toContain('katex');expect(html).not.toContain('<code');expect(html).not.toContain('aria-label="입력 미리보기"');});
+ it('keeps supported caption math on the AST preview path',()=>{const html=renderToStaticMarkup(<LessonText text={'식 $x^2+3x=0$'}/>);expect(html).toContain('aria-label="입력 미리보기"');expect(html).toContain('katex');});
  it('counts partial viewing time once per visit',()=>{const base={lesson_id:'a',lesson_version:1,type:'scene'} as EventRow;expect(summarizeLessonActivity([{...base,payload:{visit_id:'one',elapsed_ms:3000}},{...base,payload:{visit_id:'one',elapsed_ms:7000}},{...base,payload:{visit_id:'two',elapsed_ms:2000}}])[0].seconds).toBe(9);});
  it('renders authored quiz fractions as math instead of input fallback code',()=>{const html=renderToStaticMarkup(<LessonText authored text={'$k>\\tfrac94$'}/>);expect(html).toContain('katex');expect(html).not.toContain('<code');});
  it('renders seven scenes with no autoplay and worked labels',()=>{const html=renderToStaticMarkup(<LessonViewer lesson={prototypeLesson()} record={async()=>({})}/>);expect(html.match(/data-scene="true"/g)).toHaveLength(7);expect(html).not.toMatch(/autoPlay|autoplay/);expect(html).toContain('머릿속');expect(html).toContain('종이에');expect(html).toContain('data-tone="lesson"');expect(html).toContain('문제풀이');});
