@@ -1,34 +1,8 @@
-.player { display: flex; align-items: center; gap: 20px; padding: 20px 24px; border-radius: 24px; border: 1px solid var(--studio-grid); background: var(--studio-panel); box-shadow: 0 16px 40px var(--studio-shadow); }
-.play { flex: 0 0 60px; width: 60px; height: 60px; display: grid; place-items: center; border: 0; border-radius: 50%; color: var(--color-gray-50); background: var(--color-primary-500); box-shadow: 0 0 24px var(--studio-glow); font-size: 25px !important; }
-.body { flex: 1; min-width: 0; }
-.caption { display: flex; align-items: center; gap: 8px; color: var(--studio-text); font-size: clamp(14px, 1.4vw, 19px); line-height: 1.5; white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
-.caption::-webkit-scrollbar { display: none; }
-.caption strong { color: var(--studio-accent); font-weight: 650; }
-.caption :global(.katex) { font-size: 1.1em; }
-.role { color: var(--studio-muted); border: 1px solid var(--studio-grid); border-radius: 6px; padding: 2px 5px; font-size: 11px; flex: none; }
-.lower { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
-.waveform { position: relative; min-width: 0; flex: 1; height: 30px; }
-.waveform:focus-within { outline: 2px solid var(--studio-accent); outline-offset: 3px; border-radius: 4px; }
-.bars { height: 100%; display: flex; align-items: center; gap: 3px; }
-.bars i { flex: 1; min-width: 1px; max-width: 4px; border-radius: 4px; background: var(--studio-muted); opacity: .55; }
-.bars i[data-played="true"] { background: var(--studio-accent); opacity: 1; }
-.scrub { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.time { font-size: 13px; color: var(--studio-text); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.time span { color: var(--studio-muted); }
-.speed { border: 1px solid var(--studio-grid); border-radius: 8px; padding: 7px 5px; color: var(--studio-text); background: var(--studio-bg); font-size: 12px; }
-.speed:focus-visible { outline: 2px solid var(--studio-accent); }
-.mode { display: block; margin-top: 4px; color: var(--studio-muted); font-size: 10px; }
-@media (max-width: 1023px) { .player { padding: 14px 18px; gap: 14px; } .play { flex-basis: 48px; width: 48px; height: 48px; } .lower { margin-top: 8px; } }
-@media (max-width: 767px) { .player { padding: 12px; gap: 10px; border-radius: 18px; } .play { flex-basis: 40px; width: 40px; height: 40px; font-size: 20px !important; } .lower { gap: 6px; } .time { font-size: 10px; } .speed { font-size: 10px; padding: 5px 2px; } .bars { gap: 1px; } .caption { font-size: 13px; } }
-
-.role[data-role="think"] { color:var(--color-lesson); }
-.role[data-role="write"] { color:var(--studio-accent); }
-.role[data-role="say"] { color:var(--color-secondary-400); }
-
-:global([data-frame="true"]) .player { padding:20px 24px; gap:20px; border-radius:24px; }
-:global([data-frame="true"]) .play { width:60px; height:60px; flex-basis:60px; font-size:25px !important; }
-:global([data-frame="true"]) .caption { font-size:19px; }
-:global([data-frame="true"]) .lower { gap:14px; margin-top:14px; }
-:global([data-frame="true"]) .time { font-size:13px; }
-:global([data-frame="true"]) .speed { font-size:12px; padding:7px 5px; }
-:global([data-frame="true"]) .bars { gap:3px; }
+.player { display:flex; align-items:center; gap:12px; height:56px; padding:0 12px; border:1px solid var(--studio-grid); border-radius:var(--radius-button); background:var(--studio-panel); color:var(--studio-text); }
+.play { width:36px; height:36px; flex:none; display:grid; place-items:center; border:0; border-radius:50%; background:var(--color-primary-500); color:var(--color-gray-50); font-size:20px !important; }
+.scrub { flex:1; min-width:20px; height:24px; accent-color:var(--studio-accent); cursor:pointer; }
+.time { font-size:12px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.speed,.captions { border:1px solid var(--studio-grid); border-radius:var(--radius-button); padding:5px; background:var(--studio-bg); color:var(--studio-text); font-size:12px !important; }
+.captions[aria-pressed="false"] { opacity:.55; }
+.scrub:focus-visible,.speed:focus-visible { outline:2px solid var(--studio-accent); outline-offset:2px; }
+@media(max-width:767px) { .player { gap:6px; padding:0 8px; } .time { font-size:10px; } .speed,.captions { font-size:10px !important; } }

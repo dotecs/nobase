@@ -1,25 +1,23 @@
 'use client';
 import { useCallback,useEffect,useMemo,useRef,useState,type ReactNode } from 'react';
 import type {Alignment} from '@/lib/learn/lessons/alignment';
-import { FiPause,FiPlay } from 'react-icons/fi';
 import type { Scene } from '@/lib/learn/lessons/schema';
 import type { LessonEvent } from '@/lib/learn/lessons/types';
 import type { StageState } from '@/lib/learn/lessons/stage-state';
 import { stageStateAt } from '@/lib/learn/lessons/stage-state-at';
-import { buildTimeline,formatTimelineTime,PLAYBACK_RATES,timelinePosition } from '@/lib/learn/lessons/timeline';
-import { StudioCaption } from './StudioCaption';
-import { FLAT_WAVEFORM,loadWaveform } from './waveform';
-import styles from './player.module.css';
+import { buildTimeline,PLAYBACK_RATES,timelinePosition } from '@/lib/learn/lessons/timeline';
+import {Caption} from './Caption';
+import {Transport} from './Transport';
 const EMPTY_URLS:Record<string,string>={},EMPTY_DURATIONS:Record<string,number|null>={};
-export type Playback={state:StageState;time:number;sentenceStart:number;playing:boolean;ended:boolean;bar:ReactNode;pause:()=>void;seek:(time:number)=>void};
-type Props={alignments?:Record<string,Alignment|null>;scene:Scene;audioUrls?:Record<string,string>;durations?:Record<string,number|null>;worked?:boolean;isLastScene?:boolean;onPrevious?:()=>void;onNext?:()=>void;onResume?:()=>void;onSeek?:()=>void;refreshAudio?:()=>Promise<Record<string,string>>;onDuration?:(sentenceId:string,ms:number)=>Promise<unknown>;onEvent?:(event:LessonEvent)=>void;children:(playback:Playback)=>ReactNode};
+export type Playback={state:StageState;time:number;sentenceStart:number;playing:boolean;ended:boolean;bar:ReactNode;caption:ReactNode;pause:()=>void;seek:(time:number)=>void};
+type Props={showCaptions?:boolean;onToggleCaptions?:()=>void;alignments?:Record<string,Alignment|null>;scene:Scene;audioUrls?:Record<string,string>;durations?:Record<string,number|null>;worked?:boolean;isLastScene?:boolean;onPrevious?:()=>void;onNext?:()=>void;onResume?:()=>void;onSeek?:()=>void;refreshAudio?:()=>Promise<Record<string,string>>;onDuration?:(sentenceId:string,ms:number)=>Promise<unknown>;onEvent?:(event:LessonEvent)=>void;children:(playback:Playback)=>ReactNode};
 /** Mount with key={scene.id}. One clock drives media, captions and deterministic stage state. */
-export default function StudioPlayer({scene,alignments,audioUrls=EMPTY_URLS,durations=EMPTY_DURATIONS,worked,isLastScene=false,onPrevious,onNext,onResume,onSeek,onDuration,onEvent,refreshAudio,children}:Props){
+export default function StudioPlayer({scene,alignments,showCaptions,onToggleCaptions,audioUrls=EMPTY_URLS,durations=EMPTY_DURATIONS,worked,isLastScene=false,onPrevious,onNext,onResume,onSeek,onDuration,onEvent,refreshAudio,children}:Props){
  const [sources,setSources]=useState(audioUrls),refreshed=useRef(new Set<string>()),mounted=useRef(true);
  useEffect(()=>setSources(audioUrls),[audioUrls]);
  const [known,setKnown]=useState(durations),timeline=useMemo(()=>buildTimeline(scene,known),[scene,known]);
  const audio=useRef<HTMLAudioElement>(null),clock=useRef({time:0,playing:false,rate:1,failed:false});
- const [playing,setPlaying]=useState(false),[rate,setRate]=useState(1),[wave,setWave]=useState(FLAT_WAVEFORM);
+ const [playing,setPlaying]=useState(false),[rate,setRate]=useState(1),[localCaptions,setLocalCaptions]=useState(true);
  const initial=useMemo(()=>stageStateAt(scene,0,timeline.starts,{alignments,durations:known}),[scene,timeline,alignments,known]);
  const [snapshot,setSnapshot]=useState({time:0,state:initial});
  const last=useRef({time:0,json:JSON.stringify(initial),state:initial});
@@ -36,7 +34,6 @@ export default function StudioPlayer({scene,alignments,audioUrls=EMPTY_URLS,dura
  const position=timelinePosition(timeline,snapshot.time),entry=timeline.entries[position.index],src=sources[entry.sentence.id];
  useEffect(()=>{if(!opened.current){opened.current=true;emit({type:'scene',payload:{scene_id:scene.id}});}},[scene.id,emit]);
  useEffect(()=>{if(playing&&reported.current!==entry.sentence.id){reported.current=entry.sentence.id;emit({type:'sentence',payload:{scene_id:scene.id,sentence_id:entry.sentence.id}});}},[playing,entry.sentence.id,scene.id,emit]);
- useEffect(()=>{let cancelled=false;setWave(FLAT_WAVEFORM);if(src)void loadWaveform(src).then(value=>{if(!cancelled)setWave(value);});return()=>{cancelled=true;};},[src]);
  useEffect(()=>{const element=audio.current;if(!element)return;const pos=timelinePosition(timeline,clock.current.time),sentence=timeline.entries[pos.index].sentence,url=sources[sentence.id];
   if(element.dataset.sentence!==sentence.id||element.dataset.source!==(url??'')){element.pause();clock.current.failed=false;element.dataset.sentence=sentence.id;element.dataset.source=url??'';if(url)element.src=url;else element.removeAttribute('src');element.load();}
   element.playbackRate=rate;if(url){try{if(Math.abs(element.currentTime-pos.localMs/1000)>.08)element.currentTime=pos.localMs/1000;}catch{}if(playing)void element.play().catch(error=>{if(error?.name!=='AbortError'&&clock.current.playing&&element.dataset.sentence===sentence.id)clock.current.failed=true;});else element.pause();}
@@ -51,13 +48,7 @@ export default function StudioPlayer({scene,alignments,audioUrls=EMPTY_URLS,dura
  const audioError=()=>{clock.current.failed=true;const id=audio.current?.dataset.sentence;if(!id||refreshed.current.has(id)||!handlers.current.refreshAudio)return;refreshed.current.add(id);void handlers.current.refreshAudio().then(next=>{if(mounted.current)setSources(old=>({...old,...next}));}).catch(()=>{});};
  const metadata=()=>{const element=audio.current,id=element?.dataset.sentence;if(!element||!id||!Number.isFinite(element.duration)||element.duration<=0)return;const ms=Math.round(element.duration*1000),cursor=timelinePosition(timeline,clock.current.time);if(timeline.entries[cursor.index].sentence.id===id){try{element.currentTime=Math.min(cursor.localMs,ms)/1000;}catch{}}if(known[id])return;const next={...known,[id]:ms},nextTimeline=buildTimeline(scene,next);clock.current.time=nextTimeline.entries[cursor.index].startMs+Math.min(cursor.localMs,nextTimeline.entries[cursor.index].durationMs);setKnown(next);void handlers.current.onDuration?.(id,ms).catch(()=>{});};
  useEffect(()=>{commit(clock.current.time,true);},[commit]);
- const bar=<div className={styles.player}>
-  <button type="button" className={styles.play} aria-label={playing?'일시정지':'재생'} onClick={playing?pause:play}>{playing?<FiPause aria-hidden="true"/>:<FiPlay aria-hidden="true"/>}</button>
-  <div className={styles.body}><StudioCaption sentence={entry.sentence} worked={worked}/><div className={styles.lower}>
-   <div className={styles.waveform}><div className={styles.bars} aria-hidden="true">{wave.map((height,i)=><i key={i} data-played={i/64<=snapshot.time/timeline.totalMs} style={{height:Math.max(3,height*26)}}/>)}</div><input className={styles.scrub} type="range" aria-label="재생 위치" aria-valuetext={formatTimelineTime(snapshot.time)} min={0} max={timeline.totalMs} step={10} value={snapshot.time} onChange={event=>seek(Number(event.target.value))}/></div>
-   <span className={styles.time}>{formatTimelineTime(snapshot.time)} <span>/ {formatTimelineTime(timeline.totalMs)}</span></span>
-   <select className={styles.speed} aria-label="재생 속도" value={rate} onChange={event=>changeRate(Number(event.target.value))}>{PLAYBACK_RATES.map(value=><option key={value} value={value}>{value===1?'1.0':value}×</option>)}</select>
-  </div>{!src&&<span className={styles.mode}>자막 모드</span>}</div>
- </div>;
- return <>{children({state:snapshot.state,time:snapshot.time,sentenceStart:entry.startMs,playing,ended:position.ended,bar,pause,seek})}<audio hidden ref={audio} preload="metadata" onLoadedMetadata={metadata} onError={audioError} onEnded={()=>{const id=audio.current?.dataset.sentence,finished=timeline.entries.find(e=>e.sentence.id===id);if(finished)commit(finished.endMs,true);}}/></>;
+ const visible=showCaptions??localCaptions;const bar=<Transport time={snapshot.time} total={timeline.totalMs} playing={playing} rate={rate} captions={visible} onPlay={play} onPause={pause} onSeek={seek} onRate={changeRate} onCaptions={()=>{setLocalCaptions(!visible);onToggleCaptions?.();}} audio={!!src}/>;
+ const caption=visible?<Caption sentence={entry.sentence} alignment={alignments?.[entry.sentence.id]} time={position.localMs} duration={entry.durationMs} worked={worked}/>:null;
+ return <>{children({state:snapshot.state,time:snapshot.time,sentenceStart:entry.startMs,playing,ended:position.ended,bar,caption,pause,seek})}<audio hidden ref={audio} preload="metadata" onLoadedMetadata={metadata} onError={audioError} onEnded={()=>{const id=audio.current?.dataset.sentence,finished=timeline.entries.find(e=>e.sentence.id===id);if(finished)commit(finished.endMs,true);}}/></>;
 }
