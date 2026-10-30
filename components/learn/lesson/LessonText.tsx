@@ -1,15 +1,4 @@
-import { MathPreview } from '../MathPreview';
-import { renderMathMarkdown } from '@/lib/math-markdown';
+import { InlineMath,BlockMath } from 'react-katex';
 import { inspectMath } from '@/lib/learn/mathcheck/format';
-
-export function LessonText({text,authored=false}:{text:string;authored?:boolean}) {
-  if(authored)return <>{renderMathMarkdown(text)}</>;
-  return <>{text.split(/(\$\$?[\s\S]*?\$\$?)/g).map((part,i)=>{
-    if(!part.startsWith('$'))return part;
-    const math=part.replace(/^\$\$?|\$\$?$/g,'');
-    // Only read-only lesson captions may fall back to authored TeX.
-    return inspectMath(math).status==='success'
-      ? <MathPreview key={i} value={math} caption={false} help={false}/>
-      : <span key={i}>{renderMathMarkdown(part)}</span>;
-  })}</>;
-}
+/** Read-only authored captions; student input still uses the existing MathPreview. */
+export function LessonText({text,authored=false}:{text:string;authored?:boolean}){return <>{text.split(/(\$\$[\s\S]*?\$\$|\$[^$]*?\$)/g).map((part,i)=>{if(!part.startsWith('$'))return part;const block=part.startsWith('$$'),raw=part.slice(block?2:1,block?-2:-1),parsed=authored?null:inspectMath(raw),latex=parsed?.status==='success'?parsed.latex:raw;return block?<BlockMath key={i} math={latex}/>:<span key={i} data-lesson-math={parsed?.status==='success'?'ast':'authored'}><InlineMath math={latex}/></span>;})}</>;}

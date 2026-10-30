@@ -7,7 +7,7 @@ import { LessonText } from './LessonText';
 import styles from './lesson.module.css';
 export function ConceptTrace({start,nodes,edges,onEvent,onClose}:{start:string;nodes:ConceptNode[];edges:ConceptEdge[];onEvent:(event:LessonEvent)=>void;onClose:()=>void}){
  const chain=traceConcepts(start,nodes,edges),[state,setState]=useState(initialTrace),root=useRef<HTMLElement>(null);
- useEffect(()=>{root.current?.scrollIntoView({block:'center'});root.current?.focus();},[]);
+ useEffect(()=>{root.current?.focus({preventScroll:true});},[]);
  const node=chain[state.index],gap=chain.find(n=>n.id===state.gap);
  const answer=(correct:boolean,option_id?:string)=>{const next=answerTrace(chain,state,correct);setState(next);onEvent({type:'quiz',payload:{kind:'concept_check',concept_id:node.id,option_id,correct,path:next.path}});if(next.gap)onEvent({type:'gap',payload:{concept_id:next.gap,path:next.path}});};
  return <aside ref={root} tabIndex={-1} className={styles.scene} aria-label="어디서 막혔는지 확인"><h2>한 단계씩 확인해요</h2>
