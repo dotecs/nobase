@@ -26,7 +26,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,on:action.on,c:action.c,label:action.label});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
    case 'reveal':state.revealed[action.target]=[...state.revealed[action.target].filter(i=>i!==action.index),action.index];break;
-   case 'camera':for(const axis of ['x','y'] as const)for(const index of [0,1] as const)tracks.set('camera:'+axis+index,{from:state.camera[axis][index],to:action[axis][index],start,duration:action.duration_ms??800,set:value=>{state.camera[axis][index]=value;}});break;
+   case 'camera':{const width=action.width??(state.camera.x[1]-state.camera.x[0]),height=width*(state.camera.y[1]-state.camera.y[0])/(state.camera.x[1]-state.camera.x[0]),target={x:action.x??[action.cx!-width/2,action.cx!+width/2],y:action.y??[action.cy!-height/2,action.cy!+height/2]};for(const axis of ['x','y'] as const)for(const index of [0,1] as const)tracks.set('camera:'+axis+index,{from:state.camera[axis][index],to:target[axis][index],start,duration:action.duration_ms??800,set:value=>{state.camera[axis][index]=value;}});break;}
    case 'label':state.labels.push({text:action.text,tex:action.tex,at:{...action.at},anchor:action.anchor});break;
    case 'band':state.band=action.y?[...action.y]:null;break;
    case 'pulse':pulses.set(action.target,start);break;

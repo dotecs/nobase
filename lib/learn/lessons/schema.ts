@@ -8,11 +8,13 @@ import { validateAuthoredMath } from './authored-math';
 const id = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/).max(120);
 const text = z.string().min(1).max(20000);
 const range = z.tuple([z.number().finite(), z.number().finite()]).refine(([a,b]) => a < b && b-a <= 200, '범위는 증가하며 폭이 200 이하여야 합니다.');
+const graphY=z.preprocess(value=>typeof value==='number'?[value-5,value+5]:value??[-5,5],range);
+const aspect=z.enum(['equal','free']).optional();
 export function validGraphExpression(expr: string, parameter?: string) {
   try { const parsed=parseMath(expr); return !parsed.relation && [...variables(parsed.left)].every(v=>v==='x'||v===parameter); } catch { return false; }
 }
 export const graphSchema = z.object({
-  type:z.literal('graph'), initial:initialStageSchema.optional(), x:range, y:range,
+  type:z.literal('graph'), initial:initialStageSchema.optional(), x:range, y:graphY, aspect,
   fns:z.array(z.object({expr:text.refine(e=>validGraphExpression(e),'그래프 식을 해석할 수 없습니다.'),c:z.enum(['c1','c2','c3']),label:text.optional()})).min(1).max(12),
   points:z.array(z.object({x:z.number().finite(),y:z.number().finite(),c:z.enum(['c1','c2','c3']),label:text.optional()})).max(100).optional(),
   band:z.tuple([z.number().finite(),z.number().finite()]).optional(), aria:text,
@@ -24,7 +26,7 @@ export const stageSchema=z.discriminatedUnion('type',[
   graphSchema,
   z.object({type:z.literal('steps'),steps:z.array(z.object({tex:text,concept_id:id.optional(),why:text.optional(),think:text.optional()})).min(1)}),
   z.object({type:z.literal('chain'),nodes:z.array(z.object({tex:text.optional(),text})).min(1)}),
-  z.object({type:z.literal('slider'),initial:initialStageSchema.optional(),expr:text,param:z.object({name:z.string().regex(/^[a-wyz]$/),min:z.number().finite(),max:z.number().finite(),step:z.number().positive(),init:z.number().finite()}),x:range,y:range,verdict:z.enum(['discriminant','none'])}).superRefine((s,ctx)=>{
+  z.object({type:z.literal('slider'),initial:initialStageSchema.optional(),expr:text,param:z.object({name:z.string().regex(/^[a-wyz]$/),min:z.number().finite(),max:z.number().finite(),step:z.number().positive(),init:z.number().finite()}),x:range,y:graphY,aspect,verdict:z.enum(['discriminant','none'])}).superRefine((s,ctx)=>{
     if(!validGraphExpression(s.expr,s.param.name)||s.param.min>=s.param.max||s.param.init<s.param.min||s.param.init>s.param.max)ctx.addIssue({code:'custom',message:'슬라이더 식 또는 범위를 확인하세요.'});
   }),
   z.object({type:z.literal('table'),columns:z.array(text).min(1),rows:z.array(z.object({cells:z.array(z.string()),tone:z.enum(['pos','zero','neg']).optional()}))}).refine(s=>s.rows.every(r=>r.cells.length===s.columns.length),'표 열 수가 다릅니다.'),
