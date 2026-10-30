@@ -19,8 +19,8 @@
           4
         ],
         "y": [
-          -5,
-          7
+          -3,
+          5
         ],
         "aria": "세 이차함수 그래프와 x축 교점",
         "fns": [
@@ -64,7 +64,8 @@
             2
           ],
           "hidden_points": true
-        }
+        },
+        "aspect": "equal"
       },
       "narration": [
         {
@@ -86,19 +87,20 @@
               {
                 "type": "draw",
                 "target": "fn:0",
-                "duration_ms": 1600
+                "at": "@근을 몇 개",
+                "duration_ms": 1500
               },
               {
                 "type": "draw",
                 "target": "fn:1",
-                "at_ms": 800,
-                "duration_ms": 1600
+                "at": "@근을 몇 개+600",
+                "duration_ms": 1500
               },
               {
                 "type": "draw",
                 "target": "fn:2",
-                "at_ms": 1600,
-                "duration_ms": 1600
+                "at": "@근을 몇 개+1200",
+                "duration_ms": 1500
               }
             ]
           }
@@ -110,30 +112,46 @@
           "cue": {
             "actions": [
               {
-                "type": "highlight",
+                "type": "underline",
                 "target": "axis:x",
-                "dim_others": false
+                "at": "@엑스축과 만나는"
               },
               {
                 "type": "point",
                 "x": 1.3028,
                 "y": 0,
                 "c": "c1",
-                "at_ms": 1500
+                "at": "@엑스좌표"
               },
               {
                 "type": "point",
                 "x": -2.3028,
                 "y": 0,
                 "c": "c1",
-                "at_ms": 1800
+                "at": "@엑스좌표+250"
               },
               {
                 "type": "point",
                 "x": 0.3333,
                 "y": 0,
                 "c": "c2",
-                "at_ms": 2100
+                "at": "@엑스좌표+500"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 1.3028,
+                  "y": 0
+                },
+                "at": "@엑스좌표"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": -2.3028,
+                  "y": 0
+                },
+                "at": "@엑스좌표+400"
               }
             ]
           },
@@ -152,7 +170,28 @@
                   "fn:0",
                   "point:0",
                   "point:1"
-                ]
+                ],
+                "at": "@파란"
+              },
+              {
+                "type": "circle",
+                "position": {
+                  "x": 1.3028,
+                  "y": 0
+                },
+                "rx": 0.45,
+                "ry": 0.45,
+                "at": "@두 번"
+              },
+              {
+                "type": "circle",
+                "position": {
+                  "x": -2.3028,
+                  "y": 0
+                },
+                "rx": 0.45,
+                "ry": 0.45,
+                "at": "@두 번+200"
               },
               {
                 "type": "highlight",
@@ -160,30 +199,27 @@
                   "fn:1",
                   "point:2"
                 ],
-                "at_ms": 2200
+                "at": "@청록"
               },
               {
                 "type": "highlight",
                 "target": "fn:2",
-                "at_ms": 4200
+                "at": "@주황"
               },
               {
-                "type": "band",
-                "y": [
-                  0,
-                  7
+                "type": "shade",
+                "region": "below:fn:2",
+                "x": [
+                  -4,
+                  4
                 ],
-                "at_ms": 4200
+                "at": "@떠서",
+                "ttl_ms": 3500
               },
               {
                 "type": "clear",
                 "what": "highlight",
-                "at_ms": 6500
-              },
-              {
-                "type": "band",
-                "y": null,
-                "at_ms": 6500
+                "at": "@숫자 하나"
               }
             ]
           }
@@ -248,11 +284,13 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:0"
+                "target": "step:0",
+                "at": "@start"
               }
             ]
           },
@@ -267,11 +305,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 1
+                "index": 1,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:1"
+                "target": "step:1",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@에이로 나눠"
               }
             ]
           },
@@ -286,11 +331,13 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 2
+                "index": 2,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:2"
+                "target": "step:2",
+                "at": "@start"
               }
             ]
           },
@@ -305,11 +352,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 3
+                "index": 3,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:3"
+                "target": "step:3",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@제곱을"
               }
             ]
           },
@@ -324,11 +378,13 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 4
+                "index": 4,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:4"
+                "target": "step:4",
+                "at": "@start"
               }
             ]
           },
@@ -343,16 +399,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 5
+                "index": 5,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:5"
+                "target": "step:5",
+                "at": "@start"
               },
               {
-                "type": "pulse",
+                "type": "flash",
                 "target": "step:5",
-                "at_ms": 1500
+                "at": "@여기서 멈춰야"
               }
             ]
           },
@@ -367,11 +425,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 6
+                "index": 6,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:6"
+                "target": "step:6",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:6",
+                "at": "@근의 공식입니다"
               }
             ]
           },
@@ -420,11 +485,18 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "node:0"
+                "target": "node:0",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "node:0",
+                "at": "@판별식이라고"
               }
             ]
           },
@@ -439,11 +511,13 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 1
+                "index": 1,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "node:1"
+                "target": "node:1",
+                "at": "@start"
               }
             ]
           },
@@ -456,24 +530,25 @@
           "cue": {
             "actions": [
               {
-                "type": "reveal",
-                "target": "node",
-                "index": 1
-              },
-              {
                 "type": "highlight",
-                "target": "node:1"
+                "target": "node:1",
+                "at": "@start"
               },
               {
                 "type": "reveal",
                 "target": "node",
                 "index": 2,
-                "at_ms": 4500
+                "at": "@영이면 어떨까요"
               },
               {
                 "type": "highlight",
                 "target": "node:2",
-                "at_ms": 4500
+                "at": "@영이면 어떨까요"
+              },
+              {
+                "type": "underline",
+                "target": "node:2",
+                "at": "@중근"
               }
             ]
           },
@@ -488,11 +563,18 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 3
+                "index": 3,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "node:3"
+                "target": "node:3",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "node:3",
+                "at": "@실근이 없다는"
               }
             ]
           },
@@ -525,10 +607,11 @@
           3
         ],
         "y": [
-          -5,
-          7
+          -2,
+          6
         ],
-        "verdict": "discriminant"
+        "verdict": "discriminant",
+        "aspect": "equal"
       },
       "narration": [
         {
@@ -542,7 +625,8 @@
                 "type": "param",
                 "name": "c",
                 "from": -3,
-                "to": -3
+                "to": -3,
+                "at": "@start"
               }
             ]
           }
@@ -558,17 +642,24 @@
                 "type": "param",
                 "name": "c",
                 "to": 3,
-                "duration_ms": 3500,
+                "duration_ms": 3000,
                 "easing": "ease-in-out",
-                "at_ms": 3000
+                "at": "@디가 음수다는"
               },
               {
-                "type": "band",
-                "y": [
-                  0,
-                  7
+                "type": "shade",
+                "region": "below:fn:0",
+                "x": [
+                  -5,
+                  3
                 ],
-                "at_ms": 6500
+                "at": "@엑스축 위에 떠 있다",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@만나지 않는다"
               }
             ]
           }
@@ -585,31 +676,30 @@
                 "name": "c",
                 "to": 1,
                 "duration_ms": 1500,
-                "easing": "ease-in-out"
+                "easing": "ease-in-out",
+                "at": "@start"
               },
               {
-                "type": "pulse",
-                "target": "fn:0",
-                "at_ms": 1500
+                "type": "pointer",
+                "position": {
+                  "x": -1,
+                  "y": 0
+                },
+                "at": "@딱 닿습니다"
               },
               {
                 "type": "param",
                 "name": "c",
                 "to": 4,
                 "duration_ms": 1500,
-                "at_ms": 2800
+                "at": "@크면 떠오르고"
               },
               {
                 "type": "param",
                 "name": "c",
                 "to": -3,
                 "duration_ms": 2000,
-                "at_ms": 4800
-              },
-              {
-                "type": "band",
-                "y": null,
-                "at_ms": 4800
+                "at": "@작으면"
               }
             ]
           }
@@ -679,11 +769,18 @@
               {
                 "type": "reveal",
                 "target": "row",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "row:0"
+                "target": "row:0",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:0",
+                "at": "@십삼이 나오죠"
               }
             ]
           },
@@ -698,11 +795,18 @@
               {
                 "type": "reveal",
                 "target": "row",
-                "index": 1
+                "index": 1,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "row:1"
+                "target": "row:1",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:1",
+                "at": "@영이 나오면서"
               }
             ]
           },
@@ -717,11 +821,18 @@
               {
                 "type": "reveal",
                 "target": "row",
-                "index": 2
+                "index": 2,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "row:2"
+                "target": "row:2",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:2",
+                "at": "@음수가 나옵니다"
               }
             ]
           },
@@ -768,16 +879,17 @@
           "role": "say",
           "text": "추가로, 일차항의 계수가 짝수인 경우에는 짝수 공식을 쓸 수 있습니다. 풀이 과정이 간소화되는 경향이 있기 때문에 익혀 두시는 것을 추천드립니다.",
           "cue": {
-            "step": 0,
             "actions": [
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:0"
+                "target": "step:0",
+                "at": "@start"
               }
             ]
           },
@@ -788,27 +900,33 @@
           "role": "say",
           "text": "$b$를 2로 나눈 것을 $b'$이라고 두고 근의 공식에 넣습니다. 루트 안에 4가 공통으로 있으니까 묶어서 밖으로 나오면 2가 되고, 분자 분모에 2가 공통이라 약분됩니다.",
           "cue": {
-            "step": 2,
             "actions": [
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 1
+                "index": 1,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:1"
+                "target": "step:1",
+                "at": "@start"
               },
               {
                 "type": "reveal",
                 "target": "step",
                 "index": 2,
-                "at_ms": 3500
+                "at": "@루트 안에 사가"
               },
               {
                 "type": "highlight",
                 "target": "step:2",
-                "at_ms": 3500
+                "at": "@루트 안에 사가"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@이가 되고"
               }
             ]
           },
@@ -819,16 +937,22 @@
           "role": "say",
           "text": "새 공식이 아니라 근의 공식을 약분한 것입니다. 판별식도 같이 작아져서 $\\frac D4=b'^2-ac$로 판별해도 결과는 같습니다.",
           "cue": {
-            "step": 3,
             "actions": [
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 3
+                "index": 3,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:3"
+                "target": "step:3",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "step:3",
+                "at": "@결과는 같습니다"
               }
             ]
           },

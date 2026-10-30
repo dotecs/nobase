@@ -38,11 +38,18 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "node:0"
+                "target": "node:0",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "node:0",
+                "at": "@실근을 갖지 않도록"
               }
             ]
           },
@@ -57,11 +64,18 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 1
+                "index": 1,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "node:1"
+                "target": "node:1",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "node:1",
+                "at": "@번역 대상"
               }
             ]
           },
@@ -76,11 +90,18 @@
               {
                 "type": "reveal",
                 "target": "node",
-                "index": 2
+                "index": 2,
+                "at": "@디는 영보다 작다"
               },
               {
                 "type": "highlight",
-                "target": "node:2"
+                "target": "node:2",
+                "at": "@디는 영보다 작다"
+              },
+              {
+                "type": "underline",
+                "target": "node:2",
+                "at": "@전부입니다"
               }
             ]
           },
@@ -143,11 +164,13 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 0
+                "index": 0,
+                "at": "@start"
               },
               {
                 "type": "highlight",
-                "target": "step:0"
+                "target": "step:0",
+                "at": "@start"
               }
             ]
           },
@@ -162,11 +185,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 1
+                "index": 1,
+                "at": "@실제 식으로"
               },
               {
                 "type": "highlight",
-                "target": "step:1"
+                "target": "step:1",
+                "at": "@실제 식으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@씨 자리에"
               }
             ]
           },
@@ -181,11 +211,13 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 2
+                "index": 2,
+                "at": "@정리하면"
               },
               {
                 "type": "highlight",
-                "target": "step:2"
+                "target": "step:2",
+                "at": "@정리하면"
               }
             ]
           },
@@ -200,11 +232,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 3
+                "index": 3,
+                "at": "@케이가 있는 항만"
               },
               {
                 "type": "highlight",
-                "target": "step:3"
+                "target": "step:3",
+                "at": "@케이가 있는 항만"
+              },
+              {
+                "type": "flash",
+                "target": "step:3",
+                "at": "@방향이 바뀐다"
               }
             ]
           },
@@ -219,16 +258,18 @@
               {
                 "type": "reveal",
                 "target": "step",
-                "index": 4
+                "index": 4,
+                "at": "@마이너스 사로 나누면"
               },
               {
                 "type": "highlight",
-                "target": "step:4"
+                "target": "step:4",
+                "at": "@마이너스 사로 나누면"
               },
               {
-                "type": "pulse",
+                "type": "underline",
                 "target": "step:4",
-                "at_ms": 3000
+                "at": "@이것이 답입니다"
               }
             ]
           },
@@ -261,10 +302,11 @@
           2
         ],
         "y": [
-          -4,
-          6
+          -3,
+          4
         ],
-        "verdict": "discriminant"
+        "verdict": "discriminant",
+        "aspect": "equal"
       },
       "narration": [
         {
@@ -279,27 +321,33 @@
                 "name": "k",
                 "to": 2.25,
                 "duration_ms": 2500,
-                "easing": "ease-in-out"
+                "easing": "ease-in-out",
+                "at": "@start"
               },
               {
-                "type": "pulse",
-                "target": "fn:0",
-                "at_ms": 2500
+                "type": "pointer",
+                "position": {
+                  "x": -1.5,
+                  "y": 0
+                },
+                "at": "@닿고"
               },
               {
                 "type": "param",
                 "name": "k",
                 "to": 4,
                 "duration_ms": 2000,
-                "at_ms": 3500
+                "at": "@그보다 크면"
               },
               {
-                "type": "band",
-                "y": [
-                  0,
-                  6
+                "type": "shade",
+                "region": "below:fn:0",
+                "x": [
+                  -5,
+                  2
                 ],
-                "at_ms": 3500
+                "at": "@떠 있다",
+                "ttl_ms": 3500
               }
             ]
           }
@@ -315,26 +363,34 @@
                 "type": "param",
                 "name": "k",
                 "to": 1,
-                "duration_ms": 1500
+                "duration_ms": 1500,
+                "at": "@start"
               },
               {
-                "type": "band",
-                "y": null
+                "type": "bracket",
+                "axis": "x",
+                "from": -2.62,
+                "to": -0.38,
+                "label": "실근 2개",
+                "at": "@부등호 방향",
+                "ttl_ms": 3000
               },
               {
                 "type": "param",
                 "name": "k",
                 "to": 4,
                 "duration_ms": 2500,
-                "at_ms": 3500
+                "at": "@커질수록"
               },
               {
-                "type": "band",
-                "y": [
-                  0,
-                  6
+                "type": "shade",
+                "region": "below:fn:0",
+                "x": [
+                  -5,
+                  2
                 ],
-                "at_ms": 4500
+                "at": "@떠오르니까",
+                "ttl_ms": 3000
               }
             ]
           }
