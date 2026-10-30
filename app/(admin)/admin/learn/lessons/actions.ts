@@ -6,12 +6,13 @@ import { lessonDb } from '@/lib/learn/lessons/data';
 import { lessonSchema } from '@/lib/learn/lessons/schema';
 import { generateLessonAudio,LESSON_VOICE } from '@/lib/learn/lessons/audio';
 import type { AudioGenerationResult } from '@/lib/learn/lessons/audio';
-export async function generateAudio(id:string,version:number):Promise<{result?:AudioGenerationResult;error?:string}>{
+export async function generateAudio(id:string,version:number,options:{forceAlignment?:boolean;sentenceIds?:string[];excludeIds?:string[]}={}):Promise<{result?:AudioGenerationResult;error?:string}>{
  try{await requireCoach();const key=process.env.ELEVENLABS_API_KEY?.trim();if(!key)return {error:'키 없음'};
  const client=lessonDb(),lesson=await client.from('learn_lessons').select('*').eq('id',id).eq('version',version).single();if(lesson.error)throw lesson.error;
- const existing=await client.from('learn_lesson_audio').select('*').eq('lesson_id',id).eq('lesson_version',version);if(existing.error)throw existing.error;
- const result=await generateLessonAudio(lessonSchema.parse(lesson.data.body),version,{key,voice:process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE,existing:existing.data??[],save:async(row,bytes)=>{
-  const uploaded=await client.storage.from('learn-lessons').upload(row.path,bytes,{contentType:'audio/mpeg',upsert:true,cacheControl:'0'});if(uploaded.error)throw uploaded.error;
+ z.object({forceAlignment:z.boolean().optional(),sentenceIds:z.array(z.string()).max(1000).optional(),excludeIds:z.array(z.string()).max(1000).optional()}).parse(options);
+ const existing=await client.from('learn_lesson_audio').select('*').eq('lesson_id',id);if(existing.error)throw existing.error;
+ const result=await generateLessonAudio(lessonSchema.parse(lesson.data.body),version,{key,voice:process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE,...options,existing:(existing.data??[]).filter(r=>r.lesson_version===version),reusable:existing.data??[],save:async(row,bytes)=>{
+  if(bytes){const uploaded=await client.storage.from('learn-lessons').upload(row.path,bytes,{contentType:'audio/mpeg',upsert:true,cacheControl:'0'});if(uploaded.error)throw uploaded.error;}
   const saved=await client.from('learn_lesson_audio').upsert(row,{onConflict:'lesson_id,lesson_version,sentence_id'});if(saved.error)throw saved.error;
  }});revalidatePath('/admin/learn/lessons');return {result};
  }catch(error){return {error:runtimeError(error,'lesson.generateAudio')};}

@@ -1,6 +1,7 @@
+import type {Alignment} from './alignment';
 import type { Lesson } from './schema';
 export type LessonRow={id:string;version:number;pack_id:string;kind:Lesson['kind'];title:string;ability_ids:string[];body:Lesson;status:'draft'|'reviewed'|'live'|'retired';created_at:string};
-export type AudioRow={lesson_id:string;lesson_version:number;sentence_id:string;text_hash:string;path:string;duration_ms:number|null;created_at:string};
+export type AudioRow={lesson_id:string;lesson_version:number;sentence_id:string;text_hash:string;path:string;duration_ms:number|null;alignment?:Alignment|null;created_at:string};
 export type LessonEventType='open'|'scene'|'sentence'|'why_click'|'quiz'|'dontknow'|'gap'|'complete';
 export type LessonEvent={type:LessonEventType;payload:Record<string,unknown>};
 export type EventRow=LessonEvent&{id:string;user_id:string;lesson_id:string;lesson_version:number;created_at:string};
