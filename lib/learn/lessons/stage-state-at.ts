@@ -1,3 +1,6 @@
+import {resolveAnchor,type At} from './anchors';
+import type {Alignment} from './alignment';
+import {captionDuration} from './events';
 import type { Scene } from './schema';
 import type { StageState,StagePoint } from './stage-state';
 import { sentenceActions } from './legacy-actions';
@@ -6,15 +9,15 @@ import { numeric } from '../mathcheck/evaluate';
 type Track={from:number;to:number;start:number;duration:number;easing?:'linear'|'ease'|'ease-in-out';set:(value:number)=>void};
 function ease(p:number,kind:Track['easing']){if(!kind||kind==='linear'||p===0||p===1)return p;const [x1,y1,x2,y2]=kind==='ease'?[.25,.1,.25,1]:[.42,0,.58,1];const cubic=(t:number,a:number,b:number)=>3*(1-t)**2*t*a+3*(1-t)*t*t*b+t**3;let low=0,high=1;for(let i=0;i<20;i++){const t=(low+high)/2;if(cubic(t,x1,x2)<p)low=t;else high=t;}return cubic((low+high)/2,y1,y2);}
 /** Rebuild from the scene origin, never from a previous render or a wall clock. */
-export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[]):StageState{
+export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],options:{alignments?:Record<string,Alignment|null>;durations?:Record<string,number|null>}={}):StageState{
  if(sentenceStarts.length!==scene.narration.length||sentenceStarts.some((value,i)=>!Number.isFinite(value)||value<0||(i>0&&value<sentenceStarts[i-1])))throw new Error('Invalid sentence timeline');
  const stage=scene.stage,isGraph=stage.type==='graph'||stage.type==='slider',fns=stage.type==='graph'?stage.fns:stage.type==='slider'?[{expr:stage.expr}]:[];
- const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{}};
+ const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{},warnings:[]};
  let points:Array<Omit<StagePoint,'y'>&{y?:number;on?:string}>=stage.type==='graph'&&!stage.initial?.hidden_points?(stage.points??[]).map((p,i)=>({...p,id:'point:'+i})):[];
  let pointIndex=points.length;
  const tracks=new Map<string,Track>(),pulses=new Map<string,number>();
  const advance=(time:number)=>{for(const track of tracks.values()){const p=track.duration===0?1:Math.max(0,Math.min(1,(time-track.start)/track.duration));track.set(track.from+(track.to-track.from)*ease(p,track.easing));}};
- const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>({action,start:(sentenceStarts[i]??0)+(action.at_ms??0)}))).sort((a,b)=>a.start-b.start);
+ const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=(typeof action.at==='object'?action.at_ms:action.at??action.at_ms)??0,resolved=resolveAnchor(at as At,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms};})).sort((a,b)=>a.start-b.start);
  const time=Math.max(0,Number.isFinite(tMs)?tMs:0);
  for(const {action,start} of events){if(start>time)break;advance(start);
   switch(action.type){

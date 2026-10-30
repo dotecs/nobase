@@ -1,5 +1,6 @@
 'use client';
 import { useCallback,useEffect,useMemo,useRef,useState,type ReactNode } from 'react';
+import type {Alignment} from '@/lib/learn/lessons/alignment';
 import { FiPause,FiPlay } from 'react-icons/fi';
 import type { Scene } from '@/lib/learn/lessons/schema';
 import type { LessonEvent } from '@/lib/learn/lessons/types';
@@ -11,21 +12,21 @@ import { FLAT_WAVEFORM,loadWaveform } from './waveform';
 import styles from './player.module.css';
 const EMPTY_URLS:Record<string,string>={},EMPTY_DURATIONS:Record<string,number|null>={};
 export type Playback={state:StageState;time:number;sentenceStart:number;playing:boolean;ended:boolean;bar:ReactNode;pause:()=>void;seek:(time:number)=>void};
-type Props={scene:Scene;audioUrls?:Record<string,string>;durations?:Record<string,number|null>;worked?:boolean;isLastScene?:boolean;onPrevious?:()=>void;onNext?:()=>void;onResume?:()=>void;onSeek?:()=>void;refreshAudio?:()=>Promise<Record<string,string>>;onDuration?:(sentenceId:string,ms:number)=>Promise<unknown>;onEvent?:(event:LessonEvent)=>void;children:(playback:Playback)=>ReactNode};
+type Props={alignments?:Record<string,Alignment|null>;scene:Scene;audioUrls?:Record<string,string>;durations?:Record<string,number|null>;worked?:boolean;isLastScene?:boolean;onPrevious?:()=>void;onNext?:()=>void;onResume?:()=>void;onSeek?:()=>void;refreshAudio?:()=>Promise<Record<string,string>>;onDuration?:(sentenceId:string,ms:number)=>Promise<unknown>;onEvent?:(event:LessonEvent)=>void;children:(playback:Playback)=>ReactNode};
 /** Mount with key={scene.id}. One clock drives media, captions and deterministic stage state. */
-export default function StudioPlayer({scene,audioUrls=EMPTY_URLS,durations=EMPTY_DURATIONS,worked,isLastScene=false,onPrevious,onNext,onResume,onSeek,onDuration,onEvent,refreshAudio,children}:Props){
+export default function StudioPlayer({scene,alignments,audioUrls=EMPTY_URLS,durations=EMPTY_DURATIONS,worked,isLastScene=false,onPrevious,onNext,onResume,onSeek,onDuration,onEvent,refreshAudio,children}:Props){
  const [sources,setSources]=useState(audioUrls),refreshed=useRef(new Set<string>()),mounted=useRef(true);
  useEffect(()=>setSources(audioUrls),[audioUrls]);
  const [known,setKnown]=useState(durations),timeline=useMemo(()=>buildTimeline(scene,known),[scene,known]);
  const audio=useRef<HTMLAudioElement>(null),clock=useRef({time:0,playing:false,rate:1,failed:false});
  const [playing,setPlaying]=useState(false),[rate,setRate]=useState(1),[wave,setWave]=useState(FLAT_WAVEFORM);
- const initial=useMemo(()=>stageStateAt(scene,0,timeline.starts),[scene,timeline]);
+ const initial=useMemo(()=>stageStateAt(scene,0,timeline.starts,{alignments,durations:known}),[scene,timeline,alignments,known]);
  const [snapshot,setSnapshot]=useState({time:0,state:initial});
  const last=useRef({time:0,json:JSON.stringify(initial),state:initial});
  const handlers=useRef({onPrevious,onNext,onResume,onSeek,onDuration,onEvent,isLastScene,refreshAudio});handlers.current={onPrevious,onNext,onResume,onSeek,onDuration,onEvent,isLastScene,refreshAudio};
  const opened=useRef(false),complete=useRef(false),reported=useRef(''),visit=useRef({id:'',started:0});
  const emit=useCallback((event:LessonEvent)=>{if(!visit.current.id)visit.current={id:crypto.randomUUID(),started:performance.now()};handlers.current.onEvent?.({...event,payload:{...event.payload,visit_id:visit.current.id,elapsed_ms:Math.round(performance.now()-visit.current.started)}});},[]);
- const commit=useCallback((value:number,force=false)=>{const time=Math.max(0,Math.min(timeline.totalMs,value));clock.current.time=time;const next=stageStateAt(scene,time,timeline.starts),json=JSON.stringify(next),changed=json!==last.current.json;
+ const commit=useCallback((value:number,force=false)=>{const time=Math.max(0,Math.min(timeline.totalMs,value));clock.current.time=time;const next=stageStateAt(scene,time,timeline.starts,{alignments,durations:known}),json=JSON.stringify(next),changed=json!==last.current.json;
   if(force||changed||Math.floor(time/80)!==Math.floor(last.current.time/80)){const state=changed?next:last.current.state;last.current={time,json,state};setSnapshot({time,state});}
  },[scene,timeline]);
  const pause=useCallback(()=>{clock.current.playing=false;setPlaying(false);audio.current?.pause();},[]);
