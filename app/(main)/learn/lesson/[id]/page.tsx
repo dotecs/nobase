@@ -1,10 +1,4 @@
 import { notFound } from 'next/navigation';
-import { requireLearner } from '@/lib/learn/runtime';
-import { publishedLesson,audioUrls,conceptGraph } from '@/lib/learn/lessons/data';
-import { LessonViewer } from '@/components/learn/lesson/LessonViewer';
-import { recordLessonEvents,refreshLessonAudio,loadConceptCard } from '../actions';
-export const metadata={title:'시각 레슨',robots:{index:false,follow:false}};
-export default async function LessonPage({params}:{params:Promise<{id:string}>}){
- await requireLearner();const {id}=await params;const row=await publishedLesson(id);if(!row)notFound();
- return <LessonViewer lesson={row.body} graph={await conceptGraph(row.pack_id)} audio={await audioUrls(id,row.version)} record={recordLessonEvents.bind(null,id,row.version)} refreshAudio={refreshLessonAudio.bind(null,id,row.version)} loadConcept={loadConceptCard}/>;
-}
+import { requireLearner } from '@/lib/learn/runtime';import { publishedLesson,audioPlayback,conceptGraph } from '@/lib/learn/lessons/data';import { StudioViewer } from '@/components/studio/StudioViewer';import { recordLessonEvents,refreshLessonAudio,recordLessonAudioDuration,loadConceptCard } from '../actions';import { startSession } from '../../actions';
+export const metadata={title:'러닝 스튜디오',robots:{index:false,follow:false}};
+export default async function LessonPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{frame?:string;chrome?:string}>}){await requireLearner();const {id}=await params,row=await publishedLesson(id);if(!row)notFound();const [audio,graph,query]=await Promise.all([audioPlayback(id,row.version),conceptGraph(row.pack_id),searchParams]);return <StudioViewer lesson={row.body} graph={graph} audio={audio.urls} durations={audio.durations} record={recordLessonEvents.bind(null,id,row.version)} refreshAudio={refreshLessonAudio.bind(null,id,row.version)} recordDuration={recordLessonAudioDuration.bind(null,id,row.version)} loadConcept={loadConceptCard} startPractice={startSession} frame={query.frame==='16x9'} chrome={query.chrome!=='0'}/>;}

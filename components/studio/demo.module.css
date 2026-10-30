@@ -25,3 +25,7 @@
 .legend [data-color="c2"] i { background:var(--color-secondary-400); }
 .legend [data-color="c3"] i { background:var(--color-warning); }
 .verdict { margin-top:12px; font-size:13px; color:var(--studio-muted); }
+
+:global([data-frame="true"]) .formula { font-size:30px; margin-bottom:20px; }
+:global([data-frame="true"]) .value { font-size:19px; margin-bottom:22px; }
+:global([data-frame="true"]) .value input { padding:7px 8px; font-size:17px; }

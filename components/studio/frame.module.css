@@ -1,0 +1,1 @@
+.frame { position:fixed; inset:0; z-index:100; width:100vw; height:100dvh; overflow:hidden; background:var(--color-gray-950); }

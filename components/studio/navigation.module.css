@@ -19,3 +19,10 @@
 .actions { display:flex; flex-wrap:wrap; gap:12px; }
 @media(max-width:767px) { .nav { gap:6px; } .nav>button { padding:9px; gap:5px; font-size:12px; } .progress { flex-direction:column; gap:0; } .progress>span { font-size:11px; } .dots { max-width:130px; } .dots button { width:15px; height:18px; padding:4px; } .complete { padding:12px; } .complete h2 { margin-bottom:16px; } }
 @media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
+
+:global([data-frame="true"]) .nav { gap:16px; }
+:global([data-frame="true"]) .nav>button { padding:12px 22px; gap:10px; font-size:16px; }
+:global([data-frame="true"]) .progress { flex-direction:row; gap:20px; }
+:global([data-frame="true"]) .progress>span { font-size:14px; }
+:global([data-frame="true"]) .dots { max-width:320px; }
+:global([data-frame="true"]) .dots button { width:24px; height:28px; padding:8px; }

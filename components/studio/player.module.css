@@ -24,3 +24,11 @@
 .role[data-role="think"] { color:var(--color-lesson); }
 .role[data-role="write"] { color:var(--studio-accent); }
 .role[data-role="say"] { color:var(--color-secondary-400); }
+
+:global([data-frame="true"]) .player { padding:20px 24px; gap:20px; border-radius:24px; }
+:global([data-frame="true"]) .play { width:60px; height:60px; flex-basis:60px; font-size:25px !important; }
+:global([data-frame="true"]) .caption { font-size:19px; }
+:global([data-frame="true"]) .lower { gap:14px; margin-top:14px; }
+:global([data-frame="true"]) .time { font-size:13px; }
+:global([data-frame="true"]) .speed { font-size:12px; padding:7px 5px; }
+:global([data-frame="true"]) .bars { gap:3px; }

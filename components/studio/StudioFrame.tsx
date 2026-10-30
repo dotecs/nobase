@@ -1,0 +1,3 @@
+'use client';
+import { useEffect,useState,type CSSProperties,type ReactNode } from 'react';import { studioFrameScale } from '@/lib/learn/lessons/frame';import styles from './frame.module.css';
+export function StudioFrame({enabled,children}:{enabled:boolean;children:ReactNode}){const [scale,setScale]=useState(1);useEffect(()=>{if(!enabled)return;const resize=()=>setScale(studioFrameScale(window.innerWidth,window.innerHeight));resize();window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);},[enabled]);return enabled?<div className={styles.frame} style={{'--studio-scale':scale} as CSSProperties}>{children}</div>:<>{children}</>;}

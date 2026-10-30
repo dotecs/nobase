@@ -13,3 +13,7 @@
 .band { fill: var(--studio-glow); opacity: .24; }
 .label { color: var(--studio-text); font-size: 19px; white-space: nowrap; }
 @media (max-width: 767px) { .tick { font-size: 12px; } .axisName { font-size: 20px; } .pointLabel { font-size: 15px; } .curve { stroke-width: 2.5; } }
+
+:global([data-frame="true"]) .tick { font-size:16px; }
+:global([data-frame="true"]) .axisName { font-size:26px; }
+:global([data-frame="true"]) .pointLabel { font-size:23px; }

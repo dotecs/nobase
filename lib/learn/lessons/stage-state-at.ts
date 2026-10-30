@@ -31,7 +31,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[]):Sta
   }
  }
  advance(time);
- state.points=points.map(point=>{const fn=point.on?fns[Number(point.on.slice(3))]:undefined;return {...point,y:point.y??(fn?numeric(parseMath(fn.expr).left,{...state.params,x:point.x}):NaN)};});
+ state.points=points.map(point=>{const fn=point.on?fns[Number(point.on.slice(3))]:undefined;return {...point,on:point.y===undefined?point.on:undefined,y:point.y??(fn?numeric(parseMath(fn.expr).left,{...state.params,x:point.x}):NaN)};});
  for(const [target,start] of pulses){const progress=(time-start)/800;if(progress>=0&&progress<1)state.pulses[target]=Math.sin(Math.PI*progress);}
  return state;
 }
