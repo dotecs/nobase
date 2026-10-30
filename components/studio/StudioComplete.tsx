@@ -1,0 +1,4 @@
+import Link from 'next/link';
+import { formatTimelineTime } from '@/lib/learn/lessons/timeline';
+import styles from './navigation.module.css';
+export function StudioComplete({seen,total,elapsed,gaps,onReturn,onPractice}:{seen:number;total:number;elapsed:number;gaps:{id:string;name:string}[];onReturn:()=>void;onPractice?:()=>void}){return <section className={styles.complete} aria-label="레슨 완료"><p>한 걸음 더 이해했어요</p><h2>오늘의 레슨을 마쳤어요</h2><dl><div><dt>본 장면</dt><dd>{seen} / {total}</dd></div><div><dt>걸린 시간</dt><dd>{formatTimelineTime(elapsed)}</dd></div></dl>{gaps.length>0&&<div><h3>다시 살펴볼 개념</h3><ul>{gaps.map(g=><li key={g.id}><Link href={'/learn/concept/'+g.id}>{g.name}</Link></li>)}</ul></div>}<div className={styles.actions}>{onPractice?<button type="button" onClick={onPractice}>연습 문제로</button>:<Link href="/learn">연습 문제로</Link>}<Link href="/learn">학습 홈</Link><button type="button" onClick={onReturn}>레슨으로 돌아가기</button></div></section>;}

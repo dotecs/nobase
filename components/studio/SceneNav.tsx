@@ -1,0 +1,5 @@
+'use client';
+import { FiArrowLeft,FiArrowRight } from 'react-icons/fi';
+import type { Scene } from '@/lib/learn/lessons/schema';
+import styles from './navigation.module.css';
+export function SceneNav({scenes,index,ended,onMove,onComplete}:{scenes:Pick<Scene,'id'|'title'>[];index:number;ended:boolean;onMove:(index:number)=>void;onComplete:()=>void}){return <nav className={styles.nav} aria-label="장면 이동"><button type="button" disabled={index===0} onClick={()=>onMove(index-1)}><FiArrowLeft aria-hidden="true"/>이전 내용</button><div className={styles.progress}><div className={styles.dots}>{scenes.map((scene,i)=><button type="button" key={scene.id} aria-label={scene.title+' 장면으로 이동'} aria-current={i===index?'step':undefined} onClick={()=>onMove(i)}/>)}</div><span>{String(index+1).padStart(2,'0')} / {String(scenes.length).padStart(2,'0')}</span></div><button type="button" className={styles.next} data-ended={ended} onClick={()=>index===scenes.length-1?onComplete():onMove(index+1)}>{index===scenes.length-1?'학습 마치기':'다음 내용'}<FiArrowRight aria-hidden="true"/></button></nav>;}

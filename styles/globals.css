@@ -644,7 +644,7 @@ ol {
  --studio-muted: var(--color-gray-400);
  --studio-shadow: color-mix(in srgb, var(--color-gray-950) 30%, transparent);
 }
-[data-theme="light"] [data-studio]:not([data-theme="dark"]), [data-studio][data-theme="light"] {
+[data-studio][data-theme="light"] {
  --studio-bg: var(--color-gray-50);
  --studio-panel: color-mix(in srgb, var(--color-primary-50) 75%, transparent);
  --studio-grid: color-mix(in srgb, var(--color-primary-500) 20%, transparent);

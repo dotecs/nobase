@@ -7,7 +7,7 @@
 .logo { display: block; }
 .logo img { filter: brightness(0) invert(1); }
 .studio[data-theme="light"] .logo img { filter: none; }
-:global([data-theme="light"]) .studio:not([data-theme="dark"]) .logo img { filter: none; }
+
 .focusButton { display: inline-flex; gap: 10px; align-items: center; border: 1px solid var(--studio-grid); color: var(--studio-muted); background: var(--studio-panel); border-radius: var(--radius-button); padding: 10px 14px; font-size: var(--text-sm) !important; }
 .exitFocus { position: absolute; top: 16px; right: 20px; z-index: 2; }
 .content { min-height: 0; display: grid; grid-template-columns: minmax(300px, 1fr) minmax(0, 2fr); gap: 32px; }
@@ -63,3 +63,8 @@
  .subtitle { font-size: 14px; }
  .controlBody { padding: 18px; }
 }
+
+.topActions { display:flex; gap:8px; }
+.stage { animation:sceneIn 200ms ease; }
+@keyframes sceneIn { from { opacity:0; } to { opacity:1; } }
+@media(prefers-reduced-motion:reduce) { .stage { animation:none; } }

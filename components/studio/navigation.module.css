@@ -1,0 +1,21 @@
+.nav { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; }
+.nav>button,.actions a,.actions button { display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid var(--studio-grid); border-radius:12px; padding:12px 22px; background:var(--studio-panel); color:var(--studio-text); font:inherit; cursor:pointer; text-decoration:none; }
+.nav .next,.actions a:first-child { background:var(--color-primary-500); color:var(--color-gray-50); }
+.progress { display:flex; align-items:center; justify-content:center; gap:20px; min-width:0; font-variant-numeric:tabular-nums; }
+.progress>span { white-space:nowrap; font-size:14px; color:var(--studio-muted); }
+.dots { display:flex; flex-wrap:wrap; justify-content:center; max-width:320px; }
+.dots button { width:24px; height:28px; background:transparent; border:0; padding:8px; cursor:pointer; }
+.dots button::after { content:''; display:block; width:8px; height:8px; border-radius:50%; background:var(--studio-grid); }
+.dots button[aria-current]::after { background:var(--studio-accent); box-shadow:0 0 12px var(--studio-glow); }
+.next[data-ended="true"] { animation:navPulse 700ms ease 1; }
+@keyframes navPulse { 50% { box-shadow:0 0 0 8px var(--studio-glow); } }
+.complete { max-width:780px; width:100%; margin:auto; padding:32px; color:var(--studio-text); }
+.complete h2 { font-size:clamp(24px,3vw,40px); margin:12px 0 28px; }
+.complete p,.complete dt { color:var(--studio-muted); }
+.complete dl { display:flex; gap:48px; margin-bottom:28px; }
+.complete dd { font-size:28px; margin:8px 0; }
+.complete ul { padding-left:20px; margin:12px 0 24px; }
+.complete a { color:var(--studio-accent); }
+.actions { display:flex; flex-wrap:wrap; gap:12px; }
+@media(max-width:767px) { .nav { gap:6px; } .nav>button { padding:9px; gap:5px; font-size:12px; } .progress { flex-direction:column; gap:0; } .progress>span { font-size:11px; } .dots { max-width:130px; } .dots button { width:15px; height:18px; padding:4px; } .complete { padding:12px; } .complete h2 { margin-bottom:16px; } }
+@media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
