@@ -196,3 +196,12 @@ DB 변경 후 `lib/database.types.ts`도 함께 업데이트하세요.
 | 059_learn_session_cap_config.sql | session v2 복사 → v3, per_ability_buffer=1·stop_when_verified=true | 적용 완료 | 2026-10-30 08:42 KST | Claude(Supabase MCP) |
 
 기존 규칙 행은 유지한다. 적용 및 적용일·적용자 기록은 Claude가 수행한다.
+
+### 시각 레슨 v1 (파일만 작성)
+
+| 파일 | 목적 | 작성일 | 적용 여부 | 적용일 | 적용자 |
+|---|---|---|---|---|---|
+| 060_learn_lessons.sql | 레슨 버전·음성·활동·비공개 저장소 | 2026-10-30 | 미적용 | | |
+| 061_learn_concepts.sql | 개념·선행 관계 | 2026-10-30 | 미적용 | | |
+
+Claude 적용 순서: 060 → 061 → 개념 데이터 등록 → 검증한 레슨 seed. 기존 learn-evidence 정책은 변경하지 않았습니다.

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { parseMath } from '../mathcheck/parse';
 import { variables } from '../mathcheck/evaluate';
+import { validateAuthoredMath } from './authored-math';
 
 const id = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/).max(120);
 const text = z.string().min(1).max(20000);
@@ -45,4 +46,4 @@ export type Scene=Lesson['scenes'][number];
 export type Sentence=z.infer<typeof sentenceSchema>;
 export type GraphStage=z.infer<typeof graphSchema>;
 export function lessonConceptIds(lesson:Lesson){return [...new Set(lesson.scenes.flatMap(({stage})=>stage.type==='steps'?stage.steps.flatMap(s=>s.concept_id?[s.concept_id]:[]):stage.type==='quiz'?[stage.trace_concept_id]:[]))];}
-export function validateLesson(input:unknown,conceptIds:ReadonlySet<string>){const lesson=lessonSchema.parse(input);const missing=lessonConceptIds(lesson).filter(id=>!conceptIds.has(id));if(missing.length)throw new Error('없는 개념 ID: '+missing.join(', '));return lesson;}
+export function validateLesson(input:unknown,conceptIds:ReadonlySet<string>){const lesson=lessonSchema.parse(input);validateAuthoredMath(lesson);const missing=lessonConceptIds(lesson).filter(id=>!conceptIds.has(id));if(missing.length)throw new Error('없는 개념 ID: '+missing.join(', '));return lesson;}

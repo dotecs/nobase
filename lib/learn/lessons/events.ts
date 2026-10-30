@@ -6,10 +6,14 @@ export function chooseTodayLesson(lessons:LessonRow[],abilityIds:string[]){
  for(const ability of abilityIds){const lesson=[...latest.values()].filter(l=>l.ability_ids.includes(ability)).sort((a,b)=>Number(a.kind==='worked')-Number(b.kind==='worked')||a.id.localeCompare(b.id))[0];if(lesson)return lesson;}return null;
 }
 export function summarizeLessonActivity(events:EventRow[]){
+ const visits=new Map<string,Map<string,number>>();
  const rows=new Map<string,{id:string;version:number;seconds:number;why:number;gaps:string[];completed:boolean}>();
  for(const event of events){const key=event.lesson_id+':'+event.lesson_version;const row=rows.get(key)??{id:event.lesson_id,version:event.lesson_version,seconds:0,why:0,gaps:[],completed:false};
- if(event.type==='complete'){row.completed=true;const ms=event.payload.duration_ms;if(typeof ms==='number'&&Number.isFinite(ms))row.seconds+=Math.max(0,Math.round(ms/1000));}
+ const {visit_id,elapsed_ms}=event.payload;const timed=typeof visit_id==='string'&&typeof elapsed_ms==='number'&&Number.isFinite(elapsed_ms)&&elapsed_ms>=0;
+ if(timed){const times=visits.get(key)??new Map<string,number>();times.set(visit_id,Math.max(times.get(visit_id)??0,elapsed_ms));visits.set(key,times);}
+ if(event.type==='complete'){row.completed=true;const ms=event.payload.duration_ms;if(!timed&&typeof ms==='number'&&Number.isFinite(ms))row.seconds+=Math.max(0,Math.round(ms/1000));}
  if(event.type==='why_click')row.why++;if(event.type==='gap'&&typeof event.payload.concept_id==='string'&&!row.gaps.includes(event.payload.concept_id))row.gaps.push(event.payload.concept_id);rows.set(key,row);}
+ for(const [key,times] of visits)rows.get(key)!.seconds+=Math.round([...times.values()].reduce((a,b)=>a+b,0)/1000);
  return [...rows.values()];
 }
 export function captionDuration(text:string,rate:number){return Math.max(2000,text.length*85)/rate;}
