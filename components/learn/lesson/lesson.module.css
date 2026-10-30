@@ -35,3 +35,8 @@
 .quiz button[data-correct="true"] { border-color: var(--color-success); }
 .figure { display: block; max-width: 100%; height: auto; }
 @media (max-width: 767px) { .columns { grid-template-columns: minmax(0, 1fr); } .scene { padding: var(--space-3); } }
+
+.dialog { width: min(700px, calc(100% - 24px)); max-height: 85dvh; overflow: auto; border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); color: var(--color-text); padding: var(--space-4); }
+.dialog::backdrop { background: var(--color-bg-overlay); }
+.close { min-height: 44px; padding: var(--space-2) var(--space-4); border-radius: var(--radius-button); margin-bottom: var(--space-3); }
+.close:focus-visible { outline: none; box-shadow: var(--focus-ring); }

@@ -1,8 +1,9 @@
 'use server';
 import { requireLearner,runtimeError } from '@/lib/learn/runtime';
-import { lessonDb,publishedLesson,audioUrls } from '@/lib/learn/lessons/data';
+import { lessonDb,publishedLesson,audioUrls,conceptCardData } from '@/lib/learn/lessons/data';
 import { lessonEventsSchema } from '@/lib/learn/lessons/events';
 import type { LessonEvent } from '@/lib/learn/lessons/types';
+export async function loadConceptCard(id:string){try{await requireLearner();const data=await conceptCardData(id);return data?{data}:{error:'개념을 찾을 수 없습니다.'};}catch(error){return {error:runtimeError(error,'lesson.conceptCard')};}}
 export async function recordLessonEvents(id:string,version:number,input:LessonEvent[]):Promise<{error?:string}>{
  try{const user=await requireLearner();const events=lessonEventsSchema.parse(input),lesson=await publishedLesson(id,version);if(!lesson)throw new Error('Published lesson missing');
  const scenes=new Set(lesson.body.scenes.map(s=>s.id)),sentences=new Set(lesson.body.scenes.flatMap(s=>s.narration.map(n=>n.id)));
