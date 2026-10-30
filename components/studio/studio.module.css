@@ -96,7 +96,7 @@
 .captionSlot { position:absolute; left:5%; right:5%; bottom:calc(var(--studio-player-height,56px) + 20px); pointer-events:none; }
 .captionSlot[data-empty="true"] { display:none; }
 .studio[data-focus="true"][data-transport-visible="false"] .playerSlot { opacity:0; pointer-events:none; }
-.studio[data-focus="true"] .playerSlot:focus-within { opacity:1; pointer-events:auto; }
+.studio[data-focus="true"] .playerSlot:has(:focus-visible) { opacity:1; pointer-events:auto; }
 .playerSlot { transition:opacity 150ms; }
 @media(max-width:767px) { .content,.studio[data-layout="split"] .content,.studio[data-layout="stage-full"] .content { grid-template-rows:minmax(0,1fr) auto auto auto; } .captionSlot { position:static; grid-row:2; } .controls { grid-row:3; } .playerSlot { grid-row:4; } }
 .studio[data-frame="true"] .captionSlot { position:absolute; bottom:calc(var(--studio-player-height,56px) + 20px); left:5%; right:5%; }

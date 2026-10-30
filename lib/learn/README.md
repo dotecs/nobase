@@ -25,3 +25,39 @@
 - LessonText의 단일 달러 수식은 인라인, 이중 달러만 블록입니다. 학생 입력용 MathPreview·파서·채점은 그대로입니다. 추적은 클라이언트 상태로 갱신하고 preventScroll 포커스를 사용합니다.
 - 관리자 음성 생성의 '남은 문장 자동 이어서'는 기본 해제입니다. 체크하면 순차 배치를 반복하고 결과를 누적합니다. 실패·키 없음·진행 없음·명시적 중단이면 멈춥니다. 실제 API는 이 구현 검증에서 호출하지 않았습니다.
 - /learn/studio-demo는 인증된 코드 픽스처이며 DB 레슨/이벤트를 생성하지 않습니다. frame=16x9, chrome=0 옵션도 지원합니다. LS-7 콘텐츠 게시 인계는 docs/learning-studio-content-handoff.md를 참고하세요.
+
+## 러닝 스튜디오 v2
+
+음성 정렬은 {chars,start,end}(밀리초)로 저장한다. API는 [ElevenLabs with-timestamps](https://elevenlabs.io/docs/api-reference/text-to-speech/convert-with-timestamps) 공식 응답을 따른다(확인일 2026-10-30). 새 음성은 정렬 마지막 end를 길이로 저장한다. 같은 lesson_id/text_hash의 다른 버전은 path·alignment·duration_ms를 복사하며 파일 업로드나 음성 호출을 하지 않는다. 재생은 해당 lesson_id/ 경로만 허용한다. 정렬 재생성은 공유 파일을 덮어쓰지 않고 새 경로에 저장한다.
+
+| 시간 표현 | 의미 |
+|---|---|
+| at_ms:300 또는 at:300 | 문장 시작 후 300ms |
+| at:"@파란" | 지시문을 제외한 TTS 대본의 첫 발화 |
+| at:"@파란#2+300" | 두 번째 발화 후 300ms |
+| at:"@start" / "@end-500" | 문장 시작 / 끝 500ms 전 |
+| tts 안 ⟨p1⟩ + at:"@p1" | 마커 제거 위치. 요청에 마커를 보내지 않음 |
+
+resolveAt은 순수 함수이며 못 찾은 앵커 진단은 resolveAnchor 결과와 lesson:check에 표시한다. 재생 시 자막 텍스트 비례 폴백을 제공하지만 새 작성물은 TTS 대본의 유효한 앵커를 요구한다. 정렬이 없으면 선형 추정한다. +오프셋은 문장 끝 이후에도 그대로 보존하며 음수 결과만 0으로 제한한다.
+
+시간 at와 좌표 position을 구분한다. 기존 at:{x,y}는 계속 허용하되, 시간 앵커와 좌표를 동시에 쓸 때는 position을 쓴다.
+
+| 칠판 액션 | 주요 필드 |
+|---|---|
+| pointer | position 또는 target |
+| circle | position, rx, ry |
+| underline | target(step:n, node:n, row:n, cell:r:c) |
+| arrow | from/to(좌표 또는 target), label |
+| bracket | axis, from, to, label |
+| shade | region(above/below:fn:n, between:fn:n,fn:m), x |
+| handwrite | position, tex 또는 text |
+| flash | target, color(chalk/accent) |
+
+공통 ttl_ms 기본값은 2500, 0은 지속이다. clear all은 칠판도 지운다. 기존 band는 above:axis shade와 원래 y 경계로 유지된다. 모든 도형은 미디어 시각의 상태로 재구성하며 CSS 타이머나 난수를 쓰지 않는다. pointer/circle 3개 이상은 작성 경고다.
+
+자막과 무대는 같은 alignment를 사용한다. Caption은 발화 단어를 밝히며 현재 2줄 구간만 보여준다. Transport는 자막 텍스트 없이 56px 높이를 유지한다. 그래프의 equalGraph는 x 폭과 무대 비율로 y 범위를 파생하고 1/2/5 단위 눈금 간격을 선택한다.
+
+작성 점검: npm run lesson:check -- content/lessons/rm-11.json --timeline
+실제 정렬 점검: 위 명령에 --alignment <문장ID별 정렬 JSON> 추가. CLI는 DB와 API에 접근하지 않는다.
+
+LS2-6 인계: docs/learning-studio-v2-content-handoff.md. 062와 v3 seed는 Claude가 적용하며 코드 커밋은 운영 검수 완료를 뜻하지 않는다.
