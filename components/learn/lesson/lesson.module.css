@@ -1,0 +1,37 @@
+.scenes { display: grid; gap: var(--space-6); min-width: 0; }
+.scene { padding: var(--space-5); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); box-shadow: var(--shadow-card); scroll-margin-top: 160px; min-width: 0; }
+.scene h2 { font-size: var(--text-xl); margin-bottom: var(--space-4); }
+.columns { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+.stage, .rail { min-width: 0; }
+.rail { display: grid; gap: var(--space-2); }
+.caption { border-left: 3px solid var(--color-border); padding: var(--space-3); line-height: 1.8; scroll-margin-top: 160px; overflow-wrap: anywhere; }
+.caption strong { display: block; font-size: var(--text-sm); color: var(--color-secondary); }
+.caption[data-role="think"] strong { color: var(--color-lesson); }
+.caption[data-role="write"] strong { color: var(--color-primary); }
+.caption[data-active="true"] { border-color: var(--color-lesson); background: var(--color-lesson-subtle); }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.controls label { display: flex; align-items: center; gap: var(--space-2); }
+.controls button, .controls select, .scene button, .scene a { min-height: 44px; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-brand); border-radius: var(--radius-button); background: var(--color-bg-elevated); color: var(--color-text); font: inherit; }
+.scene a { display: inline-flex; align-items: center; }
+.controls :focus-visible, .scene :focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.controls button:disabled { opacity: .5; }
+.steps, .chain { list-style: none; padding: 0; margin: 0; }
+.steps li, .chain li { border-bottom: 1px solid var(--color-border); padding: var(--space-3) 0; }
+.steps li[hidden], .chain li[hidden] { display: none; }
+.formula { overflow-x: auto; padding: var(--space-2) 0; }
+.help { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 22px; }
+.explanation { display: grid; gap: var(--space-2); margin-top: var(--space-2); padding: var(--space-3); background: var(--color-bg-secondary); }
+.slider { display: block; margin-top: var(--space-3); }
+.slider input { display: block; width: 100%; min-height: 44px; accent-color: var(--color-primary); }
+.table { overflow-x: auto; }
+.table table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: var(--space-2); border-bottom: 1px solid var(--color-border); text-align: left; }
+.table tr[data-current="true"] { background: var(--color-lesson-subtle); }
+.table tr[data-tone="pos"] { color: var(--color-primary); }
+.table tr[data-tone="zero"] { color: var(--color-warning); }
+.table tr[data-tone="neg"] { color: var(--color-success); }
+.quiz { display: grid; gap: var(--space-3); }
+.quiz button { text-align: left; }
+.quiz button[data-correct="true"] { border-color: var(--color-success); }
+.figure { display: block; max-width: 100%; height: auto; }
+@media (max-width: 767px) { .columns { grid-template-columns: minmax(0, 1fr); } .scene { padding: var(--space-3); } }

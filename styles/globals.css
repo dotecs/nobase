@@ -626,3 +626,8 @@ ol {
 }
 [data-theme="dark"] { --glass-bg: rgba(14,26,43,.58); --glass-bg-strong: rgba(14,26,43,.74); --glass-bg-flat: rgba(14,26,43,.88); --glass-border: rgba(140,180,220,.22); --glass-border-outer: rgba(0,114,198,.28); --glass-highlight: rgba(170,205,240,.35); --glass-shadow: 0 16px 40px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glass-bg: rgba(14,26,43,.58); --glass-bg-strong: rgba(14,26,43,.74); --glass-bg-flat: rgba(14,26,43,.88); --glass-border: rgba(140,180,220,.22); --glass-border-outer: rgba(0,114,198,.28); --glass-highlight: rgba(170,205,240,.35); --glass-shadow: 0 16px 40px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3); } }
+
+/* Visual lesson semantic tokens. */
+:root { --color-lesson: #7c3aed; --color-lesson-subtle: #f5f3ff; }
+[data-theme="dark"] { --color-lesson: #c4b5fd; --color-lesson-subtle: #24183d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --color-lesson: #c4b5fd; --color-lesson-subtle: #24183d; } }

@@ -1,3 +1,4 @@
+import { TodayLessonCard } from '@/components/learn/lesson/TodayLessonCard';
 import { AdminLearnNotice } from '@/components/learn/AdminLearnNotice';
 import { pendingPhotoSessions } from '@/lib/learn/session-photos';
 import { SessionPhotoReminder } from '@/components/learn/SessionPhotoReminder';
@@ -30,11 +31,13 @@ export default async function LearnPage() {
   else try {
     const learner=await learnerRow(user.id,true),config=await runtimeConfigs();
     const [summary,due,open]=learner.status==='active'?await Promise.all([homeSummary(learner),dueReviewAbilities(user.id),openLearningSession(user.id)]):[undefined,[],null];
-    const plannedCount=open?readLearningPlan(open.plan).meta.remaining:learner.status==='active'?(await recommendLearningSession(user.id,learner,config)).result.items.length:0;
+    const recommendation=!open&&learner.status==='active'?await recommendLearningSession(user.id,learner,config):null;
+    const queue=open?readLearningPlan(open.plan).meta.queue:recommendation?.result.items??[];
+    const plannedCount=open?readLearningPlan(open.plan).meta.remaining:queue.length;
     const padSession=await createAdminSupabaseClient().from('learn_sessions').select('id').eq('user_id',user.id).is('ended_at',null).limit(1);if(padSession.error)throw padSession.error;
     const photoPending=await pendingPhotoSessions(user.id);
     const padEntry=<PadModeCard hasOpenSession={!!padSession.data?.length||!!photoPending.diagnosticPending||!!photoPending.learning}/>;
-    content=<>{!(learner.status==='awaiting_coach'&&photoPending.diagnosticPending)&&padEntry}<HomePanel diagnosticPhotoPending={!!photoPending.diagnosticPending} status={learner.status} minutes={config.configs.diagnostic.time_limit_min} photoRequired={(config.configs.evidence.session_photo??{diagnostic:'required',learning:'optional',review:'optional'}).diagnostic==='required'} summary={summary} due={due.length} itemsPerSession={plannedCount} maxMinutes={config.configs.session.max_minutes} openSessionId={open?.id}/>{learner.status==='awaiting_coach'&&photoPending.diagnosticPending&&padEntry}{photoPending.learning&&<SessionPhotoReminder sessionId={photoPending.learning.id}/>}</>;
+    content=<><TodayLessonCard userId={user.id} packId={learner.pack_id} abilityIds={[...new Set(queue.map(item=>item.ability_id))]}/>{!(learner.status==='awaiting_coach'&&photoPending.diagnosticPending)&&padEntry}<HomePanel diagnosticPhotoPending={!!photoPending.diagnosticPending} status={learner.status} minutes={config.configs.diagnostic.time_limit_min} photoRequired={(config.configs.evidence.session_photo??{diagnostic:'required',learning:'optional',review:'optional'}).diagnostic==='required'} summary={summary} due={due.length} itemsPerSession={plannedCount} maxMinutes={config.configs.session.max_minutes} openSessionId={open?.id}/>{learner.status==='awaiting_coach'&&photoPending.diagnosticPending&&padEntry}{photoPending.learning&&<SessionPhotoReminder sessionId={photoPending.learning.id}/>}</>;
   }catch(error){content=<p role="alert">{runtimeError(error, 'app/(main)/learn/page.tsx')}</p>;}
   return <>
     <Header isLoggedIn userName={profile?.name || user.email} userRole={profile?.role} />
