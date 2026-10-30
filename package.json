@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lesson:check": "node scripts/lesson-check.mjs",
+    "lesson:seed": "node scripts/lesson-seed.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

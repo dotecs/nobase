@@ -1,0 +1,10 @@
+import type { Lesson } from './schema';
+export type LessonRow={id:string;version:number;pack_id:string;kind:Lesson['kind'];title:string;ability_ids:string[];body:Lesson;status:'draft'|'reviewed'|'live'|'retired';created_at:string};
+export type AudioRow={lesson_id:string;lesson_version:number;sentence_id:string;text_hash:string;path:string;duration_ms:number|null;created_at:string};
+export type LessonEventType='open'|'scene'|'sentence'|'why_click'|'quiz'|'dontknow'|'gap'|'complete';
+export type LessonEvent={type:LessonEventType;payload:Record<string,unknown>};
+export type EventRow=LessonEvent&{id:string;user_id:string;lesson_id:string;lesson_version:number;created_at:string};
+export type ConceptNode={id:string;pack_id:string;ability_id:string|null;name:string;one_line:string;check_question:{stem_md:string;options:{id:string;text_md:string}[];correct:string}|null;lesson_id:string|null;created_at:string};
+export type ConceptEdge={source_id:string;target_id:string;type:'prerequisite'};
+type Table<Row>={Row:Row;Insert:Partial<Row>;Update:Partial<Row>;Relationships:[]};
+export type LessonsDatabase={public:{Tables:{learn_lessons:Table<LessonRow>;learn_lesson_audio:Table<AudioRow>;learn_lesson_events:Table<EventRow>;learn_concepts:Table<ConceptNode>;learn_concept_edges:Table<ConceptEdge>};Views:Record<never,never>;Functions:Record<never,never>;Enums:Record<never,never>;CompositeTypes:Record<never,never>}};

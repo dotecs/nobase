@@ -23,3 +23,7 @@
 .shell[data-tone="review"] .toneBadge { background: var(--color-success-subtle); color: var(--color-success-700); }
 :global([data-theme="dark"]) .shell[data-tone="diagnostic"] .toneBadge { background: color-mix(in srgb, var(--color-secondary-700) 15%, transparent); }
 @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .shell[data-tone="diagnostic"] .toneBadge { background: color-mix(in srgb, var(--color-secondary-700) 15%, transparent); } }
+
+.shell[data-tone="lesson"] .bar { border-color: var(--color-lesson); }
+.shell[data-tone="lesson"] .toneBadge { color: var(--color-lesson); background: var(--color-lesson-subtle); }
+.shell[data-tone="lesson"] .body { width: min(100% - 32px, 1120px); }
