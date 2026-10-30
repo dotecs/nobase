@@ -103,7 +103,7 @@
     },
     {
       "id": "c.perfect-square",
-      "ability_id": "09-1",
+      "ability_id": null,
       "name": "완전제곱식",
       "one_line": "$x^2+px+\\left(\\frac p2\\right)^2=\\left(x+\\frac p2\\right)^2$. 일차항 계수의 절반을 제곱해 더하면 제곱 꼴이 된다.",
       "lesson_id": "rm-09",
@@ -153,7 +153,7 @@
     },
     {
       "id": "c.sqrt-props",
-      "ability_id": "08-1",
+      "ability_id": null,
       "name": "제곱근의 성질",
       "one_line": "$X^2=k$ ($k\\ge0$)이면 $X=\\pm\\sqrt k$. 제곱해서 음수가 되는 실수는 없다.",
       "lesson_id": "rm-08",
