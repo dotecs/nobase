@@ -631,3 +631,26 @@ ol {
 :root { --color-lesson: #7c3aed; --color-lesson-subtle: #f5f3ff; }
 [data-theme="dark"] { --color-lesson: #c4b5fd; --color-lesson-subtle: #24183d; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --color-lesson: #c4b5fd; --color-lesson-subtle: #24183d; } }
+
+/* Learning Studio: isolated dark canvas; explicit light theme is also supported. */
+[data-studio] {
+ --studio-bg: color-mix(in srgb, var(--color-gray-900) 65%, var(--color-gray-950));
+ --studio-panel: color-mix(in srgb, var(--color-gray-800) 50%, transparent);
+ --studio-grid: color-mix(in srgb, var(--color-gray-500) 32%, transparent);
+ --studio-grid-soft: color-mix(in srgb, var(--color-gray-500) 5%, transparent);
+ --studio-accent: var(--color-primary-400);
+ --studio-glow: color-mix(in srgb, var(--studio-accent) 40%, transparent);
+ --studio-text: var(--color-gray-50);
+ --studio-muted: var(--color-gray-400);
+ --studio-shadow: color-mix(in srgb, var(--color-gray-950) 30%, transparent);
+}
+[data-theme="light"] [data-studio]:not([data-theme="dark"]), [data-studio][data-theme="light"] {
+ --studio-bg: var(--color-gray-50);
+ --studio-panel: color-mix(in srgb, var(--color-primary-50) 75%, transparent);
+ --studio-grid: color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+ --studio-grid-soft: color-mix(in srgb, var(--color-primary-500) 5%, transparent);
+ --studio-text: var(--color-gray-900);
+ --studio-muted: var(--color-gray-600);
+ --studio-shadow: color-mix(in srgb, var(--color-primary-300) 20%, transparent);
+}
+body:has([data-studio]) { overflow: hidden; }
