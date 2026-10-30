@@ -1,9 +1,12 @@
+import { StudioGraph } from '@/components/studio/StudioGraph';
+import type { StageState } from '@/lib/learn/lessons/stage-state';
 import type { GraphStage } from '@/lib/learn/lessons/schema';
 import { GRAPH,graphScale,curvePath,integerTicks } from '@/lib/learn/lessons/graph';
 import styles from './graph.module.css';
 const colors={c1:'var(--color-primary)',c2:'var(--color-secondary-500)',c3:'var(--color-warning)'};
 export type StandardGraphProps=Omit<GraphStage,'type'>&{highlight?:string;parameters?:Record<string,number>};
-export function StandardGraph({x,y,fns,points=[],band,aria,highlight,parameters}:StandardGraphProps){
+export function StandardGraph(props:StandardGraphProps&({variant?:'default';state?:never}|{variant:'studio';state:StageState})){return props.variant==='studio'?<StudioGraph fns={props.fns} aria={props.aria} state={props.state}/>:<ClassicGraph {...props}/>;}
+function ClassicGraph({x,y,fns,points=[],band,aria,highlight,parameters}:StandardGraphProps){
  const {sx,sy}=graphScale(x,y),right=GRAPH.width-GRAPH.right,bottom=GRAPH.height-GRAPH.bottom;
  const hasX=y[0]<=0&&y[1]>=0,hasY=x[0]<=0&&x[1]>=0;
  const active=(key:string,label?:string)=>!highlight||highlight===key||highlight===label;

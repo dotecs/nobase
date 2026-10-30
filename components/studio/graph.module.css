@@ -1,0 +1,15 @@
+.container { width: 100%; height: 100%; min-width: 0; min-height: 0; }
+.graph { display: block; width: 100%; height: 100%; overflow: visible; background: transparent; }
+.grid { stroke: var(--studio-grid); stroke-width: 1; stroke-dasharray: 3 7; }
+.axes { stroke: var(--studio-text); stroke-width: 1.4; fill: var(--studio-text); }
+.axes text { stroke: none; }
+.tick { font-family: var(--font-sans); font-size: 16px; fill: var(--studio-muted); }
+.axisName { font-family: serif; font-style: italic; font-size: 26px; }
+.curve, .glow { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.curve { stroke-width: 3; }
+.glow { stroke-width: 7; opacity: .6; }
+.point { stroke: var(--studio-text); stroke-width: 2; }
+.pointLabel { font-size: 23px; font-family: var(--font-sans); fill: var(--studio-text); paint-order: stroke; stroke: var(--studio-bg); stroke-width: 4; stroke-linejoin: round; }
+.band { fill: var(--studio-glow); opacity: .24; }
+.label { color: var(--studio-text); font-size: 19px; white-space: nowrap; }
+@media (max-width: 767px) { .tick { font-size: 12px; } .axisName { font-size: 20px; } .pointLabel { font-size: 15px; } .curve { stroke-width: 2.5; } }

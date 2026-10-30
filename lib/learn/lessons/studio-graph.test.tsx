@@ -1,0 +1,12 @@
+import { it,expect } from 'vitest';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { readFileSync } from 'node:fs';
+import { StandardGraph } from '@/components/learn/StandardGraph';
+import { graphScale,curvePath } from './graph';
+import type { StageState } from './stage-state';
+const state:StageState={params:{a:1},drawProgress:{'fn:0':.5},visibleFns:[0],points:[{id:'point:0',x:2,y:4}],highlight:null,dimOthers:true,camera:{x:[-4,4],y:[-3,7]},labels:[],band:null,revealed:{step:[],node:[],row:[]},pulses:{}};
+const render=(value:StageState)=>renderToStaticMarkup(<StandardGraph variant="studio" state={value} x={[-4,4]} y={[-3,7]} fns={[{expr:'a*x^2',c:'c1'}]} aria="이차함수 그래프"/>);
+it('renders negative ticks, static glow, points and partial draw from state',()=>{const html=render(state);for(const text of ['이차함수 그래프','feGaussianBlur','stroke-dashoffset="0.5"','(2, 4)','>-2<','viewBox="0 0 1200 750"'])expect(html).toContain(text);expect(html.match(/stroke-dashoffset="0.5"/g)).toHaveLength(2);});
+it('honors visibility and camera without mutating state',()=>{const hidden={...state,visibleFns:[],camera:{x:[1,3] as [number,number],y:[2,8] as [number,number]}};const before=JSON.stringify(hidden);const html=render(hidden);expect(html).not.toContain('data-target="fn:0"');expect(html).not.toContain('>-2<');expect(JSON.stringify(hidden)).toBe(before);});
+it('samples 400 points with a supplied viewport and preserves default graph behavior',()=>{const viewport={width:1200,height:750,left:30,right:24,top:24,bottom:28};expect(graphScale([-1,1],[-1,1],viewport).sx(-1)).toBe(30);expect(graphScale([-1,1],[-1,1],viewport).sx(1)).toBe(1176);expect(curvePath('x',[-1,1],[-1,1],{},viewport).match(/[ML]/g)).toHaveLength(400);expect(renderToStaticMarkup(<StandardGraph x={[-1,1]} y={[-1,1]} fns={[{expr:'x',c:'c1'}]} aria="기존"/>)).toContain('viewBox="0 0 640 400"');});
+it('keeps the renderer free of animation clocks and literal colors',()=>{expect(readFileSync('components/studio/StudioGraph.tsx','utf8')).not.toContain('requestAnimationFrame');expect(readFileSync('components/studio/graph.module.css','utf8')).not.toMatch(/#[\da-f]{3,8}\b|rgba?\(/i);});
