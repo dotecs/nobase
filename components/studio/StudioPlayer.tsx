@@ -26,7 +26,7 @@ export default function StudioPlayer({scene,alignments,showCaptions,onToggleCapt
  const emit=useCallback((event:LessonEvent)=>{if(!visit.current.id)visit.current={id:crypto.randomUUID(),started:performance.now()};handlers.current.onEvent?.({...event,payload:{...event.payload,visit_id:visit.current.id,elapsed_ms:Math.round(performance.now()-visit.current.started)}});},[]);
  const commit=useCallback((value:number,force=false)=>{const time=Math.max(0,Math.min(timeline.totalMs,value));clock.current.time=time;const next=stageStateAt(scene,time,timeline.starts,{alignments,durations:known}),json=JSON.stringify(next),changed=json!==last.current.json;
   if(force||changed||Math.floor(time/80)!==Math.floor(last.current.time/80)){const state=changed?next:last.current.state;last.current={time,json,state};setSnapshot({time,state});}
- },[scene,timeline]);
+ },[scene,timeline,alignments,known]);
  const pause=useCallback(()=>{clock.current.playing=false;setPlaying(false);audio.current?.pause();},[]);
  const seek=useCallback((value:number)=>{handlers.current.onSeek?.();commit(value,true);const position=timelinePosition(timeline,clock.current.time),element=audio.current;if(element?.dataset.sentence===timeline.entries[position.index].sentence.id){try{element.currentTime=position.localMs/1000;}catch{ /* Metadata may not be loaded yet. */ }}if(position.ended)pause();},[commit,timeline,pause]);
  const play=useCallback(()=>{handlers.current.onResume?.();if(clock.current.time>=timeline.totalMs){complete.current=false;commit(0,true);}clock.current.playing=true;setPlaying(true);const element=audio.current;if(element?.dataset.source)void element.play().catch(error=>{if(error?.name!=='AbortError'&&clock.current.playing)clock.current.failed=true;});},[timeline,commit]);

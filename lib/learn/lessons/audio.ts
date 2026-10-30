@@ -1,3 +1,4 @@
+import {stripMarkers} from './markers';
 import 'next/headers';
 import { createHash,randomUUID } from 'node:crypto';
 import type { Lesson,Sentence } from './schema';
@@ -17,7 +18,7 @@ export async function requestSpeech(text:string,voice:string,key:string,timeoutM
  if(!key.trim())throw new Error('키 없음');const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
  try{
   // API format: https://elevenlabs.io/docs/api-reference/text-to-speech/convert-with-timestamps (2026-10-30)
-  const response=await fetcher(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}/with-timestamps?output_format=mp3_44100_128`,{method:'POST',signal:controller.signal,headers:{'xi-api-key':key,'Content-Type':'application/json'},body:JSON.stringify({text,model_id:LESSON_MODEL,voice_settings:{stability:.5,similarity_boost:.8,style:0,use_speaker_boost:true}})});
+  const response=await fetcher(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}/with-timestamps?output_format=mp3_44100_128`,{method:'POST',signal:controller.signal,headers:{'xi-api-key':key,'Content-Type':'application/json'},body:JSON.stringify({text:stripMarkers(text),model_id:LESSON_MODEL,voice_settings:{stability:.5,similarity_boost:.8,style:0,use_speaker_boost:true}})});
   if(!response.ok)throw new Error(`음성 요청 실패 (HTTP ${response.status})`);
   const payload=speechResponseSchema.parse(await response.json()),alignment=compactAlignment(payload.alignment),bytes=new Uint8Array(Buffer.from(payload.audio_base64,'base64'));if(!bytes.byteLength||bytes.byteLength>20*1024*1024)throw new Error('음성 응답 크기 오류');return {bytes,alignment,duration_ms:alignment.end.at(-1)!};
  }finally{clearTimeout(timer);}

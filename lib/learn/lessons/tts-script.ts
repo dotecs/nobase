@@ -1,3 +1,4 @@
+import {stripMarkers} from './markers';
 import { parseMath, type Expr } from '../mathcheck/parse';
 import type { Sentence } from './schema';
 const letters:Record<string,string>={a:'에이',b:'비',c:'씨',d:'디',e:'이',f:'에프',g:'지',h:'에이치',i:'아이',j:'제이',k:'케이',l:'엘',m:'엠',n:'엔',o:'오',p:'피',q:'큐',r:'알',s:'에스',t:'티',u:'유',v:'브이',w:'더블유',x:'엑스',y:'와이',z:'제트'};
@@ -22,4 +23,6 @@ export function spokenMath(source:string):string {
   catch {return source.replace(/\\(?:leq|le)\b/g,' 작거나 같다 ').replace(/\\sqrt\{([^{}]*)\}/g,' 루트 $1 ').replace(/\\pm/g,' 플러스 마이너스 ').replace(/[a-z]/gi,c=>letters[c.toLowerCase()]??c).replace(/\d+/g,koreanNumber).replace(/[{}\\]/g,' ').replace(/\s+/g,' ').trim();}
 }
 export const roleDirections={say:'',think:'[slower, thinking aloud]',write:'[clear, deliberate]'} as const;
-export function ttsScript(sentence:Sentence){if(sentence.tts)return sentence.tts;return [roleDirections[sentence.role],sentence.text.replace(/\$\$?([\s\S]*?)\$\$?/g,(_,math:string)=>spokenMath(math))].filter(Boolean).join(' ');}
+export function rawTtsScript(sentence:Sentence){if(sentence.tts)return sentence.tts;return [roleDirections[sentence.role],sentence.text.replace(/\$\$?([\s\S]*?)\$\$?/g,(_,math:string)=>spokenMath(math))].filter(Boolean).join(' ');}
+
+export function ttsScript(sentence:Sentence){return stripMarkers(rawTtsScript(sentence));}

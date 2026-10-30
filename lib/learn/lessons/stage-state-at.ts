@@ -1,5 +1,5 @@
 import {isChalk,chalkAt} from './chalk';
-import {resolveAnchor,type At} from './anchors';
+import {resolveAnchor,actionAnchor} from './anchors';
 import type {Alignment} from './alignment';
 import {captionDuration} from './events';
 import type { Scene } from './schema';
@@ -19,7 +19,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  let pointIndex=points.length;
  const tracks=new Map<string,Track>(),pulses=new Map<string,number>();
  const advance=(time:number)=>{for(const track of tracks.values()){const p=track.duration===0?1:Math.max(0,Math.min(1,(time-track.start)/track.duration));track.set(track.from+(track.to-track.from)*ease(p,track.easing));}};
- const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=(typeof action.at==='object'?action.at_ms:action.at??action.at_ms)??0,resolved=resolveAnchor(at as At,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms};})).sort((a,b)=>a.start-b.start);
+ const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=actionAnchor(action),resolved=resolveAnchor(at,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms};})).sort((a,b)=>a.start-b.start);
  const time=Math.max(0,Number.isFinite(tMs)?tMs:0);
  for(const [eventIndex,{action,start}] of events.entries()){if(start>time)break;advance(start);
   if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex);if(mark)state.chalk!.push(mark);continue;}
