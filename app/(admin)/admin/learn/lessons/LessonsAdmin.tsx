@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { LessonRow } from '@/lib/learn/lessons/types';
+import type { AudioGenerationResult } from '@/lib/learn/lessons/audio';
+import styles from './lessons.module.css';
+export type AdminLesson=Pick<LessonRow,'id'|'version'|'title'|'kind'|'status'>&{total:number;generated:number;missing:number;batch:number;characters:number};
+export function LessonsAdmin({rows,hasKey,generate,advance}:{rows:AdminLesson[];hasKey:boolean;generate:(id:string,version:number)=>Promise<{result?:AudioGenerationResult;error?:string}>;advance:(id:string,version:number,status:'reviewed'|'live')=>Promise<{error?:string}>}){
+ const [confirmation,setConfirmation]=useState<string|null>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState('');const router=useRouter();
+ async function run(row:AdminLesson,status?:'reviewed'|'live'){setBusy(true);setMessage('');try{if(status){const result=await advance(row.id,row.version,status);setMessage(result.error??'상태를 변경했습니다.');}else{const {result,error}=await generate(row.id,row.version);setMessage(error??(result?.noKey?'키 없음':result?`생성 ${result.generated} · 건너뜀 ${result.skipped} · 남음 ${result.remaining}${result.failed.length?' · 실패: '+result.failed.map(f=>f.sentence_id).join(', '):''}`:'결과를 확인하지 못했습니다.'));}setConfirmation(null);router.refresh();}catch{setMessage('처리하지 못했습니다. 다시 시도해 주세요.');}finally{setBusy(false);}}
+ return <section className={styles.page}><h1>시각 레슨 관리</h1>{!hasKey&&<p role="status">키 없음</p>}{message&&<p role="status">{message}</p>}{!rows.length&&<p>등록된 레슨이 없습니다. 검증한 JSON을 seed로 등록해 주세요.</p>}{rows.map(row=>{const key=row.id+':'+row.version;return <article className={styles.card} key={key}><h2>{row.title}</h2><p>{row.id} · v{row.version} · {row.kind} · {row.status}</p><p>{row.total}문장 · 음성 생성됨 {row.generated} · 미생성 {row.missing}</p>{hasKey&&row.missing>0&&<button disabled={busy} onClick={()=>setConfirmation(key)}>음성 생성</button>}{confirmation===key&&<div className={styles.confirmation}><p>{row.batch}문장 · 약 {row.characters}자 · 예상 크레딧: 요율 확인 필요</p><p>한 번에 최대 60문장입니다. 남은 문장은 다시 눌러 이어서 생성합니다.</p><button disabled={busy} onClick={()=>void run(row)}>생성 시작</button><button disabled={busy} onClick={()=>setConfirmation(null)}>취소</button></div>}{row.status==='draft'&&<button disabled={busy} onClick={()=>void run(row,'reviewed')}>검수 완료 → reviewed</button>}{row.status==='reviewed'&&<button disabled={busy} onClick={()=>void run(row,'live')}>게시 → live</button>}</article>;})}</section>;
+}

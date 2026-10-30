@@ -1,0 +1,7 @@
+.page { padding: var(--space-6); display: grid; gap: var(--space-4); }
+.card { border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); padding: var(--space-4); background: var(--color-bg-elevated); box-shadow: var(--shadow-card); }
+.card h2, .card p { margin-bottom: var(--space-3); }
+.card button { min-height: 44px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-button); background: var(--color-bg-elevated); color: var(--color-text); padding: var(--space-2) var(--space-3); margin-right: var(--space-2); }
+.card button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.card button:disabled { opacity: .5; }
+.confirmation { padding: var(--space-3); background: var(--color-bg-secondary); margin: var(--space-3) 0; }
