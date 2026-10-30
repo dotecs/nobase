@@ -1,15 +1,15 @@
 'use client';
 import { useCallback,useEffect,useRef,useState } from 'react';
-import Link from 'next/link';
+import { ConceptTrace } from './ConceptTrace';
 import { FocusShell } from '../FocusShell';
 import { LessonStage } from './LessonStage';
 import { LessonText } from './LessonText';
 import type { Lesson } from '@/lib/learn/lessons/schema';
-import type { LessonEvent } from '@/lib/learn/lessons/types';
+import type { ConceptNode,ConceptEdge,LessonEvent } from '@/lib/learn/lessons/types';
 import { captionDuration } from '@/lib/learn/lessons/events';
 import styles from './lesson.module.css';
-export type LessonViewerProps={lesson:Lesson;audio?:Record<string,string>;record:(events:LessonEvent[])=>Promise<{error?:string}>;refreshAudio?:()=>Promise<Record<string,string>>};
-export function LessonViewer({lesson,audio={},record,refreshAudio}:LessonViewerProps){
+export type LessonViewerProps={lesson:Lesson;graph?:{nodes:ConceptNode[];edges:ConceptEdge[]};audio?:Record<string,string>;record:(events:LessonEvent[])=>Promise<{error?:string}>;refreshAudio?:()=>Promise<Record<string,string>>};
+export function LessonViewer({lesson,audio={},graph={nodes:[],edges:[]},record,refreshAudio}:LessonViewerProps){
  const sentences=lesson.scenes.flatMap(scene=>scene.narration.map(sentence=>({scene,sentence})));
  const [index,setIndex]=useState(0),[running,setRunning]=useState(false),[sound,setSound]=useState(true),[rate,setRate]=useState(1),[notice,setNotice]=useState(''),[trace,setTrace]=useState<string|null>(null);
  const player=useRef<HTMLAudioElement>(null),root=useRef<HTMLDivElement>(null),queue=useRef<LessonEvent[]>([]),started=useRef(0),seen=useRef(new Set<string>()),opened=useRef(false),busy=useRef(false),urls=useRef(audio);
@@ -36,6 +36,6 @@ export function LessonViewer({lesson,audio={},record,refreshAudio}:LessonViewerP
  return <FocusShell title={lesson.title} tone="lesson" lessonKind={lesson.kind} toolbar={<div className={styles.controls}><button type="button" onClick={()=>begin()} disabled={running}>재생</button><button type="button" onClick={()=>{setRunning(false);void flush();}} disabled={!running}>정지</button><button type="button" onClick={()=>begin(true)}>처음부터</button><button type="button" aria-pressed={sound} onClick={()=>setSound(v=>!v)}>음성 {sound?'켬':'끔'}</button><label>속도 <select value={rate} onChange={e=>setRate(Number(e.target.value))}><option value={1}>1배</option><option value={1.25}>1.25배</option></select></label></div>}>
   <audio ref={player} preload="none" aria-label="레슨 음성"/>{notice&&<p role="status">{notice}</p>}{lesson.intro&&<div><LessonText text={lesson.intro}/></div>}
   <div ref={root} className={styles.scenes}>{lesson.scenes.map(scene=><section className={styles.scene} data-scene id={scene.id} key={scene.id}><h2>{scene.title}</h2><div className={styles.columns}><LessonStage scene={scene} cue={current?.scene.id===scene.id?current.sentence.cue:undefined} onWhy={concept_id=>emit({type:'why_click',payload:{scene_id:scene.id,concept_id}})} onTrace={concept_id=>{setTrace(concept_id);emit({type:'dontknow',payload:{scene_id:scene.id,concept_id}});}} onQuiz={(option_id,correct)=>emit({type:'quiz',payload:{scene_id:scene.id,option_id,correct}})}/><div className={styles.rail}>{scene.narration.map(sentence=><div key={sentence.id} data-sentence={sentence.id} data-active={running&&current.sentence.id===sentence.id} data-role={lesson.kind==='worked'?sentence.role:undefined} className={styles.caption}>{lesson.kind==='worked'&&<strong>{sentence.role==='think'?'머릿속':sentence.role==='write'?'종이에':'설명'}</strong>}<LessonText text={sentence.text}/></div>)}</div></div></section>)}</div>
-  {trace&&<aside className={styles.scene}><p>연결된 개념부터 확인해 보세요.</p><Link href={'/learn/concept/'+trace}>개념 확인</Link><button type="button" onClick={()=>setTrace(null)}>닫기</button></aside>}
+  {trace&&<ConceptTrace key={trace} start={trace} nodes={graph.nodes} edges={graph.edges} onEvent={emit} onClose={()=>setTrace(null)}/>}
  </FocusShell>;
 }

@@ -4,6 +4,7 @@ import { createAdminSupabaseClient } from '@/lib/supabase-admin';
 import { lessonSchema } from './schema';
 import type { LessonsDatabase } from './types';
 export const lessonDb=()=>createAdminSupabaseClient() as unknown as SupabaseClient<LessonsDatabase>;
+export async function conceptGraph(packId:string){const client=lessonDb();const nodes=await client.from('learn_concepts').select('*').eq('pack_id',packId);if(nodes.error)throw nodes.error;if(!nodes.data?.length)return {nodes:[],edges:[]};const edges=await client.from('learn_concept_edges').select('*').in('target_id',nodes.data.map(n=>n.id));if(edges.error)throw edges.error;const ids=new Set(nodes.data.map(n=>n.id));return {nodes:nodes.data,edges:(edges.data??[]).filter(e=>ids.has(e.source_id))};}
 export async function publishedLesson(id:string,version?:number){
  let query=lessonDb().from('learn_lessons').select('*').eq('id',id).in('status',['reviewed','live']);if(version!==undefined)query=query.eq('version',version);
  const {data,error}=await query.order('version',{ascending:false}).limit(1).maybeSingle();if(error)throw error;
