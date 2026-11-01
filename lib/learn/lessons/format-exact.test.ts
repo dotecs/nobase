@@ -5,3 +5,4 @@ it.each([0,-0,1e-12])('normalizes near-zero %s',value=>expect(formatNum(value)).
 it('absorbs floating-point noise',()=>{expect(formatNum(.3333333333)).toBe('1/3');expect(formatNum(.1+.2)).toBe('3/10');});
 it('rejects nonfinite values',()=>{expect(isExact(NaN)).toBe(false);expect(()=>formatNum(Infinity)).toThrow();});
 it('keeps sign merging while emitting TeX fractions',()=>{expect(formulaValues('x + {{c}}',{c:-.5})).toBe('x - \\tfrac{1}{2}');});
+it('does not mistake scientific-notation integers for algebraic e',()=>expect(formatNum(1e21)).toBe('1000000000000000000000'));

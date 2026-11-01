@@ -90,3 +90,5 @@
  .studio:not([data-focus="true"]):not([data-chrome="false"]) .stageColumn { grid-column:2; grid-row:2; }
  .studio:not([data-focus="true"]):not([data-chrome="false"]) .navigation { grid-column:2; grid-row:3; }
 }
+/* Exact finite fractions can be long; keep their full notation reachable. */
+.stageHeader>div:nth-child(2) { min-width:0; max-width:100%; overflow-x:auto; }

@@ -16,4 +16,4 @@ export function summarizeLessonActivity(events:EventRow[]){
  for(const [key,times] of visits)rows.get(key)!.seconds+=Math.round([...times.values()].reduce((a,b)=>a+b,0)/1000);
  return [...rows.values()];
 }
-export function captionDuration(text:string,rate:number){return Math.max(2000,text.length*85)/rate;}
+export function captionDuration(text:string,rate:number){return Math.max(2000,text.replace(/⏎/g,'').length*85)/rate;}

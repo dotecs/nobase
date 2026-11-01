@@ -9,7 +9,7 @@ export function decimalRational(value:number){if(!Number.isFinite(value))throw n
 function ratio(p:number,q:number,symbol:string,mode:'tex'|'text'){const n=(p===1&&symbol?'':String(p))+symbol;return q===1?n:mode==='tex'?`\\tfrac{${n}}{${q}}`:`${n}/${q}`;}
 function recognized(value:number,mode:'tex'|'text'):string|null{
  if(!Number.isFinite(value))return null;const negative=value<0,v=Math.abs(value),sign=negative?(mode==='tex'?'-':'−'):'';
- if(close(v,Math.round(v)))return (negative&&Math.round(v)!==0?'−':'')+Math.round(v);
+ if(close(v,Math.round(v)))return (negative&&Math.round(v)!==0?'−':'')+decimalRational(Math.round(v)).toString();
  const rational=fraction(v,64);if(rational)return sign+ratio(...rational,'',mode);
  for(const [constant,symbol,max] of [[Math.PI,mode==='tex'?'\\pi':'π',12],[Math.E,'e',4]] as const){const r=fraction(v/constant,max);if(r&&r[0]!==0&&close(v,r[0]/r[1]*constant))return sign+ratio(...r,symbol,mode);}
  const square=fraction(v*v,64);

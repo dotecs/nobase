@@ -4,6 +4,7 @@ import {captionWords} from './captions';
 import {audioHash} from './audio';
 import {resolveAnchor,spokenText} from './anchors';
 import type {Sentence} from './schema';
+import {captionDuration} from './events';
 const text='파란 그래프는 두 번 만나고, 청록 그래프는 한 번 스치고, 주황 그래프는 $x$축 위에 떠서 한 번도 만나지 않죠. 이 셋을 구분해 주는 숫자 하나를 오늘 배웁니다.';
 it('splits the requested rm-11 example at semantic boundaries',()=>expect(splitCaption(text)).toEqual(['파란 그래프는 두 번 만나고, 청록 그래프는 한 번 스치고,','주황 그래프는 $x$축 위에 떠서 한 번도 만나지 않죠.','이 셋을 구분해 주는 숫자 하나를 오늘 배웁니다.']));
 it('ignores math punctuation and counts rendered symbols',()=>{expect(splitCaption('값은 $1.5$입니다. 다음 문장을 읽어 봅시다.')).toEqual(['값은 $1.5$입니다.','다음 문장을 읽어 봅시다.']);expect(captionDisplayLength('$\\frac{1}{2}$')).toBe(2);});
@@ -11,3 +12,4 @@ it('keeps closing quotes and merges a short trailing sentence',()=>expect(splitC
 it('uses connective endings and then spaces for long text',()=>{const source='왼쪽 그래프의 모양을 먼저 자세하게 관찰하고 오른쪽 그래프의 모양과 차이점을 순서대로 설명해 봅시다';expect(splitCaption(source)[0]).toBe('왼쪽 그래프의 모양을 먼저 자세하게 관찰하고');const words='가나다라마바사 아자차카타파하 가나다라마바 사아자차카타 파하가나다라마 바사아자차카타';expect(splitCaption(words).every(s=>captionDisplayLength(s)<=38)).toBe(true);});
 it('never merges forced breaks and carries them into CaptionWord chunks',()=>{const sentence:Sentence={id:'s',role:'say',text:'하나⏎둘'};expect(splitCaption(sentence.text)).toEqual(['하나','둘']);expect(captionWords(sentence,null,1000).map(w=>[w.text,w.chunk])).toEqual([['하나',0],['둘',1]]);});
 it.each([undefined,'하나 둘'])('does not change audio hashes or anchors when inserting a hard break (tts=%s)',tts=>{const a:Sentence={id:'s',role:'say',text:'하나 둘',tts},b={...a,text:'하나⏎ 둘',tts:tts?.replace(' ','⏎ ')};expect(audioHash(b)).toBe(audioHash(a));expect(spokenText(b)).not.toContain('⏎');expect(resolveAnchor('@둘',b,null,1000)).toEqual(resolveAnchor('@둘',a,null,1000));});
+it('does not extend caption-only playback with hard-break markers',()=>{const text='길이가 충분히 긴 자막의 재생 시간을 비교합니다. '.repeat(3);expect(captionDuration(text,1)).toBe(captionDuration(text.replace(/ /g,'⏎ '),1));});
