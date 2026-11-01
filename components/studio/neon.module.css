@@ -1,0 +1,2 @@
+.mark { filter:drop-shadow(0 0 3px var(--studio-mark-glow)) drop-shadow(0 0 10px var(--studio-mark-glow)); }
+.hand { filter:drop-shadow(0 0 3px var(--studio-hand-glow)) drop-shadow(0 0 10px var(--studio-hand-glow)); }
