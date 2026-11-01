@@ -1,0 +1,130 @@
+{
+ "id": "root-math",
+ "title": "뿌리깊은수학",
+ "chapters": [
+  {
+   "no": 1,
+   "title": "수와 식",
+   "items": [
+    {
+     "no": 1,
+     "title": "수 체계",
+     "lesson_id": "rm-01"
+    },
+    {
+     "no": 2,
+     "title": "문자와 식",
+     "lesson_id": "rm-02"
+    },
+    {
+     "no": 3,
+     "title": "분배 법칙",
+     "lesson_id": "rm-03"
+    },
+    {
+     "no": 4,
+     "title": "분수의 성질",
+     "lesson_id": "rm-04"
+    },
+    {
+     "no": 5,
+     "title": "등식의 성질",
+     "lesson_id": "rm-05"
+    },
+    {
+     "no": 6,
+     "title": "부등식의 성질",
+     "lesson_id": "rm-06"
+    },
+    {
+     "no": 7,
+     "title": "지수법칙",
+     "lesson_id": "rm-07"
+    },
+    {
+     "no": 8,
+     "title": "제곱근의 성질",
+     "lesson_id": "rm-08"
+    }
+   ]
+  },
+  {
+   "no": 2,
+   "title": "이차방정식",
+   "items": [
+    {
+     "no": 9,
+     "title": "이차식의 인수분해",
+     "lesson_id": "rm-09"
+    },
+    {
+     "no": 10,
+     "title": "이차방정식의 해법",
+     "lesson_id": "rm-10"
+    },
+    {
+     "no": 11,
+     "title": "이차방정식의 판별식",
+     "lesson_id": "rm-11",
+     "worked": [
+      {
+       "title": "문제풀이 1 · 실근을 갖지 않을 조건",
+       "lesson_id": "rm-11-w1"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "no": 3,
+   "title": "함수",
+   "items": [
+    {
+     "no": 12,
+     "title": "함수의 정의",
+     "lesson_id": "rm-12"
+    },
+    {
+     "no": 13,
+     "title": "합성함수",
+     "lesson_id": "rm-13"
+    },
+    {
+     "no": 14,
+     "title": "역함수",
+     "lesson_id": "rm-14"
+    },
+    {
+     "no": 15,
+     "title": "함수의 관계식과 그래프",
+     "lesson_id": "rm-15"
+    },
+    {
+     "no": 16,
+     "title": "방정식과 부등식의 의미",
+     "lesson_id": "rm-16"
+    },
+    {
+     "no": 17,
+     "title": "그래프의 평행이동",
+     "lesson_id": "rm-17"
+    },
+    {
+     "no": 18,
+     "title": "그래프의 대칭이동",
+     "lesson_id": "rm-18"
+    },
+    {
+     "no": 19,
+     "title": "함수 지식의 틀",
+     "lesson_id": "rm-19"
+    },
+    {
+     "no": 20,
+     "title": "상수함수",
+     "lesson_id": "rm-20"
+    }
+   ]
+  }
+ ]
+}

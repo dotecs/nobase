@@ -13,3 +13,5 @@
 .memo { font-family:var(--font-hand),var(--font-sans); font-size:28px; line-height:1.3; white-space:pre-line; }
 
 .layer .handLabel { font-family:var(--font-hand),var(--font-sans); font-size:28px; }
+
+@media(prefers-reduced-motion:reduce) { .arrowHead { opacity:1 !important; } }

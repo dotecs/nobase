@@ -1,6 +1,6 @@
 import {it,expect} from 'vitest';
-import {readFileSync} from 'node:fs';
-it('loads Poor Story only through studio route layouts without preload',()=>{const font=readFileSync('components/studio/font.ts','utf8');expect(font).toContain('Poor_Story');expect(font).toContain('preload:false');for(const p of ['app/layout.tsx','app/(main)/layout.tsx']){if(require('node:fs').existsSync(p))expect(readFileSync(p,'utf8')).not.toContain('studioHand');}});
+import {readFileSync,existsSync} from 'node:fs';
+it('loads Poor Story only through studio route layouts without preload',()=>{const font=readFileSync('components/studio/font.ts','utf8');expect(font).toContain('Poor_Story');expect(font).toContain('preload:false');for(const p of ['app/layout.tsx','app/(main)/layout.tsx']){if(existsSync(p))expect(readFileSync(p,'utf8')).not.toContain('studioHand');}});
 
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CourseSidebar} from '@/components/studio/CourseSidebar';
@@ -22,3 +22,12 @@ it('keeps unspecified memo TTL persistent but fades red marks over the final 200
 it.each(['equal','free'] as const)('places axis underline at actual axis in %s aspect',aspect=>{const g=equalGraph({x:[-3,3],y:[-.5,6.5]},{width:900,height:400,left:30,right:24,top:24,bottom:28},aspect),points=underlinePoints({type:'underline',target:'axis:x'},{...g,target:()=>null});expect(points.every(p=>Math.abs(p.y-g.sy(0))<1)).toBe(true);});
 
 it('provides accessible modal curriculum and responsive two-row controls',()=>{const shell=readFileSync('components/studio/StudioShell.tsx','utf8'),css=readFileSync('components/studio/studio.module.css','utf8');expect(shell).toContain('showModal()');expect(shell).toContain('onCancel');expect(css).toContain('max-width:1279px');expect(css).toContain('max-width:1023px');expect(css).toContain('data-chrome="false"');});
+
+import {validateAuthoredMath} from './authored-math';
+import {actionWarnings} from './action-validation';
+import {StageControls} from '@/components/studio/stages/StageControls';
+it('retains explicit slider controls while defaulting to stepper',()=>{const scene=structuredClone(studioDemo.scenes[0]);if(scene.stage.type!=='slider')throw Error('fixture');scene.stage.param.control='slider';expect(renderToStaticMarkup(<StageControls scene={scene} value={1} onGrab={()=>{}} onExplore={()=>{}}/>)).toContain('type="range"');});
+it('rejects broken authored point TeX and warns on more than four memos',()=>{const lesson=structuredClone(studioDemo),scene=lesson.scenes[0];scene.narration[0].cue={actions:[{type:'point',x:0,y:0,label:'\\notacommand'}]};expect(()=>validateAuthoredMath(lesson)).toThrow();scene.narration[0].cue.actions=Array.from({length:5},()=>({type:'handwrite' as const,position:{x:1,y:1},text:'가'}));expect(actionWarnings(scene).join()).toContain('손글씨');});
+
+import {ChalkLayer} from '@/components/studio/ChalkLayer';
+it('centers a responsive memo by its actual width',()=>{const mark=chalkAt({type:'handwrite',position:{x:0,y:2},text:'메모',align:'middle'},0,900,'memo')!;const html=renderToStaticMarkup(<svg><ChalkLayer marks={[mark]} space={{x:[-3,3],y:[-2,4],sx:x=>300+x*50,sy:y=>300-y*50,target:()=>null}}/></svg>);expect(html).toContain('x="235"');expect(html).toContain('width="130"');});

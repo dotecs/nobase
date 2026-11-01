@@ -21,7 +21,7 @@
 .sidebar li:before { content:''; position:absolute; left:17px; top:0; bottom:0; width:1px; background:var(--studio-grid); }
 .sidebar li a,.sidebar li>span { display:flex; gap:16px; align-items:center; padding:12px 10px; text-decoration:none; color:inherit; border:1px solid transparent; border-radius:8px; }
 .sidebar li i { width:10px; height:10px; border-radius:50%; flex-shrink:0; background:var(--studio-muted); z-index:1; }
-.sidebar li[data-current="true"] a { color:var(--studio-accent); background:var(--studio-panel); border-color:var(--studio-card-border); }
+.sidebar li[data-current="true"]>span { color:var(--studio-accent); background:var(--studio-panel); border-color:var(--studio-card-border); }
 .sidebar li[data-current="true"] i { background:var(--studio-accent); outline:2px solid var(--studio-accent); outline-offset:4px; }
 .sidebar li[data-worked="true"] { padding-left:16px; font-size:13px; }
 .sidebar [aria-disabled="true"] { opacity:.45; }
