@@ -7,6 +7,7 @@ import type { StageState } from '@/lib/learn/lessons/stage-state';
 import { stageStateAt } from '@/lib/learn/lessons/stage-state-at';
 import { buildTimeline,PLAYBACK_RATES,timelinePosition } from '@/lib/learn/lessons/timeline';
 import {Caption} from './Caption';
+import {shouldReplaceAudioSource} from '@/lib/learn/lessons/audio-source';
 import {Transport} from './Transport';
 const EMPTY_URLS:Record<string,string>={},EMPTY_DURATIONS:Record<string,number|null>={};
 export type Playback={state:StageState;time:number;sentenceStart:number;playing:boolean;ended:boolean;bar:ReactNode;caption:ReactNode;pause:()=>void;seek:(time:number)=>void};
@@ -35,7 +36,7 @@ export default function StudioPlayer({scene,alignments,showCaptions,onToggleCapt
  useEffect(()=>{if(!opened.current){opened.current=true;emit({type:'scene',payload:{scene_id:scene.id}});}},[scene.id,emit]);
  useEffect(()=>{if(playing&&reported.current!==entry.sentence.id){reported.current=entry.sentence.id;emit({type:'sentence',payload:{scene_id:scene.id,sentence_id:entry.sentence.id}});}},[playing,entry.sentence.id,scene.id,emit]);
  useEffect(()=>{const element=audio.current;if(!element)return;const pos=timelinePosition(timeline,clock.current.time),sentence=timeline.entries[pos.index].sentence,url=sources[sentence.id];
-  if(element.dataset.sentence!==sentence.id||element.dataset.source!==(url??'')){element.pause();clock.current.failed=false;element.dataset.sentence=sentence.id;element.dataset.source=url??'';if(url)element.src=url;else element.removeAttribute('src');element.load();}
+  if(shouldReplaceAudioSource({currentSentence:element.dataset.sentence,nextSentence:sentence.id,currentUrl:element.dataset.source,nextUrl:url,playing:clock.current.playing,failed:clock.current.failed})){element.pause();clock.current.failed=false;element.dataset.sentence=sentence.id;element.dataset.source=url??'';if(url)element.src=url;else element.removeAttribute('src');element.load();}
   element.playbackRate=rate;if(url){try{if(Math.abs(element.currentTime-pos.localMs/1000)>.08)element.currentTime=pos.localMs/1000;}catch{}if(playing)void element.play().catch(error=>{if(error?.name!=='AbortError'&&clock.current.playing&&element.dataset.sentence===sentence.id)clock.current.failed=true;});else element.pause();}
  },[position.index,playing,rate,timeline,sources]);
  useEffect(()=>{let frame=0,previous=performance.now();const tick=(now:number)=>{const elapsed=now-previous;previous=now;if(clock.current.playing){const pos=timelinePosition(timeline,clock.current.time),active=timeline.entries[pos.index],element=audio.current,url=sources[active.sentence.id];let time=clock.current.time;
