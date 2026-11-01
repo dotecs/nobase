@@ -1,4 +1,10 @@
-.sidebar { min-width:0; height:100%; overflow:auto; scrollbar-width:thin; color:var(--studio-muted); font-size:14px; }
+.sidebar { min-width:0; height:100%; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:var(--studio-card-border) transparent; padding-right:6px; padding-bottom:24px; color:var(--studio-muted); font-size:14px; }
+/* Safari/구형 Chromium: 무대 카드 테두리와 같은 색의 얇은 스크롤바 */
+.sidebar::-webkit-scrollbar { width:6px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--studio-card-border); border-radius:6px; }
+.sidebar:hover { scrollbar-color:var(--studio-grid) transparent; }
+.sidebar:hover::-webkit-scrollbar-thumb { background:var(--studio-grid); }
 .current { padding:20px; border:1px solid var(--studio-card-border); border-radius:14px; background:var(--studio-card); margin-bottom:28px; }
 .current p { color:var(--studio-accent); font-size:12px; margin:0 0 10px; }
 .current h2 { font-size:20px; color:var(--studio-text); margin:0 0 20px; line-height:1.4; }
