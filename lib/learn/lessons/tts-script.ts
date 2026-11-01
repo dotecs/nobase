@@ -23,6 +23,6 @@ export function spokenMath(source:string):string {
   catch {return source.replace(/\\(?:leq|le)\b/g,' 작거나 같다 ').replace(/\\sqrt\{([^{}]*)\}/g,' 루트 $1 ').replace(/\\pm/g,' 플러스 마이너스 ').replace(/[a-z]/gi,c=>letters[c.toLowerCase()]??c).replace(/\d+/g,koreanNumber).replace(/[{}\\]/g,' ').replace(/\s+/g,' ').trim();}
 }
 export const roleDirections={say:'',think:'[slower, thinking aloud]',write:'[clear, deliberate]'} as const;
-export function rawTtsScript(sentence:Sentence){if(sentence.tts)return sentence.tts;return [roleDirections[sentence.role],sentence.text.replace(/\$\$?([\s\S]*?)\$\$?/g,(_,math:string)=>spokenMath(math))].filter(Boolean).join(' ');}
+export function rawTtsScript(sentence:Sentence){if(sentence.tts)return sentence.tts.replace(/⏎/g,'');return [roleDirections[sentence.role],sentence.text.replace(/⏎/g,'').replace(/\$\$?([\s\S]*?)\$\$?/g,(_,math:string)=>spokenMath(math))].filter(Boolean).join(' ');}
 
 export function ttsScript(sentence:Sentence){return stripMarkers(rawTtsScript(sentence));}
