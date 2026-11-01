@@ -13,3 +13,20 @@ it('uses connective endings and then spaces for long text',()=>{const source='�
 it('never merges forced breaks and carries them into CaptionWord chunks',()=>{const sentence:Sentence={id:'s',role:'say',text:'하나⏎둘'};expect(splitCaption(sentence.text)).toEqual(['하나','둘']);expect(captionWords(sentence,null,1000).map(w=>[w.text,w.chunk])).toEqual([['하나',0],['둘',1]]);});
 it.each([undefined,'하나 둘'])('does not change audio hashes or anchors when inserting a hard break (tts=%s)',tts=>{const a:Sentence={id:'s',role:'say',text:'하나 둘',tts},b={...a,text:'하나⏎ 둘',tts:tts?.replace(' ','⏎ ')};expect(audioHash(b)).toBe(audioHash(a));expect(spokenText(b)).not.toContain('⏎');expect(resolveAnchor('@둘',b,null,1000)).toEqual(resolveAnchor('@둘',a,null,1000));});
 it('does not extend caption-only playback with hard-break markers',()=>{const text='길이가 충분히 긴 자막의 재생 시간을 비교합니다. '.repeat(3);expect(captionDuration(text,1)).toBe(captionDuration(text.replace(/ /g,'⏎ '),1));});
+
+it('does not break after a closing quote that is glued to a particle',()=>{
+ const parts=splitCaption('이차방정식의 실근은 이차함수 그래프가 $x$축과 만나는 점의 $x$좌표입니다. 그러니까 "근이 몇 개냐"는 "그래프가 $x$축과 몇 번 만나냐"와 같은 말입니다.');
+ expect(parts.some(p=>p.startsWith('는 ')||p.startsWith('와 '))).toBe(false);
+ expect(parts.every(p=>captionDisplayLength(p)<=42)).toBe(true);
+});
+
+it('never merges a fragment across a sentence boundary',()=>{
+ const parts=splitCaption('이차방정식의 실근은 이차함수 그래프가 $x$축과 만나는 점의 $x$좌표입니다. 그러니까 "근이 몇 개냐"는 "그래프가 $x$축과 몇 번 만나냐"와 같은 말입니다.');
+ expect(parts.some(p=>/입니다\. 그러니까$/.test(p))).toBe(false);
+ expect(parts[0]).toMatch(/좌표입니다\.$/);
+});
+
+it('prefers a space outside quotation marks over one inside',()=>{
+ const parts=splitCaption('그러니까 "근이 몇 개냐"는 "그래프가 $x$축과 몇 번 만나냐"와 같은 말입니다.');
+ expect(parts).toEqual(['그러니까 "근이 몇 개냐"는','"그래프가 $x$축과 몇 번 만나냐"와 같은 말입니다.']);
+});
