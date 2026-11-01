@@ -16,7 +16,8 @@ function recognized(value:number,mode:'tex'|'text'):string|null{
  if(square){const [p,q]=square,n=p*q;if(Number.isSafeInteger(n)&&n>0){let rest=n,outside=1;for(let d=2;d*d<=rest;d++){while(rest%(d*d)===0){outside*=d;rest/=d*d;}}if(rest>1){const r=new Rational(outside,q),root=mode==='tex'?`\\sqrt{${rest}}`:`√${rest}`,numerator=(r.n===BigInt(1)?'':String(r.n))+root;return sign+(r.d===BigInt(1)?numerator:mode==='tex'?`\\tfrac{${numerator}}{${r.d}}`:`${numerator}/${r.d}`);}}}return null;
 }
 /** Unrecognized finite decimals are reduced exactly, per the 2026-11-01 clarification. */
-export function formatExact(value:number,mode:'tex'|'text'):string{const result=recognized(value,mode);if(result!==null)return result;const r=decimalRational(value);return mode==='tex'?rationalTex(r):r.toString().replace('-','−');}
-export function isExact(value:number):boolean{return Number.isFinite(value);}
+/** 인식(정수·분모 64 이하 분수·π·e·제곱근)되지 않는 값은 소수 둘째 자리로 줄인다. 2026-11-01 대표 결정: 의미 없는 큰 분모 분수(예: 2070333999999999/10^15)는 쓰지 않는다. */
+export function formatExact(value:number,mode:'tex'|'text'):string{const result=recognized(value,mode);if(result!==null)return result;if(!Number.isFinite(value))throw new Error('유한한 수가 필요합니다.');return Number(value.toFixed(2)).toString().replace('-','−');}
+export function isExact(value:number):boolean{return Number.isFinite(value)&&recognized(value,'text')!==null;}
 export function formatNum(value:number){return formatExact(value,'text');}
 export function formulaValues(formula:string,params:Record<string,number>){return formula.replace(/([+\-−])(\s*)\{\{([a-zA-Z]+)\}\}/g,(_,sign:string,space:string,name:string)=>{const v=params[name];if(!Number.isFinite(v))return sign+space+'{{'+name+'}}';return ((v<0)!==(sign!=='+')?'-':'+')+space+formatExact(Math.abs(v),'tex');}).replace(/\{\{([a-zA-Z]+)\}\}/g,(_,name:string)=>formatExact(params[name],'tex'));}

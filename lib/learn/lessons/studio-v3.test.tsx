@@ -34,3 +34,6 @@ it('centers a responsive memo by its actual width',()=>{const mark=chalkAt({type
 
 it.each([['+ {{c}}',{c:-3},'- 3'],['+ {{c}}',{c:3},'+ 3'],['+ {{c}}',{c:0},'+ 0'],['- {{c}}',{c:-1.5},'+ \\tfrac{3}{2}'],['(a = {{a}})',{a:-2},'(a = −2)']] as const)('combines placeholder signs: %s with %j', (formula,params,expected)=>{expect(formulaValues(formula,params)).toBe(expected);});
 it('marks completed main and worked lessons without marking an unfinished row',()=>{const html=renderToStaticMarkup(<CourseSidebar lesson={{...studioDemo,id:'rm-11'}} index={0} course={{curriculum:root,available:['rm-11','rm-11-w1'],completed:['rm-11','rm-11-w1']}}/>);expect((html.match(/data-completed="true"/g)??[])).toHaveLength(2);expect(html).toContain('학습 완료');expect(html).toContain('data-completed="false"');});
+
+import {snapToStep} from './stage-controls';
+it('snaps animated parameter values to the step grid for display',()=>{const p={min:-2,max:5,step:0.25};expect(snapToStep(2.070333999999999,p)).toBe(2);expect(snapToStep(2.13,p)).toBe(2.25);expect(snapToStep(9,p)).toBe(5);expect(snapToStep(-3,p)).toBe(-2);});
