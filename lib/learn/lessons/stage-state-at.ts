@@ -26,7 +26,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
   switch(action.type){
    case 'param':{const name=action.name;tracks.set('param:'+name,{from:action.from??state.params[name]??0,to:action.to,start,duration:action.duration_ms??800,easing:action.easing,set:value=>{state.params[name]=value;}});break;}
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
-   case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,on:action.on,c:action.c,label:action.label});break;
+   case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
    case 'reveal':state.revealed[action.target]=[...state.revealed[action.target].filter(i=>i!==action.index),action.index];break;
    case 'camera':{const width=action.width??(state.camera.x[1]-state.camera.x[0]),height=width*(state.camera.y[1]-state.camera.y[0])/(state.camera.x[1]-state.camera.x[0]),target={x:action.x??[action.cx!-width/2,action.cx!+width/2],y:action.y??[action.cy!-height/2,action.cy!+height/2]};for(const axis of ['x','y'] as const)for(const index of [0,1] as const)tracks.set('camera:'+axis+index,{from:state.camera[axis][index],to:target[axis][index],start,duration:action.duration_ms??800,set:value=>{state.camera[axis][index]=value;}});break;}

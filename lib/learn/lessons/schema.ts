@@ -16,7 +16,7 @@ export function validGraphExpression(expr: string, parameter?: string) {
 export const graphSchema = z.object({
   type:z.literal('graph'), initial:initialStageSchema.optional(), x:range, y:graphY, aspect,
   fns:z.array(z.object({expr:text.refine(e=>validGraphExpression(e),'그래프 식을 해석할 수 없습니다.'),c:z.enum(['c1','c2','c3']),label:text.optional()})).min(1).max(12),
-  points:z.array(z.object({x:z.number().finite(),y:z.number().finite(),c:z.enum(['c1','c2','c3']),label:text.optional()})).max(100).optional(),
+  points:z.array(z.object({x:z.number().finite(),y:z.number().finite(),c:z.enum(['c1','c2','c3']),guides:z.boolean().optional(),label_pos:z.enum(['ne','nw','se','sw']).optional(),label:text.optional()})).max(100).optional(),
   band:z.tuple([z.number().finite(),z.number().finite()]).optional(), aria:text,
 });
 export const questionSchema=z.object({stem_md:text,options:z.array(z.object({id,text_md:text})).min(2).max(8),correct:id}).superRefine((q,ctx)=>{

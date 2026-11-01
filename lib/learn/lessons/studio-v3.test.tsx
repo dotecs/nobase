@@ -13,3 +13,6 @@ import {formatNum,formulaValues} from './format-num';
 import {lessonSchema} from './schema';
 it('formats shared numbers and responds to parameter values in formulas',()=>{expect(formatNum(-2.3)).toBe('−2.3');expect(formatNum(2)).toBe('2');expect(formulaValues('a={{a}}',{a:1})).toBe('a=1');expect(formulaValues('a={{a}}',{a:2.5})).toBe('a=2.5');});
 it('rejects formulas referencing undefined parameters',()=>{const lesson=structuredClone(studioDemo);lesson.scenes[0].headline!.formula='{{z}}';expect(lessonSchema.safeParse(lesson).success).toBe(false);});
+
+import {equalGraph} from './equal-graph';
+it.each([{width:1400,height:400},{width:320,height:700}])('keeps every declared corner visible in equal aspect %j',v=>{const camera={x:[-3,3] as [number,number],y:[-.5,6.5] as [number,number]},g=equalGraph(camera,{...v,left:30,right:24,top:24,bottom:28});expect(g.x[0]).toBeLessThanOrEqual(-3);expect(g.x[1]).toBeGreaterThanOrEqual(3);expect(g.y[0]).toBeLessThanOrEqual(-.5);expect(g.y[1]).toBeGreaterThanOrEqual(6.5);expect(g.unitX).toBeCloseTo(g.unitY);});
