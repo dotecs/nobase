@@ -28,7 +28,7 @@ export default function StudioShell({sidebar,formula,scene,stage,controls,player
   {focused&&chrome&&<button type="button" className={`${styles.focusButton} ${styles.exitFocus}`} onClick={exit}><FiMinimize aria-hidden="true"/>집중 모드 종료</button>}
   <div className={styles.content}>
    <div className={styles.panel}>{sidebar}</div>
-   <div className={styles.stageColumn}><div className={styles.stageHeader}><div>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h1 title={title}>{title}</h1></div><div>{formula}</div><div>{controls}</div></div><div key={scene.id} className={styles.stage}>{['graph','slider','figure'].includes(scene.stage.type)?stage:<StageFit>{stage}</StageFit>}</div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
+   <div className={styles.stageColumn}><div className={styles.stageHeader}><div>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h1 title={title}>{title}</h1></div><div>{formula}</div><div>{controls}</div></div><div key={scene.id} className={styles.stage}>{['graph','slider','figure'].includes(scene.stage.type)?stage:<StageFit>{stage}</StageFit>}</div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&!navigation&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
   </div>
   <footer className={styles.navigation}>{navigation}</footer>
   {overlay}

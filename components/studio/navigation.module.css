@@ -3,10 +3,6 @@
 .nav .next,.actions a:first-child { background:var(--color-primary-500); color:var(--color-gray-50); }
 .progress { display:flex; align-items:center; justify-content:center; gap:20px; min-width:0; font-variant-numeric:tabular-nums; }
 .progress>span { white-space:nowrap; font-size:14px; color:var(--studio-muted); }
-.dots { display:flex; flex-wrap:wrap; justify-content:center; max-width:320px; }
-.dots button { width:24px; height:28px; background:transparent; border:0; padding:8px; cursor:pointer; }
-.dots button::after { content:''; display:block; width:8px; height:8px; border-radius:50%; background:var(--studio-grid); }
-.dots button[aria-current]::after { background:var(--studio-accent); box-shadow:0 0 12px var(--studio-glow); }
 .next[data-ended="true"] { animation:navPulse 700ms ease 1; }
 @keyframes navPulse { 50% { box-shadow:0 0 0 8px var(--studio-glow); } }
 .complete { max-width:780px; width:100%; margin:auto; padding:32px; color:var(--studio-text); }
@@ -17,12 +13,9 @@
 .complete ul { padding-left:20px; margin:12px 0 24px; }
 .complete a { color:var(--studio-accent); }
 .actions { display:flex; flex-wrap:wrap; gap:12px; }
-@media(max-width:767px) { .nav { gap:6px; } .nav>button { padding:9px; gap:5px; font-size:12px; } .progress { flex-direction:column; gap:0; } .progress>span { font-size:11px; } .dots { max-width:130px; } .dots button { width:15px; height:18px; padding:4px; } .complete { padding:12px; } .complete h2 { margin-bottom:16px; } }
-@media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
 
-:global([data-frame="true"]) .nav { gap:16px; }
-:global([data-frame="true"]) .nav>button { padding:12px 22px; gap:10px; font-size:16px; }
-:global([data-frame="true"]) .progress { flex-direction:row; gap:20px; }
-:global([data-frame="true"]) .progress>span { font-size:14px; }
-:global([data-frame="true"]) .dots { max-width:320px; }
-:global([data-frame="true"]) .dots button { width:24px; height:28px; padding:8px; }
+.transport { flex:1; min-width:0; }
+.progress button { color:var(--studio-muted); background:transparent; border:0; padding:8px; font-size:24px; }
+.nav { padding-left:296px; }
+:global([data-focus="true"]) .nav { padding-left:0; }
+@media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
