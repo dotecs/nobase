@@ -12,7 +12,7 @@ export const actionSchema=z.discriminatedUnion('type',[
  ...chalkOptions,
  z.object({type:z.literal('param'),name:target,to:finite,from:finite.optional(),...timing,duration_ms:time,easing:z.enum(['linear','ease','ease-in-out']).optional()}),
  z.object({type:z.literal('draw'),target:fn,...timing,duration_ms:time}),
- z.object({type:z.literal('point'),x:finite,y:finite.optional(),on:fn.optional(),label:z.string().optional(),c:z.enum(['c1','c2','c3']).optional(),...timing}).refine(p=>p.y!==undefined||p.on!==undefined,'점에는 y 또는 on이 필요합니다.'),
+ z.object({type:z.literal('point'),x:finite,y:finite.optional(),on:fn.optional(),guides:z.boolean().optional(),label_pos:z.enum(['ne','nw','se','sw']).optional(),label:z.string().optional(),c:z.enum(['c1','c2','c3']).optional(),...timing}).refine(p=>p.y!==undefined||p.on!==undefined,'점에는 y 또는 on이 필요합니다.'),
  z.object({type:z.literal('highlight'),target:z.union([target,z.array(target).min(1)]),dim_others:z.boolean().optional(),...timing}),
  z.object({type:z.literal('reveal'),target:z.enum(['step','node','row']),index,...timing}),
  z.object({type:z.literal('camera'),x:range.optional(),y:range.optional(),cx:finite.optional(),cy:finite.optional(),width:finite.positive().max(200).optional(),...timing,duration_ms:time}).refine(a=>!!(a.x&&a.y)||(a.cx!==undefined&&a.cy!==undefined&&a.width!==undefined),'카메라에 x/y 또는 cx/cy/width가 필요합니다.'),

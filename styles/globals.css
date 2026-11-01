@@ -656,3 +656,7 @@ ol {
  --studio-shadow: color-mix(in srgb, var(--color-primary-300) 20%, transparent);
 }
 body:has([data-studio]) { overflow: hidden; }
+
+/* Learning studio v3: colors are scoped to the studio, independent of site theme. */
+[data-studio] { --studio-mark:#ff3b5c; --studio-mark-core:#ffd6dd; --studio-mark-glow:rgba(255,40,80,.55); --studio-hand:#4cc9f0; --studio-hand-glow:rgba(76,201,240,.45); --studio-curve-glow:rgba(56,189,248,.45); --studio-card:color-mix(in srgb,var(--color-gray-900) 70%,transparent); --studio-card-border:rgba(120,160,210,.22); --studio-caption:rgba(8,14,26,.82); }
+[data-studio][data-theme="light"] { --studio-mark:#e11d48; --studio-mark-core:#e11d48; --studio-mark-glow:rgba(225,29,72,.22); --studio-hand:#0284c7; --studio-hand-glow:rgba(2,132,199,.18); --studio-curve-glow:rgba(2,132,199,.2); --studio-card:rgba(255,255,255,.85); --studio-card-border:rgba(15,23,42,.12); --studio-caption:rgba(255,255,255,.92); }
