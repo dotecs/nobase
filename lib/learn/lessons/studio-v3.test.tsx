@@ -31,3 +31,6 @@ it('rejects broken authored point TeX and warns on more than four memos',()=>{co
 
 import {ChalkLayer} from '@/components/studio/ChalkLayer';
 it('centers a responsive memo by its actual width',()=>{const mark=chalkAt({type:'handwrite',position:{x:0,y:2},text:'메모',align:'middle'},0,900,'memo')!;const html=renderToStaticMarkup(<svg><ChalkLayer marks={[mark]} space={{x:[-3,3],y:[-2,4],sx:x=>300+x*50,sy:y=>300-y*50,target:()=>null}}/></svg>);expect(html).toContain('x="235"');expect(html).toContain('width="130"');});
+
+it.each([['+ {{c}}',{c:-3},'- 3'],['+ {{c}}',{c:3},'+ 3'],['+ {{c}}',{c:0},'+ 0'],['- {{c}}',{c:-1.5},'+ 1.5'],['(a = {{a}})',{a:-2},'(a = −2)']] as const)('combines placeholder signs: %s with %j', (formula,params,expected)=>{expect(formulaValues(formula,params)).toBe(expected);});
+it('marks completed main and worked lessons without marking an unfinished row',()=>{const html=renderToStaticMarkup(<CourseSidebar lesson={{...studioDemo,id:'rm-11'}} index={0} course={{curriculum:root,available:['rm-11','rm-11-w1'],completed:['rm-11','rm-11-w1']}}/>);expect((html.match(/data-completed="true"/g)??[])).toHaveLength(2);expect(html).toContain('학습 완료');expect(html).toContain('data-completed="false"');});

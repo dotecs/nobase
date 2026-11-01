@@ -1,5 +1,6 @@
-import {it,expect,vi} from 'vitest';
-const query=vi.hoisted(()=>({select:vi.fn(),in:vi.fn()}));
-vi.mock('./data',()=>({lessonDb:()=>({from:vi.fn(()=>query)})}));
+import {it,expect,vi,beforeEach} from 'vitest';
+const db=vi.hoisted(()=>({from:vi.fn()}));vi.mock('./data',()=>({lessonDb:()=>db}));
 import {loadCurriculum} from './curriculum-server';
-it('loads availability in one batched lesson query and deduplicates versions',async()=>{query.select.mockReturnValue(query);query.in.mockReturnValueOnce(query).mockResolvedValueOnce({data:[{id:'rm-11'},{id:'rm-11'}],error:null});const result=await loadCurriculum('root-math');expect(query.select).toHaveBeenCalledTimes(1);expect(query.select).toHaveBeenCalledWith('id');expect(query.in).toHaveBeenLastCalledWith('status',['reviewed','live']);expect(result?.available).toEqual(['rm-11']);});
+beforeEach(()=>vi.clearAllMocks());
+it('queries availability and only this authenticated user’s completion events once each',async()=>{const lessons={select:vi.fn(),in:vi.fn()},events={select:vi.fn(),eq:vi.fn(),in:vi.fn()};lessons.select.mockReturnValue(lessons);lessons.in.mockReturnValueOnce(lessons).mockResolvedValueOnce({data:[{id:'rm-11'},{id:'rm-11'}],error:null});events.select.mockReturnValue(events);events.eq.mockReturnValue(events);events.in.mockResolvedValue({data:[{lesson_id:'rm-11'},{lesson_id:'rm-11'},{lesson_id:'rm-11-w1'}],error:null});db.from.mockImplementation(name=>name==='learn_lessons'?lessons:events);const result=await loadCurriculum('root-math','authenticated-user');expect(db.from.mock.calls).toEqual([['learn_lessons'],['learn_lesson_events']]);expect(events.select).toHaveBeenCalledWith('lesson_id');expect(events.eq.mock.calls).toEqual([['user_id','authenticated-user'],['type','complete']]);expect(events.in).toHaveBeenCalledTimes(1);expect(events.in.mock.calls[0][1]).toContain('rm-11-w1');expect(result?.available).toEqual(['rm-11']);expect(result?.completed).toEqual(['rm-11','rm-11-w1']);});
+it('does not query unknown packs',async()=>{expect(await loadCurriculum('unknown','user')).toBeUndefined();expect(db.from).not.toHaveBeenCalled();});
