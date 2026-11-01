@@ -1,0 +1,12 @@
+import {it,expect} from 'vitest';
+import {coordinate,expressionNumber} from './coordinate';
+import {lessonSchema} from './schema';
+import {chalkSchema} from './chalk-schema';
+import {actionSchema} from './action-schema';
+import {studioDemo} from './studio-demo';
+import {stageStateAt} from './stage-state-at';
+it.each([['1/4',.25],['(-1+sqrt(13))/2',(-1+Math.sqrt(13))/2],['pi/2',Math.PI/2],['e/2',Math.E/2]])('evaluates constant coordinate %s',(s,n)=>expect(expressionNumber(s)).toBeCloseTo(n,12));
+it.each(['x+1','a','sin(1)','log(2)','1/0','sqrt(-1)','1=2','2^3'])('rejects invalid coordinate %s',s=>expect(coordinate.safeParse(s).success).toBe(false));
+it('preserves authored point TeX through parsing twice and stage reconstruction',()=>{const raw=structuredClone(studioDemo) as unknown as {scenes:{stage:Record<string,unknown>}[]};raw.scenes[0].stage={...raw.scenes[0].stage,points:[{x:'(-1+sqrt(13))/2',y:'pi/2',c:'c1',label:'auto'}],param:{name:'a',min:'-3',max:'3',step:'1/4',init:'1/2'}};const lesson=lessonSchema.parse(raw),again=lessonSchema.parse(lesson),state=stageStateAt(again.scenes[0],0,again.scenes[0].narration.map((_,i)=>i*5000));expect(state.params.a).toBe(.5);expect(state.points[0].x).toBeCloseTo((-1+Math.sqrt(13))/2);expect(state.points[0].x_tex).toContain('sqrt');expect(state.points[0].y_tex).toContain('pi');});
+it('supports chalk positions, arrow ends, bracket endpoints and positive radii',()=>{expect(chalkSchema.parse({type:'circle',position:{x:'pi/2',y:'0'},rx:'1/4',ry:'sqrt(2)'})).toMatchObject({position:{x:Math.PI/2,y:0},rx:.25});expect(chalkSchema.parse({type:'bracket',axis:'x',from:'-1/2',to:'sqrt(2)'})).toMatchObject({from:-.5,to:Math.sqrt(2)});expect(chalkSchema.parse({type:'handwrite',position:{x:0,y:0},text:'메모',arrow_to:{x:'1/3',y:'e'}})).toMatchObject({arrow_to:{x:1/3,y:Math.E}});expect(chalkSchema.safeParse({type:'circle',position:{x:0,y:0},rx:'-1/2',ry:1}).success).toBe(false);});
+it('keeps point action coordinates numeric with authored labels available',()=>{expect(actionSchema.parse({type:'point',x:'1/3',y:'sqrt(2)',label:'auto'})).toMatchObject({x:1/3,y:Math.sqrt(2),x_tex:'\\frac{1}{3}'});});
