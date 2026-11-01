@@ -16,3 +16,7 @@ it('rejects formulas referencing undefined parameters',()=>{const lesson=structu
 
 import {equalGraph} from './equal-graph';
 it.each([{width:1400,height:400},{width:320,height:700}])('keeps every declared corner visible in equal aspect %j',v=>{const camera={x:[-3,3] as [number,number],y:[-.5,6.5] as [number,number]},g=equalGraph(camera,{...v,left:30,right:24,top:24,bottom:28});expect(g.x[0]).toBeLessThanOrEqual(-3);expect(g.x[1]).toBeGreaterThanOrEqual(3);expect(g.y[0]).toBeLessThanOrEqual(-.5);expect(g.y[1]).toBeGreaterThanOrEqual(6.5);expect(g.unitX).toBeCloseTo(g.unitY);});
+
+import {chalkAt,underlinePoints} from './chalk';
+it('keeps unspecified memo TTL persistent but fades red marks over the final 200ms',()=>{expect(chalkAt({type:'handwrite',position:{x:0,y:0},text:'가'},0,9000,'m')).not.toBeNull();expect(chalkAt({type:'pointer',position:{x:0,y:0}},0,2400,'p')?.opacity).toBe(.5);});
+it.each(['equal','free'] as const)('places axis underline at actual axis in %s aspect',aspect=>{const g=equalGraph({x:[-3,3],y:[-.5,6.5]},{width:900,height:400,left:30,right:24,top:24,bottom:28},aspect),points=underlinePoints({type:'underline',target:'axis:x'},{...g,target:()=>null});expect(points.every(p=>Math.abs(p.y-g.sy(0))<1)).toBe(true);});

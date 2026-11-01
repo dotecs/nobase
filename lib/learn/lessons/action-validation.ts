@@ -9,7 +9,7 @@ export function actionErrors(scene:Scene):string[]{
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');
  for(const sentence of scene.narration)for(const action of sentence.cue?.actions??[]){
   if(typeof action.at==='string'){const result=resolveAnchor(action.at as At,sentence,null,1000);if(result.warning||result.source==='caption')errors.push(result.warning??'앵커는 TTS 대본에 있어야 합니다: '+action.at);}
-  if(isChalk(action)){if('target' in action&&action.target&&!valid(action.target))errors.push('칠판 대상 범위 오류');if(action.type==='arrow'&&[action.from,action.to].some(p=>typeof p==='string'?!valid(p):!graph))errors.push('화살표 대상 또는 좌표 오류');if(['circle','handwrite','bracket','shade'].includes(action.type)&&!graph)errors.push('칠판 좌표는 그래프 무대에서 사용하세요.');if(action.type==='pointer'&&(typeof action.at==='object'||action.position)&&!graph)errors.push('pointer 좌표는 그래프 전용입니다.');if(action.type==='shade'&&[...action.region.matchAll(/fn:(\d+)/g)].some(m=>Number(m[1])>=counts.fn))errors.push('shade 함수 범위 오류');}
+  if(isChalk(action)){if(action.type==='handwrite'&&action.arrow_to&&'target' in action.arrow_to&&!valid(action.arrow_to.target))errors.push('메모 화살표 대상 오류');if('target' in action&&action.target&&!valid(action.target))errors.push('칠판 대상 범위 오류');if(action.type==='arrow'&&[action.from,action.to].some(p=>typeof p==='string'?!valid(p):!graph))errors.push('화살표 대상 또는 좌표 오류');if(['circle','handwrite','bracket','shade'].includes(action.type)&&!graph)errors.push('칠판 좌표는 그래프 무대에서 사용하세요.');if(action.type==='pointer'&&(typeof action.at==='object'||action.position)&&!graph)errors.push('pointer 좌표는 그래프 전용입니다.');if(action.type==='shade'&&[...action.region.matchAll(/fn:(\d+)/g)].some(m=>Number(m[1])>=counts.fn))errors.push('shade 함수 범위 오류');}
   if(action.type==='param'&&(stage.type!=='slider'||action.name!==stage.param.name))errors.push('param.name 불일치');
   if(['draw','point','camera','label','band'].includes(action.type)&&!graph)errors.push('그래프 전용 액션입니다.');
   if(action.type==='draw'&&!valid(action.target))errors.push('draw 대상 범위 오류');
@@ -21,4 +21,4 @@ export function actionErrors(scene:Scene):string[]{
  return errors;
 }
 
-export function actionWarnings(scene:Scene){return scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[]);}
+export function actionWarnings(scene:Scene){return [...(scene.narration.flatMap(s=>s.cue?.actions??[]).filter(a=>a.type==='handwrite').length>4?[scene.id+': 손글씨 메모는 4개 이하를 권장합니다.']:[]),...scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[])];}
