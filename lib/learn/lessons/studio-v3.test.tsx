@@ -11,7 +11,7 @@ it('opens chapter 02 and marks current or worked lessons while disabling unavail
 
 import {formatNum,formulaValues} from './format-num';
 import {lessonSchema} from './schema';
-it('formats shared numbers and responds to parameter values in formulas',()=>{expect(formatNum(-2.3)).toBe('−2.3');expect(formatNum(2)).toBe('2');expect(formulaValues('a={{a}}',{a:1})).toBe('a=1');expect(formulaValues('a={{a}}',{a:2.5})).toBe('a=2.5');});
+it('formats shared numbers and responds to parameter values in formulas',()=>{expect(formatNum(-2.3)).toBe('−23/10');expect(formatNum(2)).toBe('2');expect(formulaValues('a={{a}}',{a:1})).toBe('a=1');expect(formulaValues('a={{a}}',{a:2.5})).toBe('a=\\tfrac{5}{2}');});
 it('rejects formulas referencing undefined parameters',()=>{const lesson=structuredClone(studioDemo);lesson.scenes[0].headline!.formula='{{z}}';expect(lessonSchema.safeParse(lesson).success).toBe(false);});
 
 import {equalGraph} from './equal-graph';
@@ -32,5 +32,5 @@ it('rejects broken authored point TeX and warns on more than four memos',()=>{co
 import {ChalkLayer} from '@/components/studio/ChalkLayer';
 it('centers a responsive memo by its actual width',()=>{const mark=chalkAt({type:'handwrite',position:{x:0,y:2},text:'메모',align:'middle'},0,900,'memo')!;const html=renderToStaticMarkup(<svg><ChalkLayer marks={[mark]} space={{x:[-3,3],y:[-2,4],sx:x=>300+x*50,sy:y=>300-y*50,target:()=>null}}/></svg>);expect(html).toContain('x="235"');expect(html).toContain('width="130"');});
 
-it.each([['+ {{c}}',{c:-3},'- 3'],['+ {{c}}',{c:3},'+ 3'],['+ {{c}}',{c:0},'+ 0'],['- {{c}}',{c:-1.5},'+ 1.5'],['(a = {{a}})',{a:-2},'(a = −2)']] as const)('combines placeholder signs: %s with %j', (formula,params,expected)=>{expect(formulaValues(formula,params)).toBe(expected);});
+it.each([['+ {{c}}',{c:-3},'- 3'],['+ {{c}}',{c:3},'+ 3'],['+ {{c}}',{c:0},'+ 0'],['- {{c}}',{c:-1.5},'+ \\tfrac{3}{2}'],['(a = {{a}})',{a:-2},'(a = −2)']] as const)('combines placeholder signs: %s with %j', (formula,params,expected)=>{expect(formulaValues(formula,params)).toBe(expected);});
 it('marks completed main and worked lessons without marking an unfinished row',()=>{const html=renderToStaticMarkup(<CourseSidebar lesson={{...studioDemo,id:'rm-11'}} index={0} course={{curriculum:root,available:['rm-11','rm-11-w1'],completed:['rm-11','rm-11-w1']}}/>);expect((html.match(/data-completed="true"/g)??[])).toHaveLength(2);expect(html).toContain('학습 완료');expect(html).toContain('data-completed="false"');});

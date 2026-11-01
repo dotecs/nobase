@@ -22,3 +22,5 @@
 
 .guides { stroke:var(--studio-muted); stroke-width:1; stroke-dasharray:4 4; }
 .pointLabel :global(.katex) { font-size:1em; text-shadow:1px 0 var(--studio-bg),-1px 0 var(--studio-bg),0 1px var(--studio-bg),0 -1px var(--studio-bg); }
+.tickMath { text-align:center; color:var(--studio-muted); font-size:14px; line-height:36px; }
+.tickMath :global(.katex) { font-size:1em; }

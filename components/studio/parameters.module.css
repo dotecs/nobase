@@ -19,3 +19,5 @@
  .panel:not(:has(input[type="range"])) div { min-width:0; gap:2px; }
  .panel:not(:has(input[type="range"])) button { width:24px; display:grid; place-items:center; line-height:1; }
 }
+.verdict { display:block; font-size:10px; line-height:16px; white-space:nowrap; }
+.verdict :global(.katex) { font-size:1em; }
