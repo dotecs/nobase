@@ -92,3 +92,25 @@
 }
 /* Exact finite fractions can be long; keep their full notation reachable. */
 .stageHeader>div:nth-child(2) { min-width:0; max-width:100%; overflow-x:auto; }
+/* Admin-only fourth cell: reference immediately left of the parameter panel. */
+.stageHeader[data-reference="true"] { grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto auto; }
+.stageHeader[data-reference="true"]>div:nth-child(3) { grid-column:4; grid-row:1; }
+.stageHeader .sceneReference { grid-column:3; grid-row:1; }
+@media(max-width:1023px) {
+ .stageHeader[data-reference="true"] { height:144px; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:64px 28px 36px; }
+ .stageHeader[data-reference="true"]>div:nth-child(3) { grid-column:2; grid-row:1; }
+ .stageHeader[data-reference="true"]>div:nth-child(2) { grid-column:1/-1; grid-row:3; }
+ .stageHeader[data-reference="true"] .sceneReference { grid-column:2; grid-row:2; justify-self:end; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"] { height:116px; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:64px 36px; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"]>div:nth-child(2) { grid-row:2; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"] .sceneReference { grid-column:2; grid-row:1; }
+}
+@media(max-width:1279px) and (max-height:500px) and (orientation:landscape) {
+ .stageHeader[data-reference="true"] { height:40px; grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto auto; grid-template-rows:1fr; }
+ .stageHeader[data-reference="true"]>div:nth-child(2) { grid-column:2; grid-row:1; }
+ .stageHeader[data-reference="true"]>div:nth-child(3) { grid-column:4; grid-row:1; }
+ .stageHeader[data-reference="true"] .sceneReference { grid-column:3; grid-row:1; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"] { height:40px; grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto; grid-template-rows:1fr; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"]>div:nth-child(2) { grid-column:2; grid-row:1; }
+ .studio[data-slider="true"] .stageHeader[data-reference="true"] .sceneReference { grid-column:3; grid-row:1; }
+}

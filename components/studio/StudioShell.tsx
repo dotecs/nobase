@@ -7,8 +7,8 @@ import type { Scene } from '@/lib/learn/lessons/schema';
 import styles from './studio.module.css';
 import {StageFit} from './stages/StageFit';
 export function shouldAutoHideTransport(focused:boolean,coarse:boolean){return focused&&!coarse;}
-type Props={sidebar?:ReactNode;formula?:ReactNode;scene:Scene;stage:ReactNode;controls?:ReactNode;player?:ReactNode;caption?:ReactNode;navigation?:ReactNode;theme?:'dark'|'light';onThemeChange?:(theme:'dark'|'light')=>void;overlay?:ReactNode;frame?:boolean;chrome?:boolean;focusMode?:boolean;onFocusChange?:(value:boolean)=>void};
-export default function StudioShell({sidebar,formula,scene,stage,controls,player,caption,navigation,theme,onThemeChange,overlay,frame=false,chrome=true,focusMode,onFocusChange}:Props){
+type Props={reference?:ReactNode;sidebar?:ReactNode;formula?:ReactNode;scene:Scene;stage:ReactNode;controls?:ReactNode;player?:ReactNode;caption?:ReactNode;navigation?:ReactNode;theme?:'dark'|'light';onThemeChange?:(theme:'dark'|'light')=>void;overlay?:ReactNode;frame?:boolean;chrome?:boolean;focusMode?:boolean;onFocusChange?:(value:boolean)=>void};
+export default function StudioShell({reference,sidebar,formula,scene,stage,controls,player,caption,navigation,theme,onThemeChange,overlay,frame=false,chrome=true,focusMode,onFocusChange}:Props){
  const [drawerOpen,setDrawerOpen]=useState(false),drawer=useRef<HTMLDialogElement>(null),drawerButton=useRef<HTMLButtonElement>(null);
  useEffect(()=>{const el=drawer.current;if(!el)return;if(drawerOpen&&!el.open)el.showModal();if(!drawerOpen&&el.open){el.close();drawerButton.current?.focus();}},[drawerOpen]);
  const playerRef=useRef<HTMLDivElement>(null),[playerHeight,setPlayerHeight]=useState(56);
@@ -31,7 +31,7 @@ export default function StudioShell({sidebar,formula,scene,stage,controls,player
   {focused&&chrome&&<button type="button" className={`${styles.focusButton} ${styles.exitFocus}`} aria-label="집중 모드 종료" onClick={exit}><FiMinimize aria-hidden="true"/><span className={styles.exitLabel}>집중 모드 종료</span></button>}
   <div className={styles.content}>
    <div className={styles.panel}>{sidebar}</div>
-   <div className={styles.stageColumn}><div className={styles.stageHeader}><div>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h1 title={title}>{title}</h1></div><div>{formula}</div><div>{controls}</div></div><div key={scene.id} className={styles.stage}>{['graph','slider','figure'].includes(scene.stage.type)?stage:<StageFit>{stage}</StageFit>}</div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&!navigation&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
+   <div className={styles.stageColumn}><div className={styles.stageHeader} data-reference={!!reference}><div>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h1 title={title}>{title}</h1></div><div>{formula}</div><div>{controls}</div>{reference&&<div className={styles.sceneReference}>{reference}</div>}</div><div key={scene.id} className={styles.stage}>{['graph','slider','figure'].includes(scene.stage.type)?stage:<StageFit>{stage}</StageFit>}</div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&!navigation&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
   </div>
   <footer className={styles.navigation}>{navigation}</footer>
   <dialog ref={drawer} className={styles.drawer} aria-label="전체 교육 과정" onCancel={()=>setDrawerOpen(false)} onClick={e=>{if(e.target===e.currentTarget)setDrawerOpen(false);}}><button type="button" className={styles.focusButton} onClick={()=>setDrawerOpen(false)}>닫기</button>{sidebar}</dialog>

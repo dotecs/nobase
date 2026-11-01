@@ -14,9 +14,15 @@ export type StateRow = Database['public']['Tables']['learn_ability_states']['Row
 export const json = (value: unknown) => value as Json;
 export function stableId(value: string) { const hash = createHash('sha256').update(value).digest('hex'); return `${hash.slice(0,8)}-${hash.slice(8,12)}-4${hash.slice(13,16)}-8${hash.slice(17,20)}-${hash.slice(20,32)}`; }
 export async function requireLearner() {
+  return (await requireLearnerAccess()).user;
+}
+/** Reuse the access decision so server pages need not query the role twice. */
+export async function requireLearnerAccess() {
   const client = await createServerSupabaseClient(); const {data:{user}} = await client.auth.getUser();
-  if (!user || !(await hasLearnAccess(user.id)).granted) throw new LearnUserError('코칭 과정 등록 후 이용할 수 있습니다.');
-  return user;
+  if (!user) throw new LearnUserError('코칭 과정 등록 후 이용할 수 있습니다.');
+  const access=await hasLearnAccess(user.id);
+  if (!access.granted) throw new LearnUserError('코칭 과정 등록 후 이용할 수 있습니다.');
+  return {user,access};
 }
 export async function requireCoach() {
   const client = await createServerSupabaseClient(); const {data:{user}} = await client.auth.getUser();

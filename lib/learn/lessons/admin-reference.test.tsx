@@ -1,0 +1,12 @@
+import {it,expect,vi} from 'vitest';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {StudioViewer} from '@/components/studio/StudioViewer';
+import StudioDemo from '@/components/studio/StudioDemo';
+import {Caption} from '@/components/studio/Caption';
+import {copyStudioReference} from '@/components/studio/ReferenceChip';
+import {studioDemo} from './studio-demo';
+it.each([[true,true,2],[false,true,0],[true,false,0],[false,false,0]])('reference chips admin=%s chrome=%s', (admin,chrome,count)=>{const html=renderToStaticMarkup(<StudioViewer lesson={{...studioDemo,id:'rm-11'}} admin={admin} chrome={chrome}/>);expect((html.match(/data-studio-ref=/g)??[])).toHaveLength(count);if(count)expect(html).toContain('rm-11#'+studioDemo.scenes[0].id);});
+it('defaults to no admin chips',()=>{expect(renderToStaticMarkup(<StudioViewer lesson={studioDemo}/>)).not.toContain('data-studio-ref');});
+it('shows only the sentence chip when captions are off',()=>{const html=renderToStaticMarkup(<Caption sentence={{id:'s4-3',role:'say',text:'자막 본문'}} referenceLessonId="rm-11" showText={false}/>);expect(html).toContain('s4-3');expect(html).toContain('rm-11#s4-3');expect(html).not.toContain('자막 본문');expect(html).not.toContain('aria-label="현재 자막"');});
+it('copies scene and sentence identifiers without altering their format',async()=>{const write=vi.fn().mockResolvedValue(undefined);await copyStudioReference('rm-11','s4',write);await copyStudioReference('rm-11','s4-3',write);await copyStudioReference('demo','s1-1',write);expect(write.mock.calls).toEqual([['rm-11#s4'],['rm-11#s4-3'],['demo#s1-1']]);});
+it('uses the demo reference prefix without changing demo curriculum identity',()=>{const html=renderToStaticMarkup(<StudioDemo admin/>);expect(html).toContain('demo#'+studioDemo.scenes[0].id);expect(html).toContain('aria-current="page"');});

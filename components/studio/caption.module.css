@@ -11,3 +11,6 @@
 @media(max-width:767px) { .caption { width:100%; padding:6px 10px; font-size:20px; } .lines { min-height:60px; } }
 :global([data-frame="true"]) .caption { width:fit-content; padding:10px 18px; font-size:20px; }
 :global([data-frame="true"]) .lines { min-height:0; }
+.caption[data-reference="true"] { display:flex; align-items:center; gap:10px; }
+.captionContent { min-width:0; flex:1; }
+.referenceOnly { width:fit-content; margin:auto; }
