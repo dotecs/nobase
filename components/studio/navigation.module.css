@@ -19,3 +19,6 @@
 .nav { padding-left:296px; }
 :global([data-focus="true"]) .nav { padding-left:0; }
 @media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
+
+@media(max-width:1279px) { .nav { padding-left:0; } }
+@media(max-width:1023px) { .nav { display:grid; grid-template-columns:1fr auto 1fr; gap:6px; } .transport { grid-column:1/-1; grid-row:1; } .nav>button { padding:8px; font-size:12px; gap:4px; } .nav>button:first-child { grid-column:1; } .progress { grid-column:2; gap:2px; } .progress>span { font-size:12px; } .nav .next { grid-column:3; } .progress button { padding:4px; font-size:20px; } }
