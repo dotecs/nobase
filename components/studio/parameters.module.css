@@ -1,0 +1,8 @@
+.panel { width:190px; padding:8px 12px; border:1px solid var(--studio-card-border); border-radius:12px; background:var(--studio-panel); text-align:center; font-size:14px; }
+.panel label { display:block; margin-bottom:6px; }
+.panel div { display:flex; gap:6px; }
+.panel button,.panel input { min-width:0; border:1px solid var(--studio-card-border); background:var(--studio-bg); color:var(--studio-text); border-radius:8px; text-align:center; height:32px; }
+.panel button { width:34px; flex-shrink:0; font-size:22px; }
+.panel input { width:100%; appearance:textfield; }
+.panel input::-webkit-inner-spin-button { appearance:none; }
+.panel input[type="range"] { accent-color:var(--studio-accent); }
