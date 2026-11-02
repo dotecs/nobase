@@ -107,7 +107,8 @@ describe('number line and brackets', () => {
     const viewport = { width: 1000, height: 400, left: 30, right: 24, top: 24, bottom: 28 };
     const result = equalGraph(camera, viewport, 'equal', true);
     expect(result.x).toEqual(camera.x);
-    expect(result.y).toEqual(camera.y);
+    expect(result.unitX).toBe(result.unitY); // 좌우·상하 축척이 같아야 한다(왜곡 금지)
+    expect((result.y[0]+result.y[1])/2).toBeCloseTo(0);
     expect(result.sx(-5)).toBe(30);
     expect(result.sx(5)).toBe(976);
     expect(result.sy(0) - viewport.top).toBeGreaterThanOrEqual(120);
