@@ -1,0 +1,5 @@
+.tree { position:relative; color:var(--studio-text); }
+.connections { position:absolute; inset:0; overflow:visible; fill:none; stroke:var(--studio-accent); opacity:.6; stroke-width:2; }
+.node { position:absolute; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:8px 12px; border:1px solid var(--studio-card-border); border-radius:var(--radius-card); background:var(--studio-panel); font-size:20px; line-height:1.4; text-align:center; word-break:keep-all; }
+.node p { margin:0; }
+.node :global(.katex) { font-size:1em; }

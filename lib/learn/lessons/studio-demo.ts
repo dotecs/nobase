@@ -10,6 +10,15 @@ export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',titl
   {id:'studio-down-1',role:'say',text:'a를 1에서 -1로 바꿔 볼게요. 그래프가 천천히 **아래로 열리는 모양**으로 변해요.',cue:{actions:[{type:'param',name:'a',to:-1,duration_ms:2600,easing:'ease-in-out'}]}},
   {id:'studio-down-2',role:'say',text:'**a가 음수이면** 그래프는 아래로 열려요. 계수의 부호와 그래프의 방향을 함께 기억해요.',cue:{actions:[{type:'point',x:1,on:'fn:0'},{type:'point',x:2,on:'fn:0'}]}},
  ]},
+ {id:'number-tree',tag:'define',title:'실수의 분류',stage:{type:'tree',direction:'right',initial:{hidden:'all'},root:{id:'real',label:'실수',children:[
+  {id:'rational',label:'유리수',children:[
+   {id:'int',label:'정수',children:[{id:'pos',label:'양의 정수 (= 자연수)'},{id:'zero',label:'0'},{id:'neg',label:'음의 정수'}]},
+   {id:'nonint',label:'정수가 아닌 유리수'}]},
+  {id:'irrational',label:'무리수'}]}},narration:[
+  {id:'tree-1',role:'say',text:'실수는 유리수와 무리수로 나눌 수 있어요.',cue:{actions:[{type:'reveal',target:'tree',id:'rational'},{type:'reveal',target:'tree',id:'irrational',at_ms:600}]}},
+  {id:'tree-2',role:'say',text:'유리수는 정수와 정수가 아닌 유리수로 나뉘어요.',cue:{actions:[{type:'reveal',target:'tree',id:'int'},{type:'reveal',target:'tree',id:'nonint',at_ms:600}]}},
+  {id:'tree-3',role:'say',text:'정수에는 양의 정수, 영, 음의 정수가 있어요. 양의 정수를 자연수라고도 해요.',cue:{actions:[{type:'reveal',target:'tree',id:'pos'},{type:'reveal',target:'tree',id:'zero',at_ms:600},{type:'reveal',target:'tree',id:'neg',at_ms:1200}]}},
+ ]},
 ]});
 
 // Demonstration-only course; never used by the real lesson route.

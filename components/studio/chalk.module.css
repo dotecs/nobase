@@ -15,3 +15,5 @@
 .layer .handLabel { font-family:var(--font-hand),var(--font-sans); font-size:28px; }
 
 @media(prefers-reduced-motion:reduce) { .arrowHead { opacity:1 !important; } }
+
+.layer .bracketLabel { stroke:var(--studio-bg); stroke-width:5px; paint-order:stroke fill; stroke-linejoin:round; }

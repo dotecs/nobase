@@ -1,5 +1,6 @@
 import {graphScale,type GraphViewport} from './graph';
-export function equalGraph(camera:{x:[number,number];y:[number,number]},viewport:GraphViewport,aspect:'equal'|'free'='equal'){
+export function equalGraph(camera:{x:[number,number];y:[number,number]},viewport:GraphViewport,aspect:'equal'|'free'='equal',numberLine=false){
+ if(numberLine)return {x:camera.x,y:camera.y,...graphScale(camera.x,camera.y,viewport),unitX:(viewport.width-viewport.left-viewport.right)/(camera.x[1]-camera.x[0]),unitY:(viewport.height-viewport.top-viewport.bottom)/(camera.y[1]-camera.y[0])};
  const w=viewport.width-viewport.left-viewport.right,h=viewport.height-viewport.top-viewport.bottom,unit=Math.min(w/(camera.x[1]-camera.x[0]),h/(camera.y[1]-camera.y[0])),cx=(camera.x[0]+camera.x[1])/2,cy=(camera.y[0]+camera.y[1])/2;
  const x:[number,number]=aspect==='equal'?[cx-w/unit/2,cx+w/unit/2]:camera.x,y:[number,number]=aspect==='equal'?[cy-h/unit/2,cy+h/unit/2]:camera.y;
  return {x,y,...graphScale(x,y,viewport),unitX:w/(x[1]-x[0]),unitY:h/(y[1]-y[0])};

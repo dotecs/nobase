@@ -1,3 +1,4 @@
+import {treeNodes} from './tree';
 import {isChalk,chalkAt} from './chalk';
 import {resolveAnchor,actionAnchor} from './anchors';
 import type {Alignment} from './alignment';
@@ -14,6 +15,12 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  if(sentenceStarts.length!==scene.narration.length||sentenceStarts.some((value,i)=>!Number.isFinite(value)||value<0||(i>0&&value<sentenceStarts[i-1])))throw new Error('Invalid sentence timeline');
  const stage=scene.stage,isGraph=stage.type==='graph'||stage.type==='slider',fns=stage.type==='graph'?stage.fns:stage.type==='slider'?[{expr:stage.expr}]:[];
  const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{},warnings:[],chalk:[]};
+ const tree = stage.type==='tree' ? treeNodes(stage.root) : [];
+ if(stage.type==='tree') {
+  const hidden = new Set(stage.initial?.hidden_nodes ?? []);
+  state.revealed.tree = stage.initial?.hidden==='all' ? [] : tree.filter(({node})=>!hidden.has(node.id)).map(({node})=>node.id);
+  state.treeReveal = {};
+ }
  if(state.band)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},0,0,'legacy-band')!,yRange:state.band});
  let points:Array<Omit<StagePoint,'y'>&{y?:number;on?:string}>=(stage.type==='graph'||stage.type==='slider')&&!stage.initial?.hidden_points?(stage.points??[]).map((p,i)=>({...p,id:'point:'+i})):[];
  let pointIndex=points.length;
@@ -28,7 +35,20 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
-   case 'reveal':state.revealed[action.target]=[...state.revealed[action.target].filter(i=>i!==action.index),action.index];break;
+   case 'reveal': {
+    if(action.target==='tree') {
+     const node=tree.find(({node})=>node.id===action.id);
+     for(const id of node ? [...node.ancestors,node.node.id] : []) {
+      if(state.revealed.tree!.includes(id))continue;
+      state.revealed.tree!.push(id);
+      state.treeReveal![id]={line:Math.min(1,(time-start)/300),card:Math.max(0,Math.min(1,(time-start-300)/200))};
+     }
+    } else {
+     const index=action.index!;
+     state.revealed[action.target]=[...state.revealed[action.target].filter(i=>i!==index),index];
+    }
+    break;
+   }
    case 'camera':{const width=action.width??(state.camera.x[1]-state.camera.x[0]),height=width*(state.camera.y[1]-state.camera.y[0])/(state.camera.x[1]-state.camera.x[0]),target={x:action.x??[action.cx!-width/2,action.cx!+width/2],y:action.y??[action.cy!-height/2,action.cy!+height/2]};for(const axis of ['x','y'] as const)for(const index of [0,1] as const)tracks.set('camera:'+axis+index,{from:state.camera[axis][index],to:target[axis][index],start,duration:action.duration_ms??800,set:value=>{state.camera[axis][index]=value;}});break;}
    case 'label':{const position=action.position??(typeof action.at==='object'?action.at:undefined);if(position)state.labels.push({text:action.text,tex:action.tex,at:{...position},anchor:action.anchor});break;}
    case 'band':state.band=action.y?[...action.y]:null;state.chalk=state.chalk!.filter(m=>m.id!=='legacy-band');if(action.y)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},start,time,'legacy-band')!,yRange:action.y});break;
