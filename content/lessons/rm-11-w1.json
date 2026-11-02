@@ -293,7 +293,7 @@
         "expr": "x^2+3x+k",
         "param": {
           "name": "k",
-          "min": -2,
+          "min": -0.75,
           "max": 5,
           "step": 0.25,
           "init": 1,
@@ -308,7 +308,19 @@
           4
         ],
         "verdict": "discriminant",
-        "aspect": "equal"
+        "aspect": "equal",
+        "items": [
+          {
+            "id": "eq",
+            "tex": "y = x^2 + 3x + {{k}}",
+            "position": {
+              "x": -4.8,
+              "y": 3.6
+            },
+            "size": "lg",
+            "align": "start"
+          }
+        ]
       },
       "narration": [
         {
@@ -350,6 +362,12 @@
                 ],
                 "at": "@떠 있다",
                 "ttl_ms": 3500
+              },
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@start",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -399,7 +417,7 @@
                 "text": "k가 커질수록\n떠올라요.",
                 "position": {
                   "x": 0.2,
-                  "y": 3.0
+                  "y": 3
                 },
                 "arrow_to": {
                   "x": -1.5,
@@ -415,8 +433,7 @@
         "eyebrow": "확인",
         "title": "그림으로\n답을 검산하다",
         "accent": "검산",
-        "subtitle": "k가 9/4를 넘으면 그래프가 떠오릅니다.",
-        "formula": "y = x^2 + 3x + {{k}}"
+        "subtitle": "k가 9/4를 넘으면 그래프가 떠오릅니다."
       }
     },
     {
