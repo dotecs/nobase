@@ -300,6 +300,151 @@
         ],
         "correct": "a"
       }
+    },
+    {
+      "id": "c.integer",
+      "ability_id": "01-1",
+      "name": "정수",
+      "one_line": "수직선에서 0을 기준으로 1칸씩 떨어진 수. 양의 정수(자연수)·0·음의 정수.",
+      "lesson_id": "rm-01",
+      "check_question": {
+        "stem_md": "다음 중 정수가 아닌 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-4$"
+          },
+          {
+            "id": "b",
+            "text_md": "$0$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac{6}{3}$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac{3}{2}$"
+          }
+        ],
+        "correct": "d"
+      }
+    },
+    {
+      "id": "c.rational",
+      "ability_id": "01-2",
+      "name": "유리수",
+      "one_line": "분모·분자가 정수인 분수 b/a (a≠0)로 쓸 수 있는 수. 정수도 포함.",
+      "lesson_id": "rm-01",
+      "check_question": {
+        "stem_md": "다음 중 유리수가 아닌 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$0.5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\sqrt2$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac73$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.irrational",
+      "ability_id": "01-2",
+      "name": "무리수",
+      "one_line": "분수로 쓸 수 없는 수. 소수로 쓰면 순환하지 않는 무한소수. π, √2.",
+      "lesson_id": "rm-01",
+      "check_question": {
+        "stem_md": "무리수를 소수로 나타내면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "유한소수"
+          },
+          {
+            "id": "b",
+            "text_md": "순환하는 무한소수"
+          },
+          {
+            "id": "c",
+            "text_md": "순환하지 않는 무한소수"
+          },
+          {
+            "id": "d",
+            "text_md": "정수"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.real",
+      "ability_id": "01-2",
+      "name": "실수",
+      "one_line": "유리수와 무리수를 합친 것. 수직선 전체.",
+      "lesson_id": "rm-01",
+      "check_question": {
+        "stem_md": "실수를 그림으로 나타낸 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "수직선"
+          },
+          {
+            "id": "b",
+            "text_md": "좌표평면"
+          },
+          {
+            "id": "c",
+            "text_md": "분수"
+          },
+          {
+            "id": "d",
+            "text_md": "표"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.real-square",
+      "ability_id": "01-3",
+      "name": "실수의 제곱은 0 이상",
+      "one_line": "어떤 실수든 제곱하면 0보다 크거나 같다. 제곱해서 음수가 되는 실수는 없다.",
+      "lesson_id": "rm-01",
+      "check_question": {
+        "stem_md": "$x$가 실수일 때 항상 성립하는 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$x^2>0$"
+          },
+          {
+            "id": "b",
+            "text_md": "$x^2\\ge0$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x^2<0$"
+          },
+          {
+            "id": "d",
+            "text_md": "$x^2=x$"
+          }
+        ],
+        "correct": "b"
+      }
     }
   ],
   "edges": [
@@ -366,6 +511,41 @@
     {
       "source_id": "c.equality-props",
       "target_id": "c.ineq-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.integer",
+      "target_id": "c.rational",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.rational",
+      "target_id": "c.real",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.irrational",
+      "target_id": "c.real",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.real",
+      "target_id": "c.real-square",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.real-square",
+      "target_id": "c.sqrt-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.real-square",
+      "target_id": "c.discriminant-meaning",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.integer",
+      "target_id": "c.fraction-props",
       "type": "prerequisite"
     }
   ]
