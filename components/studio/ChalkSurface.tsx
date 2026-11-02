@@ -1,6 +1,47 @@
 'use client';
-import {useEffect,useRef,useState,type ReactNode} from 'react';
-import type {ChalkMark,TargetBox} from '@/lib/learn/lessons/chalk';
-import {ChalkLayer} from './ChalkLayer';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import type { ChalkMark } from '@/lib/learn/lessons/chalk';
+import type { Scene } from '@/lib/learn/lessons/schema';
+import type { StageState } from '@/lib/learn/lessons/stage-state';
+import { itemsOf, itemParameters } from '@/lib/learn/lessons/items';
+import { ChalkLayer } from './ChalkLayer';
+import { BoardItems } from './BoardItems';
+import { StageFit } from './stages/StageFit';
+import { useTargetBoxes } from './useTargetBoxes';
 import styles from './chalk.module.css';
-export function ChalkSurface({marks,revision,children}:{marks:ChalkMark[];revision:string;children:ReactNode}){const ref=useRef<HTMLDivElement>(null),[layout,setLayout]=useState({width:1,height:1,targets:{} as Record<string,TargetBox>});useEffect(()=>{const root=ref.current;if(!root)return;const measure=()=>{const targets:Record<string,TargetBox>={};root.querySelectorAll<HTMLElement>('[data-stage-target]').forEach(el=>{let left=el.offsetLeft,top=el.offsetTop;for(let parent=el.offsetParent as HTMLElement|null;parent&&parent!==root;parent=parent.offsetParent as HTMLElement|null){left+=parent.offsetLeft;top+=parent.offsetTop;}const right=left+el.offsetWidth,bottom=top+el.offsetHeight;targets[el.dataset.stageTarget!]={left,right,top,bottom,x:(left+right)/2,y:(top+bottom)/2};});const next={width:root.offsetWidth||1,height:root.offsetHeight||1,targets};setLayout(old=>JSON.stringify(old)===JSON.stringify(next)?old:next);};const observer=new ResizeObserver(measure);observer.observe(root);root.querySelectorAll('[data-stage-target]').forEach(el=>observer.observe(el));measure();return()=>observer.disconnect();},[revision]);return <div ref={ref} className={styles.surface}>{children}<svg className={styles.overlay} viewBox={`0 0 ${layout.width} ${layout.height}`}><ChalkLayer marks={marks} space={{sx:x=>x,sy:y=>y,x:[0,layout.width],y:[0,layout.height],target:id=>layout.targets[id]??null}}/></svg></div>;}
+
+export function ChalkSurface({ marks, revision, children, scene, state }: {
+  marks: ChalkMark[]; revision: string; children: ReactNode; scene: Scene; state: StageState;
+}) {
+  const root = useRef<HTMLDivElement>(null);
+  const svg = useRef<SVGSVGElement>(null);
+  const [size, setSize] = useState({ width: 1, height: 1 });
+  const items = itemsOf(scene.stage);
+  const canvas = scene.stage.type === 'board' || items.length > 0;
+  const targets = useTargetBoxes(root, svg, revision + JSON.stringify(size));
+  useEffect(() => {
+    const element = root.current;
+    if (!element) return;
+    const measure = () => {
+      const next = { width: element.offsetWidth || 1, height: element.offsetHeight || 1 };
+      setSize(previous => previous.width === next.width && previous.height === next.height ? previous : next);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    measure();
+    return () => observer.disconnect();
+  }, []);
+  const normalized = canvas;
+  return <div ref={root} className={styles.surface} data-canvas={canvas} data-board={scene.stage.type === 'board'}>
+    {canvas ? <div className={styles.canvasContent}><StageFit intrinsic={scene.stage.type === 'tree'}>{children}</StageFit></div> : children}
+    <BoardItems items={items} state={state} params={itemParameters(scene.stage, state.params)} space={{ sx: x => x * size.width, sy: y => y * size.height }} />
+    <svg ref={svg} className={styles.overlay} viewBox={'0 0 ' + size.width + ' ' + size.height}>
+      <ChalkLayer marks={marks} space={{
+        sx: x => normalized ? x * size.width : x,
+        sy: y => normalized ? y * size.height : y,
+        x: [0, normalized ? 1 : size.width], y: [0, normalized ? 1 : size.height],
+        target: id => targets[id] ?? null,
+      }} />
+    </svg>
+  </div>;
+}

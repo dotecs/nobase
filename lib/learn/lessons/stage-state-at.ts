@@ -1,3 +1,4 @@
+import {itemsOf} from './items';
 import {treeNodes} from './tree';
 import {isChalk,chalkAt} from './chalk';
 import {resolveAnchor,actionAnchor} from './anchors';
@@ -15,6 +16,12 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  if(sentenceStarts.length!==scene.narration.length||sentenceStarts.some((value,i)=>!Number.isFinite(value)||value<0||(i>0&&value<sentenceStarts[i-1])))throw new Error('Invalid sentence timeline');
  const stage=scene.stage,isGraph=stage.type==='graph'||stage.type==='slider',fns=stage.type==='graph'?stage.fns:stage.type==='slider'?[{expr:stage.expr}]:[];
  const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{},warnings:[],chalk:[]};
+ const items=itemsOf(stage);
+ if(items.length) {
+  const initial='initial' in stage?stage.initial:undefined;
+  state.revealed.item=initial?.hidden==='all'?[]:items.filter(item=>!initial?.hidden_items?.includes(item.id)).map(item=>item.id);
+  state.itemOpacity={};
+ }
  const tree = stage.type==='tree' ? treeNodes(stage.root) : [];
  if(stage.type==='tree') {
   const hidden = new Set(stage.initial?.hidden_nodes ?? []);
@@ -36,7 +43,12 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
    case 'reveal': {
-    if(action.target==='tree') {
+    if(action.target==='item') {
+     if(!state.revealed.item?.includes(action.id!)) {
+      state.revealed.item=[...(state.revealed.item??[]),action.id!];
+      state.itemOpacity={...state.itemOpacity,[action.id!]:Math.min(1,(time-start)/250)};
+     }
+    } else if(action.target==='tree') {
      const node=tree.find(({node})=>node.id===action.id);
      for(const id of node ? [...node.ancestors,node.node.id] : []) {
       if(state.revealed.tree!.includes(id))continue;

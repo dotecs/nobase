@@ -1,3 +1,4 @@
+import {itemsOf} from './items';
 import {treeNodes} from './tree';
 import {isExact} from './format-num';
 import katex from 'katex';
@@ -8,6 +9,7 @@ export function validateAuthoredMath(lesson:Lesson){
  const markdown=(text:string)=>{const math=[...text.matchAll(/\$\$?([\s\S]*?)\$\$?/g)];const rest=text.replace(/\$\$?([\s\S]*?)\$\$?/g,'');if(rest.includes('$'))throw new Error('수식 구분자 $가 닫히지 않았습니다.');math.forEach(match=>check(match[1]));};
  if(lesson.intro)markdown(lesson.intro);
  for(const scene of lesson.scenes){
+  for(const item of itemsOf(scene.stage)){const value=(item.tex??item.text??'').replace(/\{\{[^}]+\}\}/g,'1');if(item.tex)check(value);else markdown(value);}
   if(scene.headline?.formula)check(scene.headline.formula.replace(/\{\{[^}]+\}\}/g,'1'));
   if(scene.stage.type==='graph'||scene.stage.type==='slider')scene.stage.points?.forEach(p=>{if(p.label==='auto'&&((!p.x_tex&&!isExact(p.x))||(!p.y_tex&&!isExact(p.y))))throw new Error('점 ('+p.x+', '+p.y+')의 좌표를 정확한 식으로 쓰거나 label을 명시하세요');if(p.x_tex)check(p.x_tex);if(p.y_tex)check(p.y_tex);if(p.label&&p.label!=='auto')check(p.label);});
   for(const s of scene.narration)for(const a of s.cue?.actions??[])if(a.type==='point'&&a.label&&a.label!=='auto')check(a.label);

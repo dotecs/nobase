@@ -1,3 +1,4 @@
+import {itemsSchema,itemErrors} from './items';
 import {treeSchema} from './tree';
 import {coordinate,graphPoint} from './coordinate';
 import { z } from 'zod';
@@ -16,7 +17,7 @@ export function validGraphExpression(expr: string, parameter?: string) {
   try { const parsed=parseMath(expr); return !parsed.relation && [...variables(parsed.left)].every(v=>v==='x'||v===parameter); } catch { return false; }
 }
 export const graphSchema = z.object({
-  type:z.literal('graph'), initial:initialStageSchema.optional(), x:range, y:graphY, aspect, number_line:z.boolean().optional(),
+  type:z.literal('graph'), items:itemsSchema.optional(), initial:initialStageSchema.optional(), x:range, y:graphY, aspect, number_line:z.boolean().optional(),
   fns:z.array(z.object({expr:text.refine(e=>validGraphExpression(e),'그래프 식을 해석할 수 없습니다.'),c:z.enum(['c1','c2','c3']),label:text.optional()})).max(12),
   points:z.array(graphPoint).max(100).optional(),
   band:z.tuple([z.number().finite(),z.number().finite()]).optional(), aria:text,
@@ -27,15 +28,16 @@ export const questionSchema=z.object({stem_md:text,options:z.array(z.object({id,
 export const stageSchema=z.discriminatedUnion('type',[
   graphSchema,
   treeSchema,
-  z.object({type:z.literal('steps'),steps:z.array(z.object({tex:text,concept_id:id.optional(),why:text.optional(),think:text.optional()})).min(1)}),
-  z.object({type:z.literal('chain'),nodes:z.array(z.object({tex:text.optional(),text})).min(1)}),
-  z.object({type:z.literal('slider'),initial:initialStageSchema.optional(),expr:text,points:z.array(graphPoint).max(100).optional(),param:z.object({name:z.string().regex(/^[a-wyz]$/),min:coordinate,max:coordinate,step:coordinate.pipe(z.number().positive()),control:z.enum(['stepper','slider']).optional(),init:coordinate}),x:range,y:graphY,aspect,number_line:z.boolean().optional(),verdict:z.enum(['discriminant','none'])}).superRefine((s,ctx)=>{
+  z.object({type:z.literal('board'),items:itemsSchema,initial:initialStageSchema.optional(),aspect:z.literal('16:9').optional()}),
+  z.object({type:z.literal('steps'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),steps:z.array(z.object({tex:text,concept_id:id.optional(),why:text.optional(),think:text.optional()})).min(1)}),
+  z.object({type:z.literal('chain'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),nodes:z.array(z.object({tex:text.optional(),text})).min(1)}),
+  z.object({type:z.literal('slider'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),expr:text,points:z.array(graphPoint).max(100).optional(),param:z.object({name:z.string().regex(/^[a-wyz]$/),min:coordinate,max:coordinate,step:coordinate.pipe(z.number().positive()),control:z.enum(['stepper','slider']).optional(),init:coordinate}),x:range,y:graphY,aspect,number_line:z.boolean().optional(),verdict:z.enum(['discriminant','none'])}).superRefine((s,ctx)=>{
     if(!validGraphExpression(s.expr,s.param.name)||s.param.min>=s.param.max||s.param.init<s.param.min||s.param.init>s.param.max)ctx.addIssue({code:'custom',message:'슬라이더 식 또는 범위를 확인하세요.'});
   }),
-  z.object({type:z.literal('table'),columns:z.array(text).min(1),rows:z.array(z.object({cells:z.array(z.string()),tone:z.enum(['pos','zero','neg']).optional()}))}).refine(s=>s.rows.every(r=>r.cells.length===s.columns.length),'표 열 수가 다릅니다.'),
+  z.object({type:z.literal('table'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),columns:z.array(text).min(1),rows:z.array(z.object({cells:z.array(z.string()),tone:z.enum(['pos','zero','neg']).optional()}))}).refine(s=>s.rows.every(r=>r.cells.length===s.columns.length),'표 열 수가 다릅니다.'),
   questionSchema.safeExtend({type:z.literal('quiz'),explain:text,trace_concept_id:id}),
   z.object({type:z.literal('figure'),svg:text.optional(),image_path:z.string().regex(/^\/(?!\/)[^\s]*$/).optional(),caption:text}).refine(s=>Boolean(s.svg)!==Boolean(s.image_path),'SVG 또는 이미지 하나를 지정하세요.').refine(s=>!s.svg||(/^<svg[\s>]/.test(s.svg)&&!/<script|<foreignObject|\bon\w+\s*=|(?:href|src)\s*=\s*["'](?:https?:|javascript:)/i.test(s.svg)),'안전한 정적 SVG만 허용합니다.'),
-]);
+]).superRefine((stage,ctx)=>{for(const message of itemErrors(stage))ctx.addIssue({code:'custom',message});});
 export const sentenceSchema=z.object({id,role:z.enum(['say','think','write']),text,tts:text.optional(),cue:z.object({actions:z.array(actionSchema).optional(),step:z.number().int().nonnegative().optional(),node:z.number().int().nonnegative().optional(),row:z.number().int().nonnegative().optional(),highlight:text.optional()}).optional()});
 export const lessonSchema=z.object({id,kind:z.enum(['concept','worked']),title:text,pack_id:id,ability_ids:z.array(id),intro:text.optional(),goal:z.string().max(120).optional(),scenes:z.array(z.object({id,title:text,headline:z.object({eyebrow:text.optional(),title:text,accent:text.optional(),subtitle:text.optional(),formula:z.string().max(300).optional()}).refine(h=>!h.accent||h.title.includes(h.accent),'강조어는 제목의 부분 문자열이어야 합니다.').optional(),layout:z.enum(['stage-right','stage-full','split']).optional(),tag:z.enum(['translate','derive','check','explore','define','example']),stage:stageSchema,narration:z.array(sentenceSchema).min(1)})).min(1)}).superRefine((lesson,ctx)=>{
   const scenes=new Set<string>(),sentences=new Set<string>();

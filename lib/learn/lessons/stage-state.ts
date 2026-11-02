@@ -13,7 +13,8 @@ export type StageState={
  camera:{x:[number,number];y:[number,number]};
  labels:StageLabel[];
  band:[number,number]|null;
- revealed:{step:number[];node:number[];row:number[];tree?:string[]};
+ revealed:{step:number[];node:number[];row:number[];tree?:string[];item?:string[]};
+ itemOpacity?:Record<string,number>;
  treeReveal?:Record<string,{line:number;card:number}>;
  pulses:Record<string,number>;
 };

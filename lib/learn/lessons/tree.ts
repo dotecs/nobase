@@ -1,3 +1,4 @@
+import {itemsSchema,itemInitial} from './items';
 import { z } from 'zod';
 
 export type TreeNode = { id: string; label: string; tex?: string; children?: TreeNode[] };
@@ -12,7 +13,8 @@ export const treeSchema = z.object({
   type: z.literal('tree'),
   direction: z.enum(['right', 'down']).default('right'),
   root: nodeSchema,
-  initial: z.object({ hidden_nodes: z.array(nodeId).optional(), hidden: z.literal('all').optional() }).optional(),
+  items: itemsSchema.optional(),
+  initial: z.object({ ...itemInitial, hidden_nodes: z.array(nodeId).optional(), hidden: z.literal('all').optional() }).optional(),
 }).superRefine((tree, ctx) => {
   const nodes = treeNodes(tree.root);
   const ids = new Set(nodes.map(({ node }) => node.id));

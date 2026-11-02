@@ -1,8 +1,8 @@
 import { lessonSchema } from './schema';
 /** Local code fixture only: no lesson row, seed, generated audio or event writes. */
 export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',title:'계수 a의 역할',goal:'계수에 따른 그래프 변화 이해하기',pack_id:'root-math',ability_ids:['11-1'],scenes:[
- {id:'opens-up',tag:'explore',title:'이차함수의 그래프',headline:{formula:'y = ax^2 \\quad (a = {{a}})',title:'이차함수의 그래프',subtitle:'계수 a를 움직이며 그래프의 변화를 살펴보세요.\n수식이 어떻게 모양이 되는지, 직접 확인해요.'},stage:{type:'slider',expr:'a*x^2',param:{name:'a',min:-3,max:3,step:.5,init:1},x:[-3,3],y:[-.5,6.5],verdict:'none'},narration:[
-  {id:'studio-up-1',role:'say',text:'a가 양수이면, 그래프는 위로 열린 포물선이 됩니다.',cue:{actions:[{type:'point',x:0,on:'fn:0',label:'(0, 0)',label_pos:'se'},{type:'point',x:1,on:'fn:0',label:'(1, 1)',guides:true},{type:'point',x:2,on:'fn:0',label:'(2, 4)',guides:true},{type:'handwrite',position:{x:3.4,y:5.6},text:'a가 커질수록\n폭이 좁아져요.',arrow_to:{x:2.35,y:5.5}}]}},
+ {id:'opens-up',tag:'explore',title:'이차함수의 그래프',headline:{title:'이차함수의 그래프',subtitle:'계수 a를 움직이며 그래프의 변화를 살펴보세요.\n수식이 어떻게 모양이 되는지, 직접 확인해요.'},stage:{type:'slider',items:[{id:'eq',tex:'y = ax^2 \\quad (a = {{a}})',position:{x:-3,y:6.4},size:'lg',align:'start'}],expr:'a*x^2',param:{name:'a',min:-3,max:3,step:.5,init:1},x:[-3,3],y:[-.5,6.5],verdict:'none'},narration:[
+  {id:'studio-up-1',role:'say',text:'a가 양수이면, 그래프는 위로 열린 포물선이 됩니다.',cue:{actions:[{type:'underline',target:'item:eq'},{type:'point',x:0,on:'fn:0',label:'(0, 0)',label_pos:'se'},{type:'point',x:1,on:'fn:0',label:'(1, 1)',guides:true},{type:'point',x:2,on:'fn:0',label:'(2, 4)',guides:true},{type:'handwrite',position:{x:5.6,y:4.5},text:'a가 커질수록\n폭이 좁아져요.',arrow_to:{x:2.35,y:5.5}}]}},
   {id:'studio-up-2',role:'say',text:'a가 2로 커지면 그래프의 폭이 **더 좁아져요**. 같은 x에서 높이가 달라지죠.',cue:{actions:[{type:'param',name:'a',to:2,duration_ms:2200,easing:'ease-in-out'}]}},
   {id:'studio-up-3',role:'say',text:'a를 다시 1로 바꾸면 처음 모양으로 돌아와요. **슬라이더를 직접 움직여** 확인해 보세요.',cue:{actions:[{type:'param',name:'a',to:1,duration_ms:2200,easing:'ease-in-out'}]}},
  ]},
@@ -18,6 +18,14 @@ export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',titl
   {id:'tree-1',role:'say',text:'실수는 유리수와 무리수로 나눌 수 있어요.',cue:{actions:[{type:'reveal',target:'tree',id:'rational'},{type:'reveal',target:'tree',id:'irrational',at_ms:600}]}},
   {id:'tree-2',role:'say',text:'유리수는 정수와 정수가 아닌 유리수로 나뉘어요.',cue:{actions:[{type:'reveal',target:'tree',id:'int'},{type:'reveal',target:'tree',id:'nonint',at_ms:600}]}},
   {id:'tree-3',role:'say',text:'정수에는 양의 정수, 영, 음의 정수가 있어요. 양의 정수를 자연수라고도 해요.',cue:{actions:[{type:'reveal',target:'tree',id:'pos'},{type:'reveal',target:'tree',id:'zero',at_ms:600},{type:'reveal',target:'tree',id:'neg',at_ms:1200}]}},
+ ]},
+ {id:'board-notes',tag:'derive',title:'칠판 위에서 식 연결하기',headline:{eyebrow:'칠판',title:'같은 식을 다른 모양으로'},stage:{type:'board',aspect:'16:9',initial:{hidden_items:['result']},items:[
+  {id:'source',tex:'x^2 + 2x + 1',position:{x:.2,y:.25},size:'lg',align:'start'},
+  {id:'result',tex:'(x+1)^2',position:{x:.65,y:.25},size:'lg',color:'hand'},
+  {id:'note',text:'완전제곱식으로 묶어 보세요.',position:{x:.5,y:.65},size:'md'}
+ ]},narration:[
+  {id:'board-1',role:'say',text:'이 식을 완전제곱식으로 묶어 볼게요.',cue:{actions:[{type:'underline',target:'item:source'},{type:'circle',target:'item:source',at_ms:500}]}},
+  {id:'board-2',role:'say',text:'같은 식이 두 번 곱해진 모양이에요.',cue:{actions:[{type:'reveal',target:'item',id:'result'},{type:'arrow',from:'item:source',to:'item:result',at_ms:300},{type:'flash',target:'item:result',at_ms:600}]}},
  ]},
 ]});
 
