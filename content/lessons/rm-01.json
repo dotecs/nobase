@@ -33,17 +33,8 @@
           2.5
         ],
         "aspect": "equal",
-        "fns": [
-          {
-            "expr": "0*x",
-            "c": "c1",
-            "label": "수직선"
-          }
-        ],
+        "fns": [],
         "initial": {
-          "hidden_fns": [
-            0
-          ],
           "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
@@ -103,7 +94,8 @@
             "y": 0,
             "c": "c1"
           }
-        ]
+        ],
+        "number_line": true
       },
       "narration": [
         {
@@ -305,17 +297,8 @@
           2.5
         ],
         "aspect": "equal",
-        "fns": [
-          {
-            "expr": "0*x",
-            "c": "c1",
-            "label": "수직선"
-          }
-        ],
+        "fns": [],
         "initial": {
-          "hidden_fns": [
-            0
-          ],
           "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
@@ -393,7 +376,8 @@
             "c": "c2",
             "label": "auto"
           }
-        ]
+        ],
+        "number_line": true
       },
       "narration": [
         {
@@ -605,17 +589,8 @@
           2.5
         ],
         "aspect": "equal",
-        "fns": [
-          {
-            "expr": "0*x",
-            "c": "c1",
-            "label": "수직선"
-          }
-        ],
+        "fns": [],
         "initial": {
-          "hidden_fns": [
-            0
-          ],
           "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
@@ -693,7 +668,8 @@
             "c": "c3",
             "label": "auto"
           }
-        ]
+        ],
+        "number_line": true
       },
       "narration": [
         {
@@ -892,17 +868,8 @@
           2.5
         ],
         "aspect": "equal",
-        "fns": [
-          {
-            "expr": "0*x",
-            "c": "c1",
-            "label": "수직선"
-          }
-        ],
+        "fns": [],
         "initial": {
-          "hidden_fns": [
-            0
-          ],
           "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
@@ -962,7 +929,8 @@
             "y": 0,
             "c": "c1"
           }
-        ]
+        ],
+        "number_line": true
       },
       "narration": [
         {
@@ -1227,53 +1195,53 @@
         "eyebrow": "1강 · 수 체계",
         "title": "실수의 분류",
         "accent": "분류",
-        "subtitle": "이 표 하나가 오늘 내용의 전부"
+        "subtitle": "이 그림 하나가 오늘 내용의 전부"
       },
       "tag": "example",
       "stage": {
-        "type": "table",
-        "columns": [
-          "분류",
-          "뜻",
-          "예"
-        ],
-        "rows": [
-          {
-            "cells": [
-              "양의 정수 (= 자연수)",
-              "0보다 큰 정수",
-              "$1,\\ 2,\\ 3,\\ \\cdots$"
-            ]
-          },
-          {
-            "cells": [
-              "0",
-              "",
-              "$0$"
-            ]
-          },
-          {
-            "cells": [
-              "음의 정수",
-              "0보다 작은 정수",
-              "$-1,\\ -2,\\ -3,\\ \\cdots$"
-            ]
-          },
-          {
-            "cells": [
-              "정수가 아닌 유리수",
-              "분수로 쓸 수 있지만 정수는 아닌 수",
-              "$\\tfrac12,\\ -\\tfrac34,\\ 0.25$"
-            ]
-          },
-          {
-            "cells": [
-              "무리수",
-              "분수로 쓸 수 없는 수",
-              "$\\sqrt2,\\ \\pi$"
-            ]
-          }
-        ]
+        "type": "tree",
+        "direction": "right",
+        "initial": {
+          "hidden": "all"
+        },
+        "root": {
+          "id": "real",
+          "label": "실수",
+          "children": [
+            {
+              "id": "rational",
+              "label": "유리수",
+              "children": [
+                {
+                  "id": "int",
+                  "label": "정수",
+                  "children": [
+                    {
+                      "id": "pos",
+                      "label": "양의 정수 (= 자연수)"
+                    },
+                    {
+                      "id": "zero",
+                      "label": "0"
+                    },
+                    {
+                      "id": "neg",
+                      "label": "음의 정수"
+                    }
+                  ]
+                },
+                {
+                  "id": "nonint",
+                  "label": "정수가 아닌 유리수"
+                }
+              ]
+            },
+            {
+              "id": "irrational",
+              "label": "무리수"
+            }
+          ]
+        }
       },
       "narration": [
         {
@@ -1282,7 +1250,47 @@
           "text": "정리하겠습니다. 실수는 유리수와 무리수로 이루어져 있고, 유리수 안에는 정수와 정수가 아닌 유리수가 있습니다.",
           "tts": "정리하겠습니다. 실수는 유리수와 무리수로 이루어져 있고, 유리수 안에는 정수와, 정수가 아닌 유리수가 있습니다.",
           "cue": {
-            "actions": []
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "tree",
+                "id": "real",
+                "at": "@start"
+              },
+              {
+                "type": "reveal",
+                "target": "tree",
+                "id": "rational",
+                "at": "@유리수와 무리수로"
+              },
+              {
+                "type": "reveal",
+                "target": "tree",
+                "id": "irrational",
+                "at": "@유리수와 무리수로+400"
+              },
+              {
+                "type": "reveal",
+                "target": "tree",
+                "id": "int",
+                "at": "@정수와,"
+              },
+              {
+                "type": "reveal",
+                "target": "tree",
+                "id": "nonint",
+                "at": "@정수가 아닌 유리수가"
+              },
+              {
+                "type": "highlight",
+                "target": [
+                  "tree:rational",
+                  "tree:int",
+                  "tree:nonint"
+                ],
+                "at": "@정수가 아닌 유리수가"
+              }
+            ]
           }
         },
         {
@@ -1294,30 +1302,35 @@
             "actions": [
               {
                 "type": "reveal",
-                "target": "row",
-                "index": 0,
+                "target": "tree",
+                "id": "pos",
                 "at": "@양의 정수, 영"
               },
               {
                 "type": "reveal",
-                "target": "row",
-                "index": 1,
+                "target": "tree",
+                "id": "zero",
                 "at": "@영, 음의"
               },
               {
                 "type": "reveal",
-                "target": "row",
-                "index": 2,
+                "target": "tree",
+                "id": "neg",
                 "at": "@음의 정수로"
               },
               {
                 "type": "highlight",
                 "target": [
-                  "row:0",
-                  "row:1",
-                  "row:2"
+                  "tree:pos",
+                  "tree:zero",
+                  "tree:neg"
                 ],
                 "at": "@음의 정수로"
+              },
+              {
+                "type": "underline",
+                "target": "tree:pos",
+                "at": "@자연수와 같은"
               }
             ]
           }
@@ -1330,19 +1343,13 @@
           "cue": {
             "actions": [
               {
-                "type": "reveal",
-                "target": "row",
-                "index": 3,
-                "at": "@start"
-              },
-              {
                 "type": "highlight",
-                "target": "row:3",
+                "target": "tree:nonint",
                 "at": "@start"
               },
               {
                 "type": "underline",
-                "target": "row:3",
+                "target": "tree:nonint",
                 "at": "@정식 명칭입니다"
               }
             ]
@@ -1351,19 +1358,13 @@
         {
           "id": "s6-4",
           "role": "say",
-          "text": "그리고 분수로 나타낼 수 없는 무리수까지. 이 표 하나가 오늘 내용의 전부입니다.",
-          "tts": "그리고 분수로 나타낼 수 없는 무리수까지. [concluding] 이 표 하나가 오늘 내용의 전부입니다.",
+          "text": "그리고 분수로 나타낼 수 없는 무리수까지. 이 그림 하나가 오늘 내용의 전부입니다.",
+          "tts": "그리고 분수로 나타낼 수 없는 무리수까지. [concluding] 이 그림 하나가 오늘 내용의 전부입니다.",
           "cue": {
             "actions": [
               {
-                "type": "reveal",
-                "target": "row",
-                "index": 4,
-                "at": "@start"
-              },
-              {
                 "type": "highlight",
-                "target": "row:4",
+                "target": "tree:irrational",
                 "at": "@start"
               },
               {
