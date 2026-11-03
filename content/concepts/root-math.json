@@ -4,9 +4,9 @@
     {
       "id": "c.equation",
       "ability_id": "05-1",
-      "name": "방정식",
-      "one_line": "미지수에 어떤 값을 넣느냐에 따라 참이 되기도 거짓이 되기도 하는 등식. 참이 되게 하는 값이 '해'.",
-      "lesson_id": "rm-16",
+      "name": "방정식과 해",
+      "one_line": "미지수 값에 따라 참이 되기도 거짓이 되기도 하는 등식. \"x가 무엇이면 참이 되느냐\"고 묻는 의문문. 참이 되게 하는 값이 해.",
+      "lesson_id": "rm-05",
       "check_question": {
         "stem_md": "다음 중 방정식인 것은?",
         "options": [
@@ -153,9 +153,9 @@
     },
     {
       "id": "c.sqrt-props",
-      "ability_id": null,
+      "ability_id": "08-3",
       "name": "제곱근의 성질",
-      "one_line": "$X^2=k$ ($k\\ge0$)이면 $X=\\pm\\sqrt k$. 제곱해서 음수가 되는 실수는 없다.",
+      "one_line": "a의 제곱근(제곱해서 a가 되는 수): a>0이면 ±√a 두 개, a=0이면 0 하나, a<0이면 실수 중에는 없다. 그래서 $X^2=k$ ($k\\ge0$)이면 $X=\\pm\\sqrt k$.",
       "lesson_id": "rm-08",
       "check_question": {
         "stem_md": "$(x+1)^2=5$ 의 해는?",
@@ -445,6 +445,644 @@
         ],
         "correct": "b"
       }
+    },
+    {
+      "id": "c.term",
+      "ability_id": "02-2",
+      "name": "항과 상수항",
+      "one_line": "식을 부호(+, −)로 끊은 덩어리 하나하나가 항. 문자 없이 수로만 된 항이 상수항.",
+      "lesson_id": "rm-02",
+      "check_question": {
+        "stem_md": "$4x^3-2x^2y+y-7$ 에서 상수항은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$4x^3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$y$"
+          },
+          {
+            "id": "c",
+            "text_md": "$-7$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-2$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.coefficient",
+      "ability_id": "02-3",
+      "name": "계수",
+      "one_line": "문자가 포함된 항에서 문자 앞에 곱해진 수. 부호까지 포함한다.",
+      "lesson_id": "rm-02",
+      "check_question": {
+        "stem_md": "$-2x^2y$ 의 계수는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-2$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x^2$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-2x^2$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.exponent-degree",
+      "ability_id": "02-3",
+      "name": "지수와 차수",
+      "one_line": "지수는 거듭제곱 횟수(오른쪽 위 작은 수, 1은 생략). 차수는 한 항에서 문자가 곱해진 횟수. 식의 차수는 가장 높은 항의 차수.",
+      "lesson_id": "rm-02",
+      "check_question": {
+        "stem_md": "$-2x^2y$ 의 차수는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "1"
+          },
+          {
+            "id": "b",
+            "text_md": "2"
+          },
+          {
+            "id": "c",
+            "text_md": "3"
+          },
+          {
+            "id": "d",
+            "text_md": "0"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.like-terms",
+      "ability_id": "02-4",
+      "name": "동류항",
+      "one_line": "문자와 차수가 각각 같은 항. 동류항끼리만 더하고 뺄 수 있다. 상수항끼리는 모두 동류항.",
+      "lesson_id": "rm-02",
+      "check_question": {
+        "stem_md": "$3x$ 와 동류항인 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-x^2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$3y$"
+          },
+          {
+            "id": "c",
+            "text_md": "$-5x$"
+          },
+          {
+            "id": "d",
+            "text_md": "$3$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.distributive",
+      "ability_id": "03-1",
+      "name": "분배법칙",
+      "one_line": "$a(b+c)=ab+ac$. 괄호 밖의 수를 괄호 안 각 항에 차례로 곱해 더한다. 뺄셈은 음수를 더한 것으로 본다.",
+      "lesson_id": "rm-03",
+      "check_question": {
+        "stem_md": "$-3(4x-7)$ 을 풀면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-12x-21$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-12x+21$"
+          },
+          {
+            "id": "c",
+            "text_md": "$12x-21$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-12x-7$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.reciprocal",
+      "ability_id": "03-1",
+      "name": "역수",
+      "one_line": "곱해서 1이 되는 수. 분수의 분모와 분자를 바꾼 수. 나눗셈은 역수를 곱하는 것과 같다.",
+      "lesson_id": "rm-03",
+      "check_question": {
+        "stem_md": "$-3$ 의 역수는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\frac13$"
+          },
+          {
+            "id": "c",
+            "text_md": "$-\\frac13$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-3$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.common-factor",
+      "ability_id": "03-2",
+      "name": "공통인수로 묶기",
+      "one_line": "분배법칙을 거꾸로 쓰기. $ab+ac=a(b+c)$. 각 항에 공통으로 곱해진 것을 찾아 괄호 밖으로 뺀다.",
+      "lesson_id": "rm-03",
+      "check_question": {
+        "stem_md": "$4x^2-6x$ 를 공통인수로 묶으면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2x(2x-3)$"
+          },
+          {
+            "id": "b",
+            "text_md": "$2(2x^2-3)$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x(4x-6)$"
+          },
+          {
+            "id": "d",
+            "text_md": "$2x(2x-6)$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.fraction",
+      "ability_id": "04-1",
+      "name": "분수의 뜻",
+      "one_line": "가로줄 아래가 분모, 위가 분자. 분모는 0이 될 수 없다.",
+      "lesson_id": "rm-04",
+      "check_question": {
+        "stem_md": "분수 $\\frac{b}{a}$ 에서 반드시 지켜야 하는 조건은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$a\\neq0$"
+          },
+          {
+            "id": "b",
+            "text_md": "$b\\neq0$"
+          },
+          {
+            "id": "c",
+            "text_md": "$a>b$"
+          },
+          {
+            "id": "d",
+            "text_md": "$a,b$가 자연수"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.reduce",
+      "ability_id": "04-2",
+      "name": "약분과 기약분수",
+      "one_line": "분모·분자를 같은 수로 나누는 것이 약분. 더 이상 약분되지 않는 분수가 기약분수. 답은 기약분수로 쓴다.",
+      "lesson_id": "rm-04",
+      "check_question": {
+        "stem_md": "$\\frac{6}{24}$ 를 기약분수로 나타내면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$\\frac{3}{12}$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\frac{2}{8}$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac14$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac{1}{6}$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.fraction-add",
+      "ability_id": "04-3",
+      "name": "분수의 덧셈",
+      "one_line": "분모가 다르면 더할 수 없다. 분모를 같게 만드는 통분을 거친 뒤 분자끼리 더한다.",
+      "lesson_id": "rm-04",
+      "check_question": {
+        "stem_md": "$\\frac12+\\frac13$ 은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$\\frac25$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\frac56$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac16$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac23$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.fraction-mul",
+      "ability_id": "04-4",
+      "name": "분수의 곱셈",
+      "one_line": "통분 없이 분자끼리, 분모끼리 곱한다. 결과는 약분해 기약분수로.",
+      "lesson_id": "rm-04",
+      "check_question": {
+        "stem_md": "$\\frac35\\times\\frac79$ 는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$\\frac{21}{45}$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\frac{10}{14}$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac{7}{15}$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac{27}{35}$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.complex-fraction",
+      "ability_id": "04-5",
+      "name": "번분수",
+      "one_line": "분수 안에 분수가 있는 꼴. $\\dfrac{\\frac ba}{\\frac dc}=\\dfrac{bc}{ad}$. 분모·분자에 같은 수를 곱해 정리한 것(분수의 성질).",
+      "lesson_id": "rm-04",
+      "check_question": {
+        "stem_md": "$\\dfrac{\\;\\frac23\\;}{\\;\\frac45\\;}$ 를 정리하면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$\\frac{8}{15}$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\frac{5}{6}$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac{6}{20}$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\frac{10}{12}$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.equality",
+      "ability_id": "05-1",
+      "name": "등식과 양변",
+      "one_line": "등호(=)가 들어간 식이 등식. 등호 왼쪽이 좌변, 오른쪽이 우변, 둘을 함께 양변이라 한다.",
+      "lesson_id": "rm-05",
+      "check_question": {
+        "stem_md": "$2x+10=4$ 에서 우변은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2x$"
+          },
+          {
+            "id": "b",
+            "text_md": "$10$"
+          },
+          {
+            "id": "c",
+            "text_md": "$4$"
+          },
+          {
+            "id": "d",
+            "text_md": "$2x+10$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.linear-eq-solve",
+      "ability_id": "05-3",
+      "name": "일차방정식 풀기",
+      "one_line": "목표는 좌변에 $x$만 남기기. 상수항을 먼저 없애고(양변에 같은 수 더하거나 빼기), 곱해진 수는 역수를 곱해 없앤다.",
+      "lesson_id": "rm-05",
+      "check_question": {
+        "stem_md": "$2x=-6$ 에서 $x$를 구하려고 양변에 곱할 수는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-6$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac12$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-\\frac12$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.inequality",
+      "ability_id": "06-1",
+      "name": "부등식",
+      "one_line": "부등호(<, >, ≤, ≥)가 들어간 식. 등식처럼 좌변·우변·양변이라 부른다.",
+      "lesson_id": "rm-06",
+      "check_question": {
+        "stem_md": "다음 중 부등식은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2x+1=5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$2x+1<5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$2x+1$"
+          },
+          {
+            "id": "d",
+            "text_md": "$x^2$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.linear-ineq-solve",
+      "ability_id": "06-3",
+      "name": "일차부등식 풀기",
+      "one_line": "방정식과 같은 순서로 $x$만 남기되, 음수를 곱하거나 나누는 순간 부등호 방향을 뒤집는다.",
+      "lesson_id": "rm-06",
+      "check_question": {
+        "stem_md": "$-x\\le7$ 의 해는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$x\\le-7$"
+          },
+          {
+            "id": "b",
+            "text_md": "$x\\ge-7$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x\\le7$"
+          },
+          {
+            "id": "d",
+            "text_md": "$x\\ge7$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.power",
+      "ability_id": "07-1",
+      "name": "밑과 지수",
+      "one_line": "$a^n$ 은 $a$를 $n$번 곱한 것. 곱해지는 $a$가 밑, 횟수 $n$이 지수.",
+      "lesson_id": "rm-07",
+      "check_question": {
+        "stem_md": "$5^3$ 에서 밑은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$15$"
+          },
+          {
+            "id": "d",
+            "text_md": "$125$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.exp-add",
+      "ability_id": "07-1",
+      "name": "지수의 합과 곱",
+      "one_line": "밑이 같은 거듭제곱의 곱은 지수를 더한다: $a^ma^n=a^{m+n}$. 거듭제곱의 거듭제곱은 지수를 곱한다: $(a^m)^n=a^{mn}$.",
+      "lesson_id": "rm-07",
+      "check_question": {
+        "stem_md": "$(a^3)^2$ 은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$a^5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$a^6$"
+          },
+          {
+            "id": "c",
+            "text_md": "$a^9$"
+          },
+          {
+            "id": "d",
+            "text_md": "$2a^3$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.exp-sub",
+      "ability_id": "07-2",
+      "name": "지수의 차",
+      "one_line": "밑이 같은 거듭제곱의 나눗셈은 약분: $m>n$이면 $a^{m-n}$, $m=n$이면 1, $m<n$이면 $\\dfrac{1}{a^{n-m}}$.",
+      "lesson_id": "rm-07",
+      "check_question": {
+        "stem_md": "$\\dfrac{a^2}{a^5}$ 은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$a^3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$a^{-3}$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\dfrac{1}{a^3}$"
+          },
+          {
+            "id": "d",
+            "text_md": "$1$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.exp-dist",
+      "ability_id": "07-3",
+      "name": "지수의 분배",
+      "one_line": "$(ab)^n=a^nb^n$, $\\left(\\frac ab\\right)^n=\\frac{a^n}{b^n}$ ($b\\ne0$). 거꾸로, 지수가 같을 때만 밑을 곱해 합칠 수 있다.",
+      "lesson_id": "rm-07",
+      "check_question": {
+        "stem_md": "$14^3$ 과 같은 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2\\cdot7^3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$2^3\\cdot7^3$"
+          },
+          {
+            "id": "c",
+            "text_md": "$2^3\\cdot7$"
+          },
+          {
+            "id": "d",
+            "text_md": "$2\\cdot7\\cdot3$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.sqrt",
+      "ability_id": "08-1",
+      "name": "루트의 뜻",
+      "one_line": "$\\sqrt a$는 넓이가 $a$인 정사각형의 한 변의 길이, 곧 제곱해서 $a$가 되는 양수. $\\sqrt4=2$이지만 $\\sqrt5$는 분수로 쓸 수 없는 무리수.",
+      "lesson_id": "rm-08",
+      "check_question": {
+        "stem_md": "넓이가 5인 정사각형의 한 변의 길이는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$2.5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\sqrt5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac52$"
+          },
+          {
+            "id": "d",
+            "text_md": "$5^2$"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.sqrt-mul",
+      "ability_id": "08-2",
+      "name": "근호의 곱셈·나눗셈",
+      "one_line": "$\\sqrt a\\sqrt b=\\sqrt{ab}$, $\\dfrac{\\sqrt a}{\\sqrt b}=\\sqrt{\\dfrac ab}$. 더하기·빼기는 이렇게 합칠 수 없다.",
+      "lesson_id": "rm-08",
+      "check_question": {
+        "stem_md": "$\\sqrt2\\times\\sqrt3$ 은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$\\sqrt5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$\\sqrt6$"
+          },
+          {
+            "id": "c",
+            "text_md": "$6$"
+          },
+          {
+            "id": "d",
+            "text_md": "$2\\sqrt3$"
+          }
+        ],
+        "correct": "b"
+      }
     }
   ],
   "edges": [
@@ -546,6 +1184,201 @@
     {
       "source_id": "c.integer",
       "target_id": "c.fraction-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.integer",
+      "target_id": "c.term",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.term",
+      "target_id": "c.coefficient",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.term",
+      "target_id": "c.exponent-degree",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.exponent-degree",
+      "target_id": "c.like-terms",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.coefficient",
+      "target_id": "c.like-terms",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.exponent-degree",
+      "target_id": "c.quadratic-expr",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.term",
+      "target_id": "c.distributive",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.distributive",
+      "target_id": "c.common-factor",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.reciprocal",
+      "target_id": "c.fraction-mul",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.rational",
+      "target_id": "c.fraction",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction",
+      "target_id": "c.fraction-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction-props",
+      "target_id": "c.reduce",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction-props",
+      "target_id": "c.fraction-add",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction",
+      "target_id": "c.fraction-mul",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction-props",
+      "target_id": "c.complex-fraction",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction-mul",
+      "target_id": "c.complex-fraction",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equality",
+      "target_id": "c.equality-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.fraction",
+      "target_id": "c.equality-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.reciprocal",
+      "target_id": "c.equality-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equality",
+      "target_id": "c.equation",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equality-props",
+      "target_id": "c.linear-eq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equation",
+      "target_id": "c.linear-eq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.like-terms",
+      "target_id": "c.linear-eq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equality",
+      "target_id": "c.inequality",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.inequality",
+      "target_id": "c.ineq-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.ineq-props",
+      "target_id": "c.linear-ineq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.distributive",
+      "target_id": "c.linear-ineq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.linear-eq-solve",
+      "target_id": "c.linear-ineq-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.exponent-degree",
+      "target_id": "c.power",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.power",
+      "target_id": "c.exp-add",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.exp-add",
+      "target_id": "c.exp-sub",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.reduce",
+      "target_id": "c.exp-sub",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.power",
+      "target_id": "c.exp-dist",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.irrational",
+      "target_id": "c.sqrt",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.power",
+      "target_id": "c.sqrt",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.sqrt",
+      "target_id": "c.sqrt-mul",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.sqrt",
+      "target_id": "c.sqrt-props",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.common-factor",
+      "target_id": "c.perfect-square",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.quadratic-expr",
+      "target_id": "c.perfect-square",
       "type": "prerequisite"
     }
   ]
