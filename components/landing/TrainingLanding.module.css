@@ -102,3 +102,9 @@
 
 .sceneSection { color: var(--color-ink); }
 .glassCard p { color: var(--color-muted); }
+
+.freeGuide { display:flex; align-items:flex-start; gap:12px; margin-top:20px; padding:16px 18px; border:1px solid var(--color-border-brand); border-radius:12px; background:var(--color-bg-elevated); }
+.freeGuide > svg { flex-shrink:0; width:22px; height:22px; color:var(--color-primary); }
+.freeGuide p { margin:0; color:var(--color-text-secondary); font-size:14px; line-height:1.6; word-break:keep-all; }
+.freeGuide a { display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--color-primary); font-size:15px; font-weight:700; text-decoration:underline; text-underline-offset:4px; }
+.freeGuide a:focus-visible { outline:2px solid var(--color-primary); outline-offset:3px; border-radius:4px; }
