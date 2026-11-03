@@ -17,7 +17,7 @@ scene.narration.forEach(s=>{markdown(s.text);for(const action of s.cue?.actions?
   if(stage.type==='steps')stage.steps.forEach(s=>{check(s.tex);if(s.why)markdown(s.why);if(s.think)markdown(s.think);});
   if(stage.type==='tree')treeNodes(stage.root).forEach(({node})=>{markdown(node.label);if(node.tex)check(node.tex);});
   if(stage.type==='chain')stage.nodes.forEach(n=>{if(n.tex)check(n.tex);markdown(n.text);});
-  if(stage.type==='table')stage.rows.forEach(r=>r.cells.forEach(markdown));
+  if(stage.type==='table'){stage.columns.forEach(markdown);stage.rows.forEach(r=>r.cells.forEach(markdown));}
   if(stage.type==='quiz'){markdown(stage.stem_md);stage.options.forEach(o=>markdown(o.text_md));markdown(stage.explain);}
  }
 }

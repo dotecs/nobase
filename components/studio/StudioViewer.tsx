@@ -29,4 +29,4 @@ export function StudioViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=E
  </StudioPlayer></StudioFrame>;
 }
 
-function ChalkStage({scene,state,children}:{scene:import('@/lib/learn/lessons/schema').Scene;state:import('@/lib/learn/lessons/stage-state').StageState;children:React.ReactNode}){return ['graph','slider','figure'].includes(scene.stage.type)?children:<ChalkSurface scene={scene} state={state} marks={state.chalk??[]} revision={scene.id+JSON.stringify(state.revealed)}>{children}</ChalkSurface>;}
+function ChalkStage({scene,state,children}:{scene:import('@/lib/learn/lessons/schema').Scene;state:import('@/lib/learn/lessons/stage-state').StageState;children:React.ReactNode}){return ['graph','slider'].includes(scene.stage.type)?children:<ChalkSurface scene={scene} state={state} marks={state.chalk??[]} revision={scene.id+JSON.stringify(state.revealed)}>{children}</ChalkSurface>;}

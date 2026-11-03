@@ -19,3 +19,26 @@ export function shadePath(mark:ChalkMark,space:ChalkSpace){const a=mark.action;i
 
 export function underlinePoints(action:Extract<ChalkAction,{type:'underline'}>,space:ChalkSpace){if(action.from&&action.to)return linePoints(chalkPoint(action.from,space)!,chalkPoint(action.to,space)!);if(action.target==='axis:x')return linePoints({x:space.sx(space.x[0]),y:space.sy(0)},{x:space.sx(space.x[1]),y:space.sy(0)});if(action.target==='axis:y')return linePoints({x:space.sx(0),y:space.sy(space.y[0])},{x:space.sx(0),y:space.sy(space.y[1])});const b=space.target(action.target);return b?linePoints({x:b.left,y:b.bottom+3},{x:b.right,y:b.bottom+3}):[];}
 export function curvedArrow(from:ChalkPoint,to:ChalkPoint){const dx=to.x-from.x,dy=to.y-from.y,c={x:(from.x+to.x)/2-dy*.15,y:(from.y+to.y)/2+dx*.15};return Array.from({length:25},(_,i)=>{const t=i/24;return {x:(1-t)**2*from.x+2*(1-t)*t*c.x+t*t*to.x,y:(1-t)**2*from.y+2*(1-t)*t*c.y+t*t*to.y};});}
+
+export function rotatedMemoBounds(rect: { left: number; top: number; width: number; height: number }, anchor: ChalkPoint, degrees: number): TargetBox {
+  const radians = degrees * Math.PI / 180;
+  const corners = [
+    { x: rect.left, y: rect.top }, { x: rect.left + rect.width, y: rect.top },
+    { x: rect.left, y: rect.top + rect.height }, { x: rect.left + rect.width, y: rect.top + rect.height },
+  ].map(point => ({
+    x: anchor.x + (point.x - anchor.x) * Math.cos(radians) - (point.y - anchor.y) * Math.sin(radians),
+    y: anchor.y + (point.x - anchor.x) * Math.sin(radians) + (point.y - anchor.y) * Math.cos(radians),
+  }));
+  const left = Math.min(...corners.map(point => point.x)), right = Math.max(...corners.map(point => point.x));
+  const top = Math.min(...corners.map(point => point.y)), bottom = Math.max(...corners.map(point => point.y));
+  return { left, right, top, bottom, x: (left + right) / 2, y: (top + bottom) / 2 };
+}
+
+/** Start just outside the measured text, on the side facing the destination. */
+export function memoArrowStart(box: TargetBox, target: ChalkPoint): ChalkPoint {
+  const dx = target.x - box.x, dy = target.y - box.y;
+  const distance = Math.hypot(dx, dy);
+  if (!distance) return { x: box.right + 8, y: box.y };
+  const edge = Math.min(dx ? (box.right - box.left) / 2 / Math.abs(dx) : Infinity, dy ? (box.bottom - box.top) / 2 / Math.abs(dy) : Infinity);
+  return { x: box.x + dx * edge + dx / distance * 8, y: box.y + dy * edge + dy / distance * 8 };
+}

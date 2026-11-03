@@ -21,3 +21,7 @@
 .surface[data-canvas="true"] { width:100%; height:100%; }
 .surface[data-board="true"] { width:1280px; height:720px; }
 .canvasContent { position:absolute; inset:48px; }
+
+.memoText { display:inline-block; max-width:100%; vertical-align:top; }
+
+.figureContent { position:absolute; inset:0; }

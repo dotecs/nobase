@@ -17,7 +17,7 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
   const svg = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
   const items = itemsOf(scene.stage);
-  const canvas = scene.stage.type === 'board' || items.length > 0;
+  const canvas = scene.stage.type === 'board' || scene.stage.type === 'figure' || items.length > 0;
   const targets = useTargetBoxes(root, svg, revision + JSON.stringify(size));
   useEffect(() => {
     const element = root.current;
@@ -33,7 +33,7 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
   }, []);
   const normalized = canvas;
   return <div ref={root} className={styles.surface} data-canvas={canvas} data-board={scene.stage.type === 'board'}>
-    {canvas ? <div className={styles.canvasContent}><StageFit intrinsic={scene.stage.type === 'tree'}>{children}</StageFit></div> : children}
+    {scene.stage.type === 'figure' ? <div className={styles.figureContent}>{children}</div> : canvas ? <div className={styles.canvasContent}><StageFit intrinsic={scene.stage.type === 'tree'}>{children}</StageFit></div> : children}
     <BoardItems items={items} state={state} params={itemParameters(scene.stage, state.params)} space={{ sx: x => x * size.width, sy: y => y * size.height }} />
     <svg ref={svg} className={styles.overlay} viewBox={'0 0 ' + size.width + ' ' + size.height}>
       <ChalkLayer marks={marks} space={{

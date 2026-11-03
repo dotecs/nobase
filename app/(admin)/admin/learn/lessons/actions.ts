@@ -1,4 +1,5 @@
 'use server';
+import {AUDIO_BATCH_BUDGET_MS} from '@/lib/learn/lessons/audio-batch-settings';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { requireCoach,runtimeError } from '@/lib/learn/runtime';
@@ -7,14 +8,15 @@ import { lessonSchema } from '@/lib/learn/lessons/schema';
 import { generateLessonAudio,LESSON_VOICE } from '@/lib/learn/lessons/audio';
 import type { AudioGenerationResult } from '@/lib/learn/lessons/audio';
 export async function generateAudio(id:string,version:number,options:{forceAlignment?:boolean;sentenceIds?:string[];excludeIds?:string[]}={}):Promise<{result?:AudioGenerationResult;error?:string}>{
+ const deadline=Date.now()+AUDIO_BATCH_BUDGET_MS;
  try{await requireCoach();const key=process.env.ELEVENLABS_API_KEY?.trim();if(!key)return {error:'키 없음'};
  const client=lessonDb(),lesson=await client.from('learn_lessons').select('*').eq('id',id).eq('version',version).single();if(lesson.error)throw lesson.error;
  const settings=z.object({forceAlignment:z.boolean().optional(),sentenceIds:z.array(z.string()).max(1000).optional(),excludeIds:z.array(z.string()).max(1000).optional()}).parse(options);
  const existing=await client.from('learn_lesson_audio').select('*').eq('lesson_id',id);if(existing.error)throw existing.error;
- const result=await generateLessonAudio(lessonSchema.parse(lesson.data.body),version,{key,voice:process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE,...settings,existing:(existing.data??[]).filter(r=>r.lesson_version===version),reusable:existing.data??[],save:async(row,bytes)=>{
+ const result=await generateLessonAudio(lessonSchema.parse(lesson.data.body),version,{key,deadline,voice:process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE,...settings,existing:(existing.data??[]).filter(r=>r.lesson_version===version),reusable:existing.data??[],save:async(row,bytes)=>{
   if(bytes){const uploaded=await client.storage.from('learn-lessons').upload(row.path,bytes,{contentType:'audio/mpeg',upsert:true,cacheControl:'0'});if(uploaded.error)throw uploaded.error;}
   const saved=await client.from('learn_lesson_audio').upsert(row,{onConflict:'lesson_id,lesson_version,sentence_id'});if(saved.error)throw saved.error;
- }});revalidatePath('/admin/learn/lessons');return {result};
+ }});return {result};
  }catch(error){return {error:runtimeError(error,'lesson.generateAudio')};}
 }
 export async function advanceLessonStatus(id:string,version:number,status:'reviewed'|'live'):Promise<{error?:string}>{
