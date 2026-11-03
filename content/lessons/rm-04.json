@@ -1,0 +1,406 @@
+{
+  "id": "rm-04",
+  "kind": "concept",
+  "title": "분수의 성질",
+  "pack_id": "root-math",
+  "ability_ids": ["04-1", "04-2", "04-3", "04-4", "04-5"],
+  "intro": "분모는 0이 아니다. 분모·분자에 같은 수를 곱하거나 나눠도 값은 그대로 — 약분·통분·번분수가 전부 이 한 문장에서 나온다.",
+  "goal": "분수의 성질로 약분·통분·곱셈·번분수를 처리하고, 답은 기약분수로 쓴다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "분수의 뜻 — 분모는 0이 될 수 없다",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "분수", "accent": "분수", "subtitle": "분모·분자, 그리고 분모 ≠ 0" },
+      "tag": "define",
+      "stage": {
+        "type": "board",
+        "items": [
+          { "id": "frac", "tex": "\\dfrac{A}{B}", "position": { "x": 0.36, "y": 0.46 }, "size": "lg" },
+          { "id": "cond", "tex": "B \\neq 0", "position": { "x": 0.68, "y": 0.46 }, "size": "lg" }
+        ],
+        "initial": { "hidden_items": ["frac", "cond"] }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 분수의 성질입니다. 고등수학에서 가장 자주 만나는 수의 꼴이 분수입니다. 소수는 거의 나오지 않고, 대부분의 수가 분수로 표현되죠.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 분수의 성질입니다. 고등수학에서 가장 자주 만나는 수의 꼴이 분수입니다. 소수는 거의 나오지 않고, 대부분의 수가 분수로 표현되죠.",
+          "cue": { "actions": [] }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "1강에서 분모와 분자가 정수인 분수로 쓸 수 있는 수를 유리수라고 했습니다. 그 분수를 오늘은 기본부터 다시 따져 봅니다.",
+          "tts": "일강에서 분모와 분자가 정수인 분수로 쓸 수 있는 수를 유리수라고 했습니다. 그 분수를 오늘은 기본부터 다시 따져 봅니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "item", "id": "frac", "at": "@그 분수를" }
+          ] }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "가로줄 아래에 있는 수를 분모, 위에 있는 수를 분자라고 합니다.",
+          "tts": "가로줄 아래에 있는 수를 분모, 위에 있는 수를 분자라고 합니다.",
+          "cue": { "actions": [
+            { "type": "handwrite", "text": "분모", "position": { "x": 0.16, "y": 0.62 }, "arrow_to": { "x": 0.31, "y": 0.56 }, "at": "@아래에 있는" },
+            { "type": "handwrite", "text": "분자", "position": { "x": 0.16, "y": 0.28 }, "arrow_to": { "x": 0.31, "y": 0.36 }, "at": "@위에 있는" }
+          ] }
+        },
+        {
+          "id": "s1-4",
+          "role": "say",
+          "text": "분수에서 가장 먼저 챙겨야 할 조건은 분모가 0이 될 수 없다는 것입니다. 다시 한 번, 분모는 0이 될 수 없습니다. 이 조건은 5강 등식의 성질에서 \"0으로 나눌 수 없다\"로 다시 만납니다.",
+          "tts": "분수에서 가장 먼저 챙겨야 할 조건은, [slight emphasis] 분모가 영이 될 수 없다는 것입니다. 다시 한 번, 분모는 영이 될 수 없습니다. 이 조건은 오강 등식의 성질에서, 영으로 나눌 수 없다, 로 다시 만납니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "item", "id": "cond", "at": "@분모가 영이" },
+            { "type": "underline", "target": "item:cond", "at": "@다시 한 번", "ttl_ms": 6000 },
+            { "type": "handwrite", "text": "→ 5강 등식의 성질", "position": { "x": 0.68, "y": 0.72 }, "at": "@오강 등식의" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "분수의 성질 — 같은 수를 곱하거나 나눠도 값은 그대로",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "분수의 성질", "accent": "성질", "subtitle": "분모·분자에 0이 아닌 같은 수를 곱하거나 나누어도 값이 변하지 않는다" },
+      "tag": "define",
+      "stage": {
+        "type": "board",
+        "items": [
+          { "id": "p25", "tex": "\\dfrac{2}{5}", "position": { "x": 0.14, "y": 0.42 }, "size": "lg" },
+          { "id": "eq1", "tex": "=\\dfrac{2\\times2}{5\\times2}", "position": { "x": 0.33, "y": 0.42 }, "size": "lg" },
+          { "id": "eq2", "tex": "=\\dfrac{2\\times3}{5\\times3}", "position": { "x": 0.55, "y": 0.42 }, "size": "lg" },
+          { "id": "eq3", "tex": "=\\dfrac{2\\times4}{5\\times4}=\\cdots", "position": { "x": 0.8, "y": 0.42 }, "size": "lg" },
+          { "id": "rule", "text": "분모와 분자에 0이 아닌 같은 수를 곱하거나 나누어도 값이 변하지 않는다.", "position": { "x": 0.5, "y": 0.78 }, "size": "md" }
+        ],
+        "initial": { "hidden_items": ["eq1", "eq2", "eq3", "rule"] }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "분수의 성질은 한 문장입니다. 분모와 분자에 0이 아닌 같은 수를 곱하거나 나누어도, 값이 변하지 않는다.",
+          "tts": "분수의 성질은 한 문장입니다. [slowly, emphasizing] 분모와 분자에 영이 아닌 같은 수를 곱하거나 나누어도, 값이 변하지 않는다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "item", "id": "rule", "at": "@분모와 분자에" },
+            { "type": "underline", "target": "item:rule", "at": "@값이 변하지", "ttl_ms": 5000 }
+          ] }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "$\\frac25$의 분모와 분자에 똑같이 2를 곱해 $\\frac4{10}$을 만들어도, 3을 곱해 $\\frac6{15}$를, 4를 곱해 $\\frac8{20}$을 만들어도 모두 같은 값입니다.",
+          "tts": "오분의이의 분모와 분자에 똑같이 이를 곱해 십분의사를 만들어도, 삼을 곱해 십오분의육을, 사를 곱해 이십분의팔을 만들어도 모두 같은 값입니다.",
+          "cue": { "actions": [
+            { "type": "pointer", "target": "item:p25", "at": "@start", "ttl_ms": 2500 },
+            { "type": "reveal", "target": "item", "id": "eq1", "at": "@이를 곱해" },
+            { "type": "reveal", "target": "item", "id": "eq2", "at": "@삼을 곱해" },
+            { "type": "reveal", "target": "item", "id": "eq3", "at": "@사를 곱해" }
+          ] }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$\\frac25$는 어떤 것을 다섯 조각 낸 뒤 그중 두 조각이라는 뜻이죠. 열 조각 낸 뒤 네 조각을 가져도 양은 같습니다. 그래서 본질적으로 같은 수일 수밖에 없습니다.",
+          "tts": "오분의이는 어떤 것을 다섯 조각 낸 뒤, 그중 두 조각이라는 뜻이죠. 열 조각 낸 뒤 네 조각을 가져도 양은 같습니다. 그래서 본질적으로 같은 수일 수밖에 없습니다.",
+          "cue": { "actions": [
+            { "type": "circle", "target": "item:p25", "at": "@다섯 조각", "ttl_ms": 4000 },
+            { "type": "circle", "target": "item:eq1", "at": "@열 조각", "ttl_ms": 4000 }
+          ] }
+        },
+        {
+          "id": "s2-4",
+          "role": "say",
+          "text": "곱하는 경우만이 아니라 나누어도 됩니다. 이번에는 나누는 쪽을 봅니다.",
+          "tts": "곱하는 경우만이 아니라 나누어도 됩니다. 이번에는 나누는 쪽을 봅니다.",
+          "cue": { "actions": [
+            { "type": "flash", "target": "item:rule", "at": "@나누어도 됩니다" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "약분과 기약분수",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "약분과 기약분수", "accent": "기약분수", "subtitle": "같은 수로 나누기, 더 이상 나눠지지 않을 때까지" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "\\dfrac{6}{24}" },
+          { "tex": "=\\dfrac{6\\div2}{24\\div2}=\\dfrac{3}{12}", "concept_id": "c.fraction-props", "why": "6과 24는 모두 2의 배수 — 분모·분자를 같은 수 2로 나눈다(분수의 성질)" },
+          { "tex": "=\\dfrac{3\\div3}{12\\div3}=\\dfrac{1}{4}", "concept_id": "c.fraction-props", "why": "3과 12는 모두 3의 배수 — 3으로 한 번 더 나눈다" },
+          { "tex": "\\dfrac{1}{4}\\quad(\\text{기약분수})", "concept_id": "c.reduce", "why": "1과 4를 함께 나눌 수 있는 수는 1뿐 — 더 이상 약분되지 않는다" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "나누려면 먼저 공통으로 나누어지는 수, 공약수를 알아보는 것이 중요합니다. $\\frac6{24}$를 보면 6과 24가 둘 다 2의 배수죠.",
+          "tts": "나누려면 먼저 공통으로 나누어지는 수, 공약수를 알아보는 것이 중요합니다. 이십사분의육을 보면 육과 이십사가 둘 다 이의 배수죠.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+            { "type": "highlight", "target": "step:0", "at": "@이십사분의육을" }
+          ] }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "둘 다 2로 나누면 24는 12, 6은 3. $\\frac3{12}$과 같은 값이었던 겁니다.",
+          "tts": "둘 다 이로 나누면 이십사는 십이, 육은 삼. 십이분의삼과 같은 값이었던 겁니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 1, "at": "@start" },
+            { "type": "highlight", "target": "step:1", "at": "@start" },
+            { "type": "underline", "target": "step:1", "at": "@십이분의삼과", "ttl_ms": 4000 }
+          ] }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "여기서 3과 12가 모두 3의 배수라는 것까지 보이면, 3으로 한 번 더 나누어 $\\frac14$. 결국 $\\frac6{24}=\\frac14$입니다.",
+          "tts": "여기서 삼과 십이가 모두 삼의 배수라는 것까지 보이면, 삼으로 한 번 더 나누어 사분의일. 결국 이십사분의육은 사분의일입니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 2, "at": "@삼으로 한 번" },
+            { "type": "highlight", "target": "step:2", "at": "@삼으로 한 번" }
+          ] }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "이렇게 분모와 분자를 같은 수로 나누는 것을 약분이라 하고, $\\frac14$처럼 더 이상 약분되지 않는 분수를 기약분수라고 합니다.",
+          "tts": "이렇게 분모와 분자를 같은 수로 나누는 것을 약분이라 하고, 사분의일처럼 더 이상 약분되지 않는 분수를 [slight emphasis] 기약분수라고 합니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 3, "at": "@사분의일처럼" },
+            { "type": "highlight", "target": "step:3", "at": "@사분의일처럼" },
+            { "type": "flash", "target": "step:3", "at": "@기약분수라고" }
+          ] }
+        },
+        {
+          "id": "s3-5",
+          "role": "say",
+          "text": "답은 반드시 기약분수로 적습니다. 풀이 과정에서 $\\frac3{12}$을 쓰는 건 상관없지만, 답안에 기약분수가 아닌 꼴을 쓰면 감점될 수 있습니다. 객관식 보기의 수도 모두 기약분수이니, 약분을 습관으로 만드세요.",
+          "tts": "답은 반드시 기약분수로 적습니다. 풀이 과정에서 십이분의삼을 쓰는 건 상관없지만, 답안에 기약분수가 아닌 꼴을 쓰면 감점될 수 있습니다. 객관식 보기의 수도 모두 기약분수이니, 약분을 습관으로 만드세요.",
+          "cue": { "actions": [
+            { "type": "underline", "target": "step:3", "at": "@답은 반드시", "ttl_ms": 5000 },
+            { "type": "highlight", "target": "step:1", "at": "@십이분의삼을" },
+            { "type": "highlight", "target": "step:3", "at": "@객관식" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "분수의 덧셈 — 통분",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "분수의 덧셈", "accent": "덧셈", "subtitle": "분모를 같게 만든 후 분자만 더한다" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "\\dfrac{1}{2}+\\dfrac{1}{3}" },
+          { "tex": "=\\dfrac{1\\times3}{2\\times3}+\\dfrac{1\\times2}{3\\times2}", "concept_id": "c.fraction-props", "why": "분모 2와 3을 공통의 6으로 맞춘다 — 분모·분자에 같은 수를 곱해도 값은 그대로(분수의 성질)" },
+          { "tex": "=\\dfrac{3}{6}+\\dfrac{2}{6}", "concept_id": "c.fraction-add", "why": "통분 완료 — 두 분수의 분모가 같아졌다" },
+          { "tex": "=\\dfrac{3+2}{6}=\\dfrac{5}{6}", "concept_id": "c.fraction-add", "why": "분모가 같을 때만 분자끼리 더한다" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "분수를 더할 때는 분모가 서로 다르면 더하거나 뺄 수 없습니다. 그래서 두 분수의 분모를 같게 만든 다음 처리합니다.",
+          "tts": "분수를 더할 때는, 분모가 서로 다르면 더하거나 뺄 수 없습니다. 그래서 두 분수의 분모를 같게 만든 다음 처리합니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+            { "type": "highlight", "target": "step:0", "at": "@start" }
+          ] }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "$\\frac12+\\frac13$은 분모가 2와 3으로 다르죠. 2의 배수이면서 3의 배수이기도 한 수, 6을 찾습니다.",
+          "tts": "이분의일 더하기 삼분의일은 분모가 이와 삼으로 다르죠. 이의 배수이면서 삼의 배수이기도 한 수, 육을 찾습니다.",
+          "cue": { "actions": [
+            { "type": "underline", "target": "step:0", "at": "@분모가 이와", "ttl_ms": 4000 }
+          ] }
+        },
+        {
+          "id": "s4-3",
+          "role": "say",
+          "text": "분모를 6으로 만들기 위해 $\\frac12$의 분모와 분자에는 3을, $\\frac13$에는 2를 곱합니다. 방금 배운 분수의 성질이라 값은 그대로입니다.",
+          "tts": "분모를 육으로 만들기 위해, 이분의일의 분모와 분자에는 삼을, 삼분의일에는 이를 곱합니다. 방금 배운 분수의 성질이라 값은 그대로입니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 1, "at": "@start" },
+            { "type": "highlight", "target": "step:1", "at": "@start" }
+          ] }
+        },
+        {
+          "id": "s4-4",
+          "role": "say",
+          "text": "그러면 $\\frac36$과 $\\frac26$. 이렇게 두 분수의 분모를 통일하는 것을 통분이라고 합니다.",
+          "tts": "그러면 육분의삼과 육분의이. 이렇게 두 분수의 분모를 통일하는 것을 [slight emphasis] 통분이라고 합니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 2, "at": "@start" },
+            { "type": "highlight", "target": "step:2", "at": "@start" },
+            { "type": "underline", "target": "step:2", "at": "@통분이라고", "ttl_ms": 4000 }
+          ] }
+        },
+        {
+          "id": "s4-5",
+          "role": "say",
+          "text": "분모가 같아졌으니 비로소 분자끼리 더해 $\\frac56$. 분수의 덧셈은 반드시 통분을 거칩니다.",
+          "tts": "분모가 같아졌으니 비로소 분자끼리 더해 육분의오. 분수의 덧셈은 반드시 통분을 거칩니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 3, "at": "@start" },
+            { "type": "highlight", "target": "step:3", "at": "@start" },
+            { "type": "flash", "target": "step:3", "at": "@반드시 통분을" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "분수의 곱셈",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "분수의 곱셈", "accent": "곱셈", "subtitle": "분자는 분자끼리, 분모는 분모끼리" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "\\dfrac{3}{5}\\times\\dfrac{7}{9}" },
+          { "tex": "=\\dfrac{3\\times7}{5\\times9}=\\dfrac{21}{45}", "concept_id": "c.fraction-mul", "why": "통분 없이 분자끼리, 분모끼리 곱한다" },
+          { "tex": "=\\dfrac{21\\times\\frac13}{45\\times\\frac13}=\\dfrac{7}{15}", "concept_id": "c.reduce", "why": "21과 45는 모두 3의 배수 — 3으로 나눈다 = 역수 $\\frac13$을 곱한다(약분)" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "분수의 곱셈은 덧셈보다 간편합니다. 통분이 필요 없고, 분자는 분자끼리, 분모는 분모끼리 곱하면 됩니다.",
+          "tts": "분수의 곱셈은 덧셈보다 간편합니다. 통분이 필요 없고, 분자는 분자끼리, 분모는 분모끼리 곱하면 됩니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+            { "type": "highlight", "target": "step:0", "at": "@start" }
+          ] }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "$\\frac35\\times\\frac79$는 분자 3 곱하기 7, 분모 5 곱하기 9로 $\\frac{21}{45}$.",
+          "tts": "오분의삼 곱하기 구분의칠은, 분자 삼 곱하기 칠, 분모 오 곱하기 구로 사십오분의이십일.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 1, "at": "@start" },
+            { "type": "highlight", "target": "step:1", "at": "@start" }
+          ] }
+        },
+        {
+          "id": "s5-3",
+          "role": "say",
+          "text": "그런데 21과 45가 둘 다 3의 배수죠. 3으로 나누는 것은 3강에서 배운 역수, 곧 $\\frac13$을 곱하는 것과 같습니다. 약분하면 $\\frac7{15}$.",
+          "tts": "그런데 이십일과 사십오가 둘 다 삼의 배수죠. 삼으로 나누는 것은 삼강에서 배운 역수, 곧 삼분의일을 곱하는 것과 같습니다. 약분하면 십오분의칠.",
+          "cue": { "actions": [
+            { "type": "underline", "target": "step:1", "at": "@둘 다 삼의", "ttl_ms": 3000 },
+            { "type": "reveal", "target": "step", "index": 2, "at": "@삼으로 나누는" },
+            { "type": "highlight", "target": "step:2", "at": "@삼으로 나누는" }
+          ] }
+        },
+        {
+          "id": "s5-4",
+          "role": "say",
+          "text": "답은 이렇게 기약분수 $\\frac7{15}$로 적습니다.",
+          "tts": "답은 이렇게 기약분수, 십오분의칠로 적습니다.",
+          "cue": { "actions": [
+            { "type": "flash", "target": "step:2", "at": "@십오분의칠로" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "번분수 — 분수 안의 분수",
+      "headline": { "eyebrow": "4강 · 분수의 성질", "title": "번분수", "accent": "번분수", "subtitle": "안쪽끼리 곱해 분모로, 바깥쪽끼리 곱해 분자로" },
+      "tag": "derive",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "\\dfrac{\\;\\dfrac{D}{C}\\;}{\\;\\dfrac{B}{A}\\;}" },
+          { "tex": "=\\dfrac{\\dfrac{D}{C}\\times AC}{\\dfrac{B}{A}\\times AC}", "concept_id": "c.fraction-props", "why": "전체를 하나의 분수로 보고 분모·분자에 같은 수 $AC$를 곱한다(분수의 성질)" },
+          { "tex": "=\\dfrac{AD}{BC}", "concept_id": "c.reduce", "why": "위에서는 $C$와 $C$가, 아래에서는 $A$와 $A$가 약분된다" }
+        ],
+        "items": [
+          { "id": "note", "text": "→ 11강 근의 공식", "position": { "x": 0.84, "y": 0.9 }, "size": "sm", "color": "hand" }
+        ],
+        "initial": { "hidden_items": ["note"] }
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "복잡한 식을 보다 보면 분수 안에 분수가 들어 있는 꼴을 만납니다. 이런 꼴을 번분수라고 합니다. 어떻게 정리하는지 알고 있어야 문제 푸는 시간을 아낄 수 있습니다.",
+          "tts": "복잡한 식을 보다 보면, 분수 안에 분수가 들어 있는 꼴을 만납니다. 이런 꼴을 번분수라고 합니다. 어떻게 정리하는지 알고 있어야 문제 푸는 시간을 아낄 수 있습니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+            { "type": "highlight", "target": "step:0", "at": "@start" }
+          ] }
+        },
+        {
+          "id": "s6-2",
+          "role": "say",
+          "text": "원리는 분수의 성질입니다. 전체를 하나의 분수로 보고, 분모와 분자에 똑같이 $AC$를 곱합니다. 같은 수를 곱했으니 값은 그대로죠.",
+          "tts": "원리는 분수의 성질입니다. 전체를 하나의 분수로 보고, 분모와 분자에 똑같이 에이씨를 곱합니다. 같은 수를 곱했으니 값은 그대로죠.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 1, "at": "@전체를 하나의" },
+            { "type": "highlight", "target": "step:1", "at": "@전체를 하나의" }
+          ] }
+        },
+        {
+          "id": "s6-3",
+          "role": "say",
+          "text": "계산하면 위에서는 $C$와 $C$가 약분되어 $AD$가, 아래에서는 $A$와 $A$가 약분되어 $BC$가 남습니다. 안쪽에 있는 $B$와 $C$를 곱해 분모로, 바깥쪽에 있는 $A$와 $D$를 곱해 분자로. 이렇게 기억하세요.",
+          "tts": "계산하면 위에서는 씨와 씨가 약분되어 에이디가, 아래에서는 에이와 에이가 약분되어 비씨가 남습니다. [slight emphasis] 안쪽에 있는 비와 씨를 곱해 분모로, 바깥쪽에 있는 에이와 디를 곱해 분자로. 이렇게 기억하세요.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "step", "index": 2, "at": "@start" },
+            { "type": "highlight", "target": "step:2", "at": "@start" },
+            { "type": "underline", "target": "step:2", "at": "@안쪽에 있는", "ttl_ms": 6000 }
+          ] }
+        },
+        {
+          "id": "s6-4",
+          "role": "say",
+          "text": "오늘 배운 통분과 번분수 정리는 11강 근의 공식 유도에서 그대로 쓰입니다. 지금은 이런 정리가 있다 정도만 짚고 넘어갑니다.",
+          "tts": "오늘 배운 통분과 번분수 정리는, 십일강 근의 공식 유도에서 그대로 쓰입니다. 지금은 이런 정리가 있다 정도만 짚고 넘어갑니다.",
+          "cue": { "actions": [
+            { "type": "reveal", "target": "item", "id": "note", "at": "@십일강 근의" }
+          ] }
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "title": "확인",
+      "headline": { "eyebrow": "확인", "title": "번분수 정리와 기약분수", "accent": "기약분수", "subtitle": "안쪽끼리 분모로, 바깥쪽끼리 분자로 — 그리고 약분" },
+      "tag": "check",
+      "stage": {
+        "type": "quiz",
+        "stem_md": "$\\dfrac{\\;\\frac23\\;}{\\;\\frac45\\;}$ 를 정리하면?",
+        "options": [
+          { "id": "a", "text_md": "$\\frac{8}{15}$" },
+          { "id": "b", "text_md": "$\\frac{5}{6}$" },
+          { "id": "c", "text_md": "$\\frac{6}{20}$" },
+          { "id": "d", "text_md": "$\\frac{10}{12}$" }
+        ],
+        "correct": "b",
+        "explain": "안쪽 $3\\times4=12$가 분모, 바깥쪽 $2\\times5=10$이 분자 → $\\frac{10}{12}$. 답은 기약분수로 약분해 $\\frac56$.",
+        "trace_concept_id": "c.complex-fraction"
+      },
+      "narration": [
+        {
+          "id": "s7-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 안쪽끼리 곱해 분모로, 바깥쪽끼리 곱해 분자로. 그리고 답이 기약분수인지 한 번 더 확인하세요. 모르겠으면 '모르겠어요'를 누르면 어느 개념에서 막혔는지 되짚어 드립니다. 다음 시간에는 5강 등식의 성질입니다.",
+          "tts": "마지막으로 한 문제. 안쪽끼리 곱해 분모로, 바깥쪽끼리 곱해 분자로. 그리고 답이 기약분수인지 한 번 더 확인하세요. 모르겠으면 모르겠어요를 누르면, 어느 개념에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 오강, 등식의 성질입니다.",
+          "cue": { "actions": [] }
+        }
+      ]
+    }
+  ]
+}
