@@ -1,0 +1,341 @@
+{
+  "id": "rm-03",
+  "kind": "concept",
+  "title": "분배 법칙",
+  "pack_id": "root-math",
+  "ability_ids": ["03-1", "03-2"],
+  "intro": "괄호를 푸는 방향과 괄호를 만드는 방향, 두 방향으로 읽는 분배법칙.",
+  "goal": "a(b+c)=ab+ac로 괄호를 풀고, 거꾸로 공통인수를 찾아 괄호로 묶는다. 나눗셈은 역수의 곱으로 바꾼다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "분배법칙 — 차례대로 곱해서 더한다",
+      "headline": { "eyebrow": "3강 · 분배 법칙", "title": "분배법칙", "accent": "분배", "subtitle": "곱하기와 괄호 안의 더하기가 함께 있을 때 읽는 법" },
+      "tag": "define",
+      "stage": {
+        "type": "board",
+        "items": [
+          { "id": "a", "tex": "A", "position": { "x": 0.3, "y": 0.4 }, "size": "lg" },
+          { "id": "paren", "tex": "(B+C)", "position": { "x": 0.385, "y": 0.4 }, "size": "lg" },
+          { "id": "eq", "tex": "=", "position": { "x": 0.48, "y": 0.4 }, "size": "lg" },
+          { "id": "ab", "tex": "AB", "position": { "x": 0.56, "y": 0.4 }, "size": "lg" },
+          { "id": "plus", "tex": "+", "position": { "x": 0.625, "y": 0.4 }, "size": "lg" },
+          { "id": "ac", "tex": "AC", "position": { "x": 0.69, "y": 0.4 }, "size": "lg" }
+        ],
+        "initial": { "hidden_items": ["eq", "ab", "plus", "ac"] }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 세 번째 개념, 분배법칙입니다. 식을 해석할 때 수도 없이 쓰이는 법칙이라⏎꼭 한번 확인하고 익혀 두셔야 합니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 세 번째 개념, 분배법칙입니다. 식을 해석할 때 수도 없이 쓰이는 법칙이라, 꼭 한번 확인하고 익혀 두셔야 합니다.",
+          "cue": { "actions": [] }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "모양을 먼저 보세요. 괄호와 $A$ 사이에 아무 기호도 없죠. 2강에서 배운 대로, 이 사이에는 곱하기가 생략되어 있습니다.",
+          "tts": "모양을 먼저 보세요. 괄호와 에이 사이에 아무 기호도 없죠. 이강에서 배운 대로, 이 사이에는 곱하기가 생략되어 있습니다.",
+          "cue": {
+            "actions": [
+              { "type": "circle", "target": "item:a", "at": "@괄호와 에이" },
+              { "type": "handwrite", "text": "× 생략", "position": { "x": 0.34, "y": 0.18 }, "arrow_to": { "x": 0.345, "y": 0.34 }, "at": "@곱하기가 생략", "ttl_ms": 8000 }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "분배법칙은 곱하기와 괄호 안의 더하기가 함께 있는 식을 읽는 방법입니다. $A$에 $B$와 $C$를 더한 것을 곱하면, $A$를 $B$에도 곱하고 $C$에도 곱해서 더한 것과 같습니다.",
+          "tts": "분배법칙은, 곱하기와 괄호 안의 더하기가 함께 있는 식을 읽는 방법입니다. 에이에 비와 씨를 더한 것을 곱하면, [slight emphasis] 에이를 비에도 곱하고, 씨에도 곱해서 더한 것과 같습니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "item", "id": "eq", "at": "@에이를 비에도" },
+              { "type": "reveal", "target": "item", "id": "ab", "at": "@에이를 비에도" },
+              { "type": "arrow", "from": "item:a", "to": "item:ab", "at": "@에이를 비에도+200", "ttl_ms": 6000 },
+              { "type": "reveal", "target": "item", "id": "plus", "at": "@씨에도 곱해서" },
+              { "type": "reveal", "target": "item", "id": "ac", "at": "@씨에도 곱해서" },
+              { "type": "arrow", "from": "item:a", "to": "item:ac", "at": "@씨에도 곱해서+200", "ttl_ms": 6000 }
+            ]
+          }
+        },
+        {
+          "id": "s1-4",
+          "role": "say",
+          "text": "차례대로 곱해서 더한다. 이 한 문장이 분배법칙의 전부입니다.",
+          "tts": "[slowly, emphasizing] 차례대로 곱해서 더한다. [normal pace] 이 한 문장이 분배법칙의 전부입니다.",
+          "cue": {
+            "actions": [
+              { "type": "underline", "target": "item:ab", "at": "@차례대로" },
+              { "type": "underline", "target": "item:ac", "at": "@차례대로+400" },
+              { "type": "flash", "target": "item:a", "at": "@전부입니다" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "예시 — 괄호 안의 빼기는 음수를 더한 것",
+      "headline": { "eyebrow": "3강 · 분배 법칙", "title": "괄호 풀기", "accent": "풀기", "subtitle": "−3(4x−7): 앞의 수를 괄호 안으로 들여보낸다" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "-3(4x-7)" },
+          { "tex": "=(-3)\\times4x+(-3)\\times(-7)", "concept_id": "c.distributive", "why": "괄호 안의 −7을 '−7을 더했다'로 보고, 앞의 −3을 각 항에 차례로 곱한다" },
+          { "tex": "=-12x+21", "concept_id": "c.distributive", "why": "(−3)×4x=−12x, (−3)×(−7)=+21. 음수끼리 곱하면 양수" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "예시입니다. $-3$에 $4x-7$을 곱한 식입니다. 앞에 있는 $-3$을 괄호 안으로 들여보내서, 각각 곱한 다음 더한다고 생각하세요.",
+          "tts": "예시입니다. 마이너스삼에 사엑스마이너스칠을 곱한 식입니다. 앞에 있는 마이너스삼을 괄호 안으로 들여보내서, 각각 곱한 다음 더한다고 생각하세요.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+              { "type": "highlight", "target": "step:0", "at": "@start" }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "그런데 괄호 안은 더하기가 아니라 빼기 7인데요. 생각을 조금 바꿔서, $-7$을 더했다고 보면 됩니다. 그러면 아까 그 모양에 그대로 맞출 수 있습니다.",
+          "tts": "그런데 괄호 안은 더하기가 아니라 빼기 칠인데요. 생각을 조금 바꿔서, [slight emphasis] 마이너스칠을 더했다고 보면 됩니다. 그러면 아까 그 모양에 그대로 맞출 수 있습니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 1, "at": "@마이너스칠을 더했다고" },
+              { "type": "highlight", "target": "step:1", "at": "@마이너스칠을 더했다고" },
+              { "type": "underline", "target": "step:1", "at": "@그대로 맞출" }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$-3$과 $4x$를 곱해서 $-12x$. $-3$과 $-7$을 곱해서 $+21$, 음수끼리 곱하면 양수죠. 둘을 더하면 괄호가 풀렸습니다.",
+          "tts": "마이너스삼과 사엑스를 곱해서 마이너스십이엑스. 마이너스삼과 마이너스칠을 곱해서 플러스이십일, 음수끼리 곱하면 양수죠. 둘을 더하면 괄호가 풀렸습니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 2, "at": "@start" },
+              { "type": "highlight", "target": "step:2", "at": "@start" },
+              { "type": "flash", "target": "step:2", "at": "@괄호가 풀렸습니다" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "예시 — 나눗셈은 역수를 곱한다",
+      "headline": { "eyebrow": "3강 · 분배 법칙", "title": "나눗셈은 역수의 곱", "accent": "역수", "subtitle": "(6x+12)÷(−3): ÷(−3)을 ×(−1/3)으로" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "(6x+12)\\div(-3)" },
+          { "tex": "=(6x+12)\\times\\left(-\\tfrac13\\right)", "concept_id": "c.reciprocal", "why": "나눗셈은 역수를 곱하는 것. −3=−3/1의 분모·분자를 바꾸면 −1/3" },
+          { "tex": "=6x\\times\\left(-\\tfrac13\\right)+12\\times\\left(-\\tfrac13\\right)", "concept_id": "c.distributive", "why": "곱셈은 순서가 상관없으므로 뒤에 곱해져 있어도 분배법칙은 그대로" },
+          { "tex": "=-2x-4", "concept_id": "c.distributive", "why": "6x×(−1/3)=−2x, 12×(−1/3)=−4" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "다음 예시는 나누기 $-3$입니다. 괄호에 나눗셈이 붙어 있으면, 이제부터 나눗셈은 역수를 곱하는 것으로 생각해 주세요.",
+          "tts": "다음 예시는 나누기 마이너스삼입니다. 괄호에 나눗셈이 붙어 있으면, [slight emphasis] 이제부터 나눗셈은 역수를 곱하는 것으로 생각해 주세요.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+              { "type": "highlight", "target": "step:0", "at": "@start" }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "역수란 서로 곱해서 1이 되는 수입니다. 분수로 보면 분모와 분자의 자리를 바꾼 수죠. $-3$은 $\\frac{-3}{1}$이니까 자리를 바꾸면 $\\frac{1}{-3}$, 마이너스를 앞으로 빼면 $-\\frac13$입니다.",
+          "tts": "역수란, 서로 곱해서 일이 되는 수입니다. 분수로 보면 분모와 분자의 자리를 바꾼 수죠. 마이너스삼은 일분의마이너스삼이니까, 자리를 바꾸면 마이너스삼분의일, 마이너스를 앞으로 빼면 마이너스 삼분의일입니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 1, "at": "@마이너스삼은" },
+              { "type": "highlight", "target": "step:1", "at": "@마이너스삼은" },
+              { "type": "underline", "target": "step:1", "at": "@마이너스를 앞으로" }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "곱하기는 순서가 상관없습니다. 4 곱하기 3이나 3 곱하기 4나 같죠. 그래서 뒤에 곱해져 있어도 분배법칙은 똑같이 적용됩니다. 차례대로 곱해서 더하면 됩니다.",
+          "tts": "곱하기는 순서가 상관없습니다. 사 곱하기 삼이나 삼 곱하기 사나 같죠. 그래서 뒤에 곱해져 있어도, 분배법칙은 똑같이 적용됩니다. 차례대로 곱해서 더하면 됩니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 2, "at": "@그래서 뒤에" },
+              { "type": "highlight", "target": "step:2", "at": "@그래서 뒤에" }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "$6x$에 $-\\frac13$을 곱하면 $-2x$, $12$에 $-\\frac13$을 곱하면 $-4$. 그래서 $-2x-4$입니다.",
+          "tts": "육엑스에 마이너스 삼분의일을 곱하면 마이너스이엑스, 십이에 마이너스 삼분의일을 곱하면 마이너스사. 그래서 마이너스이엑스마이너스사입니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 3, "at": "@start" },
+              { "type": "highlight", "target": "step:3", "at": "@start" },
+              { "type": "underline", "target": "step:3", "at": "@그래서" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "거꾸로 — 공통인수로 묶기",
+      "headline": { "eyebrow": "3강 · 분배 법칙", "title": "거꾸로 쓰는 분배법칙", "accent": "거꾸로", "subtitle": "AB+AC에서 공통인 A를 발견해 괄호로 묶는다" },
+      "tag": "define",
+      "stage": {
+        "type": "board",
+        "items": [
+          { "id": "ab", "tex": "AB", "position": { "x": 0.3, "y": 0.4 }, "size": "lg" },
+          { "id": "plus", "tex": "+", "position": { "x": 0.365, "y": 0.4 }, "size": "lg" },
+          { "id": "ac", "tex": "AC", "position": { "x": 0.43, "y": 0.4 }, "size": "lg" },
+          { "id": "eq", "tex": "=", "position": { "x": 0.51, "y": 0.4 }, "size": "lg" },
+          { "id": "a", "tex": "A", "position": { "x": 0.585, "y": 0.4 }, "size": "lg" },
+          { "id": "paren", "tex": "(B+C)", "position": { "x": 0.67, "y": 0.4 }, "size": "lg" }
+        ],
+        "initial": { "hidden_items": ["eq", "a", "paren"] }
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "분배법칙은 괄호를 풀 때도 쓰지만, 더 중요한 쓰임은 괄호를 만들어야 할 때입니다. 식을 해석하다 보면 괄호를 풀기만 하는 게 아니라, 만들어야 하는 경우도 많습니다.",
+          "tts": "분배법칙은 괄호를 풀 때도 쓰지만, [slight emphasis] 더 중요한 쓰임은 괄호를 만들어야 할 때입니다. 식을 해석하다 보면 괄호를 풀기만 하는 게 아니라, 만들어야 하는 경우도 많습니다.",
+          "cue": {
+            "actions": [
+              { "type": "highlight", "target": ["item:ab", "item:ac"], "at": "@start" }
+            ]
+          }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "이렇게 생긴 식에서 공통으로 곱해져 있는 $A$를 발견하고, 다시 괄호로 묶어내는 것. 이것도 분배법칙의 일부입니다. 여기까지 할 수 있어야 분배법칙을 정확히 이해한 겁니다.",
+          "tts": "이렇게 생긴 식에서, 공통으로 곱해져 있는 에이를 발견하고, 다시 괄호로 묶어내는 것. 이것도 분배법칙의 일부입니다. 여기까지 할 수 있어야, 분배법칙을 정확히 이해한 겁니다.",
+          "cue": {
+            "actions": [
+              { "type": "underline", "target": "item:ab", "at": "@공통으로 곱해져", "ttl_ms": 7000 },
+              { "type": "underline", "target": "item:ac", "at": "@공통으로 곱해져+300", "ttl_ms": 7000 },
+              { "type": "reveal", "target": "item", "id": "eq", "at": "@다시 괄호로" },
+              { "type": "reveal", "target": "item", "id": "a", "at": "@다시 괄호로" },
+              { "type": "reveal", "target": "item", "id": "paren", "at": "@묶어내는 것" },
+              { "type": "circle", "target": "item:a", "at": "@묶어내는 것" }
+            ]
+          }
+        },
+        {
+          "id": "s4-3",
+          "role": "say",
+          "text": "교재에서는 $A$가 잘 보이지만, 실제 문제에서는 한눈에 보이지 않습니다. 공통으로 곱해진 것을 찾아내는 통찰력이 필요합니다. 이 묶기는 9강 이차식의 인수분해에서 핵심 도구가 됩니다.",
+          "tts": "교재에서는 에이가 잘 보이지만, 실제 문제에서는 한눈에 보이지 않습니다. 공통으로 곱해진 것을 찾아내는 통찰력이 필요합니다. 이 묶기는 구강 이차식의 인수분해에서 핵심 도구가 됩니다.",
+          "cue": {
+            "actions": [
+              { "type": "handwrite", "text": "→ 9강 이차식의 인수분해", "position": { "x": 0.5, "y": 0.72 }, "at": "@구강 이차식의" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "예시 — 4x²−6x를 2x로 묶기",
+      "headline": { "eyebrow": "3강 · 분배 법칙", "title": "공통인수 찾기", "accent": "공통인수", "subtitle": "4x²−6x = 2x(2x−3)" },
+      "tag": "example",
+      "stage": {
+        "type": "steps",
+        "steps": [
+          { "tex": "4x^2-6x" },
+          { "tex": "=2x\\times2x+2x\\times(-3)", "concept_id": "c.common-factor", "why": "4x²은 2x를 두 번 곱한 것, −6x는 2x에 −3을 곱한 것으로 본다" },
+          { "tex": "=2x(2x-3)", "concept_id": "c.distributive", "why": "공통으로 곱해진 2x를 괄호 밖으로 — 분배법칙을 거꾸로 쓴 것" }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "예시입니다. $4x^2-6x$. 여기서 $4x^2$이 $2x$ 곱하기 $2x$라는 것을 알아보면서, 동시에 $-6x$는 $2x$에 $-3$을 곱한 것으로⏎볼 수 있어야 합니다.",
+          "tts": "예시입니다. 사엑스제곱마이너스육엑스. 여기서 사엑스제곱이 이엑스 곱하기 이엑스라는 것을 알아보면서, 동시에 마이너스육엑스는 이엑스에 마이너스삼을 곱한 것으로 볼 수 있어야 합니다.",
+          "cue": {
+            "actions": [
+              { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
+              { "type": "highlight", "target": "step:0", "at": "@start" },
+              { "type": "reveal", "target": "step", "index": 1, "at": "@알아보면서" },
+              { "type": "highlight", "target": "step:1", "at": "@알아보면서" }
+            ]
+          }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "이렇게 놓고 보니 $2x$가 공통으로 곱해져 있는 게 보이죠. 그러니까 분배법칙을 거꾸로 적용합니다. $2x$를 앞으로 빼고, 뒤에는 각각에 곱해진 $2x$와 $-3$을 더한 것을 적습니다.",
+          "tts": "이렇게 놓고 보니, 이엑스가 공통으로 곱해져 있는 게 보이죠. 그러니까 분배법칙을 거꾸로 적용합니다. 이엑스를 앞으로 빼고, 뒤에는 각각에 곱해진 이엑스와 마이너스삼을 더한 것을 적습니다.",
+          "cue": {
+            "actions": [
+              { "type": "underline", "target": "step:1", "at": "@공통으로 곱해져" },
+              { "type": "reveal", "target": "step", "index": 2, "at": "@이엑스를 앞으로" },
+              { "type": "highlight", "target": "step:2", "at": "@이엑스를 앞으로" }
+            ]
+          }
+        },
+        {
+          "id": "s5-3",
+          "role": "say",
+          "text": "분배법칙은 한쪽 방향만 익히지 마시고, 반대 방향도 항상 염두에 두면서 식을 읽어야 합니다. $2x$를 다시 괄호 안으로 들여보내면 원래 식으로 돌아가는지 확인해 보세요.",
+          "tts": "분배법칙은 한쪽 방향만 익히지 마시고, [slight emphasis] 반대 방향도 항상 염두에 두면서 식을 읽어야 합니다. 이엑스를 다시 괄호 안으로 들여보내면, 원래 식으로 돌아가는지 확인해 보세요.",
+          "cue": {
+            "actions": [
+              { "type": "flash", "target": "step:2", "at": "@반대 방향도" },
+              { "type": "highlight", "target": ["step:0", "step:2"], "at": "@원래 식으로" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "확인",
+      "headline": { "eyebrow": "확인", "title": "차례대로 곱해서 더한다", "accent": "차례대로", "subtitle": "괄호 안의 빼기는 음수를 더한 것" },
+      "tag": "check",
+      "stage": {
+        "type": "quiz",
+        "stem_md": "$-2(3x-5)$ 를 풀면?",
+        "options": [
+          { "id": "a", "text_md": "$-6x-10$" },
+          { "id": "b", "text_md": "$-6x+10$" },
+          { "id": "c", "text_md": "$6x-10$" },
+          { "id": "d", "text_md": "$-6x+5$" }
+        ],
+        "correct": "b",
+        "explain": "$(-2)\\times3x=-6x$, $(-2)\\times(-5)=+10$. 괄호 안의 $-5$는 '$-5$를 더한 것'이므로 음수끼리 곱해 $+10$.",
+        "trace_concept_id": "c.distributive"
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. $-2$를 괄호 안의 두 항에 차례대로 곱하세요. 빼기 5는 $-5$를 더한 것입니다. 모르겠으면 '모르겠어요'를 누르면 어느 개념에서 막혔는지 되짚어 드립니다. 다음 시간에는 4강 분수의 성질입니다.",
+          "tts": "마지막으로 한 문제. 마이너스이를 괄호 안의 두 항에 차례대로 곱하세요. 빼기 오는 마이너스오를 더한 것입니다. 모르겠으면 모르겠어요를 누르면, 어느 개념에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 사강, 분수의 성질입니다.",
+          "cue": { "actions": [] }
+        }
+      ]
+    }
+  ]
+}
