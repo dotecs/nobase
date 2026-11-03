@@ -10,6 +10,7 @@ export const trainingLanding = {
   cta: { primary: '나에게 맞는 플랜 보기', free: '무료 기초 강의 보기', compare: '플랜별 지원 비교하기', header: '플랜 보기' },
   assets: { brand: '/pricing/n-training/hero-brand.webp', background: '/pricing/n-training/hero-bg.webp' },
   hero: {
+    freeGuide: { text: '무료 강의 링크는 톡톡 문의로 받아보세요.', label: '톡톡으로 무료 강의 링크 받기' },
     eyebrow: '뇌지컬 트레이닝 100', title: ['SSIT 준비,', '기초부터 실전까지', '한 흐름으로.'],
     description: ['수학·물리·화학부터 면접까지.', '일과 공부를 병행하는 당신을 위한 온라인 학습 과정.'],
     evidence: [

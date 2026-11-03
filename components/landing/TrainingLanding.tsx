@@ -24,12 +24,13 @@ function Actions({ content, freeHref }: Shared & { freeHref: string | null }) {
   return <div className={styles.actions}><Link className={styles.primary} href={content.links.pricing}>{content.cta.primary}<span aria-hidden="true">›</span></Link>
     {freeHref && <Link className={styles.secondary} href={freeHref}>{content.cta.free}<span aria-hidden="true">›</span></Link>}</div>;
 }
-function Hero({ content, freeHref }: Shared & { freeHref: string | null }) {
+function Hero({ content }: Shared) {
   const icons = [FiBookOpen, FiCalendar, FiMonitor];
   return <section id="top" className={`${styles.section} ${styles.hero}`}>
     <div className={styles.container}><div className={styles.heroRow}>
       <div><p className={styles.eyebrow}>{content.hero.eyebrow}</p><h1>{content.hero.title.map((line, i) => <span key={line} className={i ? styles.blue : undefined}>{line}</span>)}</h1>
-        <p className={styles.copy}>{content.hero.description.map(line => <span key={line}>{line}</span>)}</p><Actions content={content} freeHref={freeHref} /></div>
+        <p className={styles.copy}>{content.hero.description.map(line => <span key={line}>{line}</span>)}</p><Actions content={content} freeHref={null} />
+        <div className={styles.freeGuide}><FiMessageCircle aria-hidden="true" /><div><p>{content.hero.freeGuide.text}</p><a href={contact.href} target="_blank" rel="noopener noreferrer">{content.hero.freeGuide.label}<span aria-hidden="true">↗</span></a></div></div></div>
       <Image className={styles.heroBrand} src={content.assets.brand} alt="" width={1200} height={600} priority sizes="(max-width: 700px) 90vw, 45vw" />
     </div><div className={styles.three}>{content.hero.evidence.map((item, i) => { const Icon = icons[i]; return <div className={styles.evidence} key={item.title}><Icon aria-hidden="true" /><div><h3>{item.title}</h3><p>{item.text}</p></div></div>; })}</div></div>
   </section>;
@@ -97,7 +98,7 @@ export default function TrainingLanding({ content, course, cohorts, enrolledIds,
 }) {
   const freeHref = freeLessonId ? content.links.freeLesson(freeLessonId) : null;
   return <main className={styles.page} style={{ '--landing-background': `url("${content.assets.background}")` } as CSSProperties}>
-    <Hero content={content} freeHref={freeHref} /><Overview content={content} /><Curriculum content={content} curriculum={curriculum} freeLessonId={freeLessonId} /><Materials content={content} /><Support content={content} /><Instructor content={content} />
+    <Hero content={content} /><Overview content={content} /><Curriculum content={content} curriculum={curriculum} freeLessonId={freeLessonId} /><Materials content={content} /><Support content={content} /><Instructor content={content} />
     <section id="plans" className={styles.section}><div className={styles.container}><Heading lines={content.plans.title}><p>{content.plans.description}</p></Heading><PricingPlans course={course} cohorts={cohorts} enrolledIds={enrolledIds} content={getPricingContent(course.slug)} isLoggedIn={isLoggedIn} /></div></section>
     <Faq content={content} freeHref={freeHref} />
     <LandingActions primary={{ href: content.links.pricing, label: content.cta.primary }} talk={{ href: contact.href, label: contact.floatingLabel }} />
