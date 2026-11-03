@@ -3,7 +3,11 @@
   "kind": "concept",
   "title": "지수법칙",
   "pack_id": "root-math",
-  "ability_ids": ["07-1", "07-2", "07-3"],
+  "ability_ids": [
+    "07-1",
+    "07-2",
+    "07-3"
+  ],
   "intro": "밑과 지수의 뜻에서 출발해, 곱하고 나누고 거듭제곱할 때 지수가 어떻게 움직이는지 네 가지 법칙으로 정리한다.",
   "goal": "지수의 합·곱·차·분배 법칙을 풀어 쓰기로 이해하고, 거꾸로도 쓸 수 있다.",
   "scenes": [
@@ -20,10 +24,30 @@
       "stage": {
         "type": "board",
         "items": [
-          {"id": "def", "tex": "\\underbrace{a\\times a\\times\\cdots\\times a}_{n\\text{개}}=a^{n}", "position": {"x": 0.5, "y": 0.4}, "size": "lg"},
-          {"id": "ex", "tex": "2^{3}=2\\times2\\times2=8", "position": {"x": 0.5, "y": 0.72}, "size": "md"}
+          {
+            "id": "def",
+            "tex": "\\underbrace{a\\times a\\times\\cdots\\times a}_{n\\text{개}}=a^{n}",
+            "position": {
+              "x": 0.5,
+              "y": 0.4
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ex",
+            "tex": "2^{3}=2\\times2\\times2=8",
+            "position": {
+              "x": 0.5,
+              "y": 0.72
+            },
+            "size": "md"
+          }
         ],
-        "initial": {"hidden_items": ["ex"]}
+        "initial": {
+          "hidden_items": [
+            "ex"
+          ]
+        }
       },
       "narration": [
         {
@@ -31,38 +55,93 @@
           "role": "say",
           "text": "이번 시간에는 지수법칙에 대해서 알아보겠습니다. 2강에서 지수는 거듭제곱을 한 횟수라고 했죠. 이번에는 그 지수끼리 어떻게 계산되는지를 봅니다.",
           "tts": "[warm, steady lecture tone] 이번 시간에는 지수법칙에 대해서 알아보겠습니다. 이강에서 지수는 거듭제곱을 한 횟수라고 했죠. 이번에는 그 지수끼리 어떻게 계산되는지를 봅니다.",
-          "cue": {"actions": [
-            {"type": "underline", "target": "item:def", "at": "@거듭제곱을 한 횟수", "ttl_ms": 4000}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:def",
+                "at": "@거듭제곱을 한 횟수",
+                "ttl_ms": 4000
+              }
+            ]
+          }
         },
         {
           "id": "s1-2",
           "role": "say",
           "text": "용어부터 정리합니다. $a$를 똑같이 $n$번 곱한 것을 $a^n$, $a$의 $n$제곱이라 씁니다. 곱해지는 $a$를 밑, 몇 번 곱했는지 나타내는 $n$을 지수라고 합니다.",
           "tts": "용어부터 정리합니다. 에이를 똑같이 엔번 곱한 것을 에이의엔제곱이라 씁니다. [short pause] 곱해지는 에이를 밑, 몇 번 곱했는지 나타내는 엔을 지수라고 합니다.",
-          "cue": {"actions": [
-            {"type": "handwrite", "text": "밑 = 곱해지는 수", "position": {"x": 0.7, "y": 0.6}, "arrow_to": {"x": 0.6, "y": 0.44}, "at": "@곱해지는 에이를"},
-            {"type": "handwrite", "text": "지수 = 곱한 횟수", "position": {"x": 0.78, "y": 0.22}, "arrow_to": {"x": 0.625, "y": 0.34}, "at": "@나타내는 엔을"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "밑 = 곱해지는 수",
+                "position": {
+                  "x": 0.7,
+                  "y": 0.6
+                },
+                "arrow_to": {
+                  "x": 0.6,
+                  "y": 0.44
+                },
+                "at": "@곱해지는 에이를"
+              },
+              {
+                "type": "handwrite",
+                "text": "지수 = 곱한 횟수",
+                "position": {
+                  "x": 0.78,
+                  "y": 0.22
+                },
+                "arrow_to": {
+                  "x": 0.625,
+                  "y": 0.34
+                },
+                "at": "@나타내는 엔을"
+              }
+            ]
+          }
         },
         {
           "id": "s1-3",
           "role": "say",
           "text": "예를 들어 $2^3$은 2를 세 번 곱한 8입니다. 지수 3은 '곱한 횟수'이지⏎'곱하는 수'가 아니라는 것만 분명히 해 두세요.",
           "tts": "예를 들어 이의세제곱은, 이를 세 번 곱한 팔입니다. [slight emphasis] 지수 삼은 곱한 횟수이지, 곱하는 수가 아니라는 것만 분명히 해 두세요.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "item", "id": "ex", "at": "@예를 들어"},
-            {"type": "underline", "target": "item:ex", "at": "@곱한 횟수이지", "ttl_ms": 5000}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ex",
+                "at": "@예를 들어"
+              },
+              {
+                "type": "underline",
+                "target": "item:ex",
+                "at": "@곱한 횟수이지",
+                "ttl_ms": 5000
+              }
+            ]
+          }
         },
         {
           "id": "s1-4",
           "role": "say",
           "text": "오늘 배우는 법칙은 나중에 지수함수 단원에서 더 일반적인 꼴로 다시 만납니다. 지금은 $m$, $n$이 자연수일 때만 다룹니다.",
           "tts": "오늘 배우는 법칙은 나중에 지수함수 단원에서 더 일반적인 꼴로 다시 만납니다. 지금은 엠, 엔이 자연수일 때만 다룹니다.",
-          "cue": {"actions": [
-            {"type": "handwrite", "text": "m, n은 자연수", "position": {"x": 0.14, "y": 0.18}, "at": "@자연수일 때만"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "m, n은 자연수",
+                "position": {
+                  "x": 0.14,
+                  "y": 0.18
+                },
+                "at": "@자연수일 때만"
+              }
+            ]
+          }
         }
       ]
     },
@@ -79,11 +158,31 @@
       "stage": {
         "type": "steps",
         "steps": [
-          {"tex": "a^{m}\\times a^{n}=a^{m+n}", "concept_id": "c.exp-add", "why": "m번 곱한 것에 n번 더 곱하면 모두 m+n번 곱한 것"},
-          {"tex": "a^{3}\\times a^{5}=(a\\times a\\times a)\\times(a\\times a\\times a\\times a\\times a)", "concept_id": "c.power", "why": "거듭제곱을 곱셈으로 풀어 쓴다 (a의 n제곱 = a를 n번 곱한 것)"},
-          {"tex": "=a^{3+5}=a^{8}", "concept_id": "c.exp-add", "why": "a가 모두 8번 곱해져 있다"},
-          {"tex": "(a^{m})^{n}=(a^{n})^{m}=a^{mn}", "concept_id": "c.exp-add", "why": "m개짜리 덩어리를 n번 곱하면 m×n번. 곱셈이라 m과 n의 순서를 바꿔도 같다"},
-          {"tex": "(a^{3})^{2}=(a\\times a\\times a)\\times(a\\times a\\times a)=a^{2\\times3}=a^{6}", "concept_id": "c.exp-add", "why": "3개짜리 덩어리가 2개 → 6개"}
+          {
+            "tex": "a^{m}\\times a^{n}=a^{m+n}",
+            "concept_id": "c.exp-add",
+            "why": "m번 곱한 것에 n번 더 곱하면 모두 m+n번 곱한 것"
+          },
+          {
+            "tex": "a^{3}\\times a^{5}=(a\\times a\\times a)\\times(a\\times a\\times a\\times a\\times a)",
+            "concept_id": "c.power",
+            "why": "거듭제곱을 곱셈으로 풀어 쓴다 (a의 n제곱 = a를 n번 곱한 것)"
+          },
+          {
+            "tex": "=a^{3+5}=a^{8}",
+            "concept_id": "c.exp-add",
+            "why": "a가 모두 8번 곱해져 있다"
+          },
+          {
+            "tex": "(a^{m})^{n}=(a^{n})^{m}=a^{mn}",
+            "concept_id": "c.exp-add",
+            "why": "m개짜리 덩어리를 n번 곱하면 m×n번. 곱셈이라 m과 n의 순서를 바꿔도 같다"
+          },
+          {
+            "tex": "(a^{3})^{2}=(a\\times a\\times a)\\times(a\\times a\\times a)=a^{2\\times3}=a^{6}",
+            "concept_id": "c.exp-add",
+            "why": "3개짜리 덩어리가 2개 → 6개"
+          }
         ]
       },
       "narration": [
@@ -92,54 +191,125 @@
           "role": "say",
           "text": "첫 번째 법칙, 지수의 합입니다. 밑이 같은 거듭제곱끼리 곱하면 지수를 더합니다.",
           "tts": "첫 번째 법칙, 지수의 합입니다. 밑이 같은 거듭제곱끼리 곱하면, [slight emphasis] 지수를 더합니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 0, "at": "@start"},
-            {"type": "highlight", "target": "step:0", "at": "@start"},
-            {"type": "underline", "target": "step:0", "at": "@지수를 더합니다"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@지수를 더합니다"
+              }
+            ]
+          }
         },
         {
           "id": "s2-2",
           "role": "say",
           "text": "왜 그런지 예로 봅시다. $a^3\\times a^5$을 풀어 쓰면, $a$가 세 개 곱해진 덩어리 옆에⏎$a$가 다섯 개 곱해진 덩어리가 있습니다.",
           "tts": "왜 그런지 예로 봅시다. 에이의세제곱곱하기에이의다섯제곱을 풀어 쓰면, 에이가 세 개 곱해진 덩어리 옆에, 에이가 다섯 개 곱해진 덩어리가 있습니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 1, "at": "@start"},
-            {"type": "highlight", "target": "step:1", "at": "@start"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@start"
+              }
+            ]
+          }
         },
         {
           "id": "s2-3",
           "role": "say",
           "text": "합치면 $a$가 여덟 번 곱해져 있죠. 그래서 지수는 $3+5$, 즉 8입니다. 지수를 더한다는 말은 곱한 횟수를 더한다는 말입니다.",
           "tts": "합치면 에이가 여덟 번 곱해져 있죠. 그래서 지수는 삼플러스오, 즉 팔입니다. 지수를 더한다는 말은, 곱한 횟수를 더한다는 말입니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 2, "at": "@start"},
-            {"type": "highlight", "target": "step:2", "at": "@start"},
-            {"type": "flash", "target": "step:2", "at": "@즉 팔입니다"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "step:2",
+                "at": "@즉 팔입니다"
+              }
+            ]
+          }
         },
         {
           "id": "s2-4",
           "role": "say",
           "text": "두 번째, 지수의 곱입니다. $a^m$을 다시 $n$제곱하면, $m$개짜리 덩어리가 $n$개 생기니까⏎지수는 $m$ 곱하기 $n$이 됩니다.",
           "tts": "두 번째, 지수의 곱입니다. 에이의엠제곱을 다시 엔제곱하면, 엠개짜리 덩어리가 엔개 생기니까, 지수는 엠곱하기엔이 됩니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 3, "at": "@start"},
-            {"type": "highlight", "target": "step:3", "at": "@start"},
-            {"type": "underline", "target": "step:3", "at": "@엠곱하기엔이"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@엠곱하기엔이"
+              }
+            ]
+          }
         },
         {
           "id": "s2-5",
           "role": "say",
           "text": "$(a^3)^2$이면 세 개짜리 덩어리가 두 개, 모두 여섯 개입니다. 그런데 6은 $3\\times2$이기도 하고 $2\\times3$이기도 하죠. 그래서 $(a^2)^3$과도 같습니다. 어차피 곱셈이라 안의 두 수는 순서를 바꿔도 됩니다.",
           "tts": "에이의세제곱의제곱이면, 세 개짜리 덩어리가 두 개, 모두 여섯 개입니다. 그런데 육은 삼곱하기이이기도 하고, 이곱하기삼이기도 하죠. 그래서 에이의제곱의세제곱과도 같습니다. 어차피 곱셈이라, 안의 두 수는 순서를 바꿔도 됩니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 4, "at": "@start"},
-            {"type": "highlight", "target": "step:4", "at": "@start"},
-            {"type": "underline", "target": "step:3", "at": "@순서를 바꿔도"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 4,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:4",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@순서를 바꿔도"
+              }
+            ]
+          }
         }
       ]
     },
@@ -155,11 +325,36 @@
       "tag": "example",
       "stage": {
         "type": "table",
-        "columns": ["경우", "$a^m\\div a^n$", "예시"],
+        "columns": [
+          "경우",
+          "aᵐ ÷ aⁿ",
+          "예시"
+        ],
         "rows": [
-          {"cells": ["$m>n$", "$a^{m-n}$", "$a^5\\div a^2=\\dfrac{a\\times a\\times a\\times a\\times a}{a\\times a}=a^{5-2}=a^3$"], "tone": "pos"},
-          {"cells": ["$m=n$", "$1$", "$a^3\\div a^3=\\dfrac{a\\times a\\times a}{a\\times a\\times a}=1$"], "tone": "zero"},
-          {"cells": ["$m<n$", "$\\dfrac{1}{a^{n-m}}$", "$a^2\\div a^5=\\dfrac{a\\times a}{a\\times a\\times a\\times a\\times a}=\\dfrac{1}{a^{5-2}}=\\dfrac{1}{a^3}$"], "tone": "neg"}
+          {
+            "cells": [
+              "$m>n$",
+              "$a^{m-n}$",
+              "$a^5\\div a^2=\\dfrac{a\\times a\\times a\\times a\\times a}{a\\times a}=a^{5-2}=a^3$"
+            ],
+            "tone": "pos"
+          },
+          {
+            "cells": [
+              "$m=n$",
+              "$1$",
+              "$a^3\\div a^3=\\dfrac{a\\times a\\times a}{a\\times a\\times a}=1$"
+            ],
+            "tone": "zero"
+          },
+          {
+            "cells": [
+              "$m<n$",
+              "$\\dfrac{1}{a^{n-m}}$",
+              "$a^2\\div a^5=\\dfrac{a\\times a}{a\\times a\\times a\\times a\\times a}=\\dfrac{1}{a^{5-2}}=\\dfrac{1}{a^3}$"
+            ],
+            "tone": "neg"
+          }
         ]
       },
       "narration": [
@@ -168,50 +363,111 @@
           "role": "say",
           "text": "세 번째, 지수의 차입니다. 나눗셈은 분수로 쓰고 약분한다고 생각하면 됩니다. 4강에서 본 약분이죠. 위아래에 같은 $a$가 있으면 하나씩 지워집니다.",
           "tts": "세 번째, 지수의 차입니다. 나눗셈은 분수로 쓰고 약분한다고 생각하면 됩니다. 사강에서 본 약분이죠. 위아래에 같은 에이가 있으면 하나씩 지워집니다.",
-          "cue": {"actions": []}
+          "cue": {
+            "actions": []
+          }
         },
         {
           "id": "s3-2",
           "role": "say",
           "text": "분자의 지수가 더 클 때. $a^5\\div a^2$은 위에 $a$가 다섯 개, 아래에 두 개입니다. 두 개씩 약분되고 위에 세 개가 남죠. $5-2$, 그래서 $a^3$입니다.",
           "tts": "분자의 지수가 더 클 때. 에이의다섯제곱나누기에이의제곱은, 위에 에이가 다섯 개, 아래에 두 개입니다. 두 개씩 약분되고 위에 세 개가 남죠. 오빼기이, 그래서 에이의세제곱입니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "row", "index": 0, "at": "@start"},
-            {"type": "highlight", "target": "row:0", "at": "@start"},
-            {"type": "underline", "target": "row:0", "at": "@오빼기이"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:0",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:0",
+                "at": "@오빼기이"
+              }
+            ]
+          }
         },
         {
           "id": "s3-3",
           "role": "say",
           "text": "지수가 같을 때. 위아래 개수가 같으니 모두 약분되어 1이 됩니다.",
           "tts": "지수가 같을 때. 위아래 개수가 같으니 모두 약분되어 일이 됩니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "row", "index": 1, "at": "@start"},
-            {"type": "highlight", "target": "row:1", "at": "@start"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:1",
+                "at": "@start"
+              }
+            ]
+          }
         },
         {
           "id": "s3-4",
           "role": "say",
           "text": "분모의 지수가 더 클 때. $a^2\\div a^5$은 약분하고 나면 아래에 $a$가 세 개 남습니다. 그래서 $\\dfrac{1}{a^3}$, 분모에 $a$의 세제곱이 있는 꼴입니다.",
           "tts": "분모의 지수가 더 클 때. 에이의제곱나누기에이의다섯제곱은, 약분하고 나면 아래에 에이가 세 개 남습니다. 그래서 에이의세제곱분의일, 분모에 에이의세제곱이 있는 꼴입니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "row", "index": 2, "at": "@start"},
-            {"type": "highlight", "target": "row:2", "at": "@start"},
-            {"type": "underline", "target": "row:2", "at": "@에이의세제곱분의일"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:2",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:2",
+                "at": "@에이의세제곱분의일"
+              }
+            ]
+          }
         },
         {
           "id": "s3-5",
           "role": "say",
           "text": "세 경우로 나눈 것은 지금 지수가 자연수뿐이기 때문입니다. 나중에 지수함수 단원에서 지수가 0이나 음수까지 넓어지면 이 셋은 한 줄로 합쳐집니다. 지금은 '나눗셈은 지수를 빼고, 많이 남는 쪽에 쓴다'로 기억하세요.",
           "tts": "세 경우로 나눈 것은, 지금 지수가 자연수뿐이기 때문입니다. 나중에 지수함수 단원에서 지수가 영이나 음수까지 넓어지면, 이 셋은 한 줄로 합쳐집니다. [slight emphasis] 지금은, 나눗셈은 지수를 빼고, 많이 남는 쪽에 쓴다, 로 기억하세요.",
-          "cue": {"actions": [
-            {"type": "clear", "what": "highlight", "at": "@start"},
-            {"type": "highlight", "target": ["row:0", "row:1", "row:2"], "at": "@한 줄로 합쳐집니다"},
-            {"type": "clear", "what": "highlight", "at": "@로 기억하세요"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": [
+                  "row:0",
+                  "row:1",
+                  "row:2"
+                ],
+                "at": "@한 줄로 합쳐집니다"
+              },
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@로 기억하세요"
+              }
+            ]
+          }
         }
       ]
     },
@@ -228,10 +484,26 @@
       "stage": {
         "type": "steps",
         "steps": [
-          {"tex": "(ab)^{m}=a^{m}b^{m}", "concept_id": "c.exp-dist", "why": "ab를 m번 곱하면 a도 m번, b도 m번 곱해진다"},
-          {"tex": "\\left(\\dfrac{a}{b}\\right)^{m}=\\dfrac{a^{m}}{b^{m}}\\quad(b\\neq0)", "concept_id": "c.exp-dist", "why": "분수도 곱셈의 일종. 분모 b는 0이 아니어야 한다(4강)"},
-          {"tex": "(a^{2}b^{3})^{2}=a^{2}b^{3}\\times a^{2}b^{3}=a^{2}\\times a^{2}\\times b^{3}\\times b^{3}=a^{4}b^{6}", "concept_id": "c.exp-add", "why": "같은 덩어리를 두 번 곱한 뒤 a끼리, b끼리 모아 지수를 더한다"},
-          {"tex": "\\left(\\dfrac{a}{b}\\right)^{2}=\\dfrac{a}{b}\\times\\dfrac{a}{b}=\\dfrac{a\\times a}{b\\times b}=\\dfrac{a^{2}}{b^{2}}", "concept_id": "c.fraction-mul", "why": "분수의 곱셈은 분자끼리, 분모끼리(4강)"}
+          {
+            "tex": "(ab)^{m}=a^{m}b^{m}",
+            "concept_id": "c.exp-dist",
+            "why": "ab를 m번 곱하면 a도 m번, b도 m번 곱해진다"
+          },
+          {
+            "tex": "\\left(\\dfrac{a}{b}\\right)^{m}=\\dfrac{a^{m}}{b^{m}}\\quad(b\\neq0)",
+            "concept_id": "c.exp-dist",
+            "why": "분수도 곱셈의 일종. 분모 b는 0이 아니어야 한다(4강)"
+          },
+          {
+            "tex": "(a^{2}b^{3})^{2}=a^{2}b^{3}\\times a^{2}b^{3}=a^{2}\\times a^{2}\\times b^{3}\\times b^{3}=a^{4}b^{6}",
+            "concept_id": "c.exp-add",
+            "why": "같은 덩어리를 두 번 곱한 뒤 a끼리, b끼리 모아 지수를 더한다"
+          },
+          {
+            "tex": "\\left(\\dfrac{a}{b}\\right)^{2}=\\dfrac{a}{b}\\times\\dfrac{a}{b}=\\dfrac{a\\times a}{b\\times b}=\\dfrac{a^{2}}{b^{2}}",
+            "concept_id": "c.fraction-mul",
+            "why": "분수의 곱셈은 분자끼리, 분모끼리(4강)"
+          }
         ]
       },
       "narration": [
@@ -240,43 +512,99 @@
           "role": "say",
           "text": "네 번째, 지수의 분배입니다. 두 수의 곱 전체에 지수가 붙어 있으면, 그 지수가 각각에 침투합니다.",
           "tts": "네 번째, 지수의 분배입니다. 두 수의 곱 전체에 지수가 붙어 있으면, 그 지수가 각각에 침투합니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 0, "at": "@start"},
-            {"type": "highlight", "target": "step:0", "at": "@start"},
-            {"type": "underline", "target": "step:0", "at": "@각각에 침투"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@각각에 침투"
+              }
+            ]
+          }
         },
         {
           "id": "s4-2",
           "role": "say",
           "text": "분수도 마찬가지입니다. 분수는 곱셈의 일종이니까요. 지수가 분자와 분모에 각각 들어갑니다. $b$가 0이 아니라는 조건은 분모이기 때문에 붙습니다. 4강에서 본 조건이죠.",
           "tts": "분수도 마찬가지입니다. 분수는 곱셈의 일종이니까요. 지수가 분자와 분모에 각각 들어갑니다. 비가 영이 아니라는 조건은, 분모이기 때문에 붙습니다. 사강에서 본 조건이죠.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 1, "at": "@start"},
-            {"type": "highlight", "target": "step:1", "at": "@start"},
-            {"type": "flash", "target": "step:1", "at": "@분모이기 때문에"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "step:1",
+                "at": "@분모이기 때문에"
+              }
+            ]
+          }
         },
         {
           "id": "s4-3",
           "role": "say",
           "text": "예를 봅시다. $(a^2b^3)^2$은 같은 덩어리를 두 번 곱한 것. $a^2$도 두 개, $b^3$도 두 개가 되어 $a^4b^6$입니다. 침투한 다음에는 지수의 합 법칙이 쓰였죠.",
           "tts": "예를 봅시다. 에이제곱비세제곱의제곱은, 같은 덩어리를 두 번 곱한 것. 에이의제곱도 두 개, 비의세제곱도 두 개가 되어, 에이의네제곱비의여섯제곱입니다. 침투한 다음에는 지수의 합 법칙이 쓰였죠.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 2, "at": "@start"},
-            {"type": "highlight", "target": "step:2", "at": "@start"},
-            {"type": "underline", "target": "step:2", "at": "@에이의네제곱비의여섯제곱"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@에이의네제곱비의여섯제곱"
+              }
+            ]
+          }
         },
         {
           "id": "s4-4",
           "role": "say",
           "text": "분수의 제곱도 같습니다. $\\dfrac ab$를 두 번 곱하면 분자끼리 $a\\times a$, 분모끼리 $b\\times b$. 그래서 $\\dfrac{a^2}{b^2}$입니다.",
           "tts": "분수의 제곱도 같습니다. 비분의에이를 두 번 곱하면, 분자끼리 에이곱하기에이, 분모끼리 비곱하기비. 그래서 비제곱분의에이제곱입니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "step", "index": 3, "at": "@start"},
-            {"type": "highlight", "target": "step:3", "at": "@start"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@start"
+              }
+            ]
+          }
         }
       ]
     },
@@ -293,11 +621,40 @@
       "stage": {
         "type": "board",
         "items": [
-          {"id": "q", "tex": "14^{3}=\\;?", "position": {"x": 0.22, "y": 0.28}, "size": "lg"},
-          {"id": "wrong", "tex": "2\\times7^{3}\\quad(\\times)", "position": {"x": 0.62, "y": 0.28}, "size": "lg"},
-          {"id": "right", "tex": "14^{3}=(2\\times7)^{3}=2^{3}\\times7^{3}=8\\times7^{3}", "position": {"x": 0.5, "y": 0.6}, "size": "lg"}
+          {
+            "id": "q",
+            "tex": "14^{3}=\\;?",
+            "position": {
+              "x": 0.22,
+              "y": 0.28
+            },
+            "size": "lg"
+          },
+          {
+            "id": "wrong",
+            "tex": "2\\times7^{3}\\quad(\\times)",
+            "position": {
+              "x": 0.62,
+              "y": 0.28
+            },
+            "size": "lg"
+          },
+          {
+            "id": "right",
+            "tex": "14^{3}=(2\\times7)^{3}=2^{3}\\times7^{3}=8\\times7^{3}",
+            "position": {
+              "x": 0.5,
+              "y": 0.6
+            },
+            "size": "lg"
+          }
         ],
-        "initial": {"hidden_items": ["wrong", "right"]}
+        "initial": {
+          "hidden_items": [
+            "wrong",
+            "right"
+          ]
+        }
       },
       "narration": [
         {
@@ -305,40 +662,93 @@
           "role": "say",
           "text": "이 법칙은 거꾸로 쓰는 것도 중요합니다. 숫자 계산에서 자주 틀리는 예를 봅시다. $14^3$. 14는 $2\\times7$이니까 $2\\times7^3$이라고 쓰면 될까요?",
           "tts": "이 법칙은 거꾸로 쓰는 것도 중요합니다. 숫자 계산에서 자주 틀리는 예를 봅시다. 십사의세제곱. 십사는 이곱하기칠이니까, 이곱하기칠의세제곱이라고 쓰면 될까요?",
-          "cue": {"actions": [
-            {"type": "underline", "target": "item:q", "at": "@십사의세제곱", "ttl_ms": 3000},
-            {"type": "reveal", "target": "item", "id": "wrong", "at": "@이곱하기칠의세제곱이라고"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:q",
+                "at": "@십사의세제곱",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "wrong",
+                "at": "@이곱하기칠의세제곱이라고"
+              }
+            ]
+          }
         },
         {
           "id": "s5-2",
           "role": "say",
           "text": "안 됩니다. 2의 지수는 생략된 1이고, 7의 지수는 3입니다. 지수가 서로 다르면 두 밑을 곱해서 하나로 합칠 수 없습니다.",
           "tts": "안 됩니다. 이의 지수는 생략된 일이고, 칠의 지수는 삼입니다. [slight emphasis] 지수가 서로 다르면, 두 밑을 곱해서 하나로 합칠 수 없습니다.",
-          "cue": {"actions": [
-            {"type": "circle", "target": "item:wrong", "at": "@안 됩니다", "ttl_ms": 6000},
-            {"type": "handwrite", "text": "지수 1 ≠ 지수 3", "position": {"x": 0.62, "y": 0.44}, "at": "@지수가 서로 다르면"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:wrong",
+                "at": "@안 됩니다",
+                "ttl_ms": 6000
+              },
+              {
+                "type": "handwrite",
+                "text": "지수 1 ≠ 지수 3",
+                "position": {
+                  "x": 0.62,
+                  "y": 0.44
+                },
+                "at": "@지수가 서로 다르면"
+              }
+            ]
+          }
         },
         {
           "id": "s5-3",
           "role": "say",
           "text": "바르게 쓰면 $2\\times7$ 전체의 세제곱입니다. 지수가 각각 침투해서 $2^3\\times7^3$, 즉 $8\\times7^3$이 됩니다.",
           "tts": "바르게 쓰면 이곱하기칠 전체의 세제곱입니다. 지수가 각각 침투해서 이의세제곱곱하기칠의세제곱, 즉 팔곱하기칠의세제곱이 됩니다.",
-          "cue": {"actions": [
-            {"type": "reveal", "target": "item", "id": "right", "at": "@start"},
-            {"type": "underline", "target": "item:right", "at": "@각각 침투해서", "ttl_ms": 5000}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "right",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "item:right",
+                "at": "@각각 침투해서",
+                "ttl_ms": 5000
+              }
+            ]
+          }
         },
         {
           "id": "s5-4",
           "role": "say",
           "text": "거꾸로 말하면, $2^3\\times7^3$처럼 지수가 같을 때만 밑을 곱해 $14^3$으로 합칠 수 있습니다. 법칙은 양방향으로 쓸 수 있어야 제대로 아는 것입니다.",
           "tts": "거꾸로 말하면, 이의세제곱곱하기칠의세제곱처럼 지수가 같을 때만, 밑을 곱해 십사의세제곱으로 합칠 수 있습니다. [slight emphasis] 법칙은 양방향으로 쓸 수 있어야 제대로 아는 것입니다.",
-          "cue": {"actions": [
-            {"type": "flash", "target": "item:right", "at": "@지수가 같을 때만"},
-            {"type": "handwrite", "text": "지수가 같을 때만 밑을 합친다", "position": {"x": 0.5, "y": 0.8}, "at": "@양방향으로"}
-          ]}
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "item:right",
+                "at": "@지수가 같을 때만"
+              },
+              {
+                "type": "handwrite",
+                "text": "지수가 같을 때만 밑을 합친다",
+                "position": {
+                  "x": 0.5,
+                  "y": 0.8
+                },
+                "at": "@양방향으로"
+              }
+            ]
+          }
         }
       ]
     },
@@ -356,10 +766,22 @@
         "type": "quiz",
         "stem_md": "다음 중 옳은 것은?",
         "options": [
-          {"id": "a", "text_md": "$a^3\\times a^5=a^{15}$"},
-          {"id": "b", "text_md": "$(a^3)^2=a^5$"},
-          {"id": "c", "text_md": "$14^3=2^3\\times7^3$"},
-          {"id": "d", "text_md": "$a^2\\div a^5=a^3$"}
+          {
+            "id": "a",
+            "text_md": "$a^3\\times a^5=a^{15}$"
+          },
+          {
+            "id": "b",
+            "text_md": "$(a^3)^2=a^5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$14^3=2^3\\times7^3$"
+          },
+          {
+            "id": "d",
+            "text_md": "$a^2\\div a^5=a^3$"
+          }
         ],
         "correct": "c",
         "explain": "$a^3\\times a^5=a^{3+5}=a^8$, $(a^3)^2=a^{3\\times2}=a^6$, $a^2\\div a^5=\\dfrac{1}{a^3}$. $14^3=(2\\times7)^3=2^3\\times7^3$ 만 옳다.",
@@ -371,7 +793,9 @@
           "role": "say",
           "text": "마지막으로 한 문제. 헷갈리면 거듭제곱을 풀어 써 보세요. 몇 번 곱해졌는지 세면 답이 나옵니다. 모르겠으면 '모르겠어요'를 누르면 어느 법칙에서 막혔는지 되짚어 드립니다. 다음 시간에는 8강 제곱근의 성질입니다.",
           "tts": "마지막으로 한 문제. 헷갈리면 거듭제곱을 풀어 써 보세요. 몇 번 곱해졌는지 세면 답이 나옵니다. 모르겠으면 모르겠어요를 누르면, 어느 법칙에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 팔강, 제곱근의 성질입니다.",
-          "cue": {"actions": []}
+          "cue": {
+            "actions": []
+          }
         }
       ]
     }

@@ -114,7 +114,7 @@
                 "type": "handwrite",
                 "text": "좌변",
                 "position": {
-                  "x": 0.3,
+                  "x": 0.4,
                   "y": 0.62
                 },
                 "arrow_to": {
@@ -131,7 +131,7 @@
                 "type": "handwrite",
                 "text": "우변",
                 "position": {
-                  "x": 0.7,
+                  "x": 0.56,
                   "y": 0.62
                 },
                 "arrow_to": {
@@ -186,33 +186,59 @@
       },
       "tag": "define",
       "stage": {
-        "type": "chain",
-        "nodes": [
+        "type": "table",
+        "columns": [
+          "성질",
+          "식",
+          "뜻"
+        ],
+        "rows": [
           {
-            "tex": "A+C=B+C",
-            "text": "양변에 같은 수를 더해도 성립"
+            "cells": [
+              "더하기",
+              "$A+C=B+C$",
+              "양변에 같은 수를 더해도 성립"
+            ]
           },
           {
-            "tex": "A-C=B-C",
-            "text": "양변에서 같은 수를 빼도 성립"
+            "cells": [
+              "빼기",
+              "$A-C=B-C$",
+              "양변에서 같은 수를 빼도 성립"
+            ]
           },
           {
-            "tex": "A\\times C=B\\times C",
-            "text": "양변에 같은 수를 곱해도 성립"
+            "cells": [
+              "곱하기",
+              "$A\\times C=B\\times C$",
+              "양변에 같은 수를 곱해도 성립"
+            ]
           },
           {
-            "tex": "A\\div C=B\\div C\\quad(C\\neq0)",
-            "text": "양변을 같은 수로 나누어도 성립. 단, 0으로는 나눌 수 없다"
+            "cells": [
+              "나누기",
+              "$A\\div C=B\\div C\\quad(C\\neq0)$",
+              "양변을 같은 수로 나누어도 성립. 단, 0으로는 나눌 수 없다"
+            ]
           },
           {
-            "tex": "\\dfrac1A=\\dfrac1B",
-            "text": "양변의 역수를 취해도 성립 ($A$, $B$가 0이 아닐 때). 역수는 3강"
+            "cells": [
+              "역수",
+              "$\\dfrac1A=\\dfrac1B$",
+              "양변의 역수를 취해도 성립 ($A$, $B$가 0이 아닐 때). 역수는 3강"
+            ]
           },
           {
-            "tex": "A^n=B^n",
-            "text": "양변을 똑같이 거듭제곱해도 성립"
+            "cells": [
+              "거듭제곱",
+              "$A^n=B^n$",
+              "양변을 똑같이 거듭제곱해도 성립"
+            ]
           }
-        ]
+        ],
+        "initial": {
+          "hidden": "all"
+        }
       },
       "narration": [
         {
@@ -224,26 +250,26 @@
             "actions": [
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 0,
                 "at": "@더하거나"
               },
               {
                 "type": "highlight",
-                "target": "node:0",
+                "target": "row:0",
                 "at": "@더하거나"
               },
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 1,
                 "at": "@빼도"
               },
               {
                 "type": "highlight",
                 "target": [
-                  "node:0",
-                  "node:1"
+                  "row:0",
+                  "row:1"
                 ],
                 "at": "@빼도"
               }
@@ -259,29 +285,29 @@
             "actions": [
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 2,
                 "at": "@곱해도"
               },
               {
                 "type": "highlight",
-                "target": "node:2",
+                "target": "row:2",
                 "at": "@곱해도"
               },
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 3,
                 "at": "@나누어도"
               },
               {
                 "type": "highlight",
-                "target": "node:3",
+                "target": "row:3",
                 "at": "@나누어도"
               },
               {
                 "type": "underline",
-                "target": "node:3",
+                "target": "row:3",
                 "at": "@영으로는",
                 "ttl_ms": 6000
               }
@@ -297,24 +323,24 @@
             "actions": [
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 4,
                 "at": "@역수를 취해도"
               },
               {
                 "type": "highlight",
-                "target": "node:4",
+                "target": "row:4",
                 "at": "@역수를 취해도"
               },
               {
                 "type": "reveal",
-                "target": "node",
+                "target": "row",
                 "index": 5,
                 "at": "@거듭제곱해도"
               },
               {
                 "type": "highlight",
-                "target": "node:5",
+                "target": "row:5",
                 "at": "@거듭제곱해도"
               },
               {
@@ -429,11 +455,12 @@
                 "type": "handwrite",
                 "text": "거짓",
                 "position": {
-                  "x": 0.84,
-                  "y": 0.42
+                  "x": 0.68,
+                  "y": 0.4
                 },
                 "arrow_to": {
-                  "target": "item:t1"
+                  "x": 0.635,
+                  "y": 0.43
                 },
                 "at": "@거짓이고"
               },
@@ -447,11 +474,12 @@
                 "type": "handwrite",
                 "text": "참",
                 "position": {
-                  "x": 0.84,
-                  "y": 0.56
+                  "x": 0.68,
+                  "y": 0.54
                 },
                 "arrow_to": {
-                  "target": "item:t2"
+                  "x": 0.625,
+                  "y": 0.57
                 },
                 "at": "@되어 참입니다"
               }

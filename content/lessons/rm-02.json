@@ -3,26 +3,89 @@
   "kind": "concept",
   "title": "문자와 식",
   "pack_id": "root-math",
-  "ability_ids": ["02-1", "02-2", "02-3", "02-4"],
+  "ability_ids": [
+    "02-1",
+    "02-2",
+    "02-3",
+    "02-4"
+  ],
   "intro": "문자가 들어간 식을 정확히 읽기 위한 기본 용어 — 곱셈 기호의 생략, 부호, 항, 계수, 지수, 차수, 동류항.",
   "goal": "식 4x³−2x²y+3y−7을 보고 항·상수항·계수·지수·차수를 말하고, 동류항을 가려낸다.",
   "scenes": [
     {
       "id": "s1",
       "title": "곱셈 기호의 생략",
-      "headline": { "eyebrow": "2강 · 문자와 식", "title": "곱셈 기호의 생략", "accent": "생략", "subtitle": "수와 문자, 문자와 문자 사이의 ×는 쓰지 않는다" },
+      "headline": {
+        "eyebrow": "2강 · 문자와 식",
+        "title": "곱셈 기호의 생략",
+        "accent": "생략",
+        "subtitle": "수와 문자, 문자와 문자 사이의 ×는 쓰지 않는다"
+      },
       "tag": "define",
       "stage": {
         "type": "board",
         "items": [
-          { "id": "t1", "tex": "4x^3", "position": { "x": 0.2, "y": 0.3 }, "size": "lg" },
-          { "id": "t2", "tex": "-2x^2y", "position": { "x": 0.38, "y": 0.3 }, "size": "lg" },
-          { "id": "t3", "tex": "+3y", "position": { "x": 0.55, "y": 0.3 }, "size": "lg" },
-          { "id": "t4", "tex": "-7", "position": { "x": 0.68, "y": 0.3 }, "size": "lg" },
-          { "id": "rule", "text": "(수)×(문자), (문자)×(문자) 사이의 × 는 생략", "position": { "x": 0.44, "y": 0.6 }, "size": "md" },
-          { "id": "bad", "tex": "3\\times4 \\;\\neq\\; 34", "position": { "x": 0.44, "y": 0.78 }, "size": "md" }
+          {
+            "id": "t1",
+            "tex": "4x^3",
+            "position": {
+              "x": 0.38,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t2",
+            "tex": "-2x^2y",
+            "position": {
+              "x": 0.463,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t3",
+            "tex": "+3y",
+            "position": {
+              "x": 0.545,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t4",
+            "tex": "-7",
+            "position": {
+              "x": 0.605,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "rule",
+            "text": "(수)×(문자), (문자)×(문자) 사이의 × 는 생략",
+            "position": {
+              "x": 0.49,
+              "y": 0.6
+            },
+            "size": "md"
+          },
+          {
+            "id": "bad",
+            "tex": "3\\times4 \\;\\neq\\; 34",
+            "position": {
+              "x": 0.49,
+              "y": 0.78
+            },
+            "size": "md"
+          }
         ],
-        "initial": { "hidden_items": ["rule", "bad"] }
+        "initial": {
+          "hidden_items": [
+            "rule",
+            "bad"
+          ]
+        }
       },
       "narration": [
         {
@@ -30,7 +93,9 @@
           "role": "say",
           "text": "이번 시간에는 문자와 식입니다. 수만 있던 식에 $x$, $y$ 같은 문자가 들어오면, 그 식을 정확히 읽기 위한 기본 용어들이 필요합니다.",
           "tts": "[warm, steady lecture tone] 이번 시간에는 문자와 식입니다. 수만 있던 식에 엑스, 와이 같은 문자가 들어오면, 그 식을 정확히 읽기 위한 기본 용어들이 필요합니다.",
-          "cue": { "actions": [] }
+          "cue": {
+            "actions": []
+          }
         },
         {
           "id": "s1-2",
@@ -39,8 +104,24 @@
           "tts": "예시로 이 식을 보겠습니다. 사엑스세제곱에서, 사와 엑스세제곱 사이에는 아무 기호도 없죠. [slight emphasis] 여기에는 곱하기가 생략되어 있습니다.",
           "cue": {
             "actions": [
-              { "type": "circle", "target": "item:t1", "at": "@사이에는", "ttl_ms": 6000 },
-              { "type": "handwrite", "text": "4 × x³", "position": { "x": 0.2, "y": 0.5 }, "arrow_to": { "target": "item:t1" }, "at": "@곱하기가 생략" }
+              {
+                "type": "circle",
+                "target": "item:t1",
+                "at": "@사이에는",
+                "ttl_ms": 6000
+              },
+              {
+                "type": "handwrite",
+                "text": "4 × x³",
+                "position": {
+                  "x": 0.33,
+                  "y": 0.5
+                },
+                "arrow_to": {
+                  "target": "item:t1"
+                },
+                "at": "@곱하기가 생략"
+              }
             ]
           }
         },
@@ -51,8 +132,18 @@
           "tts": "뒤쪽도 마찬가지입니다. 이와 엑스제곱, 엑스제곱과 와이, 삼과 와이 사이에도 모두 곱하기가 숨어 있습니다.",
           "cue": {
             "actions": [
-              { "type": "pointer", "target": "item:t2", "at": "@이와 엑스제곱", "ttl_ms": 4000 },
-              { "type": "pointer", "target": "item:t3", "at": "@삼과 와이", "ttl_ms": 4000 }
+              {
+                "type": "pointer",
+                "target": "item:t2",
+                "at": "@이와 엑스제곱",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "pointer",
+                "target": "item:t3",
+                "at": "@삼과 와이",
+                "ttl_ms": 4000
+              }
             ]
           }
         },
@@ -63,9 +154,23 @@
           "tts": "정리하면, 수와 문자 사이, 문자와 문자 사이에서는 곱셈 기호를 생략할 수 있습니다. [short pause] 단, 수와 수 사이에서는 안 됩니다. 삼 곱하기 사를 삼십사로 쓰면 서른넷과 헷갈리니까요.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "rule", "at": "@정리하면" },
-              { "type": "reveal", "target": "item", "id": "bad", "at": "@수와 수 사이에서는" },
-              { "type": "underline", "target": "item:bad", "at": "@삼십사로" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rule",
+                "at": "@정리하면"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "bad",
+                "at": "@수와 수 사이에서는"
+              },
+              {
+                "type": "underline",
+                "target": "item:bad",
+                "at": "@삼십사로"
+              }
             ]
           }
         }
@@ -74,19 +179,77 @@
     {
       "id": "s2",
       "title": "부호와 항, 상수항",
-      "headline": { "eyebrow": "2강 · 문자와 식", "title": "부호 · 항 · 상수항", "accent": "항", "subtitle": "부호로 끊은 덩어리가 항, 문자 없는 항이 상수항" },
+      "headline": {
+        "eyebrow": "2강 · 문자와 식",
+        "title": "부호 · 항 · 상수항",
+        "accent": "항",
+        "subtitle": "부호로 끊은 덩어리가 항, 문자 없는 항이 상수항"
+      },
       "tag": "define",
       "stage": {
         "type": "board",
         "items": [
-          { "id": "t1", "tex": "4x^3", "position": { "x": 0.2, "y": 0.3 }, "size": "lg" },
-          { "id": "t2", "tex": "-2x^2y", "position": { "x": 0.38, "y": 0.3 }, "size": "lg" },
-          { "id": "t3", "tex": "+3y", "position": { "x": 0.55, "y": 0.3 }, "size": "lg" },
-          { "id": "t4", "tex": "-7", "position": { "x": 0.68, "y": 0.3 }, "size": "lg" },
-          { "id": "sign", "text": "부호: 음수·양수를 나타내는 기호 $+$, $-$", "position": { "x": 0.44, "y": 0.62 }, "size": "md" },
-          { "id": "const", "text": "상수항: 문자 없이 수만으로 이루어진 항", "position": { "x": 0.44, "y": 0.78 }, "size": "md" }
+          {
+            "id": "t1",
+            "tex": "4x^3",
+            "position": {
+              "x": 0.38,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t2",
+            "tex": "-2x^2y",
+            "position": {
+              "x": 0.463,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t3",
+            "tex": "+3y",
+            "position": {
+              "x": 0.545,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t4",
+            "tex": "-7",
+            "position": {
+              "x": 0.605,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "sign",
+            "text": "부호: 음수·양수를 나타내는 기호 $+$, $-$",
+            "position": {
+              "x": 0.49,
+              "y": 0.62
+            },
+            "size": "md"
+          },
+          {
+            "id": "const",
+            "text": "상수항: 문자 없이 수만으로 이루어진 항",
+            "position": {
+              "x": 0.49,
+              "y": 0.78
+            },
+            "size": "md"
+          }
         ],
-        "initial": { "hidden_items": ["sign", "const"] }
+        "initial": {
+          "hidden_items": [
+            "sign",
+            "const"
+          ]
+        }
       },
       "narration": [
         {
@@ -96,8 +259,18 @@
           "tts": "다음은 부호입니다. 일강에서 양수와 음수를 봤죠. 어떤 항이 양수인지 음수인지 나타내는 기호, 플러스, 마이너스를 부호라고 합니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "sign", "at": "@어떤 항이" },
-              { "type": "pointer", "target": "item:t2", "at": "@플러스, 마이너스", "ttl_ms": 3000 }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "sign",
+                "at": "@어떤 항이"
+              },
+              {
+                "type": "pointer",
+                "target": "item:t2",
+                "at": "@플러스, 마이너스",
+                "ttl_ms": 3000
+              }
             ]
           }
         },
@@ -108,7 +281,15 @@
           "tts": "식의 제일 앞에 오는 플러스는 생략합니다. 사엑스세제곱 앞에는 아무것도 없지만, 사실은 플러스사엑스세제곱입니다.",
           "cue": {
             "actions": [
-              { "type": "handwrite", "text": "(+)", "position": { "x": 0.11, "y": 0.3 }, "at": "@사실은" }
+              {
+                "type": "handwrite",
+                "text": "(+)",
+                "position": {
+                  "x": 0.325,
+                  "y": 0.3
+                },
+                "at": "@사실은"
+              }
             ]
           }
         },
@@ -119,10 +300,26 @@
           "tts": "이렇게 부호를 기준으로 끊은 덩어리 하나하나를 항이라고 합니다. 이 식에는 항이 네 개 있습니다.",
           "cue": {
             "actions": [
-              { "type": "underline", "target": "item:t1", "at": "@항이 네 개" },
-              { "type": "underline", "target": "item:t2", "at": "@항이 네 개+250" },
-              { "type": "underline", "target": "item:t3", "at": "@항이 네 개+500" },
-              { "type": "underline", "target": "item:t4", "at": "@항이 네 개+750" }
+              {
+                "type": "underline",
+                "target": "item:t1",
+                "at": "@항이 네 개"
+              },
+              {
+                "type": "underline",
+                "target": "item:t2",
+                "at": "@항이 네 개+250"
+              },
+              {
+                "type": "underline",
+                "target": "item:t3",
+                "at": "@항이 네 개+500"
+              },
+              {
+                "type": "underline",
+                "target": "item:t4",
+                "at": "@항이 네 개+750"
+              }
             ]
           }
         },
@@ -133,9 +330,29 @@
           "tts": "이 중 문자 없이 수로만 된 항, 마이너스칠을 상수항이라고 합니다. 상수는 값이 변하지 않는 수라는 뜻입니다.",
           "cue": {
             "actions": [
-              { "type": "circle", "target": "item:t4", "at": "@마이너스칠을" },
-              { "type": "handwrite", "text": "상수항", "position": { "x": 0.8, "y": 0.47 }, "arrow_to": { "target": "item:t4" }, "at": "@상수항이라고" },
-              { "type": "reveal", "target": "item", "id": "const", "at": "@상수는 값이" }
+              {
+                "type": "circle",
+                "target": "item:t4",
+                "at": "@마이너스칠을"
+              },
+              {
+                "type": "handwrite",
+                "text": "상수항",
+                "position": {
+                  "x": 0.8,
+                  "y": 0.47
+                },
+                "arrow_to": {
+                  "target": "item:t4"
+                },
+                "at": "@상수항이라고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "const",
+                "at": "@상수는 값이"
+              }
             ]
           }
         }
@@ -144,18 +361,67 @@
     {
       "id": "s3",
       "title": "계수",
-      "headline": { "eyebrow": "2강 · 문자와 식", "title": "계수", "accent": "계수", "subtitle": "문자 앞에 곱해진 수, 부호까지 포함" },
+      "headline": {
+        "eyebrow": "2강 · 문자와 식",
+        "title": "계수",
+        "accent": "계수",
+        "subtitle": "문자 앞에 곱해진 수, 부호까지 포함"
+      },
       "tag": "define",
       "stage": {
         "type": "board",
         "items": [
-          { "id": "t1", "tex": "4x^3", "position": { "x": 0.2, "y": 0.3 }, "size": "lg" },
-          { "id": "t2", "tex": "-2x^2y", "position": { "x": 0.38, "y": 0.3 }, "size": "lg" },
-          { "id": "t3", "tex": "+3y", "position": { "x": 0.55, "y": 0.3 }, "size": "lg" },
-          { "id": "t4", "tex": "-7", "position": { "x": 0.68, "y": 0.3 }, "size": "lg" },
-          { "id": "def", "text": "계수: 문자 앞에 곱해진 수 (부호까지 포함)", "position": { "x": 0.44, "y": 0.8 }, "size": "md" }
+          {
+            "id": "t1",
+            "tex": "4x^3",
+            "position": {
+              "x": 0.38,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t2",
+            "tex": "-2x^2y",
+            "position": {
+              "x": 0.463,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t3",
+            "tex": "+3y",
+            "position": {
+              "x": 0.545,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t4",
+            "tex": "-7",
+            "position": {
+              "x": 0.605,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "def",
+            "text": "계수: 문자 앞에 곱해진 수 (부호까지 포함)",
+            "position": {
+              "x": 0.49,
+              "y": 0.8
+            },
+            "size": "md"
+          }
         ],
-        "initial": { "hidden_items": ["def"] }
+        "initial": {
+          "hidden_items": [
+            "def"
+          ]
+        }
       },
       "narration": [
         {
@@ -165,9 +431,29 @@
           "tts": "계수는 문자가 포함된 항에서, 문자 앞에 곱해진 수입니다. 사엑스세제곱에서는 사가 엑스세제곱의 계수입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "def", "at": "@start" },
-              { "type": "circle", "target": "item:t1", "at": "@사가" },
-              { "type": "handwrite", "text": "x³의 계수: 4", "position": { "x": 0.2, "y": 0.52 }, "arrow_to": { "target": "item:t1" }, "at": "@계수입니다" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "def",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "item:t1",
+                "at": "@사가"
+              },
+              {
+                "type": "handwrite",
+                "text": "x³의 계수: 4",
+                "position": {
+                  "x": 0.3,
+                  "y": 0.52
+                },
+                "arrow_to": {
+                  "target": "item:t1"
+                },
+                "at": "@계수입니다"
+              }
             ]
           }
         },
@@ -178,9 +464,28 @@
           "tts": "엑스제곱와이의 계수를 물으면, 이가 아니라 [slight emphasis] 부호를 포함해서 마이너스이라고 답해야 맞습니다. 계수는 부호까지 포함합니다.",
           "cue": {
             "actions": [
-              { "type": "circle", "target": "item:t2", "at": "@이가 아니라" },
-              { "type": "handwrite", "text": "x²y의 계수: −2", "position": { "x": 0.4, "y": 0.62 }, "arrow_to": { "target": "item:t2" }, "at": "@마이너스이라고" },
-              { "type": "flash", "target": "item:def", "at": "@부호까지 포함합니다" }
+              {
+                "type": "circle",
+                "target": "item:t2",
+                "at": "@이가 아니라"
+              },
+              {
+                "type": "handwrite",
+                "text": "x²y의 계수: −2",
+                "position": {
+                  "x": 0.44,
+                  "y": 0.62
+                },
+                "arrow_to": {
+                  "target": "item:t2"
+                },
+                "at": "@마이너스이라고"
+              },
+              {
+                "type": "flash",
+                "target": "item:def",
+                "at": "@부호까지 포함합니다"
+              }
             ]
           }
         },
@@ -191,8 +496,24 @@
           "tts": "와이의 계수는 플러스삼, 그냥 삼입니다. 상수항 마이너스칠은 문자가 없으니 계수를 묻지 않습니다.",
           "cue": {
             "actions": [
-              { "type": "handwrite", "text": "y의 계수: 3", "position": { "x": 0.6, "y": 0.52 }, "arrow_to": { "target": "item:t3" }, "at": "@그냥 삼입니다" },
-              { "type": "pointer", "target": "item:t4", "at": "@상수항 마이너스칠은", "ttl_ms": 3000 }
+              {
+                "type": "handwrite",
+                "text": "y의 계수: 3",
+                "position": {
+                  "x": 0.58,
+                  "y": 0.52
+                },
+                "arrow_to": {
+                  "target": "item:t3"
+                },
+                "at": "@그냥 삼입니다"
+              },
+              {
+                "type": "pointer",
+                "target": "item:t4",
+                "at": "@상수항 마이너스칠은",
+                "ttl_ms": 3000
+              }
             ]
           }
         }
@@ -201,23 +522,121 @@
     {
       "id": "s4",
       "title": "지수와 차수",
-      "headline": { "eyebrow": "2강 · 문자와 식", "title": "지수와 차수", "accent": "차수", "subtitle": "지수는 거듭제곱 횟수, 차수는 문자가 곱해진 횟수" },
+      "headline": {
+        "eyebrow": "2강 · 문자와 식",
+        "title": "지수와 차수",
+        "accent": "차수",
+        "subtitle": "지수는 거듭제곱 횟수, 차수는 문자가 곱해진 횟수"
+      },
       "tag": "define",
       "stage": {
         "type": "board",
         "items": [
-          { "id": "t1", "tex": "4x^3", "position": { "x": 0.2, "y": 0.3 }, "size": "lg" },
-          { "id": "t2", "tex": "-2x^2y", "position": { "x": 0.38, "y": 0.3 }, "size": "lg" },
-          { "id": "t3", "tex": "+3y", "position": { "x": 0.55, "y": 0.3 }, "size": "lg" },
-          { "id": "t4", "tex": "-7", "position": { "x": 0.68, "y": 0.3 }, "size": "lg" },
-          { "id": "d1", "text": "3차", "position": { "x": 0.2, "y": 0.5 }, "size": "md", "color": "hand" },
-          { "id": "d2", "text": "3차", "position": { "x": 0.38, "y": 0.5 }, "size": "md", "color": "hand" },
-          { "id": "d3", "text": "1차", "position": { "x": 0.55, "y": 0.5 }, "size": "md", "color": "hand" },
-          { "id": "d4", "text": "0차", "position": { "x": 0.68, "y": 0.5 }, "size": "md", "color": "hand" },
-          { "id": "deg", "text": "차수: 어떤 항에 문자가 곱해진 횟수", "position": { "x": 0.44, "y": 0.66 }, "size": "md" },
-          { "id": "whole", "text": "식의 차수 = 가장 높은 항의 차수 → 이 식은 3차식", "position": { "x": 0.44, "y": 0.8 }, "size": "md" }
+          {
+            "id": "t1",
+            "tex": "4x^3",
+            "position": {
+              "x": 0.38,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t2",
+            "tex": "-2x^2y",
+            "position": {
+              "x": 0.463,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t3",
+            "tex": "+3y",
+            "position": {
+              "x": 0.545,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t4",
+            "tex": "-7",
+            "position": {
+              "x": 0.605,
+              "y": 0.3
+            },
+            "size": "lg"
+          },
+          {
+            "id": "d1",
+            "text": "3차",
+            "position": {
+              "x": 0.38,
+              "y": 0.5
+            },
+            "size": "md",
+            "color": "hand"
+          },
+          {
+            "id": "d2",
+            "text": "3차",
+            "position": {
+              "x": 0.463,
+              "y": 0.5
+            },
+            "size": "md",
+            "color": "hand"
+          },
+          {
+            "id": "d3",
+            "text": "1차",
+            "position": {
+              "x": 0.545,
+              "y": 0.5
+            },
+            "size": "md",
+            "color": "hand"
+          },
+          {
+            "id": "d4",
+            "text": "0차",
+            "position": {
+              "x": 0.605,
+              "y": 0.5
+            },
+            "size": "md",
+            "color": "hand"
+          },
+          {
+            "id": "deg",
+            "text": "차수: 어떤 항에 문자가 곱해진 횟수",
+            "position": {
+              "x": 0.49,
+              "y": 0.66
+            },
+            "size": "md"
+          },
+          {
+            "id": "whole",
+            "text": "식의 차수 = 가장 높은 항의 차수 → 이 식은 3차식",
+            "position": {
+              "x": 0.49,
+              "y": 0.8
+            },
+            "size": "md"
+          }
         ],
-        "initial": { "hidden_items": ["d1", "d2", "d3", "d4", "deg", "whole"] }
+        "initial": {
+          "hidden_items": [
+            "d1",
+            "d2",
+            "d3",
+            "d4",
+            "deg",
+            "whole"
+          ]
+        }
       },
       "narration": [
         {
@@ -227,8 +646,25 @@
           "tts": "오른쪽 위에 작게 적힌 수가 지수입니다. 거듭제곱을 한 횟수, 즉 밑에 있는 것이 몇 번 곱해졌는지를 나타냅니다. 엑스세제곱은 엑스가 세 번 곱해졌다는 뜻입니다.",
           "cue": {
             "actions": [
-              { "type": "circle", "target": "item:t1", "at": "@오른쪽 위에", "ttl_ms": 5000 },
-              { "type": "handwrite", "text": "x³ = x · x · x", "position": { "x": 0.16, "y": 0.14 }, "arrow_to": { "target": "item:t1" }, "at": "@엑스가 세 번", "ttl_ms": 12000 }
+              {
+                "type": "circle",
+                "target": "item:t1",
+                "at": "@오른쪽 위에",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "handwrite",
+                "text": "x³ = x · x · x",
+                "position": {
+                  "x": 0.3,
+                  "y": 0.12
+                },
+                "arrow_to": {
+                  "target": "item:t1"
+                },
+                "at": "@엑스가 세 번",
+                "ttl_ms": 12000
+              }
             ]
           }
         },
@@ -239,8 +675,25 @@
           "tts": "지수가 일이면 생략합니다. 와이는 사실 와이의 일제곱이고, 사와 이, 삼, 칠에도 모두 지수 일이 숨어 있습니다.",
           "cue": {
             "actions": [
-              { "type": "pointer", "target": "item:t3", "at": "@와이는 사실", "ttl_ms": 3000 },
-              { "type": "handwrite", "text": "지수 1은 생략", "position": { "x": 0.62, "y": 0.14 }, "arrow_to": { "target": "item:t3" }, "at": "@숨어 있습니다", "ttl_ms": 9000 }
+              {
+                "type": "pointer",
+                "target": "item:t3",
+                "at": "@와이는 사실",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "handwrite",
+                "text": "지수 1은 생략",
+                "position": {
+                  "x": 0.6,
+                  "y": 0.12
+                },
+                "arrow_to": {
+                  "target": "item:t3"
+                },
+                "at": "@숨어 있습니다",
+                "ttl_ms": 9000
+              }
             ]
           }
         },
@@ -251,7 +704,16 @@
           "tts": "지수끼리 계산하는 규칙은 칠강 지수법칙에서 배울 내용이라, 지금은 이름만 기억해 두세요.",
           "cue": {
             "actions": [
-              { "type": "handwrite", "text": "→ 7강 지수법칙", "position": { "x": 0.86, "y": 0.14 }, "at": "@칠강 지수법칙", "ttl_ms": 8000 }
+              {
+                "type": "handwrite",
+                "text": "→ 7강 지수법칙",
+                "position": {
+                  "x": 0.86,
+                  "y": 0.14
+                },
+                "at": "@칠강 지수법칙",
+                "ttl_ms": 8000
+              }
             ]
           }
         },
@@ -262,8 +724,17 @@
           "tts": "차수는 지수와 헷갈리기 쉽지만 분명히 다른 개념입니다. [slight emphasis] 어떤 항에 문자가 곱해진 횟수가 차수입니다. 수에 아무리 거듭제곱이 붙어도 차수는 올라가지 않습니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "deg", "at": "@어떤 항에" },
-              { "type": "underline", "target": "item:deg", "at": "@문자가 곱해진 횟수가" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "deg",
+                "at": "@어떤 항에"
+              },
+              {
+                "type": "underline",
+                "target": "item:deg",
+                "at": "@문자가 곱해진 횟수가"
+              }
             ]
           }
         },
@@ -274,10 +745,30 @@
           "tts": "사엑스세제곱은 엑스가 세 번이라 삼차, 마이너스이엑스제곱와이는 엑스 두 번에 와이 한 번이라 삼차, 삼와이는 일차, 상수항 마이너스칠은 문자가 없으니 영차입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "d1", "at": "@세 번이라 삼차" },
-              { "type": "reveal", "target": "item", "id": "d2", "at": "@한 번이라 삼차" },
-              { "type": "reveal", "target": "item", "id": "d3", "at": "@삼와이는 일차" },
-              { "type": "reveal", "target": "item", "id": "d4", "at": "@문자가 없으니 영차" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d1",
+                "at": "@세 번이라 삼차"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d2",
+                "at": "@한 번이라 삼차"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d3",
+                "at": "@삼와이는 일차"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d4",
+                "at": "@문자가 없으니 영차"
+              }
             ]
           }
         },
@@ -288,9 +779,29 @@
           "tts": "식 전체의 차수는 가장 높은 항의 차수로 말합니다. 이 식은 삼차식, 가장 높은 차수가 이이면 이차식, 일이면 일차식입니다. 이차식은 구강 이차식의 인수분해에서 본격적으로 다룹니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "whole", "at": "@start" },
-              { "type": "highlight", "target": ["item:t1", "item:d1"], "at": "@이 식은 삼차식" },
-              { "type": "handwrite", "text": "→ 9강 이차식의 인수분해", "position": { "x": 0.82, "y": 0.9 }, "at": "@구강 이차식의" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "whole",
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": [
+                  "item:t1",
+                  "item:d1"
+                ],
+                "at": "@이 식은 삼차식"
+              },
+              {
+                "type": "handwrite",
+                "text": "→ 9강 이차식의 인수분해",
+                "position": {
+                  "x": 0.82,
+                  "y": 0.9
+                },
+                "at": "@구강 이차식의"
+              }
             ]
           }
         }
@@ -299,22 +810,85 @@
     {
       "id": "s5",
       "title": "동류항",
-      "headline": { "eyebrow": "2강 · 문자와 식", "title": "동류항", "accent": "동류항", "subtitle": "문자와 차수가 각각 같은 항끼리만 더하고 뺀다" },
+      "headline": {
+        "eyebrow": "2강 · 문자와 식",
+        "title": "동류항",
+        "accent": "동류항",
+        "subtitle": "문자와 차수가 각각 같은 항끼리만 더하고 뺀다"
+      },
       "tag": "example",
       "stage": {
         "type": "table",
-        "columns": ["두 항", "문자", "차수", "동류항?"],
+        "columns": [
+          "두 항",
+          "문자",
+          "차수",
+          "동류항?"
+        ],
         "rows": [
-          { "cells": ["$3x$ 와 $-5x$", "$x$, $x$", "1, 1", "○"], "tone": "pos" },
-          { "cells": ["$-7ab$ 와 $2ab$", "$ab$, $ab$", "2, 2", "○"], "tone": "pos" },
-          { "cells": ["상수항끼리", "없음", "0, 0", "○ 모두 동류항"], "tone": "pos" },
-          { "cells": ["$9x$ 와 $-x^2$", "$x$, $x$", "1, 2", "✕ 차수가 다르다"], "tone": "neg" },
-          { "cells": ["$-8xy$ 와 $5x^2$", "$xy$, $x$", "2, 2", "✕ 문자가 다르다"], "tone": "neg" }
+          {
+            "cells": [
+              "$3x$ 와 $-5x$",
+              "$x$, $x$",
+              "1, 1",
+              "○"
+            ],
+            "tone": "pos"
+          },
+          {
+            "cells": [
+              "$-7ab$ 와 $2ab$",
+              "$ab$, $ab$",
+              "2, 2",
+              "○"
+            ],
+            "tone": "pos"
+          },
+          {
+            "cells": [
+              "상수항끼리",
+              "없음",
+              "0, 0",
+              "○ 모두 동류항"
+            ],
+            "tone": "pos"
+          },
+          {
+            "cells": [
+              "$9x$ 와 $-x^2$",
+              "$x$, $x$",
+              "1, 2",
+              "✕ 차수가 다르다"
+            ],
+            "tone": "neg"
+          },
+          {
+            "cells": [
+              "$-8xy$ 와 $5x^2$",
+              "$xy$, $x$",
+              "2, 2",
+              "✕ 문자가 다르다"
+            ],
+            "tone": "neg"
+          }
         ],
         "items": [
-          { "id": "sum", "tex": "3x-5x=-2x", "position": { "x": 0.5, "y": 0.94 }, "size": "md", "color": "hand" }
+          {
+            "id": "sum",
+            "tex": "3x-5x=-2x",
+            "position": {
+              "x": 0.5,
+              "y": 0.94
+            },
+            "size": "md",
+            "color": "hand"
+          }
         ],
-        "initial": { "hidden_items": ["sum"] }
+        "initial": {
+          "hidden_items": [
+            "sum"
+          ]
+        }
       },
       "narration": [
         {
@@ -322,7 +896,9 @@
           "role": "say",
           "text": "마지막으로 동류항입니다. 문자와 차수가 각각 같은 항을 동류항이라고 합니다. 동류항끼리만 서로 더하거나 뺄 수 있기 때문에 꼭 알아 두어야 합니다.",
           "tts": "마지막으로 동류항입니다. [slight emphasis] 문자와 차수가 각각 같은 항을 동류항이라고 합니다. 동류항끼리만 서로 더하거나 뺄 수 있기 때문에, 꼭 알아 두어야 합니다.",
-          "cue": { "actions": [] }
+          "cue": {
+            "actions": []
+          }
         },
         {
           "id": "s5-2",
@@ -331,8 +907,17 @@
           "tts": "삼엑스와 마이너스오엑스. 문자는 둘 다 엑스, 차수는 둘 다 일입니다. 동류항입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "row", "index": 0, "at": "@start" },
-              { "type": "highlight", "target": "row:0", "at": "@start" }
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:0",
+                "at": "@start"
+              }
             ]
           }
         },
@@ -343,10 +928,28 @@
           "tts": "마이너스칠에이비와 이에이비. 문자 에이, 비가 같고 각각 한 번씩 곱해져 둘 다 이차입니다. 역시 동류항입니다. 그리고 상수항끼리는 모두 동류항입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "row", "index": 1, "at": "@start" },
-              { "type": "highlight", "target": "row:1", "at": "@start" },
-              { "type": "reveal", "target": "row", "index": 2, "at": "@그리고 상수항끼리는" },
-              { "type": "highlight", "target": "row:2", "at": "@그리고 상수항끼리는" }
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:1",
+                "at": "@start"
+              },
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 2,
+                "at": "@그리고 상수항끼리는"
+              },
+              {
+                "type": "highlight",
+                "target": "row:2",
+                "at": "@그리고 상수항끼리는"
+              }
             ]
           }
         },
@@ -357,9 +960,22 @@
           "tts": "이번에는 아닌 예시입니다. 구엑스와 마이너스엑스제곱은 문자는 같지만, 차수가 일과 이로 다릅니다. 동류항이 아니라서 더하거나 뺄 수 없습니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "row", "index": 3, "at": "@start" },
-              { "type": "highlight", "target": "row:3", "at": "@start" },
-              { "type": "underline", "target": "row:3", "at": "@차수가 일과 이로" }
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:3",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:3",
+                "at": "@차수가 일과 이로"
+              }
             ]
           }
         },
@@ -370,9 +986,22 @@
           "tts": "마이너스팔엑스와이와 오엑스제곱은 둘 다 이차지만, 앞에는 와이가 있고 뒤에는 없죠. 문자가 달라서 역시 동류항이 아닙니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "row", "index": 4, "at": "@start" },
-              { "type": "highlight", "target": "row:4", "at": "@start" },
-              { "type": "underline", "target": "row:4", "at": "@문자가 달라서" }
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 4,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:4",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:4",
+                "at": "@문자가 달라서"
+              }
             ]
           }
         },
@@ -383,10 +1012,27 @@
           "tts": "동류항끼리 더할 때는, 삼엑스마이너스오엑스는마이너스이엑스처럼 계수만 더하면 됩니다. 이 정리는 오강 등식의 성질에서 방정식을 풀 때 계속 쓰입니다.",
           "cue": {
             "actions": [
-              { "type": "highlight", "target": "row:0", "at": "@start" },
-              { "type": "reveal", "target": "item", "id": "sum", "at": "@삼엑스마이너스오엑스는" },
-              { "type": "underline", "target": "item:sum", "at": "@계수만 더하면" },
-              { "type": "clear", "what": "highlight", "at": "@오강 등식의" }
+              {
+                "type": "highlight",
+                "target": "row:0",
+                "at": "@start"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "sum",
+                "at": "@삼엑스마이너스오엑스는"
+              },
+              {
+                "type": "underline",
+                "target": "item:sum",
+                "at": "@계수만 더하면"
+              },
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@오강 등식의"
+              }
             ]
           }
         }
@@ -395,16 +1041,33 @@
     {
       "id": "s6",
       "title": "확인",
-      "headline": { "eyebrow": "확인", "title": "문자와 차수를 보라", "accent": "문자와 차수", "subtitle": "동류항인지는 문자와 차수 두 가지로 가린다" },
+      "headline": {
+        "eyebrow": "확인",
+        "title": "문자와 차수를 보라",
+        "accent": "문자와 차수",
+        "subtitle": "동류항인지는 문자와 차수 두 가지로 가린다"
+      },
       "tag": "check",
       "stage": {
         "type": "quiz",
         "stem_md": "다음 중 $-8xy$ 와 동류항인 것은?",
         "options": [
-          { "id": "a", "text_md": "$5x^2$" },
-          { "id": "b", "text_md": "$8y$" },
-          { "id": "c", "text_md": "$xy$" },
-          { "id": "d", "text_md": "$-8x$" }
+          {
+            "id": "a",
+            "text_md": "$5x^2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$8y$"
+          },
+          {
+            "id": "c",
+            "text_md": "$xy$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-8x$"
+          }
         ],
         "correct": "c",
         "explain": "동류항은 문자와 차수가 각각 같은 항. $xy$는 문자 $x$, $y$가 같고 차수도 2로 같다. $5x^2$은 문자가, $8y$와 $-8x$는 문자와 차수가 다르다.",
@@ -416,7 +1079,9 @@
           "role": "say",
           "text": "마지막으로 한 문제. 보기마다 \"문자가 같은가, 차수가 같은가\" 두 가지를 따져 보세요. 모르겠으면 \"모르겠어요\"를 누르면 어느 개념에서 막혔는지 되짚어 드립니다. 다음 시간에는 3강 분배 법칙입니다.",
           "tts": "마지막으로 한 문제. 보기마다, 문자가 같은가, 차수가 같은가, 두 가지를 따져 보세요. 모르겠으면 모르겠어요를 누르면, 어느 개념에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 삼강, 분배 법칙입니다.",
-          "cue": { "actions": [] }
+          "cue": {
+            "actions": []
+          }
         }
       ]
     }
