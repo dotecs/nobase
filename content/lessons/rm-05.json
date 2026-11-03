@@ -3,7 +3,11 @@
   "kind": "concept",
   "title": "등식의 성질",
   "pack_id": "root-math",
-  "ability_ids": ["05-1", "05-2", "05-3"],
+  "ability_ids": [
+    "05-1",
+    "05-2",
+    "05-3"
+  ],
   "intro": "등호가 들어간 식, 양변에 같은 것을 해도 같음은 유지된다. 이 성질 하나로 방정식을 푼다.",
   "goal": "등식·양변을 구분하고, 등식의 성질(양변에 같은 수를 더하고 빼고 곱하고 나눈다)로 일차방정식 2x+10=4를 푼다.",
   "scenes": [
@@ -20,12 +24,48 @@
       "stage": {
         "type": "board",
         "items": [
-          { "id": "a", "tex": "A", "position": { "x": 0.42, "y": 0.4 }, "size": "lg" },
-          { "id": "eqs", "tex": "=", "position": { "x": 0.5, "y": 0.4 }, "size": "lg" },
-          { "id": "b", "tex": "B", "position": { "x": 0.58, "y": 0.4 }, "size": "lg" },
-          { "id": "ex", "tex": "2x+10=4", "position": { "x": 0.5, "y": 0.82 }, "size": "lg" }
+          {
+            "id": "a",
+            "tex": "A",
+            "position": {
+              "x": 0.42,
+              "y": 0.4
+            },
+            "size": "lg"
+          },
+          {
+            "id": "eqs",
+            "tex": "=",
+            "position": {
+              "x": 0.5,
+              "y": 0.4
+            },
+            "size": "lg"
+          },
+          {
+            "id": "b",
+            "tex": "B",
+            "position": {
+              "x": 0.58,
+              "y": 0.4
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ex",
+            "tex": "2x+10=4",
+            "position": {
+              "x": 0.5,
+              "y": 0.82
+            },
+            "size": "lg"
+          }
         ],
-        "initial": { "hidden_items": ["ex"] }
+        "initial": {
+          "hidden_items": [
+            "ex"
+          ]
+        }
       },
       "narration": [
         {
@@ -33,7 +73,9 @@
           "role": "say",
           "text": "이번 시간에는 등식의 성질을 알아봅니다. 성질을 보기 전에, 등식이 무엇인지부터 정리하겠습니다.",
           "tts": "[warm, steady lecture tone] 이번 시간에는 등식의 성질을 알아봅니다. 성질을 보기 전에, 등식이 무엇인지부터 정리하겠습니다.",
-          "cue": { "actions": [] }
+          "cue": {
+            "actions": []
+          }
         },
         {
           "id": "s1-2",
@@ -42,8 +84,17 @@
           "tts": "등식은 등호가 들어간 식입니다. 등호는, 서로 같다는 뜻의 기호 이퀄이고, 이 기호가 들어 있으면 모두 등식입니다.",
           "cue": {
             "actions": [
-              { "type": "underline", "target": "item:eqs", "at": "@등호는", "ttl_ms": 5000 },
-              { "type": "flash", "target": "item:eqs", "at": "@이 기호가" }
+              {
+                "type": "underline",
+                "target": "item:eqs",
+                "at": "@등호는",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "flash",
+                "target": "item:eqs",
+                "at": "@이 기호가"
+              }
             ]
           }
         },
@@ -54,11 +105,49 @@
           "tts": "등호를 기준으로 왼쪽을 좌변, 오른쪽을 우변이라 하고, 둘을 한꺼번에 말할 때는 양변이라고 합니다.",
           "cue": {
             "actions": [
-              { "type": "circle", "target": "item:a", "at": "@왼쪽을" },
-              { "type": "handwrite", "text": "좌변", "position": { "x": 0.3, "y": 0.62 }, "arrow_to": { "target": "item:a" }, "at": "@왼쪽을+300" },
-              { "type": "circle", "target": "item:b", "at": "@오른쪽을" },
-              { "type": "handwrite", "text": "우변", "position": { "x": 0.7, "y": 0.62 }, "arrow_to": { "target": "item:b" }, "at": "@오른쪽을+300" },
-              { "type": "handwrite", "text": "양변 = 좌변과 우변 둘 다", "position": { "x": 0.5, "y": 0.16 }, "at": "@양변이라고" }
+              {
+                "type": "circle",
+                "target": "item:a",
+                "at": "@왼쪽을"
+              },
+              {
+                "type": "handwrite",
+                "text": "좌변",
+                "position": {
+                  "x": 0.3,
+                  "y": 0.62
+                },
+                "arrow_to": {
+                  "target": "item:a"
+                },
+                "at": "@왼쪽을+300"
+              },
+              {
+                "type": "circle",
+                "target": "item:b",
+                "at": "@오른쪽을"
+              },
+              {
+                "type": "handwrite",
+                "text": "우변",
+                "position": {
+                  "x": 0.7,
+                  "y": 0.62
+                },
+                "arrow_to": {
+                  "target": "item:b"
+                },
+                "at": "@오른쪽을+300"
+              },
+              {
+                "type": "handwrite",
+                "text": "양변 = 좌변과 우변 둘 다",
+                "position": {
+                  "x": 0.5,
+                  "y": 0.16
+                },
+                "at": "@양변이라고"
+              }
             ]
           }
         },
@@ -69,8 +158,18 @@
           "tts": "예를 들어, 이엑스플러스십은사도 등식입니다. 좌변은 이엑스플러스십, 우변은 사죠. 이 식은 잠시 뒤에 다시 만납니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "ex", "at": "@예를 들어" },
-              { "type": "underline", "target": "item:ex", "at": "@좌변은", "ttl_ms": 4000 }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ex",
+                "at": "@예를 들어"
+              },
+              {
+                "type": "underline",
+                "target": "item:ex",
+                "at": "@좌변은",
+                "ttl_ms": 4000
+              }
             ]
           }
         }
@@ -89,12 +188,30 @@
       "stage": {
         "type": "chain",
         "nodes": [
-          { "tex": "A+C=B+C", "text": "양변에 같은 수를 더해도 성립" },
-          { "tex": "A-C=B-C", "text": "양변에서 같은 수를 빼도 성립" },
-          { "tex": "A\\times C=B\\times C", "text": "양변에 같은 수를 곱해도 성립" },
-          { "tex": "A\\div C=B\\div C\\quad(C\\neq0)", "text": "양변을 같은 수로 나누어도 성립. 단, 0으로는 나눌 수 없다" },
-          { "tex": "\\dfrac1A=\\dfrac1B", "text": "양변의 역수를 취해도 성립 ($A$, $B$가 0이 아닐 때). 역수는 3강" },
-          { "tex": "A^n=B^n", "text": "양변을 똑같이 거듭제곱해도 성립" }
+          {
+            "tex": "A+C=B+C",
+            "text": "양변에 같은 수를 더해도 성립"
+          },
+          {
+            "tex": "A-C=B-C",
+            "text": "양변에서 같은 수를 빼도 성립"
+          },
+          {
+            "tex": "A\\times C=B\\times C",
+            "text": "양변에 같은 수를 곱해도 성립"
+          },
+          {
+            "tex": "A\\div C=B\\div C\\quad(C\\neq0)",
+            "text": "양변을 같은 수로 나누어도 성립. 단, 0으로는 나눌 수 없다"
+          },
+          {
+            "tex": "\\dfrac1A=\\dfrac1B",
+            "text": "양변의 역수를 취해도 성립 ($A$, $B$가 0이 아닐 때). 역수는 3강"
+          },
+          {
+            "tex": "A^n=B^n",
+            "text": "양변을 똑같이 거듭제곱해도 성립"
+          }
         ]
       },
       "narration": [
@@ -105,10 +222,31 @@
           "tts": "에이는비라는 등식이 있을 때, 양변에 같은 수를 더하거나 빼도, 등식은 그대로 성립합니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "node", "index": 0, "at": "@더하거나" },
-              { "type": "highlight", "target": "node:0", "at": "@더하거나" },
-              { "type": "reveal", "target": "node", "index": 1, "at": "@빼도" },
-              { "type": "highlight", "target": ["node:0", "node:1"], "at": "@빼도" }
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 0,
+                "at": "@더하거나"
+              },
+              {
+                "type": "highlight",
+                "target": "node:0",
+                "at": "@더하거나"
+              },
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 1,
+                "at": "@빼도"
+              },
+              {
+                "type": "highlight",
+                "target": [
+                  "node:0",
+                  "node:1"
+                ],
+                "at": "@빼도"
+              }
             ]
           }
         },
@@ -119,11 +257,34 @@
           "tts": "같은 수를 곱해도 성립하고, 같은 수로 나누어도 성립합니다. [short pause] 다만 나눌 때는 조건이 하나 붙습니다. [slight emphasis] 영으로는 나눌 수 없다는 것. 사강에서 분모가 영이 될 수 없다고 한 것과 같은 이유입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "node", "index": 2, "at": "@곱해도" },
-              { "type": "highlight", "target": "node:2", "at": "@곱해도" },
-              { "type": "reveal", "target": "node", "index": 3, "at": "@나누어도" },
-              { "type": "highlight", "target": "node:3", "at": "@나누어도" },
-              { "type": "underline", "target": "node:3", "at": "@영으로는", "ttl_ms": 6000 }
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 2,
+                "at": "@곱해도"
+              },
+              {
+                "type": "highlight",
+                "target": "node:2",
+                "at": "@곱해도"
+              },
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 3,
+                "at": "@나누어도"
+              },
+              {
+                "type": "highlight",
+                "target": "node:3",
+                "at": "@나누어도"
+              },
+              {
+                "type": "underline",
+                "target": "node:3",
+                "at": "@영으로는",
+                "ttl_ms": 6000
+              }
             ]
           }
         },
@@ -134,11 +295,33 @@
           "tts": "두 가지가 더 있습니다. 양변의 역수를 취해도, 양변을 똑같이 거듭제곱해도 등식은 성립합니다. 역수는 삼강에서 본, 곱해서 일이 되는 수입니다. 기초 단계에서 자주 쓰는 성질은 아니지만 뒤에서 필요하니, 이름만 기억해 두세요.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "node", "index": 4, "at": "@역수를 취해도" },
-              { "type": "highlight", "target": "node:4", "at": "@역수를 취해도" },
-              { "type": "reveal", "target": "node", "index": 5, "at": "@거듭제곱해도" },
-              { "type": "highlight", "target": "node:5", "at": "@거듭제곱해도" },
-              { "type": "clear", "what": "highlight", "at": "@이름만" }
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 4,
+                "at": "@역수를 취해도"
+              },
+              {
+                "type": "highlight",
+                "target": "node:4",
+                "at": "@역수를 취해도"
+              },
+              {
+                "type": "reveal",
+                "target": "node",
+                "index": 5,
+                "at": "@거듭제곱해도"
+              },
+              {
+                "type": "highlight",
+                "target": "node:5",
+                "at": "@거듭제곱해도"
+              },
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@이름만"
+              }
             ]
           }
         }
@@ -157,13 +340,60 @@
       "stage": {
         "type": "board",
         "items": [
-          { "id": "eq", "tex": "2x+10=4", "position": { "x": 0.5, "y": 0.2 }, "size": "lg" },
-          { "id": "t1", "tex": "x=1:\\quad 2\\cdot1+10=12\\neq4", "position": { "x": 0.5, "y": 0.42 }, "size": "md" },
-          { "id": "t2", "tex": "x=-3:\\quad 2\\cdot(-3)+10=4", "position": { "x": 0.5, "y": 0.56 }, "size": "md" },
-          { "id": "q", "text": "$x$가 무엇이면 이 등식이 참이 될까?", "position": { "x": 0.5, "y": 0.76 }, "size": "md" },
-          { "id": "sol", "text": "해 = 등식을 참이 되게 하는 $x$의 값", "position": { "x": 0.5, "y": 0.9 }, "size": "sm" }
+          {
+            "id": "eq",
+            "tex": "2x+10=4",
+            "position": {
+              "x": 0.5,
+              "y": 0.2
+            },
+            "size": "lg"
+          },
+          {
+            "id": "t1",
+            "tex": "x=1:\\quad 2\\cdot1+10=12\\neq4",
+            "position": {
+              "x": 0.5,
+              "y": 0.42
+            },
+            "size": "md"
+          },
+          {
+            "id": "t2",
+            "tex": "x=-3:\\quad 2\\cdot(-3)+10=4",
+            "position": {
+              "x": 0.5,
+              "y": 0.56
+            },
+            "size": "md"
+          },
+          {
+            "id": "q",
+            "text": "$x$가 무엇이면 이 등식이 참이 될까?",
+            "position": {
+              "x": 0.5,
+              "y": 0.76
+            },
+            "size": "md"
+          },
+          {
+            "id": "sol",
+            "text": "해 = 등식을 참이 되게 하는 $x$의 값",
+            "position": {
+              "x": 0.5,
+              "y": 0.9
+            },
+            "size": "sm"
+          }
         ],
-        "initial": { "hidden_items": ["t1", "t2", "q", "sol"] }
+        "initial": {
+          "hidden_items": [
+            "t1",
+            "t2",
+            "q",
+            "sol"
+          ]
+        }
       },
       "narration": [
         {
@@ -173,7 +403,12 @@
           "tts": "이 성질을 써서 방정식을 풉니다. 방정식은 등식의 한 종류인데, 엑스 같은 미지수가 들어 있습니다.",
           "cue": {
             "actions": [
-              { "type": "underline", "target": "item:eq", "at": "@방정식은", "ttl_ms": 5000 }
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@방정식은",
+                "ttl_ms": 5000
+              }
             ]
           }
         },
@@ -184,10 +419,42 @@
           "tts": "미지수에 어떤 값을 넣느냐에 따라, 등식이 참이 되기도, 거짓이 되기도 합니다. 엑스에 일을 넣으면 좌변이 십이라서 거짓이고, 엑스에 마이너스삼을 넣으면 좌변이 사가 되어 참입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "t1", "at": "@일을 넣으면" },
-              { "type": "handwrite", "text": "거짓", "position": { "x": 0.84, "y": 0.42 }, "arrow_to": { "target": "item:t1" }, "at": "@거짓이고" },
-              { "type": "reveal", "target": "item", "id": "t2", "at": "@마이너스삼을" },
-              { "type": "handwrite", "text": "참", "position": { "x": 0.84, "y": 0.56 }, "arrow_to": { "target": "item:t2" }, "at": "@되어 참입니다" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t1",
+                "at": "@일을 넣으면"
+              },
+              {
+                "type": "handwrite",
+                "text": "거짓",
+                "position": {
+                  "x": 0.84,
+                  "y": 0.42
+                },
+                "arrow_to": {
+                  "target": "item:t1"
+                },
+                "at": "@거짓이고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t2",
+                "at": "@마이너스삼을"
+              },
+              {
+                "type": "handwrite",
+                "text": "참",
+                "position": {
+                  "x": 0.84,
+                  "y": 0.56
+                },
+                "arrow_to": {
+                  "target": "item:t2"
+                },
+                "at": "@되어 참입니다"
+              }
             ]
           }
         },
@@ -198,10 +465,29 @@
           "tts": "그래서 방정식은, 언어로 치면 [slight emphasis] 의문문입니다. 엑스가 무엇이면 이 등식이 참이 되느냐고 묻는 문장이죠. 그 답, 등식을 참이 되게 하는 엑스의 값을 방정식의 해라고 하고, 해를 구하는 것을, 방정식을 푼다고 합니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "item", "id": "q", "at": "@의문문입니다" },
-              { "type": "underline", "target": "item:q", "at": "@묻는 문장이죠", "ttl_ms": 5000 },
-              { "type": "reveal", "target": "item", "id": "sol", "at": "@해라고 하고" },
-              { "type": "flash", "target": "item:sol", "at": "@푼다고" }
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "q",
+                "at": "@의문문입니다"
+              },
+              {
+                "type": "underline",
+                "target": "item:q",
+                "at": "@묻는 문장이죠",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "sol",
+                "at": "@해라고 하고"
+              },
+              {
+                "type": "flash",
+                "target": "item:sol",
+                "at": "@푼다고"
+              }
             ]
           }
         },
@@ -212,7 +498,16 @@
           "tts": "십육강에서는 이 의문문을 그래프의 교점으로 다시 읽습니다. 지금은 등식의 성질만으로 답을 찾아 보겠습니다.",
           "cue": {
             "actions": [
-              { "type": "handwrite", "text": "→ 16강 방정식과 부등식의 의미", "position": { "x": 0.7, "y": 0.08 }, "align": "start", "at": "@십육강에서는" }
+              {
+                "type": "handwrite",
+                "text": "→ 16강 방정식과 부등식의 의미",
+                "position": {
+                  "x": 0.7,
+                  "y": 0.08
+                },
+                "align": "start",
+                "at": "@십육강에서는"
+              }
             ]
           }
         }
@@ -231,11 +526,29 @@
       "stage": {
         "type": "steps",
         "steps": [
-          { "tex": "2x+10=4" },
-          { "tex": "2x+10-10=4-10", "concept_id": "c.equality-props", "why": "좌변에 $x$만 남기려고 상수항 $+10$부터 없앤다. 양변에서 같은 수 10을 빼도 등식은 성립" },
-          { "tex": "2x=-6", "concept_id": "c.like-terms", "why": "좌변 $10-10=0$, 우변 $4-10=-6$. 상수항끼리 계산(2강 동류항)" },
-          { "tex": "2x\\times\\dfrac12=-6\\times\\dfrac12", "concept_id": "c.equality-props", "why": "$x$에 곱해진 2를 없애려고 2의 역수 $\\frac12$을 양변에 곱한다(3강 역수). 양변에 같은 수를 곱해도 등식은 성립" },
-          { "tex": "x=-3", "concept_id": "c.linear-eq-solve", "why": "좌변은 $2\\times\\frac12=1$이라 $x$만 남고, 우변은 $-3$. 이것이 해" }
+          {
+            "tex": "2x+10=4"
+          },
+          {
+            "tex": "2x+10-10=4-10",
+            "concept_id": "c.equality-props",
+            "why": "좌변에 $x$만 남기려고 상수항 $+10$부터 없앤다. 양변에서 같은 수 10을 빼도 등식은 성립"
+          },
+          {
+            "tex": "2x=-6",
+            "concept_id": "c.like-terms",
+            "why": "좌변 $10-10=0$, 우변 $4-10=-6$. 상수항끼리 계산(2강 동류항)"
+          },
+          {
+            "tex": "2x\\times\\dfrac12=-6\\times\\dfrac12",
+            "concept_id": "c.equality-props",
+            "why": "$x$에 곱해진 2를 없애려고 2의 역수 $\\frac12$을 양변에 곱한다(3강 역수). 양변에 같은 수를 곱해도 등식은 성립"
+          },
+          {
+            "tex": "x=-3",
+            "concept_id": "c.linear-eq-solve",
+            "why": "좌변은 $2\\times\\frac12=1$이라 $x$만 남고, 우변은 $-3$. 이것이 해"
+          }
         ]
       },
       "narration": [
@@ -246,8 +559,17 @@
           "tts": "목표는 하나입니다. [slight emphasis] 좌변에 엑스만 남기는 것. 그러면 우변에 남는 값이 바로 해입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
-              { "type": "highlight", "target": "step:0", "at": "@start" }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              }
             ]
           }
         },
@@ -258,7 +580,12 @@
           "tts": "학교에서는, 플러스십이 등호를 넘어가면 부호가 바뀐다, 이항이라고 배웠을 겁니다. 그것도 맞지만, 더 근본적인 과정을 보겠습니다. 바로 등식의 성질입니다.",
           "cue": {
             "actions": [
-              { "type": "underline", "target": "step:0", "at": "@플러스십이", "ttl_ms": 4000 }
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@플러스십이",
+                "ttl_ms": 4000
+              }
             ]
           }
         },
@@ -269,9 +596,23 @@
           "tts": "먼저 없앨 것은 뒤에 붙은 상수항 플러스십입니다. 앞의 이를 먼저 없애면 분수가 생겨 번거로우니, 보통 상수항부터 처리합니다. 플러스십을 없애려면, 양변에서 십을 빼면 됩니다. 좌변만 빼면 안 되고, 등식의 성질에 따라 우변에서도 똑같이 뺍니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 1, "at": "@양변에서 십을" },
-              { "type": "highlight", "target": "step:1", "at": "@양변에서 십을" },
-              { "type": "underline", "target": "step:1", "at": "@우변에서도", "ttl_ms": 4000 }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@양변에서 십을"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@양변에서 십을"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@우변에서도",
+                "ttl_ms": 4000
+              }
             ]
           }
         },
@@ -282,8 +623,17 @@
           "tts": "계산하면 좌변은 이엑스, 우변은 마이너스육입니다. 상수항은 없앴습니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 2, "at": "@start" },
-              { "type": "highlight", "target": "step:2", "at": "@start" }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@start"
+              }
             ]
           }
         },
@@ -294,9 +644,23 @@
           "tts": "이제 엑스 앞의 이를 없앨 차례입니다. 이와 엑스 사이에는 곱하기가 생략되어 있죠. 곱해진 수를 없애려면, 역수를 곱합니다. 이의 역수인 이분의일을 양변에 똑같이 곱합니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 3, "at": "@이분의일을" },
-              { "type": "highlight", "target": "step:3", "at": "@이분의일을" },
-              { "type": "underline", "target": "step:3", "at": "@양변에 똑같이", "ttl_ms": 4000 }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@이분의일을"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@이분의일을"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@양변에 똑같이",
+                "ttl_ms": 4000
+              }
             ]
           }
         },
@@ -307,9 +671,22 @@
           "tts": "좌변은 이 곱하기 이분의일은 일이라 엑스만 남고, 우변은 마이너스육 곱하기 이분의일은 마이너스삼. 그래서 해는 엑스는마이너스삼입니다. [slight emphasis] 양변에 같은 것을 하는 것, 이것이 등식의 성질이고, 이항은 이 과정을 줄여 부르는 말입니다.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 4, "at": "@start" },
-              { "type": "highlight", "target": "step:4", "at": "@start" },
-              { "type": "flash", "target": "step:4", "at": "@엑스는마이너스삼" }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 4,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:4",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "step:4",
+                "at": "@엑스는마이너스삼"
+              }
             ]
           }
         }
@@ -328,9 +705,19 @@
       "stage": {
         "type": "steps",
         "steps": [
-          { "tex": "x=-3\\ \\text{을}\\ 2x+10=4\\ \\text{에 넣는다}" },
-          { "tex": "2\\cdot(-3)+10=-6+10=4", "concept_id": "c.equation", "why": "좌변에 해를 넣어 계산. 등식이 참이 되는 값이 해" },
-          { "tex": "4=4\\quad\\checkmark", "concept_id": "c.equality", "why": "좌변과 우변이 같다 → 등식이 참 → $x=-3$이 해가 맞다" }
+          {
+            "tex": "x=-3\\ \\text{을}\\ 2x+10=4\\ \\text{에 넣는다}"
+          },
+          {
+            "tex": "2\\cdot(-3)+10=-6+10=4",
+            "concept_id": "c.equation",
+            "why": "좌변에 해를 넣어 계산. 등식이 참이 되는 값이 해"
+          },
+          {
+            "tex": "4=4\\quad\\checkmark",
+            "concept_id": "c.equality",
+            "why": "좌변과 우변이 같다 → 등식이 참 → $x=-3$이 해가 맞다"
+          }
         ]
       },
       "narration": [
@@ -341,10 +728,28 @@
           "tts": "해를 구했으면 원래 식에 넣어 확인합니다. 엑스는마이너스삼을 이엑스플러스십에 넣으면, 마이너스육플러스십은사.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 0, "at": "@start" },
-              { "type": "highlight", "target": "step:0", "at": "@start" },
-              { "type": "reveal", "target": "step", "index": 1, "at": "@넣으면" },
-              { "type": "highlight", "target": "step:1", "at": "@넣으면" }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@넣으면"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@넣으면"
+              }
             ]
           }
         },
@@ -355,20 +760,37 @@
           "tts": "우변도 사. 좌변과 우변이 같으니 등식이 참이고, 엑스는마이너스삼이 해가 맞습니다. 의문문에 답을 한 셈이죠.",
           "cue": {
             "actions": [
-              { "type": "reveal", "target": "step", "index": 2, "at": "@start" },
-              { "type": "highlight", "target": "step:2", "at": "@start" },
-              { "type": "flash", "target": "step:2", "at": "@해가 맞습니다" }
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "step:2",
+                "at": "@해가 맞습니다"
+              }
             ]
           }
         },
         {
           "id": "s5-3",
           "role": "say",
-          "text": "상수항 먼저 없애고, 곱해진 수는 역수로 없앤다. 이 순서는 10강 이차방정식의 해법에서도 그대로 쓰입니다.",
-          "tts": "상수항 먼저 없애고, 곱해진 수는 역수로 없앤다. 이 순서는 십강 이차방정식의 해법에서도 그대로 쓰입니다.",
+          "text": "상수항 먼저 없애고, 곱해진 수는 역수로 없앤다. \"양변에 같은 것을 한다\"는 이 생각은 10강 이차방정식의 해법에서도 그대로 쓰입니다.",
+          "tts": "상수항 먼저 없애고, 곱해진 수는 역수로 없앤다. 양변에 같은 것을 한다는 이 생각은 십강 이차방정식의 해법에서도 그대로 쓰입니다.",
           "cue": {
             "actions": [
-              { "type": "clear", "what": "highlight", "at": "@start" }
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@start"
+              }
             ]
           }
         }
@@ -388,10 +810,22 @@
         "type": "quiz",
         "stem_md": "$A=B$ 일 때, 다음 중 등식의 성질로 쓸 수 **없는** 것은?",
         "options": [
-          { "id": "a", "text_md": "$A+3=B+3$" },
-          { "id": "b", "text_md": "$A\\times3=B\\times3$" },
-          { "id": "c", "text_md": "$A\\div0=B\\div0$" },
-          { "id": "d", "text_md": "$\\dfrac1A=\\dfrac1B$" }
+          {
+            "id": "a",
+            "text_md": "$A+3=B+3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$A\\times3=B\\times3$"
+          },
+          {
+            "id": "c",
+            "text_md": "$A\\div0=B\\div0$"
+          },
+          {
+            "id": "d",
+            "text_md": "$\\dfrac1A=\\dfrac1B$"
+          }
         ],
         "correct": "c",
         "explain": "양변에 같은 수를 더하거나 곱하거나, 양변의 역수를 취하는 것은 모두 등식의 성질. 하지만 0으로 나누는 것은 할 수 없다(4강 분모≠0과 같은 이유).",
@@ -403,7 +837,9 @@
           "role": "say",
           "text": "마지막으로 한 문제. $A=B$일 때, 보기 중 등식의 성질로 쓸 수 없는 것 하나를 고르세요. 모르겠으면 '모르겠어요'를 누르면 어느 개념에서 막혔는지 되짚어 드립니다. 다음 시간에는 6강 부등식의 성질입니다.",
           "tts": "마지막으로 한 문제. 에이는비일 때, 보기 중 등식의 성질로 쓸 수 없는 것 하나를 고르세요. 모르겠으면 모르겠어요를 누르면, 어느 개념에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 육강, 부등식의 성질입니다.",
-          "cue": { "actions": [] }
+          "cue": {
+            "actions": []
+          }
         }
       ]
     }
