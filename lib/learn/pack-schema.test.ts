@@ -49,10 +49,10 @@ describe('pack import without a remote database', () => {
     expect(store.get('learn_items')?.map(row => row.version)).toEqual([1, 2]);
     expect((await importValidated(client, data)).added).toBe(0);
   });
-  it('실제 저장소 팩의 24개 소주제·23개 엣지를 검증한다', async () => {
+  it('실제 저장소 팩의 30개 소주제·23개 엣지를 검증한다', async () => {
     const result = validatePack(await readRepositoryPack('root-math'));
     expect(result.errors).toEqual([]);
-    expect(result.data?.abilities).toHaveLength(24);
+    expect(result.data?.abilities).toHaveLength(30);
     expect(result.data?.edges).toHaveLength(23);
   });
   it('테이블 미적용 오류는 안내문으로 변환한다', () => {
