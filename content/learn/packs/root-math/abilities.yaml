@@ -286,3 +286,75 @@
   request_ability: null
   source_node_id: E05
   status: draft
+- id: 07-1
+  pack_id: root-math
+  unit_id: u07
+  order_in_unit: 1
+  name: 밑·지수와 지수의 합·곱
+  action: 밑과 지수를 구분하고 a^m a^n, (a^m)^n 을 계산한다
+  slide_pages: p36-38
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 07-2
+  pack_id: root-math
+  unit_id: u07
+  order_in_unit: 2
+  name: 지수의 차(나눗셈)
+  action: a^m ÷ a^n 을 m,n 크기에 따라 계산한다
+  slide_pages: p39-41
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 07-3
+  pack_id: root-math
+  unit_id: u07
+  order_in_unit: 3
+  name: 지수의 분배와 거꾸로 쓰기
+  action: (ab)^n, (a/b)^n 을 계산하고 거꾸로 묶는다
+  slide_pages: p42-44
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 08-1
+  pack_id: root-math
+  unit_id: u08
+  order_in_unit: 1
+  name: 루트의 뜻
+  action: 넓이로 √a 의 뜻을 설명하고 무리수와 연결한다
+  slide_pages: p46-47
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 08-2
+  pack_id: root-math
+  unit_id: u08
+  order_in_unit: 2
+  name: 근호의 곱셈·나눗셈
+  action: √a√b=√(ab), √a/√b=√(a/b) 를 적용한다
+  slide_pages: p48
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 08-3
+  pack_id: root-math
+  unit_id: u08
+  order_in_unit: 3
+  name: a의 제곱근(부호별)
+  action: a>0, a=0, a<0 에 따라 제곱근의 개수를 판단한다
+  slide_pages: p49
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft

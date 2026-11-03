@@ -34,3 +34,15 @@
   title: 부등식의 성질
   slide_pages: p29-34
   tier: mvp1
+- id: u07
+  pack_id: root-math
+  order: 7
+  title: 지수법칙
+  slide_pages: p35-44
+  tier: mvp1
+- id: u08
+  pack_id: root-math
+  order: 8
+  title: 제곱근의 성질
+  slide_pages: p45-49
+  tier: mvp1
