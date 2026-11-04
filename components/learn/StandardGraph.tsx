@@ -19,6 +19,6 @@ function ClassicGraph({x,y,fns,points=[],band,aria,highlight,parameters}:Standar
   {hasY&&integerTicks(y).filter(t=>t!==0).map(t=><text className={styles.tick} key={'y'+t} x={sx(0)-7} y={sy(t)+4} textAnchor="end">{t}</text>)}
   </g>
   {fns.map((fn,i)=><path key={i} d={curvePath(fn.expr,x,y,parameters)} className={styles.curve} stroke={colors[fn.c]} opacity={active('fn:'+i,fn.label)||highlight===fn.c?1:.25}/>)}
-  {points.filter(p=>p.x>=x[0]&&p.x<=x[1]&&p.y>=y[0]&&p.y<=y[1]).map((p,i)=><g key={i} fill={colors[p.c]} opacity={active('point:'+i,p.label)?1:.25}><circle cx={sx(p.x)} cy={sy(p.y)} r={5}/>{p.label&&<text x={sx(p.x)+8} y={sy(p.y)-8}>{p.label}</text>}</g>)}
+  {points.filter(p=>p.x>=x[0]&&p.x<=x[1]&&p.y>=y[0]&&p.y<=y[1]).map((p,i)=><g key={i} fill={colors[p.c]} opacity={active('point:'+i,p.label)?1:.25}><line x1={sx(p.x)} x2={sx(p.x)} y1={sy(p.y)-8} y2={sy(p.y)+8} stroke={colors[p.c]} strokeWidth={3} strokeLinecap="round"/>{p.label&&<text x={sx(p.x)+8} y={sy(p.y)-8}>{p.label}</text>}</g>)}
  </svg>{fns.some(f=>f.label)&&<figcaption className={styles.legend}>{fns.map((fn,i)=>fn.label&&<span key={i}><i style={{background:colors[fn.c]}}/>{fn.label}</span>)}</figcaption>}</figure>;
 }

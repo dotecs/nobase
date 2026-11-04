@@ -123,7 +123,7 @@ describe('number line and brackets', () => {
     expect(markup).toContain('data-arrow="left"');
     expect(markup).toContain('stroke-width:2');
     expect(markup).toContain('>0</annotation>');
-    const circleY = Number(markup.match(/cy="([\d.]+)"/)![1]);
+    const circleY = Number(markup.match(/data-target="point:0"[\s\S]*?<line[^>]+y2="([\d.]+)"/)![1]) - 9;
     const labelY = Number(markup.match(/data-target="point:0"[\s\S]*?<foreignObject[^>]+y="([\d.]+)"/)![1]);
     expect(labelY).toBeGreaterThan(circleY + 24);
   });

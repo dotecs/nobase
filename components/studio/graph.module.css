@@ -8,7 +8,7 @@
 .curve, .glow { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .curve { stroke-width: 2.5; }
 .glow { stroke-width: 6; opacity: .4; }
-.point { fill:var(--studio-bg); stroke: var(--color-gray-50); stroke-width: 2; }
+.point { fill:none; stroke-width: 3; stroke-linecap: round; }
 .pointLabel { color:var(--studio-text); font-size: var(--studio-type-label); font-family: var(--font-sans); fill: var(--studio-text); paint-order: stroke; stroke: var(--studio-bg); stroke-width: 4; stroke-linejoin: round; }
 .band { fill: var(--studio-glow); opacity: .24; }
 .label { color: var(--studio-text); font-size: 19px; white-space: nowrap; }
