@@ -460,8 +460,13 @@
               },
               {
                 "type": "circle",
-                "target": "item:t1",
-                "at": "@사가"
+                "at": "@사가",
+                "position": {
+                  "x": 0.352,
+                  "y": 0.35
+                },
+                "rx": 0.014,
+                "ry": 0.038
               },
               {
                 "type": "handwrite",
@@ -471,7 +476,8 @@
                   "y": 0.52
                 },
                 "arrow_to": {
-                  "target": "item:t1"
+                  "x": 0.352,
+                  "y": 0.398
                 },
                 "at": "@계수입니다"
               }
@@ -487,8 +493,13 @@
             "actions": [
               {
                 "type": "circle",
-                "target": "item:t2",
-                "at": "@이가 아니라"
+                "at": "@이가 아니라",
+                "position": {
+                  "x": 0.437,
+                  "y": 0.35
+                },
+                "rx": 0.021,
+                "ry": 0.038
               },
               {
                 "type": "handwrite",
@@ -498,7 +509,8 @@
                   "y": 0.62
                 },
                 "arrow_to": {
-                  "target": "item:t2"
+                  "x": 0.437,
+                  "y": 0.398
                 },
                 "at": "@마이너스이라고"
               },
@@ -525,7 +537,8 @@
                   "y": 0.52
                 },
                 "arrow_to": {
-                  "target": "item:t3"
+                  "x": 0.554,
+                  "y": 0.398
                 },
                 "at": "@그냥 삼입니다"
               },
@@ -675,9 +688,14 @@
             "actions": [
               {
                 "type": "circle",
-                "target": "item:t1",
                 "at": "@오른쪽 위에",
-                "ttl_ms": 5000
+                "ttl_ms": 5000,
+                "position": {
+                  "x": 0.386,
+                  "y": 0.318
+                },
+                "rx": 0.011,
+                "ry": 0.03
               },
               {
                 "type": "handwrite",
@@ -687,7 +705,8 @@
                   "y": 0.12
                 },
                 "arrow_to": {
-                  "target": "item:t1"
+                  "x": 0.386,
+                  "y": 0.286
                 },
                 "at": "@엑스가 세 번",
                 "ttl_ms": 12000
@@ -703,10 +722,51 @@
           "cue": {
             "actions": [
               {
-                "type": "pointer",
-                "target": "item:t3",
+                "type": "circle",
+                "position": {
+                  "x": 0.598,
+                  "y": 0.318
+                },
+                "rx": 0.011,
+                "ry": 0.03,
                 "at": "@와이는 사실",
-                "ttl_ms": 3000
+                "ttl_ms": 5000
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0.36,
+                  "y": 0.318
+                },
+                "at": "@사와",
+                "ttl_ms": 2000
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0.447,
+                  "y": 0.318
+                },
+                "at": "@이,",
+                "ttl_ms": 2000
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0.562,
+                  "y": 0.318
+                },
+                "at": "@삼,",
+                "ttl_ms": 2000
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0.66,
+                  "y": 0.318
+                },
+                "at": "@칠에도",
+                "ttl_ms": 2500
               },
               {
                 "type": "handwrite",
@@ -716,7 +776,8 @@
                   "y": 0.12
                 },
                 "arrow_to": {
-                  "target": "item:t3"
+                  "x": 0.598,
+                  "y": 0.286
                 },
                 "at": "@숨어 있습니다",
                 "ttl_ms": 9000
@@ -773,10 +834,22 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "item:t1",
+                "at": "@사엑스세제곱은",
+                "ttl_ms": 3500
+              },
+              {
                 "type": "reveal",
                 "target": "item",
                 "id": "d1",
                 "at": "@세 번이라 삼차"
+              },
+              {
+                "type": "underline",
+                "target": "item:t2",
+                "at": "@마이너스이엑스제곱와이는",
+                "ttl_ms": 3500
               },
               {
                 "type": "reveal",
@@ -785,10 +858,22 @@
                 "at": "@한 번이라 삼차"
               },
               {
+                "type": "underline",
+                "target": "item:t3",
+                "at": "@삼와이는",
+                "ttl_ms": 3000
+              },
+              {
                 "type": "reveal",
                 "target": "item",
                 "id": "d3",
                 "at": "@삼와이는 일차"
+              },
+              {
+                "type": "underline",
+                "target": "item:t4",
+                "at": "@상수항 마이너스칠은",
+                "ttl_ms": 3000
               },
               {
                 "type": "reveal",
