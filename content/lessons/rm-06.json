@@ -488,6 +488,18 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "point:0",
+                "at": "@이는 사보다",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "circle",
+                "target": "point:2",
+                "at": "@마이너스이는",
+                "ttl_ms": 4000
+              },
+              {
                 "type": "handwrite",
                 "text": "2 < 4\n×(−1)\n−2 > −4",
                 "position": {
@@ -575,6 +587,12 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@우변에 괄호가",
+                "ttl_ms": 3000
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 1,
@@ -600,6 +618,12 @@
           "tts": "좌변의 마이너스삼을 없애려고 양변에 삼을 더합니다. 같은 수를 더했으니 부등호 방향은 그대로입니다. 좌변은 삼엑스, 우변은 사엑스플러스칠이 됩니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@좌변의 마이너스삼을",
+                "ttl_ms": 3000
+              },
               {
                 "type": "reveal",
                 "target": "step",
@@ -633,6 +657,12 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@사엑스를 뺍니다",
+                "ttl_ms": 3000
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 4,
@@ -653,6 +683,12 @@
           "tts": "이제 마이너스엑스 앞에 생략된 마이너스일을 없애야 합니다. 마이너스일의 역수는 마이너스일 자기 자신이니까, 양변에 마이너스일을 곱합니다. [slight emphasis] 음수를 곱했죠. 이 순간 부등호 방향이 바뀝니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "step:4",
+                "at": "@마이너스엑스 앞에",
+                "ttl_ms": 3000
+              },
               {
                 "type": "reveal",
                 "target": "step",

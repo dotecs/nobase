@@ -678,6 +678,12 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@상수항 플러스십입니다",
+                "ttl_ms": 3000
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 1,
@@ -725,6 +731,12 @@
           "tts": "이제 엑스 앞의 이를 없앨 차례입니다. 이와 엑스 사이에는 곱하기가 생략되어 있죠. 곱해진 수를 없애려면, 역수를 곱합니다. 이의 역수인 이분의일을 양변에 똑같이 곱합니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@엑스 앞의 이를",
+                "ttl_ms": 3000
+              },
               {
                 "type": "reveal",
                 "target": "step",
