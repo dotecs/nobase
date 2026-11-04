@@ -306,6 +306,12 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "item:t1",
+                "at": "@사엑스세제곱 앞에는",
+                "ttl_ms": 4000
+              },
+              {
                 "type": "handwrite",
                 "text": "(+)",
                 "position": {
@@ -324,6 +330,12 @@
           "tts": "이렇게 부호를 기준으로 끊은 덩어리 하나하나를 항이라고 합니다. 이 식에는 항이 네 개 있습니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "item:sign",
+                "at": "@부호를 기준으로",
+                "ttl_ms": 3000
+              },
               {
                 "type": "underline",
                 "target": "item:t1",
@@ -464,6 +476,12 @@
                 "at": "@start"
               },
               {
+                "type": "underline",
+                "target": "item:def",
+                "at": "@문자 앞에",
+                "ttl_ms": 4000
+              },
+              {
                 "type": "circle",
                 "target": "item:t1/coef",
                 "at": "@사가"
@@ -524,6 +542,12 @@
           "tts": "와이의 계수는 플러스삼, 그냥 삼입니다. 상수항 마이너스칠은 문자가 없으니 계수를 묻지 않습니다.",
           "cue": {
             "actions": [
+              {
+                "type": "circle",
+                "target": "item:t3/coef",
+                "at": "@플러스삼",
+                "ttl_ms": 3000
+              },
               {
                 "type": "callout",
                 "id": "c3",
@@ -739,6 +763,12 @@
                 "type": "underline",
                 "target": "item:deg",
                 "at": "@문자가 곱해진 횟수가"
+              },
+              {
+                "type": "circle",
+                "target": "item:t1/coef",
+                "at": "@수에 아무리",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -976,6 +1006,18 @@
                 "type": "highlight",
                 "target": "row:0",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "cell:0:1",
+                "at": "@문자는 둘 다",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "underline",
+                "target": "cell:0:2",
+                "at": "@차수는 둘 다",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -997,6 +1039,18 @@
                 "type": "highlight",
                 "target": "row:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "cell:1:1",
+                "at": "@문자 에이",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "underline",
+                "target": "cell:1:2",
+                "at": "@둘 다 이차입니다",
+                "ttl_ms": 3000
               },
               {
                 "type": "reveal",
@@ -1032,8 +1086,9 @@
               },
               {
                 "type": "underline",
-                "target": "row:3",
-                "at": "@차수가 일과 이로"
+                "target": "cell:3:2",
+                "at": "@차수가 일과 이로",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -1058,8 +1113,9 @@
               },
               {
                 "type": "underline",
-                "target": "row:4",
-                "at": "@문자가 달라서"
+                "target": "cell:4:1",
+                "at": "@문자가 달라서",
+                "ttl_ms": 4000
               }
             ]
           }

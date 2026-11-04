@@ -278,6 +278,17 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "position": {
+                  "x": 3,
+                  "y": 0
+                },
+                "rx": 2.5,
+                "ry": 0.4,
+                "at": "@양의 정수는",
+                "ttl_ms": 5000
+              },
+              {
                 "type": "handwrite",
                 "text": "양의 정수 = 자연수",
                 "position": {
@@ -594,6 +605,12 @@
           "tts": "정수도 유리수입니다. 삼은 일분의삼으로 쓸 수 있으니까요. 그래서 유리수 안에 정수가 들어 있다고 말합니다.",
           "cue": {
             "actions": [
+              {
+                "type": "circle",
+                "target": "point:8",
+                "at": "@삼은",
+                "ttl_ms": 4000
+              },
               {
                 "type": "handwrite",
                 "tex": "3=\\dfrac{3}{1}",
@@ -1135,6 +1152,12 @@
                 },
                 "at": "@수직선이다",
                 "ttl_ms": 7000
+              },
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@수직선이다",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -1342,6 +1365,12 @@
                 "at": "@start"
               },
               {
+                "type": "underline",
+                "target": "tree:real",
+                "at": "@실수는",
+                "ttl_ms": 3000
+              },
+              {
                 "type": "reveal",
                 "target": "tree",
                 "id": "rational",
@@ -1384,6 +1413,12 @@
           "tts": "정수는 다시 양의 정수, 영, 음의 정수로 나뉩니다. 양의 정수는 자연수와 같은 말입니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "tree:int",
+                "at": "@정수는 다시",
+                "ttl_ms": 3000
+              },
               {
                 "type": "reveal",
                 "target": "tree",
@@ -1435,6 +1470,12 @@
                 "type": "underline",
                 "target": "tree:nonint",
                 "at": "@정식 명칭입니다"
+              },
+              {
+                "type": "underline",
+                "target": "tree:int",
+                "at": "@정수는 아닌",
+                "ttl_ms": 2500
               }
             ]
           }
