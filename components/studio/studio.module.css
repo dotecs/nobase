@@ -12,6 +12,7 @@
 .exitFocus { position:absolute; top:4px; right:24px; z-index:5; }
 .content { display:grid; grid-template-columns:280px minmax(0,1fr); gap:16px; min-height:0; }
 .panel { min-height:0; }
+.panelHeader { display:none; }
 .stageColumn { position:relative; min-height:0; min-width:0; border:1px solid var(--studio-card-border); border-radius:14px; background:var(--studio-card); overflow:hidden; display:flex; flex-direction:column; }
 .eyebrow { margin:0 0 2px; font-size:12px; color:var(--studio-muted); }
 .stage { min-height:0; min-width:0; flex:1; display:flex; align-items:center; justify-content:center; padding:12px 24px calc(max(60px,var(--studio-caption-height,60px)) + 24px); }
@@ -71,9 +72,12 @@
 /* 과정 사이드바를 하단 바 옆으로 장치 아래 끝까지 내린다 (데스크톱, 집중·녹화 모드 제외) */
 @media(min-width:1280px) {
  .studio:not([data-focus="true"]):not([data-chrome="false"]) { grid-template-columns:280px minmax(0,1fr); }
- .studio:not([data-focus="true"]):not([data-chrome="false"]) .topbar { grid-column:1/-1; }
+ .studio:not([data-focus="true"]):not([data-chrome="false"]) .topbar { grid-column:2; grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(max-content,1fr); }
+ .studio:not([data-focus="true"]):not([data-chrome="false"]) .topbar .topLeft { display:none; }
  .studio:not([data-focus="true"]):not([data-chrome="false"]) .content { display:contents; }
- .studio:not([data-focus="true"]):not([data-chrome="false"]) .panel { grid-column:1; grid-row:2/4; margin-bottom:-16px; }
+ .studio:not([data-focus="true"]):not([data-chrome="false"]) .panel { grid-column:1; grid-row:1/4; margin-bottom:-16px; display:flex; flex-direction:column; min-height:0; }
+ .studio:not([data-focus="true"]):not([data-chrome="false"]) .panelHeader { display:flex; align-items:center; gap:10px; height:39px; flex:none; margin-bottom:6px; padding:0 4px; color:var(--studio-muted); font-size:12px; letter-spacing:0.02em; }
+ .studio:not([data-focus="true"]):not([data-chrome="false"]) .panel > :last-child { flex:1; min-height:0; }
  .studio:not([data-focus="true"]):not([data-chrome="false"]) .stageColumn { grid-column:2; grid-row:2; }
  .studio:not([data-focus="true"]):not([data-chrome="false"]) .navigation { grid-column:2; grid-row:3; }
 }
