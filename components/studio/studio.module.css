@@ -128,3 +128,8 @@
 .iconButton svg { width:19px; height:19px; }
 .topActions .iconButton:hover { color:var(--studio-text); background:var(--studio-panel); }
 .topActions .iconButton[aria-pressed="true"] { color:var(--studio-accent); background:var(--studio-panel); }
+
+.drawer .iconButton { width:44px; height:44px; padding:0; display:grid; place-items:center; border:0; background:transparent; }
+.courseButton { width:44px; height:44px; padding:0; border:0; background:transparent; justify-content:center; }
+.courseButton svg { width:20px; height:20px; }
+.drawer .iconButton:hover,.courseButton:hover { background:var(--studio-panel); color:var(--studio-text); }
