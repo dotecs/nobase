@@ -18,7 +18,7 @@ export function BoardItems({ items, state, params, space, svg = false }: {
     const dimmed = state.highlight?.length && state.dimOthers && !state.highlight.includes(target);
     const content = <div
       className={styles.item} data-stage-target={target} data-size={item.size ?? 'md'}
-      data-align={item.align ?? 'middle'} data-color={item.color}
+      data-align={item.align ?? 'middle'} data-color={item.color} data-weight={item.weight} data-kind={item.kind ?? 'plain'}
       style={{ left: svg ? 0 : position.x, top: svg ? 0 : position.y, opacity: (state.itemOpacity?.[item.id] ?? 1) * (dimmed ? .25 : 1) }}
     >{item.tex ? <InlineMath math={'\\displaystyle ' + itemContent(item, params)} /> : <LessonText authored text={itemContent(item, params)} />}</div>;
     return svg

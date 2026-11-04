@@ -1,13 +1,14 @@
-.studio { position:fixed; inset:0; z-index:100; width:100%; height: 100dvh; overflow:hidden; display:grid; grid-template-rows:48px minmax(0,1fr) 60px; gap:16px; padding:16px 24px; color:var(--studio-text); background-color:var(--studio-bg); background-image:linear-gradient(var(--studio-grid-soft) 1px,transparent 1px),linear-gradient(90deg,var(--studio-grid-soft) 1px,transparent 1px); background-size:40px 40px; font-family:var(--font-sans); word-break:keep-all; --color-text:var(--studio-text); --color-text-secondary:var(--studio-muted); --color-bg-elevated:var(--studio-bg); --color-bg-secondary:var(--studio-panel); --color-border:var(--studio-grid); --color-border-brand:var(--studio-grid); }
+.studio { position:fixed; inset:0; z-index:100; width:100%; height: 100dvh; overflow:hidden; display:grid; grid-template-rows:39px minmax(0,1fr) 60px; gap:6px; padding:0 24px 16px; color:var(--studio-text); background-color:var(--studio-bg); background-image:linear-gradient(var(--studio-grid-soft) 1px,transparent 1px),linear-gradient(90deg,var(--studio-grid-soft) 1px,transparent 1px); background-size:40px 40px; font-family:var(--font-sans); word-break:keep-all; --color-text:var(--studio-text); --color-text-secondary:var(--studio-muted); --color-bg-elevated:var(--studio-bg); --color-bg-secondary:var(--studio-panel); --color-border:var(--studio-grid); --color-border-brand:var(--studio-grid); }
 .studio *,.studio *::before,.studio *::after { box-sizing:border-box; }
 .studio button { font:inherit; cursor:pointer; }
 .studio button:disabled { cursor:default; opacity:.35; }
 .studio button:focus-visible,.studio a:focus-visible,.studio summary:focus-visible { outline:2px solid var(--studio-accent); outline-offset:3px; }
 .topbar { display:grid; grid-template-columns:minmax(max-content,1fr) minmax(0,2fr) minmax(max-content,1fr); align-items:center; gap:16px; }
-.logo img { filter:brightness(0) invert(1); width:170px; }
+.logo { display:inline-flex; align-items:center; }
+.logo img { filter:brightness(0) invert(1); width:auto; height:26px; }
 .studio[data-theme="light"] .logo img { filter:none; }
 .topActions { display:flex; gap:8px; justify-content:flex-end; }
-.focusButton { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; color:var(--studio-muted); background:var(--studio-panel); border:1px solid var(--studio-card-border); border-radius:12px; font-size:12px !important; }
+.focusButton { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; color:var(--studio-muted); background:var(--studio-panel); border:1px solid var(--studio-card-border); border-radius:12px; font-size:12px !important; }
 .exitFocus { position:absolute; top:4px; right:24px; z-index:5; }
 .content { display:grid; grid-template-columns:280px minmax(0,1fr); gap:16px; min-height:0; }
 .panel { min-height:0; }
@@ -17,7 +18,7 @@
 .captionSlot { position:absolute; bottom:16px; left:16px; right:16px; pointer-events:none; }
 .playerSlot { position:absolute; bottom:8px; left:24px; right:24px; }
 .navigation { display:flex; align-items:center; min-width:0; }
-.studio[data-focus="true"] { grid-template-rows:minmax(0,1fr) 60px; padding-top:24px; }
+.studio[data-focus="true"] { grid-template-rows:minmax(0,1fr) 60px; padding-top:12px; }
 .studio[data-focus="true"] .topbar,.studio[data-focus="true"] .panel { display:none; }
 .studio[data-focus="true"] .content { grid-template-columns:minmax(0,1fr); }
 .studio[data-focus="true"][data-transport-visible="false"] .navigation { opacity:0; pointer-events:none; }
@@ -35,7 +36,7 @@
 .drawer>button { margin-bottom:12px; }
 .drawer aside { height:auto; }
 @media(max-width:1279px) { .content { grid-template-columns:minmax(0,1fr); } .panel { display:none; } .courseButton { display:inline-flex; } }
-@media(max-width:1023px) { .studio { grid-template-rows:88px minmax(0,1fr) 112px; gap:8px; padding:8px 12px; } .eyebrow { font-size:12px; } .stage { padding-left:4px; padding-right:4px; } .logo img { width:116px; } .focusButton { padding:8px; font-size:11px !important; } .topActions { gap:4px; } .topLeft { gap:6px; } .studio[data-focus="true"] { grid-template-rows:minmax(0,1fr) 112px; } }
+@media(max-width:1023px) { .studio { grid-template-rows:76px minmax(0,1fr) 112px; gap:8px; padding:6px 12px 8px; } .eyebrow { font-size:12px; } .stage { padding-left:4px; padding-right:4px; } .logo img { height:22px; } .focusButton { padding:8px; font-size:11px !important; } .topActions { gap:4px; } .topLeft { gap:6px; } .studio[data-focus="true"] { grid-template-rows:minmax(0,1fr) 112px; } }
 .studio[data-frame="true"][data-chrome="false"] { grid-template-rows:minmax(0,1fr); }
 /* Mobile controls retain accessible hit areas and focus behavior. */
 @media(max-width:1279px) {
@@ -80,8 +81,8 @@
 /* LS4-7: titles live outside the drawing area; controls float over its corner. */
 .topTitle { min-width:0; max-width:100%; text-align:center; }
 .topTitle h1,.overlayTitle h2 { margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.topTitle h1 { font-size:18px; font-weight:600; line-height:24px; }
-.topTitle .eyebrow { font-size:12px; line-height:16px; }
+.topTitle h1 { font-size:16px; font-weight:600; line-height:20px; }
+.topTitle .eyebrow { font-size:11px; line-height:14px; margin:0; }
 .overlayTitle { display:none; position:absolute; top:12px; left:20px; z-index:2; max-width:50%; opacity:.75; pointer-events:none; }
 .overlayTitle h2 { font-size:16px; font-weight:600; line-height:22px; }
 .overlayTitle .eyebrow { font-size:12px; line-height:16px; }
@@ -90,7 +91,7 @@
 .adminShort { display:none; }
 .studio[data-focus="true"] .overlayTitle,.studio[data-chrome="false"] .overlayTitle { display:block; }
 @media(max-width:1023px) {
- .topbar { grid-template-columns:minmax(0,1fr) auto; grid-template-rows:44px 40px; gap:4px 8px; }
+ .topbar { grid-template-columns:minmax(0,1fr) auto; grid-template-rows:36px 34px; gap:4px 8px; }
  .topTitle { grid-column:1/-1; grid-row:2; justify-self:center; width:100%; max-width:100%; }
  .topActions { grid-column:2; grid-row:1; }
  .stageTools { top:8px; right:8px; gap:8px; }
@@ -98,7 +99,7 @@
  .parameterSlot { max-width:142px; }
  .adminLong { display:none; }
  .adminShort { display:inline; }
- .logo img { width:96px; }
+ .logo img { height:20px; }
 }
 @media(max-width:1279px) and (max-height:500px) and (orientation:landscape) {
  .topbar { display:none; }

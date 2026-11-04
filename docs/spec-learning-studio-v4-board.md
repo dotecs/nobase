@@ -17,7 +17,7 @@
 
 - `id`: `^[a-z][a-z0-9-]*$`, 무대 안 고유. `tex` 또는 `text`(마크다운 `$…$` 허용) 중 하나.
 - `position`: 그래프·슬라이더 무대에서는 **데이터 좌표**(점·메모와 같은 체계, 식 문자열 허용). 그래프가 아닌 무대(tree·steps·chain·table·board)에서는 **무대 비율 좌표** `{"x":0~1,"y":0~1}` (좌상단 원점). 어느 쪽인지는 무대 유형이 정한다.
-- `size`: `sm`(20px) | `md`(26px, 기본) | `lg`(34px). `align`: `start`|`middle`(기본)|`end`.
+- `size`: `sm`(20px) | `md`(26px, 기본) | `lg`(34px) | `xl`(44px, 식의 구조를 설명할 때). `align`: `start`|`middle`(기본)|`end`.
 - `{{param}}` 자리표시자는 슬라이더 값으로 실시간 치환(`formulaValues`, step 격자 맞춤, `\dfrac` 규칙 그대로).
 - 표시 스타일: 글자색 `--studio-text`, 배경 없음(칠판에 쓴 글씨). `color:"hand"`면 손글씨 노랑 Poor Story 대신 **KaTeX 그대로 노란색**(수식은 항상 KaTeX).
 - 기본은 **모두 보임**. `initial.hidden_items:["eq"]` 또는 `initial.hidden:"all"`(items에 대해)로 숨기고 `reveal {target:"item", id}`로 나타낸다(페이드인 250ms).

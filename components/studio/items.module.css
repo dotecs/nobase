@@ -2,8 +2,17 @@
 .item { position:absolute; width:max-content; color:var(--studio-text); background:none; font-family:var(--font-sans); font-size:var(--studio-type-item); line-height:1.4; white-space:pre-line; pointer-events:none; }
 .item[data-size="sm"] { font-size:20px; }
 .item[data-size="lg"] { font-size:34px; }
+.item[data-size="xl"] { font-size:44px; }
 .item[data-align="middle"] { transform:translateX(-50%); text-align:center; }
 .item[data-align="end"] { transform:translateX(-100%); text-align:right; }
 .item[data-color="hand"] { color:var(--studio-hand); }
+.item[data-color="accent"] { color:var(--studio-accent); }
+.item[data-color="mint"] { color:var(--studio-mint, #5eead4); }
+.item[data-color="muted"] { color:var(--studio-muted); }
+.item[data-weight="bold"] { font-weight:700; }
+.item strong { font-weight:700; color:var(--studio-accent); }
+.item[data-kind="note"] { padding:10px 18px 10px 16px; border-left:3px solid var(--studio-accent); background:var(--studio-panel); border-radius:0 12px 12px 0; letter-spacing:-0.01em; line-height:1.5; }
+.item[data-kind="note"] strong { margin-right:4px; }
+.item[data-kind="label"] { font-size:0.85em; color:var(--studio-muted); letter-spacing:0.02em; }
 .item :global(.katex) { font-size:1em; }
 .item :global(.katex-display) { margin:0; }
