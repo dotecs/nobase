@@ -15,7 +15,7 @@ export const itemsSchema = z.array(z.object({
   tex: z.string().min(1).max(20000).optional(),
   text: z.string().min(1).max(20000).optional(),
   position: z.object({ x: coordinate, y: coordinate }),
-  size: z.enum(['sm', 'md', 'lg']).optional(),
+  size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
   align: z.enum(['start', 'middle', 'end']).optional(),
   color: z.literal('hand').optional(),
 }).refine(item => Boolean(item.tex) !== Boolean(item.text), 'item에는 tex 또는 text 하나만 지정하세요.'));
