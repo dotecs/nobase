@@ -19,3 +19,25 @@ it('uses a transparent stage and an absolutely positioned transport dock',()=>{
  expect(css).toMatch(/\.navigation \{ position:absolute;[^}]*--studio-sidebar-width/);
  expect(css).toContain('grid-row:1/3');
 });
+
+it('lists all scene titles with one current scene and authored descriptions',()=>{
+ const lesson=prototypeLesson();
+ lesson.scenes[1].headline={title:'둘째 장면',subtitle:'이 장면의 설명'};
+ const html=renderToStaticMarkup(<CourseSidebar lesson={lesson} index={1}/>);
+ expect(html).toContain('aria-label="강의 장면 구성"');
+ expect(html).toContain('둘째 장면');
+ expect(html).toContain('이 장면의 설명');
+ expect((html.match(/aria-current="step"/g)??[])).toHaveLength(1);
+ expect((html.match(/data-scene-current=/g)??[])).toHaveLength(lesson.scenes.length);
+ const moved=renderToStaticMarkup(<CourseSidebar lesson={lesson} index={0}/>);
+ expect(moved).not.toContain('둘째 장면<em>현재</em>');
+});
+it('renders labeled icon actions and a left-aligned title',()=>{
+ const html=renderToStaticMarkup(<StudioShell scene={prototypeLesson().scenes[0]} stage="무대" onAdminModeChange={()=>{}} adminMode/>);
+ for(const label of ['관리자 모드','스튜디오 테마 전환','집중 모드'])expect(html).toContain('aria-label="'+label+'"');
+ expect(html).toContain('title="라이트 모드로 전환"');
+ expect(html).toMatch(/aria-label="관리자 모드"[^>]*><svg/);
+ const css=readFileSync('components/studio/studio.module.css','utf8');
+ expect(css).toMatch(/\.topTitle \{[^}]*text-align:left/);
+ expect(css).toContain('width:44px; height:44px;');
+});
