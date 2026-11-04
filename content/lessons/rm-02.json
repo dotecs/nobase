@@ -846,7 +846,8 @@
                 "type": "highlight",
                 "target": [
                   "item:t1",
-                  "item:c1"
+                  "item:c1",
+                  "item:whole"
                 ],
                 "at": "@이 식은 삼차식"
               },
