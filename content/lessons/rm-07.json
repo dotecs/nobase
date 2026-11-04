@@ -74,6 +74,12 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "item:def",
+                "at": "@에이를 똑같이",
+                "ttl_ms": 4000
+              },
+              {
                 "type": "handwrite",
                 "text": "밑 = 곱해지는 수",
                 "position": {
@@ -114,6 +120,12 @@
                 "target": "item",
                 "id": "ex",
                 "at": "@예를 들어"
+              },
+              {
+                "type": "circle",
+                "target": "item:ex",
+                "at": "@이의세제곱은",
+                "ttl_ms": 3000
               },
               {
                 "type": "underline",
@@ -410,6 +422,12 @@
                 "type": "highlight",
                 "target": "row:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "row:1",
+                "at": "@일이 됩니다",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -602,6 +620,12 @@
                 "type": "highlight",
                 "target": "step:3",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@비제곱분의에이제곱",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -632,7 +656,7 @@
           },
           {
             "id": "wrong",
-            "tex": "2\\times7^{3}\\quad(\\times)",
+            "tex": "\\p{two}{2}\\times\\p{seven}{7}^{\\p{exp}{3}}\\quad(\\times)",
             "position": {
               "x": 0.62,
               "y": 0.28
@@ -687,10 +711,22 @@
           "cue": {
             "actions": [
               {
-                "type": "circle",
+                "type": "underline",
                 "target": "item:wrong",
                 "at": "@안 됩니다",
                 "ttl_ms": 6000
+              },
+              {
+                "type": "circle",
+                "target": "item:wrong/two",
+                "at": "@이의 지수는",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "circle",
+                "target": "item:wrong/exp",
+                "at": "@칠의 지수는",
+                "ttl_ms": 3000
               },
               {
                 "type": "handwrite",
@@ -733,6 +769,12 @@
           "tts": "거꾸로 말하면, 이의세제곱곱하기칠의세제곱처럼 지수가 같을 때만, 밑을 곱해 십사의세제곱으로 합칠 수 있습니다. [slight emphasis] 법칙은 양방향으로 쓸 수 있어야 제대로 아는 것입니다.",
           "cue": {
             "actions": [
+              {
+                "type": "underline",
+                "target": "item:right",
+                "at": "@이의세제곱곱하기칠의세제곱처럼",
+                "ttl_ms": 4000
+              },
               {
                 "type": "flash",
                 "target": "item:right",
