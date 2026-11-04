@@ -198,6 +198,12 @@
                 "type": "underline",
                 "target": "step:1",
                 "at": "@씨 자리에"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@에이는 일",
+                "ttl_ms": 4000
               }
             ]
           },
@@ -219,6 +225,12 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@정리하면"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@start",
+                "ttl_ms": 4000
               }
             ]
           },
@@ -271,6 +283,12 @@
                 "type": "underline",
                 "target": "step:4",
                 "at": "@이것이 답입니다"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@마이너스 사 케이는",
+                "ttl_ms": 3500
               }
             ]
           },

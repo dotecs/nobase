@@ -130,6 +130,12 @@
                 "target": "item:eq",
                 "at": "@방정식이 무엇을",
                 "ttl_ms": 6000
+              },
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@와이는영의 교점",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -611,6 +617,12 @@
                 "type": "highlight",
                 "target": "node:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "node:1",
+                "at": "@플러스 마이너스 루트 디",
+                "ttl_ms": 4000
               }
             ]
           },
@@ -642,6 +654,12 @@
                 "type": "underline",
                 "target": "node:2",
                 "at": "@중근"
+              },
+              {
+                "type": "underline",
+                "target": "node:1",
+                "at": "@서로 다른 두 실근을",
+                "ttl_ms": 3500
               }
             ]
           },
@@ -793,6 +811,17 @@
                 "type": "underline",
                 "target": "axis:x",
                 "at": "@만나지 않는다"
+              },
+              {
+                "type": "underline",
+                "target": "item:disc",
+                "at": "@디가 음수다는",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@그래프 전체가"
               }
             ]
           }
@@ -847,6 +876,12 @@
                 },
                 "at": "@크면 떠오르고+600",
                 "ttl_ms": 4500
+              },
+              {
+                "type": "underline",
+                "target": "item:disc",
+                "at": "@디가 영이 되어",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -904,7 +939,22 @@
           "text": "첫 장면의 세 그래프가 바로 이 세 방정식입니다. 근은 구하지 않고 판별식만 계산해 보겠습니다.",
           "tts": "첫 장면의 세 그래프가 바로 이 세 방정식입니다. 근은 구하지 않고, 판별식만 계산해 보겠습니다.",
           "cue": {
-            "actions": []
+            "actions": [
+              {
+                "type": "highlight",
+                "target": [
+                  "row:0",
+                  "row:1",
+                  "row:2"
+                ],
+                "at": "@이 세 방정식입니다"
+              },
+              {
+                "type": "clear",
+                "what": "highlight",
+                "at": "@근은 구하지 않고"
+              }
+            ]
           }
         },
         {
@@ -928,6 +978,18 @@
                 "type": "underline",
                 "target": "row:0",
                 "at": "@십삼이 나오죠"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1",
+                "at": "@비 대신 일",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:2",
+                "at": "@서로 다른 두 실근을",
+                "ttl_ms": 3000
               }
             ]
           },
@@ -954,6 +1016,18 @@
                 "type": "underline",
                 "target": "row:1",
                 "at": "@영이 나오면서"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:1",
+                "at": "@마이너스 육의 제곱",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:2",
+                "at": "@중근을",
+                "ttl_ms": 3000
               }
             ]
           },
@@ -980,6 +1054,18 @@
                 "type": "underline",
                 "target": "row:2",
                 "at": "@음수가 나옵니다"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:1",
+                "at": "@일 빼기 사",
+                "ttl_ms": 5000
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:2",
+                "at": "@실근을 갖지 않는다는",
+                "ttl_ms": 3000
               }
             ]
           },
@@ -1074,6 +1160,12 @@
                 "type": "underline",
                 "target": "step:2",
                 "at": "@이가 되고"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@비 프라임이라고",
+                "ttl_ms": 3000
               }
             ]
           },
@@ -1100,6 +1192,12 @@
                 "type": "flash",
                 "target": "step:3",
                 "at": "@결과는 같습니다"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@비 프라임 제곱",
+                "ttl_ms": 3500
               }
             ]
           },

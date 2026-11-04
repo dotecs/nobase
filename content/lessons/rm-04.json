@@ -268,6 +268,12 @@
                 "target": "item",
                 "id": "eq3",
                 "at": "@사를 곱해"
+              },
+              {
+                "type": "underline",
+                "target": "item:rule",
+                "at": "@분모와 분자에",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -362,6 +368,12 @@
                 "type": "highlight",
                 "target": "step:0",
                 "at": "@이십사분의육을"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@육과 이십사가",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -410,6 +422,24 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@삼으로 한 번"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@삼과 십이가",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@결국 이십사분의육은",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@사분의일입니다",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -436,6 +466,18 @@
                 "type": "flash",
                 "target": "step:3",
                 "at": "@기약분수라고"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@분모와 분자를",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@약분이라 하고",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -519,6 +561,12 @@
                 "type": "highlight",
                 "target": "step:0",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@두 분수의",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -556,6 +604,12 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@삼분의일에는",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -682,6 +736,12 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@분자 삼",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -814,6 +874,12 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@전체를 하나의"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@에이씨를",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -833,7 +899,10 @@
               },
               {
                 "type": "highlight",
-                "target": "step:2",
+                "target": [
+                  "step:1",
+                  "step:2"
+                ],
                 "at": "@start"
               },
               {
@@ -841,6 +910,12 @@
                 "target": "step:2",
                 "at": "@안쪽에 있는",
                 "ttl_ms": 6000
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@위에서는",
+                "ttl_ms": 5000
               }
             ]
           }

@@ -122,6 +122,12 @@
                 },
                 "at": "@곱하기가 생략",
                 "ttl_ms": 8000
+              },
+              {
+                "type": "circle",
+                "target": "item:paren",
+                "at": "@괄호와",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -170,6 +176,18 @@
                 "to": "item:ac",
                 "at": "@씨에도 곱해서+200",
                 "ttl_ms": 6000
+              },
+              {
+                "type": "circle",
+                "target": "item:a",
+                "at": "@에이에 비와",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "underline",
+                "target": "item:paren",
+                "at": "@비와 씨를",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -247,6 +265,12 @@
                 "type": "highlight",
                 "target": "step:0",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@앞에 있는",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -273,6 +297,12 @@
                 "type": "underline",
                 "target": "step:1",
                 "at": "@그대로 맞출"
+              },
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@빼기 칠인데요",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -292,13 +322,40 @@
               },
               {
                 "type": "highlight",
-                "target": "step:2",
+                "target": [
+                  "step:1",
+                  "step:2"
+                ],
                 "at": "@start"
               },
               {
                 "type": "flash",
                 "target": "step:2",
                 "at": "@괄호가 풀렸습니다"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@마이너스삼과 사엑스",
+                "ttl_ms": 3500
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@마이너스십이엑스",
+                "ttl_ms": 3000
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@마이너스삼과 마이너스칠",
+                "ttl_ms": 3500
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@플러스이십일",
+                "ttl_ms": 3000
               }
             ]
           }
@@ -403,6 +460,12 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@그래서 뒤에"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@차례대로",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -422,13 +485,28 @@
               },
               {
                 "type": "highlight",
-                "target": "step:3",
+                "target": [
+                  "step:2",
+                  "step:3"
+                ],
                 "at": "@start"
               },
               {
                 "type": "underline",
                 "target": "step:3",
                 "at": "@그래서"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@육엑스에",
+                "ttl_ms": 3500
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@십이에",
+                "ttl_ms": 3500
               }
             ]
           }
@@ -590,6 +668,24 @@
                   "y": 0.72
                 },
                 "at": "@구강 이차식의"
+              },
+              {
+                "type": "circle",
+                "target": "item:a",
+                "at": "@에이가 잘",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "underline",
+                "target": "item:ab",
+                "at": "@공통으로 곱해진",
+                "ttl_ms": 4000
+              },
+              {
+                "type": "underline",
+                "target": "item:ac",
+                "at": "@공통으로 곱해진+300",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -653,6 +749,12 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@알아보면서"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@마이너스육엑스는",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -679,6 +781,12 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@이엑스를 앞으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@뒤에는 각각에",
+                "ttl_ms": 4000
               }
             ]
           }
@@ -702,6 +810,12 @@
                   "step:2"
                 ],
                 "at": "@원래 식으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@이엑스를 다시",
+                "ttl_ms": 3000
               }
             ]
           }
