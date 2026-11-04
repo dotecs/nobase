@@ -459,8 +459,8 @@
                   "y": 0.4
                 },
                 "arrow_to": {
-                  "x": 0.635,
-                  "y": 0.43
+                  "target": "item:t1",
+                  "anchor": "right"
                 },
                 "at": "@거짓이고"
               },
@@ -478,8 +478,8 @@
                   "y": 0.54
                 },
                 "arrow_to": {
-                  "x": 0.625,
-                  "y": 0.57
+                  "target": "item:t2",
+                  "anchor": "right"
                 },
                 "at": "@되어 참입니다"
               }

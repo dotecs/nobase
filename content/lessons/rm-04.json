@@ -93,8 +93,8 @@
                   "y": 0.62
                 },
                 "arrow_to": {
-                  "x": 0.39,
-                  "y": 0.55
+                  "target": "item:frac",
+                  "anchor": "bottom"
                 },
                 "at": "@아래에 있는"
               },
@@ -106,8 +106,8 @@
                   "y": 0.26
                 },
                 "arrow_to": {
-                  "x": 0.39,
-                  "y": 0.37
+                  "target": "item:frac",
+                  "anchor": "top"
                 },
                 "at": "@위에 있는"
               }

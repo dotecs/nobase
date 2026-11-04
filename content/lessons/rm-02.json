@@ -19,7 +19,8 @@
         "eyebrow": "2강 · 문자와 식",
         "title": "곱셈 기호의 생략",
         "accent": "생략",
-        "subtitle": "수와 문자, 문자와 문자 사이의 ×는 쓰지 않는다"
+        "subtitle": "수와 문자, 문자와 문자 사이의 ×는 쓰지 않는다",
+        "accent_bar": true
       },
       "tag": "define",
       "stage": {
@@ -28,45 +29,38 @@
           {
             "id": "t1",
             "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
+            "size": "xl",
+            "group": "expr",
+            "gap": "0.6em",
             "position": {
-              "x": 0.365,
+              "x": 0.5,
               "y": 0.3
-            },
-            "size": "xl"
+            }
           },
           {
             "id": "t2",
             "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
-            "position": {
-              "x": 0.469,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t3",
             "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
-            "position": {
-              "x": 0.57,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t4",
             "tex": "\\p{coef}{-7}",
-            "position": {
-              "x": 0.644,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "rule",
             "text": "**규칙** (수)×(문자), (문자)×(문자) 사이의 ×는 생략",
             "position": {
-              "x": 0.505,
-              "y": 0.6
+              "x": 0.5,
+              "y": 0.7
             },
             "size": "md",
             "kind": "note"
@@ -75,8 +69,8 @@
             "id": "bad",
             "tex": "3\\times4 \\;\\neq\\; 34",
             "position": {
-              "x": 0.505,
-              "y": 0.78
+              "x": 0.5,
+              "y": 0.85
             },
             "size": "md"
           }
@@ -106,20 +100,21 @@
           "cue": {
             "actions": [
               {
-                "type": "circle",
+                "type": "tint",
                 "target": "item:t1",
-                "at": "@사이에는",
-                "ttl_ms": 6000
+                "color": "mint",
+                "at": "@사엑스세제곱에서"
               },
               {
-                "type": "handwrite",
-                "text": "4 × x³",
+                "type": "callout",
+                "id": "c1",
+                "target": "item:t1",
+                "anchor": "bottom",
+                "tex": "4\\times x^3 \\;\\to\\; 4x^3",
+                "color": "mint",
                 "position": {
-                  "x": 0.33,
+                  "x": 0.3,
                   "y": 0.5
-                },
-                "arrow_to": {
-                  "target": "item:t1"
                 },
                 "at": "@곱하기가 생략"
               }
@@ -134,16 +129,42 @@
           "cue": {
             "actions": [
               {
-                "type": "pointer",
+                "type": "tint",
                 "target": "item:t2",
-                "at": "@이와 엑스제곱",
-                "ttl_ms": 4000
+                "color": "mint",
+                "at": "@이와 엑스제곱"
               },
               {
-                "type": "pointer",
+                "type": "callout",
+                "id": "c2",
+                "target": "item:t2",
+                "anchor": "bottom",
+                "tex": "(-2)\\times x^2\\times y",
+                "color": "mint",
+                "position": {
+                  "x": 0.49,
+                  "y": 0.5
+                },
+                "at": "@엑스제곱과 와이"
+              },
+              {
+                "type": "tint",
                 "target": "item:t3",
-                "at": "@삼과 와이",
-                "ttl_ms": 4000
+                "color": "mint",
+                "at": "@삼과 와이"
+              },
+              {
+                "type": "callout",
+                "id": "c3",
+                "target": "item:t3",
+                "anchor": "bottom",
+                "tex": "3\\times y",
+                "color": "mint",
+                "position": {
+                  "x": 0.68,
+                  "y": 0.5
+                },
+                "at": "@삼과 와이"
               }
             ]
           }
@@ -184,7 +205,8 @@
         "eyebrow": "2강 · 문자와 식",
         "title": "부호 · 항 · 상수항",
         "accent": "항",
-        "subtitle": "부호로 끊은 덩어리가 항, 문자 없는 항이 상수항"
+        "subtitle": "부호로 끊은 덩어리가 항, 문자 없는 항이 상수항",
+        "accent_bar": true
       },
       "tag": "define",
       "stage": {
@@ -193,45 +215,38 @@
           {
             "id": "t1",
             "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
+            "size": "xl",
+            "group": "expr",
+            "gap": "0.6em",
             "position": {
-              "x": 0.365,
+              "x": 0.5,
               "y": 0.3
-            },
-            "size": "xl"
+            }
           },
           {
             "id": "t2",
             "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
-            "position": {
-              "x": 0.469,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t3",
             "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
-            "position": {
-              "x": 0.57,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t4",
             "tex": "\\p{coef}{-7}",
-            "position": {
-              "x": 0.644,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "sign",
             "text": "**부호** 음수·양수를 나타내는 기호 $+$, $-$",
             "position": {
-              "x": 0.505,
-              "y": 0.62
+              "x": 0.5,
+              "y": 0.68
             },
             "size": "md",
             "kind": "note"
@@ -240,8 +255,8 @@
             "id": "const",
             "text": "**상수항** 문자 없이 수만으로 이루어진 항",
             "position": {
-              "x": 0.505,
-              "y": 0.78
+              "x": 0.5,
+              "y": 0.82
             },
             "size": "md",
             "kind": "note"
@@ -294,7 +309,7 @@
                 "type": "handwrite",
                 "text": "(+)",
                 "position": {
-                  "x": 0.305,
+                  "x": 0.31,
                   "y": 0.3
                 },
                 "at": "@사실은"
@@ -345,15 +360,21 @@
                 "at": "@마이너스칠을"
               },
               {
-                "type": "handwrite",
-                "text": "상수항",
+                "type": "tint",
+                "target": "item:t4",
+                "color": "mint",
+                "at": "@상수항이라고"
+              },
+              {
+                "type": "callout",
+                "id": "c1",
+                "target": "item:t4",
+                "anchor": "bottom",
+                "text": "**상수항**",
+                "color": "mint",
                 "position": {
-                  "x": 0.76,
+                  "x": 0.7,
                   "y": 0.5
-                },
-                "arrow_to": {
-                  "target": "item:t4",
-                  "anchor": "bottom"
                 },
                 "at": "@상수항이라고"
               },
@@ -375,7 +396,8 @@
         "eyebrow": "2강 · 문자와 식",
         "title": "계수",
         "accent": "계수",
-        "subtitle": "문자 앞에 곱해진 수, 부호까지 포함"
+        "subtitle": "문자 앞에 곱해진 수, 부호까지 포함",
+        "accent_bar": true
       },
       "tag": "define",
       "stage": {
@@ -384,38 +406,31 @@
           {
             "id": "t1",
             "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
+            "size": "xl",
+            "group": "expr",
+            "gap": "0.6em",
             "position": {
-              "x": 0.365,
+              "x": 0.5,
               "y": 0.3
-            },
-            "size": "xl"
+            }
           },
           {
             "id": "t2",
             "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
-            "position": {
-              "x": 0.469,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t3",
             "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
-            "position": {
-              "x": 0.57,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t4",
             "tex": "\\p{coef}{-7}",
-            "position": {
-              "x": 0.644,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "def",
@@ -454,15 +469,15 @@
                 "at": "@사가"
               },
               {
-                "type": "handwrite",
-                "text": "x³의 계수: 4",
+                "type": "callout",
+                "id": "c1",
+                "target": "item:t1/coef",
+                "anchor": "bottom",
+                "text": "$x^3$의 계수 **4**",
+                "color": "mint",
                 "position": {
                   "x": 0.3,
-                  "y": 0.52
-                },
-                "arrow_to": {
-                  "target": "item:t1/coef",
-                  "anchor": "bottom"
+                  "y": 0.5
                 },
                 "at": "@계수입니다"
               }
@@ -482,15 +497,15 @@
                 "at": "@이가 아니라"
               },
               {
-                "type": "handwrite",
-                "text": "x²y의 계수: −2",
+                "type": "callout",
+                "id": "c2",
+                "target": "item:t2/coef",
+                "anchor": "bottom",
+                "text": "$x^2y$의 계수 **−2**",
+                "color": "mint",
                 "position": {
-                  "x": 0.44,
-                  "y": 0.62
-                },
-                "arrow_to": {
-                  "target": "item:t2/coef",
-                  "anchor": "bottom"
+                  "x": 0.47,
+                  "y": 0.5
                 },
                 "at": "@마이너스이라고"
               },
@@ -510,15 +525,15 @@
           "cue": {
             "actions": [
               {
-                "type": "handwrite",
-                "text": "y의 계수: 3",
+                "type": "callout",
+                "id": "c3",
+                "target": "item:t3/coef",
+                "anchor": "bottom",
+                "text": "$y$의 계수 **3**",
+                "color": "mint",
                 "position": {
-                  "x": 0.58,
-                  "y": 0.52
-                },
-                "arrow_to": {
-                  "target": "item:t3/coef",
-                  "anchor": "bottom"
+                  "x": 0.63,
+                  "y": 0.5
                 },
                 "at": "@그냥 삼입니다"
               },
@@ -540,7 +555,8 @@
         "eyebrow": "2강 · 문자와 식",
         "title": "지수와 차수",
         "accent": "차수",
-        "subtitle": "지수는 거듭제곱 횟수, 차수는 문자가 곱해진 횟수"
+        "subtitle": "지수는 거듭제곱 횟수, 차수는 문자가 곱해진 횟수",
+        "accent_bar": true
       },
       "tag": "define",
       "stage": {
@@ -549,82 +565,31 @@
           {
             "id": "t1",
             "tex": "\\p{coef}{4}^{\\p{cexp}{\\vphantom{1}}}x^{\\p{exp}{3}}",
+            "size": "xl",
+            "group": "expr",
+            "gap": "0.6em",
             "position": {
-              "x": 0.365,
+              "x": 0.5,
               "y": 0.3
-            },
-            "size": "xl"
+            }
           },
           {
             "id": "t2",
             "tex": "\\p{coef}{-2}^{\\p{cexp}{\\vphantom{1}}}x^{\\p{exp}{2}}y",
-            "position": {
-              "x": 0.469,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t3",
             "tex": "\\p{coef}{+3}^{\\p{cexp}{\\vphantom{1}}}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
-            "position": {
-              "x": 0.57,
-              "y": 0.3
-            },
-            "size": "xl"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "t4",
             "tex": "\\p{coef}{-7}^{\\p{cexp}{\\vphantom{1}}}",
-            "position": {
-              "x": 0.644,
-              "y": 0.3
-            },
-            "size": "xl"
-          },
-          {
-            "id": "d1",
-            "text": "3차",
-            "position": {
-              "x": 0.365,
-              "y": 0.5
-            },
-            "size": "md",
-            "color": "mint",
-            "weight": "bold"
-          },
-          {
-            "id": "d2",
-            "text": "3차",
-            "position": {
-              "x": 0.469,
-              "y": 0.5
-            },
-            "size": "md",
-            "color": "mint",
-            "weight": "bold"
-          },
-          {
-            "id": "d3",
-            "text": "1차",
-            "position": {
-              "x": 0.57,
-              "y": 0.5
-            },
-            "size": "md",
-            "color": "mint",
-            "weight": "bold"
-          },
-          {
-            "id": "d4",
-            "text": "0차",
-            "position": {
-              "x": 0.644,
-              "y": 0.5
-            },
-            "size": "md",
-            "color": "mint",
-            "weight": "bold"
+            "size": "xl",
+            "group": "expr"
           },
           {
             "id": "deg",
@@ -649,10 +614,6 @@
         ],
         "initial": {
           "hidden_items": [
-            "d1",
-            "d2",
-            "d3",
-            "d4",
             "deg",
             "whole"
           ]
@@ -673,15 +634,14 @@
                 "ttl_ms": 5000
               },
               {
-                "type": "handwrite",
-                "text": "x³ = x · x · x",
+                "type": "callout",
+                "target": "item:t1/exp",
+                "anchor": "top",
+                "tex": "x^3 = x\\cdot x\\cdot x",
+                "color": "mint",
                 "position": {
                   "x": 0.3,
-                  "y": 0.12
-                },
-                "arrow_to": {
-                  "target": "item:t1/exp",
-                  "anchor": "top"
+                  "y": 0.08
                 },
                 "at": "@엑스가 세 번",
                 "ttl_ms": 12000
@@ -727,15 +687,14 @@
                 "ttl_ms": 2500
               },
               {
-                "type": "handwrite",
-                "text": "지수 1은 생략",
+                "type": "callout",
+                "target": "item:t3/exp",
+                "anchor": "top",
+                "text": "지수 $1$은 생략",
+                "color": "mint",
                 "position": {
-                  "x": 0.6,
-                  "y": 0.12
-                },
-                "arrow_to": {
-                  "target": "item:t3/exp",
-                  "anchor": "top"
+                  "x": 0.64,
+                  "y": 0.08
                 },
                 "at": "@숨어 있습니다",
                 "ttl_ms": 9000
@@ -792,51 +751,79 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
+                "type": "tint",
                 "target": "item:t1",
-                "at": "@사엑스세제곱은",
-                "ttl_ms": 3500
+                "color": "mint",
+                "at": "@사엑스세제곱은"
               },
               {
-                "type": "reveal",
-                "target": "item",
-                "id": "d1",
+                "type": "callout",
+                "id": "c1",
+                "target": "item:t1",
+                "anchor": "bottom",
+                "text": "**3차**",
+                "color": "mint",
+                "position": {
+                  "x": 0.376,
+                  "y": 0.5
+                },
                 "at": "@세 번이라 삼차"
               },
               {
-                "type": "underline",
+                "type": "tint",
                 "target": "item:t2",
-                "at": "@마이너스이엑스제곱와이는",
-                "ttl_ms": 3500
+                "color": "mint",
+                "at": "@마이너스이엑스제곱와이는"
               },
               {
-                "type": "reveal",
-                "target": "item",
-                "id": "d2",
+                "type": "callout",
+                "id": "c2",
+                "target": "item:t2",
+                "anchor": "bottom",
+                "text": "**3차**",
+                "color": "mint",
+                "position": {
+                  "x": 0.463,
+                  "y": 0.5
+                },
                 "at": "@한 번이라 삼차"
               },
               {
-                "type": "underline",
+                "type": "tint",
                 "target": "item:t3",
-                "at": "@삼와이는",
-                "ttl_ms": 3000
+                "color": "mint",
+                "at": "@삼와이는"
               },
               {
-                "type": "reveal",
-                "target": "item",
-                "id": "d3",
+                "type": "callout",
+                "id": "c3",
+                "target": "item:t3",
+                "anchor": "bottom",
+                "text": "**1차**",
+                "color": "mint",
+                "position": {
+                  "x": 0.556,
+                  "y": 0.5
+                },
                 "at": "@삼와이는 일차"
               },
               {
-                "type": "underline",
+                "type": "tint",
                 "target": "item:t4",
-                "at": "@상수항 마이너스칠은",
-                "ttl_ms": 3000
+                "color": "mint",
+                "at": "@상수항 마이너스칠은"
               },
               {
-                "type": "reveal",
-                "target": "item",
-                "id": "d4",
+                "type": "callout",
+                "id": "c4",
+                "target": "item:t4",
+                "anchor": "bottom",
+                "text": "**0차**",
+                "color": "mint",
+                "position": {
+                  "x": 0.626,
+                  "y": 0.5
+                },
                 "at": "@문자가 없으니 영차"
               }
             ]
@@ -859,7 +846,7 @@
                 "type": "highlight",
                 "target": [
                   "item:t1",
-                  "item:d1"
+                  "item:c1"
                 ],
                 "at": "@이 식은 삼차식"
               },
@@ -884,7 +871,8 @@
         "eyebrow": "2강 · 문자와 식",
         "title": "동류항",
         "accent": "동류항",
-        "subtitle": "문자와 차수가 각각 같은 항끼리만 더하고 뺀다"
+        "subtitle": "문자와 차수가 각각 같은 항끼리만 더하고 뺀다",
+        "accent_bar": true
       },
       "tag": "example",
       "stage": {
@@ -1115,7 +1103,8 @@
         "eyebrow": "확인",
         "title": "문자와 차수를 보라",
         "accent": "문자와 차수",
-        "subtitle": "동류항인지는 문자와 차수 두 가지로 가린다"
+        "subtitle": "동류항인지는 문자와 차수 두 가지로 가린다",
+        "accent_bar": true
       },
       "tag": "check",
       "stage": {
