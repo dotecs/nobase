@@ -1,3 +1,4 @@
+import {annotationColor} from '@/lib/learn/lessons/annotation-schema';
 import { InlineMath } from 'react-katex';
 import { LessonText } from '@/components/learn/lesson/LessonText';
 import { layoutTree, type TreeStage as TreeStageData } from '@/lib/learn/lessons/tree';
@@ -17,8 +18,8 @@ export function TreeStage({ stage, state }: { stage: TreeStageData; state: Stage
       />)}
     </svg>
     {layout.nodes.filter(({ node }) => visible.has(node.id)).map(({ node, x, y, width, height }) => <div
-      key={node.id} className={styles.node} data-stage-target={'tree:' + node.id}
-      style={{ left: x, top: y, width, height, opacity: opacity(node.id) * (state.treeReveal?.[node.id]?.card ?? 1) }}
+      key={node.id} className={styles.node} data-stage-target={'tree:' + node.id} data-studio-tint={state.tints?.['tree:'+node.id]}
+      style={{ color:annotationColor(state.tints?.['tree:'+node.id]),left: x, top: y, width, height, opacity: opacity(node.id) * (state.treeReveal?.[node.id]?.card ?? 1) }}
     >
       {node.tex && <InlineMath math={node.tex} />}
       <LessonText authored text={node.label} />

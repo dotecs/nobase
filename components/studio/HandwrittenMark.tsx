@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import {targetAnchor} from '@/lib/learn/lessons/pointing';
 import { InlineMath } from 'react-katex';
-import { chalkLine, chalkPoint, curvedArrow, memoArrowStart, rotatedMemoBounds, targetAnchor, type ChalkMark, type ChalkSpace } from '@/lib/learn/lessons/chalk';
+import { chalkLine, chalkPoint, curvedArrow, memoArrowStart, rotatedMemoBounds, type ChalkMark, type ChalkSpace } from '@/lib/learn/lessons/chalk';
 import { ChalkStroke } from './ChalkStroke';
 import styles from './chalk.module.css';
 
@@ -37,8 +38,11 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
   anchor.y = Math.max(top + 32, Math.min(bottom - height + 26, anchor.y));
   const rotation = action.rotate ?? -4;
   const bounds = rotatedMemoBounds({ left: anchor.x - offset, top: anchor.y - 26, width, height }, anchor, rotation);
-  const target = action.arrow_to ? ('target' in action.arrow_to ? targetAnchor(action.arrow_to.target, action.arrow_to.anchor, space) : chalkPoint(action.arrow_to, space)) : null;
-  const points = target && measured ? curvedArrow(memoArrowStart(bounds, target), target) : [];
+  const arrowTo = action.arrow_to;
+  const destination = arrowTo ? ('target' in arrowTo ? targetAnchor(arrowTo.target, bounds, space, arrowTo.anchor) : chalkPoint(arrowTo, space)) : null;
+  const start = destination ? memoArrowStart(bounds, destination) : null;
+  const target = start && arrowTo && 'target' in arrowTo ? targetAnchor(arrowTo.target, start, space, arrowTo.anchor) : destination;
+  const points = start && target && measured ? curvedArrow(start, target) : [];
   const previous = points.at(-2);
   const angle = target && previous ? Math.atan2(target.y - previous.y, target.x - previous.x) : 0;
   const progress = Math.max(0, Math.min(1, (mark.elapsed - (target ? 400 : 0)) / 400));
@@ -51,8 +55,8 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
       ])} />
     </g>}
     <foreignObject x={anchor.x - offset} y={anchor.y - 26} width={width} height={height} overflow="visible" transform={'rotate(' + rotation + ' ' + anchor.x + ' ' + anchor.y + ')'}>
-      <div className={styles.memo} style={{ fontSize, width: 'max-content', maxWidth, textAlign: action.align === 'middle' ? 'center' : 'left', clipPath: 'inset(0 ' + (100 - progress * 100) + '% 0 0)' }}>
-        <span ref={text} className={styles.memoText} data-memo-text>{action.tex ? <InlineMath math={'\\displaystyle ' + action.tex} /> : action.text}</span>
+      <div className={styles.memo} style={{ fontSize: 'max(calc(var(--studio-type-hand) * '+Math.min(1,(right-left)/1100)+'), '+(14/Math.max(.1,scale))+'px)', width: 'max-content', maxWidth, textAlign: action.align === 'middle' ? 'center' : 'left', clipPath: 'inset(0 ' + (100 - progress * 100) + '% 0 0)' }}>
+        <span ref={text} className={styles.memoText} data-memo-text data-stage-target={'memo:'+mark.id}>{action.tex ? <InlineMath math={'\\displaystyle ' + action.tex} /> : action.text}</span>
       </div>
     </foreignObject>
   </>;

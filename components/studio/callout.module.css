@@ -1,0 +1,11 @@
+.layer { pointer-events:none; color:var(--studio-text); }
+.dot,.head { fill:currentColor; stroke:none; }
+.line { fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.note { width:max-content; color:inherit; font-family:var(--font-sans); font-size:var(--studio-type-item); line-height:1.4; white-space:pre-line; }
+.note[data-size="sm"] { font-size:20px; }
+.note[data-size="lg"] { font-size:34px; }
+.note[data-align="middle"] { text-align:center; }
+.note[data-align="end"] { text-align:right; }
+.note :global(.katex) { font-size:1em; }
+.note :global(.katex-display) { margin:0; }
+@media(prefers-reduced-motion:reduce) { .dot,.head,.note { opacity:1 !important; } .line { stroke-dashoffset:0; } }

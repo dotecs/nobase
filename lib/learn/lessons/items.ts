@@ -14,7 +14,9 @@ export const itemsSchema = z.array(z.object({
   id: itemId,
   tex: z.string().min(1).max(20000).optional(),
   text: z.string().min(1).max(20000).optional(),
-  position: z.object({ x: coordinate, y: coordinate }),
+  position: z.object({ x: coordinate, y: coordinate }).optional(),
+  group: itemId.optional(),
+  gap: z.string().regex(/^\d+(?:\.\d+)?(?:em|px)$/).optional(),
   size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
   align: z.enum(['start', 'middle', 'end']).optional(),
   color: z.enum(['hand', 'accent', 'mint', 'muted']).optional(),
@@ -50,8 +52,15 @@ export function itemErrors(stage: { type: string; items?: BoardItem[]; initial?:
   if (ids.size !== items.length) errors.push('item ID 중복');
   for (const item of items) { const parts = itemParts(item); if (new Set(parts).size !== parts.length) errors.push('item 부분 이름 중복: ' + item.id); }
   if ('initial' in stage && stage.initial?.hidden_items?.some(id => !ids.has(id))) errors.push('initial.hidden_items에 없는 item ID가 있습니다.');
+  const groups = new Set<string>();
   for (const item of items) {
-    if (!graph && Object.values(item.position).some(value => value < 0 || value > 1)) errors.push('비그래프 item 좌표는 0~1이어야 합니다: ' + item.id);
+    const follower = !!item.group && groups.has(item.group);
+    if (item.group && stage.type !== 'board') errors.push('group은 board에서만 사용하세요.');
+    if (follower && (item.position || item.gap)) errors.push('group의 position과 gap은 첫 item에만 지정하세요.');
+    if (!follower && !item.position) errors.push('item 또는 group 첫 항의 position이 필요합니다.');
+    if (!item.group && item.gap) errors.push('gap에는 group이 필요합니다.');
+    if (item.group) groups.add(item.group);
+    if (!graph && Object.values(item.position ?? {}).some(value => value < 0 || value > 1)) errors.push('비그래프 item 좌표는 0~1이어야 합니다: ' + item.id);
     for (const match of (item.tex ?? item.text ?? '').matchAll(/\{\{([^}]+)\}\}/g)) {
       if (stage.type !== 'slider' || match[1] !== stage.param?.name) errors.push('없는 item 파라미터: ' + match[1]);
     }
@@ -75,5 +84,5 @@ export function itemContent(item: BoardItem, params: Record<string, number>) {
 
 /** Graph callers supply data scales; other stages supply normalized canvas scales. */
 export function itemPosition(item: BoardItem, space: Pick<ChalkSpace, 'sx' | 'sy'>) {
-  return { x: space.sx(item.position.x), y: space.sy(item.position.y) };
+  return { x: space.sx(item.position!.x), y: space.sy(item.position!.y) };
 }

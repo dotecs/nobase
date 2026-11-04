@@ -27,6 +27,18 @@ export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',titl
   {id:'board-1',role:'say',text:'이 식을 완전제곱식으로 묶어 볼게요.',cue:{actions:[{type:'underline',target:'item:source'},{type:'circle',target:'item:source',at_ms:500}]}},
   {id:'board-2',role:'say',text:'같은 식이 두 번 곱해진 모양이에요.',cue:{actions:[{type:'reveal',target:'item',id:'result'},{type:'arrow',from:'item:source',to:'item:result',at_ms:300},{type:'flash',target:'item:result',at_ms:600}]}},
  ]},
+ {id:'expression-callout',tag:'define',title:'곱셈 기호의 생략',headline:{eyebrow:'2강 · 문자와 식',title:'곱셈 기호의 생략',accent_bar:true},stage:{type:'board',aspect:'16:9',items:[
+  {id:'t1',tex:'4x^3',group:'expr',position:{x:.5,y:.3},gap:'0.6em',size:'xl'},
+  {id:'t2',tex:'-2x^2y',group:'expr',size:'xl'},
+  {id:'t3',tex:'+3y',group:'expr',size:'xl'},
+  {id:'t4',tex:'-7',group:'expr',size:'xl'}
+ ]},narration:[
+  {id:'expr-1',role:'say',text:'첫 번째 항에서 곱셈 기호가 생략된 모습을 살펴볼게요.',cue:{actions:[
+   {type:'tint',target:'item:t1',color:'mint'},
+   {type:'callout',id:'c1',target:'item:t1',tex:'4\\times x^3 \\;\\to\\; 4x^3',position:{x:.42,y:.58},color:'mint',size:'lg',at_ms:500}
+  ]}},
+  {id:'expr-2',role:'say',text:'수와 문자 사이의 곱셈 기호를 생략해서 간결하게 표현해요.'}
+ ]},
 ]});
 
 // Demonstration-only course; never used by the real lesson route.
