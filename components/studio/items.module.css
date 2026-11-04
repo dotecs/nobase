@@ -1,5 +1,5 @@
 .anchor { display:contents; }
-.item { position:absolute; width:max-content; color:var(--studio-text); background:none; font-family:var(--font-sans); font-size:26px; line-height:1.4; white-space:pre-line; pointer-events:none; }
+.item { position:absolute; width:max-content; color:var(--studio-text); background:none; font-family:var(--font-sans); font-size:var(--studio-type-item); line-height:1.4; white-space:pre-line; pointer-events:none; }
 .item[data-size="sm"] { font-size:20px; }
 .item[data-size="lg"] { font-size:34px; }
 .item[data-align="middle"] { transform:translateX(-50%); text-align:center; }

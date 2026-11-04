@@ -1,3 +1,4 @@
+import {tickValue} from './pointing';
 import {itemsOf} from './items';
 import {treeNodes} from './tree';
 import {isChalk} from './chalk';
@@ -9,7 +10,7 @@ export function actionErrors(scene:Scene):string[]{
  const treeIds=new Set(stage.type==='tree'?treeNodes(stage.root).map(n=>n.node.id):[]);
  const ratioChalk=!graph&&(stage.type==='board'||stage.type==='figure'||itemsOf(stage).length>0);
  const itemIds=new Set(itemsOf(stage).map(item=>item.id));
- const valid=(target:string)=>{if(target.startsWith('item:'))return itemIds.has(target.slice(5));if(target.startsWith('tree:'))return treeIds.has(target.slice(5));const cell=target.match(/^cell:(\d+):(\d+)$/);if(cell)return stage.type==='table'&&Number(cell[1])<stage.rows.length&&Number(cell[2])<stage.columns.length;if(target==='axis:x'||target==='axis:y'||target==='band')return graph;const match=target.match(/^(fn|point|step|node|row):(\d+)$/);return !!match&&Number(match[2])<counts[match[1] as keyof typeof counts];};
+ const valid=(target:string)=>{if(target.startsWith('tick:'))return graph&&tickValue(target)!==null;if(target.startsWith('item:'))return itemIds.has(target.slice(5));if(target.startsWith('tree:'))return treeIds.has(target.slice(5));const cell=target.match(/^cell:(\d+):(\d+)$/);if(cell)return stage.type==='table'&&Number(cell[1])<stage.rows.length&&Number(cell[2])<stage.columns.length;if(target==='axis:x'||target==='axis:y'||target==='band')return graph;const match=target.match(/^(fn|point|step|node|row):(\d+)$/);return !!match&&Number(match[2])<counts[match[1] as keyof typeof counts];};
  const errors:string[]=[];
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');
  for(const sentence of scene.narration)for(const action of sentence.cue?.actions??[]){

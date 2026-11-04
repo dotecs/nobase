@@ -108,3 +108,6 @@
 }
 
 @media(min-width:1024px) { .studio[data-focus="true"] .stageTools { top:56px; } }
+
+.studio { --studio-type-tick:20px; --studio-type-label:23px; --studio-type-hand:28px; --studio-type-item:26px; }
+.studio :global(.katex .mfrac) { font-size:1em; }

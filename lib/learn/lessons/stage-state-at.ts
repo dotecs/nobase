@@ -40,7 +40,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
   switch(action.type){
    case 'param':{const name=action.name;tracks.set('param:'+name,{from:action.from??state.params[name]??0,to:action.to,start,duration:action.duration_ms??800,easing:action.easing,set:value=>{state.params[name]=value;}});break;}
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
-   case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos});break;
+   case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos,label_offset:action.label_offset});break;
    case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
    case 'reveal': {
     if(action.target==='item') {

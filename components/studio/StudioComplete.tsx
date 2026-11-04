@@ -1,4 +1,37 @@
+'use client';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { formatTimelineTime } from '@/lib/learn/lessons/timeline';
-import styles from './navigation.module.css';
-export function StudioComplete({seen,total,elapsed,gaps,onReturn,onPractice}:{seen:number;total:number;elapsed:number;gaps:{id:string;name:string}[];onReturn:()=>void;onPractice?:()=>void}){return <section className={styles.complete} aria-label="레슨 완료"><p>한 걸음 더 이해했어요</p><h2>오늘의 레슨을 마쳤어요</h2><dl><div><dt>본 장면</dt><dd>{seen} / {total}</dd></div><div><dt>걸린 시간</dt><dd>{formatTimelineTime(elapsed)}</dd></div></dl>{gaps.length>0&&<div><h3>다시 살펴볼 개념</h3><ul>{gaps.map(g=><li key={g.id}><Link href={'/learn/concept/'+g.id}>{g.name}</Link></li>)}</ul></div>}<div className={styles.actions}>{onPractice?<button type="button" onClick={onPractice}>연습 문제로</button>:<Link href="/learn">연습 문제로</Link>}<Link href="/learn">학습 홈</Link><button type="button" onClick={onReturn}>레슨으로 돌아가기</button></div></section>;}
+import type { NextLessonAction } from '@/lib/learn/lessons/curriculum';
+import styles from './complete.module.css';
+
+export function StudioComplete({ open, seen, total, elapsed, gaps, next, onClose, onProceed, onPractice, notice }: {
+  open: boolean; seen: number; total: number; elapsed: number; gaps: { id: string; name: string }[];
+  next: NextLessonAction; onClose: () => void; onProceed: () => Promise<void>; onPractice?: () => void; notice?: string;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const leaving = useRef(false);
+  useEffect(() => {
+    const element = dialog.current;
+    if (!open || !element) return;
+    const previous = document.activeElement as HTMLElement | null;
+    leaving.current = false;
+    if (!element.open) element.showModal();
+    element.querySelector<HTMLAnchorElement>('[data-completion-next]')?.focus();
+    return () => { if (element.open) element.close(); previous?.focus(); };
+  }, [open]);
+  if (!open) return null;
+  return <dialog ref={dialog} className={styles.dialog} aria-labelledby="studio-complete-title"
+    onCancel={event => { event.preventDefault(); onClose(); }}
+    onClick={event => { const box = event.currentTarget.getBoundingClientRect(); if (event.target === event.currentTarget && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) onClose(); }}>
+    <p className={styles.eyebrow}>한 걸음 더 이해했어요</p><h2 id="studio-complete-title">오늘의 레슨을 마쳤어요</h2>
+    <dl><div><dt>본 장면</dt><dd>{seen} / {total}</dd></div><div><dt>걸린 시간</dt><dd>{formatTimelineTime(elapsed)}</dd></div></dl>
+    {gaps.length > 0 && <div className={styles.gaps}><h3>다시 살펴볼 개념</h3><ul>{gaps.map(gap => <li key={gap.id}><Link href={'/learn/concept/' + gap.id}>{gap.name}</Link></li>)}</ul></div>}
+    {notice && <p role="status">{notice}</p>}
+    <div className={styles.actions}>
+      <a data-completion-next href={next.href} className={styles.primary} onClick={async event => { event.preventDefault(); if (leaving.current) return; leaving.current = true; try { await onProceed(); } finally { leaving.current = false; } }}>{next.label}{next.lessonId && <span aria-hidden="true"> →</span>}</a>
+      {onPractice ? <button type="button" onClick={onPractice}>연습 문제로</button> : <Link href="/learn">연습 문제로</Link>}
+      <button type="button" onClick={onClose}>닫기</button>
+    </div>
+  </dialog>;
+}

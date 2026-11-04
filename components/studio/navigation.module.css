@@ -1,18 +1,10 @@
 .nav { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; }
-.nav>button,.actions a,.actions button { display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid var(--studio-grid); border-radius:12px; padding:12px 22px; background:var(--studio-panel); color:var(--studio-text); font:inherit; cursor:pointer; text-decoration:none; }
-.nav .next,.actions a:first-child { background:var(--color-primary-500); color:var(--color-gray-50); }
+.nav>button { display:inline-flex; align-items:center; justify-content:center; gap:10px; border:1px solid var(--studio-grid); border-radius:12px; padding:12px 22px; background:var(--studio-panel); color:var(--studio-text); font:inherit; cursor:pointer; text-decoration:none; }
+.nav .next { background:var(--color-primary-500); color:var(--color-gray-50); }
 .progress { display:flex; align-items:center; justify-content:center; gap:20px; min-width:0; font-variant-numeric:tabular-nums; }
 .progress>span { white-space:nowrap; font-size:14px; color:var(--studio-muted); }
 .next[data-ended="true"] { animation:navPulse 700ms ease 1; }
 @keyframes navPulse { 50% { box-shadow:0 0 0 8px var(--studio-glow); } }
-.complete { max-width:780px; width:100%; margin:auto; padding:32px; color:var(--studio-text); }
-.complete h2 { font-size:clamp(24px,3vw,40px); margin:12px 0 28px; }
-.complete p,.complete dt { color:var(--studio-muted); }
-.complete dl { display:flex; gap:48px; margin-bottom:28px; }
-.complete dd { font-size:28px; margin:8px 0; }
-.complete ul { padding-left:20px; margin:12px 0 24px; }
-.complete a { color:var(--studio-accent); }
-.actions { display:flex; flex-wrap:wrap; gap:12px; }
 
 .transport { flex:1; min-width:0; }
 .progress button { color:var(--studio-muted); background:transparent; border:0; padding:8px; font-size:24px; }

@@ -43,14 +43,12 @@ it('accepts figure items and ratio-based chalk, including without items', () => 
   expect(lessonSchema.safeParse({ ...studioDemo, scenes: [{ ...plain, narration: [{ id: 's', role: 'say', text: '그림', cue: { actions: [{ type: 'pointer', position: { x: 2, y: .2 } }] } }] }] }).success).toBe(false);
 });
 
-it('renders the figure image, item and chalk overlay through StudioViewer', () => {
+it('waits for the figure image measurement before drawing coordinate overlays', () => {
   const html = renderToStaticMarkup(<StudioViewer lesson={{ ...studioDemo, scenes: [figure] }} />);
   expect(html).toContain('alt="정사각형"');
   expect(html).toContain('data-canvas="true"');
-  expect(html).toContain('data-stage-target="item:area"');
-  expect(html).toContain('data-chalk="handwrite"');
-  expect(html).toContain('data-chalk="pointer"');
-  expect(html).toContain('katex');
+  expect(html).toContain('data-figure-image="true"');
+  expect(html).not.toContain('data-stage-target="item:area"');
 });
 
 it('preserves figure item hiding and reveal while checking nonexistent targets', () => {
