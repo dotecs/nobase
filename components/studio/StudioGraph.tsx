@@ -12,6 +12,8 @@ import type { GraphStage } from '@/lib/learn/lessons/schema';
 import type { StageState } from '@/lib/learn/lessons/stage-state';
 import { curvePath } from '@/lib/learn/lessons/graph';
 import {equalGraph,spacedTicks} from '@/lib/learn/lessons/equal-graph';
+import {CalloutLayer} from './CalloutLayer';
+import type {ChalkSpace} from '@/lib/learn/lessons/chalk';
 import {ChalkLayer} from './ChalkLayer';
 import { renderMathMarkdown } from '@/lib/math-markdown';
 import styles from './graph.module.css';
@@ -25,6 +27,7 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
  const visiblePoints=state.points.filter(p=>Number.isFinite(p.y)&&p.x>=x[0]&&p.x<=x[1]&&p.y>=y[0]&&p.y<=y[1]);
  const opacity=(target:string)=>(state.highlight?.length&&state.dimOthers&&!state.highlight.includes(target)?0.22:1)*(1-.4*(state.pulses[target]??0));
  const hasX=y[0]<=0&&y[1]>=0,hasY=!numberLine&&x[0]<=0&&x[1]>=0;
+ const space:ChalkSpace={x,y,sx,sy,fns,params:state.params,target:target=>{const tick=tickValue(target);if(tick!==null)return itemTargets['tick:'+tick]??null;if(target.startsWith('item:'))return itemTargets[target]??null;const point=state.points.find(p=>p.id===target);if(point)return {x:sx(point.x),y:sy(point.y),left:sx(point.x)-8,right:sx(point.x)+8,top:sy(point.y)-8,bottom:sy(point.y)+8};if(target.startsWith('fn:')||target.startsWith('axis:'))return {x:(viewport.left+right)/2,y:(viewport.top+bottom)/2,left:viewport.left,right,top:viewport.top,bottom};return null;}};
  return <div ref={ref} className={styles.container}><svg ref={svgRef} className={styles.graph} viewBox={`0 0 ${viewport.width} ${viewport.height}`} role="img" aria-label={aria} data-number-line={numberLine} data-unit-x={unitX} data-unit-y={unitY}>
   <defs><filter id={id+'glow'} x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter><clipPath id={id+'clip'}><rect x={viewport.left} y={viewport.top} width={right-viewport.left} height={bottom-viewport.top}/></clipPath></defs>
   {state.band&&!state.chalk?.some(m=>m.id==='legacy-band')&&<rect className={styles.band} data-target="band" style={{opacity:.24*opacity('band')}} x={viewport.left} y={sy(Math.min(y[1],Math.max(...state.band)))} width={right-viewport.left} height={Math.max(0,sy(Math.max(y[0],Math.min(...state.band)))-sy(Math.min(y[1],Math.max(...state.band))))}/>}
@@ -38,6 +41,6 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
   <GraphPointLabels points={visiblePoints} boxes={itemTargets} sx={sx} sy={sy} viewport={labelBox(0,0,size.width,size.height)} numberLine={numberLine} opacity={opacity}/>
   {state.labels.map((label,i)=><foreignObject key={i} x={sx(label.at.x)-(label.anchor==='end'?240:label.anchor==='middle'?120:0)} y={sy(label.at.y)-18} width={240} height={64} overflow="visible"><div className={styles.label} style={{textAlign:label.anchor==='end'?'right':label.anchor==='middle'?'center':'left'}}><span data-stage-target={'annotation:'+i}>{label.tex?renderMathMarkdown('$'+label.tex+'$'):label.text}</span></div></foreignObject>)}
   <BoardItems svg items={items} state={state} params={itemParams} space={{sx,sy}}/>
-  <ChalkLayer marks={state.chalk??[]} space={{x,y,sx,sy,fns,params:state.params,target:target=>{const tick=tickValue(target);if(tick!==null)return itemTargets['tick:'+tick]??null;if(target.startsWith('item:'))return itemTargets[target]??null;const point=state.points.find(p=>p.id===target);if(point)return {x:sx(point.x),y:sy(point.y),left:sx(point.x)-8,right:sx(point.x)+8,top:sy(point.y)-8,bottom:sy(point.y)+8};if(target.startsWith('fn:')||target.startsWith('axis:'))return {x:(viewport.left+right)/2,y:(viewport.top+bottom)/2,left:viewport.left,right,top:viewport.top,bottom};return null;}}}/>
+  <CalloutLayer state={state} space={space} boxes={itemTargets} params={itemParams}/><ChalkLayer marks={state.chalk??[]} space={space}/>
  </svg></div>;
 });

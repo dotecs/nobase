@@ -112,3 +112,7 @@
 
 .studio { --studio-type-tick:20px; --studio-type-label:23px; --studio-type-hand:28px; --studio-type-item:26px; }
 .studio :global(.katex .mfrac) { font-size:1em; }
+
+.topTitle[data-accent-bar="true"] h1,.overlayTitle[data-accent-bar="true"] h2 { border-left:4px solid var(--studio-accent); padding-left:12px; }
+
+.topTitle[data-accent-bar="true"] h1 { width:fit-content; max-width:100%; margin-inline:auto; }

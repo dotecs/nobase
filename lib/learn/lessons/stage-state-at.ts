@@ -1,3 +1,4 @@
+import type {TintColor} from './annotation-schema';
 import {itemsOf} from './items';
 import {treeNodes} from './tree';
 import {isChalk,chalkAt} from './chalk';
@@ -31,6 +32,8 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  if(state.band)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},0,0,'legacy-band')!,yRange:state.band});
  let points:Array<Omit<StagePoint,'y'>&{y?:number;on?:string}>=(stage.type==='graph'||stage.type==='slider')&&!stage.initial?.hidden_points?(stage.points??[]).map((p,i)=>({...p,id:'point:'+i})):[];
  let pointIndex=points.length;
+ const tints=new Map<string,{color:TintColor;expires:number}>();
+ state.callouts=[];
  const tracks=new Map<string,Track>(),pulses=new Map<string,number>();
  const advance=(time:number)=>{for(const track of tracks.values()){const p=track.duration===0?1:Math.max(0,Math.min(1,(time-track.start)/track.duration));track.set(track.from+(track.to-track.from)*ease(p,track.easing));}};
  const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=actionAnchor(action),resolved=resolveAnchor(at,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms};})).sort((a,b)=>a.start-b.start);
@@ -38,6 +41,12 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  for(const [eventIndex,{action,start}] of events.entries()){if(start>time)break;advance(start);
   if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex);if(mark)state.chalk!.push(mark);continue;}
   switch(action.type){
+   case 'tint':tints.set(action.target,{color:action.color,expires:action.ttl_ms?start+action.ttl_ms:Infinity});break;
+   case 'callout':{
+    const elapsed=time-start,ttl=action.ttl_ms??0;
+    if(ttl===0||elapsed<ttl)state.callouts!.push({id:'callout:'+eventIndex,action,elapsed,opacity:ttl===0?1:Math.min(1,(ttl-elapsed)/200)});
+    break;
+   }
    case 'param':{const name=action.name;tracks.set('param:'+name,{from:action.from??state.params[name]??0,to:action.to,start,duration:action.duration_ms??800,easing:action.easing,set:value=>{state.params[name]=value;}});break;}
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos,label_offset:action.label_offset});break;
@@ -65,9 +74,10 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'label':{const position=action.position??(typeof action.at==='object'?action.at:undefined);if(position)state.labels.push({text:action.text,tex:action.tex,at:{...position},anchor:action.anchor});break;}
    case 'band':state.band=action.y?[...action.y]:null;state.chalk=state.chalk!.filter(m=>m.id!=='legacy-band');if(action.y)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},start,time,'legacy-band')!,yRange:action.y});break;
    case 'pulse':pulses.set(action.target,start);break;
-   case 'clear':if(!action.what||action.what==='all'){state.band=null;state.chalk=[];}if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
+   case 'clear':if(!action.what||action.what==='all'){state.band=null;state.chalk=[];state.callouts=[];}if(!action.what||action.what==='all'||action.what==='tint')tints.clear();if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
   }
  }
+ state.tints=Object.fromEntries([...tints].filter(([,value])=>value.expires>time).map(([target,value])=>[target,value.color]));
  advance(time);
  state.points=points.map(point=>{const fn=point.on?fns[Number(point.on.slice(3))]:undefined;return {...point,on:point.y===undefined?point.on:undefined,y:point.y??(fn?numeric(parseMath(fn.expr).left,{...state.params,x:point.x}):NaN)};});
  for(const [target,start] of pulses){const progress=(time-start)/800;if(progress>=0&&progress<1)state.pulses[target]=Math.sin(Math.PI*progress);}
