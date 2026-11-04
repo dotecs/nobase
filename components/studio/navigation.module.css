@@ -8,7 +8,7 @@
 
 .transport { flex:1; min-width:0; }
 .progress button { color:var(--studio-muted); background:transparent; border:0; padding:8px; font-size:24px; }
-.nav { padding-left:296px; }
+.nav { padding-left:0; }
 :global([data-focus="true"]) .nav { padding-left:0; }
 @media(prefers-reduced-motion:reduce) { .next[data-ended="true"] { animation:none; } }
 
