@@ -336,27 +336,27 @@
             "tex": "ax^2+bx+c=0\\quad(a\\neq0)"
           },
           {
-            "tex": "x^2+\\tfrac{b}{a}x+\\tfrac{c}{a}=0",
+            "tex": "x^2+\\dfrac{b}{a}x+\\dfrac{c}{a}=0",
             "concept_id": "c.equality-props",
             "why": "양변을 최고차항 계수 a로 나눈다 (a≠0)"
           },
           {
-            "tex": "x^2+\\tfrac{b}{a}x=-\\tfrac{c}{a}",
+            "tex": "x^2+\\dfrac{b}{a}x=-\\dfrac{c}{a}",
             "concept_id": "c.equality-props",
             "why": "상수항을 우변으로 이항 (양변에서 c/a를 뺀다)"
           },
           {
-            "tex": "x^2+\\tfrac{b}{a}x+\\left(\\tfrac{b}{2a}\\right)^2=-\\tfrac{c}{a}+\\left(\\tfrac{b}{2a}\\right)^2",
+            "tex": "x^2+\\dfrac{b}{a}x+\\left(\\dfrac{b}{2a}\\right)^2=-\\dfrac{c}{a}+\\left(\\dfrac{b}{2a}\\right)^2",
             "concept_id": "c.perfect-square",
             "why": "일차항 계수를 2로 나눈 것의 제곱을 양변에 더해 좌변을 완전제곱식으로"
           },
           {
-            "tex": "\\left(x+\\tfrac{b}{2a}\\right)^2=\\tfrac{b^2-4ac}{4a^2}",
+            "tex": "\\left(x+\\dfrac{b}{2a}\\right)^2=\\dfrac{b^2-4ac}{4a^2}",
             "concept_id": "c.fraction-props",
             "why": "우변을 분모 4a²으로 통분해 한 덩어리로 정리"
           },
           {
-            "tex": "x+\\tfrac{b}{2a}=\\pm\\sqrt{\\tfrac{b^2-4ac}{4a^2}}",
+            "tex": "x+\\dfrac{b}{2a}=\\pm\\sqrt{\\dfrac{b^2-4ac}{4a^2}}",
             "concept_id": "c.sqrt-props",
             "why": "X²=k 이면 X=±√k. 단, 루트 안이 0 이상이어야 실수 범위에서 가능"
           },

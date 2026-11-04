@@ -52,7 +52,7 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
     </g>}
     <foreignObject x={anchor.x - offset} y={anchor.y - 26} width={width} height={height} overflow="visible" transform={'rotate(' + rotation + ' ' + anchor.x + ' ' + anchor.y + ')'}>
       <div className={styles.memo} style={{ fontSize, width: 'max-content', maxWidth, textAlign: action.align === 'middle' ? 'center' : 'left', clipPath: 'inset(0 ' + (100 - progress * 100) + '% 0 0)' }}>
-        <span ref={text} className={styles.memoText} data-memo-text>{action.tex ? <InlineMath math={action.tex} /> : action.text}</span>
+        <span ref={text} className={styles.memoText} data-memo-text>{action.tex ? <InlineMath math={'\\displaystyle ' + action.tex} /> : action.text}</span>
       </div>
     </foreignObject>
   </>;

@@ -122,9 +122,9 @@ describe('number line and brackets', () => {
     expect(markup).not.toContain('data-axis="y"');
     expect(markup).toContain('data-arrow="left"');
     expect(markup).toContain('stroke-width:2');
-    expect(markup).toContain('>0</text>');
+    expect(markup).toContain('>0</annotation>');
     const circleY = Number(markup.match(/cy="([\d.]+)"/)![1]);
-    const labelY = Number(markup.match(/<foreignObject[^>]+y="([\d.]+)"/)![1]);
+    const labelY = Number(markup.match(/data-target="point:0"[\s\S]*?<foreignObject[^>]+y="([\d.]+)"/)![1]);
     expect(labelY).toBeGreaterThan(circleY + 24);
   });
 

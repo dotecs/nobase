@@ -22,5 +22,7 @@
 
 .guides { stroke:var(--studio-muted); stroke-width:1; stroke-dasharray:4 4; }
 .pointLabel :global(.katex) { font-size:1em; text-shadow:1px 0 var(--studio-bg),-1px 0 var(--studio-bg),0 1px var(--studio-bg),0 -1px var(--studio-bg); }
-.tickMath { text-align:center; color:var(--studio-muted); font-size:14px; line-height:36px; }
+.tickMath { text-align:center; color:var(--studio-text); font-size:20px; line-height:36px; }
+.tickMath[data-align="end"] { text-align:right; }
+@media (max-width: 767px) { .tickMath { font-size:15px; } }
 .tickMath :global(.katex) { font-size:1em; }

@@ -322,12 +322,12 @@
             "tex": "(6x+12)\\div(-3)"
           },
           {
-            "tex": "=(6x+12)\\times\\left(-\\tfrac13\\right)",
+            "tex": "=(6x+12)\\times\\left(-\\dfrac13\\right)",
             "concept_id": "c.reciprocal",
             "why": "나눗셈은 역수를 곱하는 것. −3=−3/1의 분모·분자를 바꾸면 −1/3"
           },
           {
-            "tex": "=6x\\times\\left(-\\tfrac13\\right)+12\\times\\left(-\\tfrac13\\right)",
+            "tex": "=6x\\times\\left(-\\dfrac13\\right)+12\\times\\left(-\\dfrac13\\right)",
             "concept_id": "c.distributive",
             "why": "곱셈은 순서가 상관없으므로 뒤에 곱해져 있어도 분배법칙은 그대로"
           },

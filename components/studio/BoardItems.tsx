@@ -20,7 +20,7 @@ export function BoardItems({ items, state, params, space, svg = false }: {
       className={styles.item} data-stage-target={target} data-size={item.size ?? 'md'}
       data-align={item.align ?? 'middle'} data-color={item.color}
       style={{ left: svg ? 0 : position.x, top: svg ? 0 : position.y, opacity: (state.itemOpacity?.[item.id] ?? 1) * (dimmed ? .25 : 1) }}
-    >{item.tex ? <InlineMath math={itemContent(item, params)} /> : <LessonText authored text={itemContent(item, params)} />}</div>;
+    >{item.tex ? <InlineMath math={'\\displaystyle ' + itemContent(item, params)} /> : <LessonText authored text={itemContent(item, params)} />}</div>;
     return svg
       ? <foreignObject key={item.id} x={position.x} y={position.y} width={1} height={1} overflow="visible">{content}</foreignObject>
       : <div key={item.id} className={styles.anchor}>{content}</div>;
