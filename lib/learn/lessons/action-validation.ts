@@ -1,4 +1,4 @@
-import {itemsOf} from './items';
+import {itemsOf,itemTargetIds} from './items';
 import {treeNodes} from './tree';
 import {isChalk} from './chalk';
 import {resolveAnchor,type At} from './anchors';
@@ -8,7 +8,7 @@ export function actionErrors(scene:Scene):string[]{
  const counts={fn:stage.type==='graph'?stage.fns.length:stage.type==='slider'?1:0,point:((stage.type==='graph'||stage.type==='slider')&&!stage.initial?.hidden_points?stage.points?.length??0:0)+scene.narration.flatMap(n=>n.cue?.actions??[]).filter(a=>a.type==='point').length,step:stage.type==='steps'?stage.steps.length:0,node:stage.type==='chain'?stage.nodes.length:0,row:stage.type==='table'?stage.rows.length:0};
  const treeIds=new Set(stage.type==='tree'?treeNodes(stage.root).map(n=>n.node.id):[]);
  const ratioChalk=!graph&&(stage.type==='board'||stage.type==='figure'||itemsOf(stage).length>0);
- const itemIds=new Set(itemsOf(stage).map(item=>item.id));
+ const itemIds=itemTargetIds(stage);
  const valid=(target:string)=>{if(target.startsWith('item:'))return itemIds.has(target.slice(5));if(target.startsWith('tree:'))return treeIds.has(target.slice(5));const cell=target.match(/^cell:(\d+):(\d+)$/);if(cell)return stage.type==='table'&&Number(cell[1])<stage.rows.length&&Number(cell[2])<stage.columns.length;if(target==='axis:x'||target==='axis:y'||target==='band')return graph;const match=target.match(/^(fn|point|step|node|row):(\d+)$/);return !!match&&Number(match[2])<counts[match[1] as keyof typeof counts];};
  const errors:string[]=[];
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');

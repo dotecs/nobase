@@ -27,7 +27,7 @@
         "items": [
           {
             "id": "t1",
-            "tex": "4x^3",
+            "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
             "position": {
               "x": 0.365,
               "y": 0.3
@@ -36,7 +36,7 @@
           },
           {
             "id": "t2",
-            "tex": "-2x^2y",
+            "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
             "position": {
               "x": 0.469,
               "y": 0.3
@@ -45,7 +45,7 @@
           },
           {
             "id": "t3",
-            "tex": "+3y",
+            "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
             "position": {
               "x": 0.57,
               "y": 0.3
@@ -54,7 +54,7 @@
           },
           {
             "id": "t4",
-            "tex": "-7",
+            "tex": "\\p{coef}{-7}",
             "position": {
               "x": 0.644,
               "y": 0.3
@@ -192,7 +192,7 @@
         "items": [
           {
             "id": "t1",
-            "tex": "4x^3",
+            "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
             "position": {
               "x": 0.365,
               "y": 0.3
@@ -201,7 +201,7 @@
           },
           {
             "id": "t2",
-            "tex": "-2x^2y",
+            "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
             "position": {
               "x": 0.469,
               "y": 0.3
@@ -210,7 +210,7 @@
           },
           {
             "id": "t3",
-            "tex": "+3y",
+            "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
             "position": {
               "x": 0.57,
               "y": 0.3
@@ -219,7 +219,7 @@
           },
           {
             "id": "t4",
-            "tex": "-7",
+            "tex": "\\p{coef}{-7}",
             "position": {
               "x": 0.644,
               "y": 0.3
@@ -270,23 +270,13 @@
               },
               {
                 "type": "circle",
-                "position": {
-                  "x": 0.55,
-                  "y": 0.34
-                },
-                "rx": 0.016,
-                "ry": 0.045,
+                "target": "item:t3/coef",
                 "at": "@플러스",
                 "ttl_ms": 5000
               },
               {
                 "type": "circle",
-                "position": {
-                  "x": 0.432,
-                  "y": 0.34
-                },
-                "rx": 0.016,
-                "ry": 0.045,
+                "target": "item:t2/coef",
                 "at": "@마이너스를",
                 "ttl_ms": 5000
               }
@@ -362,8 +352,8 @@
                   "y": 0.5
                 },
                 "arrow_to": {
-                  "x": 0.668,
-                  "y": 0.39
+                  "target": "item:t4",
+                  "anchor": "bottom"
                 },
                 "at": "@상수항이라고"
               },
@@ -393,7 +383,7 @@
         "items": [
           {
             "id": "t1",
-            "tex": "4x^3",
+            "tex": "\\p{coef}{4}x^{\\p{exp}{3}}",
             "position": {
               "x": 0.365,
               "y": 0.3
@@ -402,7 +392,7 @@
           },
           {
             "id": "t2",
-            "tex": "-2x^2y",
+            "tex": "\\p{coef}{-2}x^{\\p{exp}{2}}y",
             "position": {
               "x": 0.469,
               "y": 0.3
@@ -411,7 +401,7 @@
           },
           {
             "id": "t3",
-            "tex": "+3y",
+            "tex": "\\p{coef}{+3}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
             "position": {
               "x": 0.57,
               "y": 0.3
@@ -420,7 +410,7 @@
           },
           {
             "id": "t4",
-            "tex": "-7",
+            "tex": "\\p{coef}{-7}",
             "position": {
               "x": 0.644,
               "y": 0.3
@@ -460,13 +450,8 @@
               },
               {
                 "type": "circle",
-                "at": "@사가",
-                "position": {
-                  "x": 0.352,
-                  "y": 0.35
-                },
-                "rx": 0.014,
-                "ry": 0.038
+                "target": "item:t1/coef",
+                "at": "@사가"
               },
               {
                 "type": "handwrite",
@@ -476,8 +461,8 @@
                   "y": 0.52
                 },
                 "arrow_to": {
-                  "x": 0.352,
-                  "y": 0.398
+                  "target": "item:t1/coef",
+                  "anchor": "bottom"
                 },
                 "at": "@계수입니다"
               }
@@ -493,13 +478,8 @@
             "actions": [
               {
                 "type": "circle",
-                "at": "@이가 아니라",
-                "position": {
-                  "x": 0.437,
-                  "y": 0.35
-                },
-                "rx": 0.021,
-                "ry": 0.038
+                "target": "item:t2/coef",
+                "at": "@이가 아니라"
               },
               {
                 "type": "handwrite",
@@ -509,8 +489,8 @@
                   "y": 0.62
                 },
                 "arrow_to": {
-                  "x": 0.437,
-                  "y": 0.398
+                  "target": "item:t2/coef",
+                  "anchor": "bottom"
                 },
                 "at": "@마이너스이라고"
               },
@@ -537,8 +517,8 @@
                   "y": 0.52
                 },
                 "arrow_to": {
-                  "x": 0.554,
-                  "y": 0.398
+                  "target": "item:t3/coef",
+                  "anchor": "bottom"
                 },
                 "at": "@그냥 삼입니다"
               },
@@ -568,7 +548,7 @@
         "items": [
           {
             "id": "t1",
-            "tex": "4x^3",
+            "tex": "\\p{coef}{4}^{\\p{cexp}{\\vphantom{1}}}x^{\\p{exp}{3}}",
             "position": {
               "x": 0.365,
               "y": 0.3
@@ -577,7 +557,7 @@
           },
           {
             "id": "t2",
-            "tex": "-2x^2y",
+            "tex": "\\p{coef}{-2}^{\\p{cexp}{\\vphantom{1}}}x^{\\p{exp}{2}}y",
             "position": {
               "x": 0.469,
               "y": 0.3
@@ -586,7 +566,7 @@
           },
           {
             "id": "t3",
-            "tex": "+3y",
+            "tex": "\\p{coef}{+3}^{\\p{cexp}{\\vphantom{1}}}\\p{var}{y}^{\\p{exp}{\\vphantom{1}}}",
             "position": {
               "x": 0.57,
               "y": 0.3
@@ -595,7 +575,7 @@
           },
           {
             "id": "t4",
-            "tex": "-7",
+            "tex": "\\p{coef}{-7}^{\\p{cexp}{\\vphantom{1}}}",
             "position": {
               "x": 0.644,
               "y": 0.3
@@ -688,14 +668,9 @@
             "actions": [
               {
                 "type": "circle",
+                "target": "item:t1/exp",
                 "at": "@오른쪽 위에",
-                "ttl_ms": 5000,
-                "position": {
-                  "x": 0.386,
-                  "y": 0.318
-                },
-                "rx": 0.011,
-                "ry": 0.03
+                "ttl_ms": 5000
               },
               {
                 "type": "handwrite",
@@ -705,8 +680,8 @@
                   "y": 0.12
                 },
                 "arrow_to": {
-                  "x": 0.386,
-                  "y": 0.286
+                  "target": "item:t1/exp",
+                  "anchor": "top"
                 },
                 "at": "@엑스가 세 번",
                 "ttl_ms": 12000
@@ -723,48 +698,31 @@
             "actions": [
               {
                 "type": "circle",
-                "position": {
-                  "x": 0.598,
-                  "y": 0.318
-                },
-                "rx": 0.011,
-                "ry": 0.03,
+                "target": "item:t3/exp",
                 "at": "@와이는 사실",
                 "ttl_ms": 5000
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 0.36,
-                  "y": 0.318
-                },
+                "target": "item:t1/cexp",
                 "at": "@사와",
                 "ttl_ms": 2000
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 0.447,
-                  "y": 0.318
-                },
+                "target": "item:t2/cexp",
                 "at": "@이,",
                 "ttl_ms": 2000
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 0.562,
-                  "y": 0.318
-                },
+                "target": "item:t3/cexp",
                 "at": "@삼,",
                 "ttl_ms": 2000
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 0.66,
-                  "y": 0.318
-                },
+                "target": "item:t4/cexp",
                 "at": "@칠에도",
                 "ttl_ms": 2500
               },
@@ -776,8 +734,8 @@
                   "y": 0.12
                 },
                 "arrow_to": {
-                  "x": 0.598,
-                  "y": 0.286
+                  "target": "item:t3/exp",
+                  "anchor": "top"
                 },
                 "at": "@숨어 있습니다",
                 "ttl_ms": 9000

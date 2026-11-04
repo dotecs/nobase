@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { InlineMath } from 'react-katex';
-import { chalkLine, chalkPoint, curvedArrow, memoArrowStart, rotatedMemoBounds, type ChalkMark, type ChalkSpace } from '@/lib/learn/lessons/chalk';
+import { chalkLine, chalkPoint, curvedArrow, memoArrowStart, rotatedMemoBounds, targetAnchor, type ChalkMark, type ChalkSpace } from '@/lib/learn/lessons/chalk';
 import { ChalkStroke } from './ChalkStroke';
 import styles from './chalk.module.css';
 
@@ -37,7 +37,7 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
   anchor.y = Math.max(top + 32, Math.min(bottom - height + 26, anchor.y));
   const rotation = action.rotate ?? -4;
   const bounds = rotatedMemoBounds({ left: anchor.x - offset, top: anchor.y - 26, width, height }, anchor, rotation);
-  const target = action.arrow_to ? chalkPoint('target' in action.arrow_to ? action.arrow_to.target : action.arrow_to, space) : null;
+  const target = action.arrow_to ? ('target' in action.arrow_to ? targetAnchor(action.arrow_to.target, action.arrow_to.anchor, space) : chalkPoint(action.arrow_to, space)) : null;
   const points = target && measured ? curvedArrow(memoArrowStart(bounds, target), target) : [];
   const previous = points.at(-2);
   const angle = target && previous ? Math.atan2(target.y - previous.y, target.x - previous.x) : 0;

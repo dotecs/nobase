@@ -27,12 +27,28 @@ export function itemsOf(stage: { type: string; items?: BoardItem[] }): BoardItem
   return stage.items ?? [];
 }
 
+/** `\p{name}{…}` inside an item's tex marks a part (coefficient, exponent …) that chalk can target as `item:<id>/<name>`. */
+export const PART_PATTERN = /\\p\{([a-z][a-z0-9-]*)\}/g;
+export function itemParts(item: BoardItem): string[] {
+  return [...(item.tex ?? '').matchAll(PART_PATTERN)].map(match => match[1]);
+}
+export function itemTargetIds(stage: { type: string; items?: BoardItem[] }): Set<string> {
+  const ids = new Set<string>();
+  for (const item of itemsOf(stage)) { ids.add(item.id); for (const part of itemParts(item)) ids.add(item.id + '/' + part); }
+  return ids;
+}
+/** KaTeX options that turn `\p{name}{…}` into a measurable `data-stage-target` span. */
+export function itemKatexOptions(itemId: string) {
+  return { trust: (context: { command: string }) => context.command === '\\htmlData', macros: { '\\p': '\\htmlData{stage-target=item:' + itemId + '/#1}{#2}' } };
+}
+
 export function itemErrors(stage: { type: string; items?: BoardItem[]; initial?: { hidden_items?: string[] }; param?: { name: string } }): string[] {
   const items = itemsOf(stage);
   const ids = new Set(items.map(item => item.id));
   const errors: string[] = [];
   const graph = stage.type === 'graph' || stage.type === 'slider';
   if (ids.size !== items.length) errors.push('item ID 중복');
+  for (const item of items) { const parts = itemParts(item); if (new Set(parts).size !== parts.length) errors.push('item 부분 이름 중복: ' + item.id); }
   if ('initial' in stage && stage.initial?.hidden_items?.some(id => !ids.has(id))) errors.push('initial.hidden_items에 없는 item ID가 있습니다.');
   for (const item of items) {
     if (!graph && Object.values(item.position).some(value => value < 0 || value > 1)) errors.push('비그래프 item 좌표는 0~1이어야 합니다: ' + item.id);

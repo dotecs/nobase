@@ -9,6 +9,8 @@ export type ChalkSpace={sx:(n:number)=>number;sy:(n:number)=>number;x:[number,nu
 export function isChalk(action:Action):action is ChalkAction{return ['pointer','circle','underline','arrow','bracket','shade','handwrite','flash'].includes(action.type);}
 export function chalkAt(action:ChalkAction,start:number,time:number,id:string):ChalkMark|null{const elapsed=time-start,ttl=action.ttl_ms??(action.type==='handwrite'?0:2500);if(elapsed<0||(ttl>0&&elapsed>=ttl))return null;return {id,action,elapsed,progress:Math.min(1,elapsed/400),opacity:ttl===0?1:Math.min(1,(ttl-elapsed)/Math.min(200,ttl))};}
 export function chalkPoint(value:string|ChalkPoint,space:ChalkSpace):ChalkPoint|null{return typeof value==='string'?space.target(value):{x:space.sx(value.x),y:space.sy(value.y)};}
+/** Point on the edge of a target's box (6px outside) so arrows stop at the glyph instead of piercing it. */
+export function targetAnchor(target:string,anchor:'center'|'top'|'bottom'|'left'|'right'|undefined,space:ChalkSpace):ChalkPoint|null{const box=space.target(target);if(!box)return null;const gap=6;switch(anchor){case 'top':return {x:box.x,y:box.top-gap};case 'bottom':return {x:box.x,y:box.bottom+gap};case 'left':return {x:box.left-gap,y:box.y};case 'right':return {x:box.right+gap,y:box.y};default:return {x:box.x,y:box.y};}}
 /** 2026-11-02 대표 결정: 분필 선은 흔들림 없이 곧게 그린다. wobble 인자는 호환용으로만 남긴다. */
 export function chalkLine(points:ChalkPoint[],_wobble=false,close=false){void _wobble;if(!points.length)return '';return points.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+','+p.y.toFixed(2)).join(' ')+(close?' Z':'');}
 export function linePoints(from:ChalkPoint,to:ChalkPoint){return Array.from({length:13},(_,i)=>({x:from.x+(to.x-from.x)*i/12,y:from.y+(to.y-from.y)*i/12}));}
