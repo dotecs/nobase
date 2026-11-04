@@ -63,12 +63,13 @@
           },
           {
             "id": "rule",
-            "text": "(수)×(문자), (문자)×(문자) 사이의 × 는 생략",
+            "text": "**규칙** (수)×(문자), (문자)×(문자) 사이의 ×는 생략",
             "position": {
               "x": 0.505,
               "y": 0.6
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           },
           {
             "id": "bad",
@@ -227,21 +228,23 @@
           },
           {
             "id": "sign",
-            "text": "부호: 음수·양수를 나타내는 기호 $+$, $-$",
+            "text": "**부호** 음수·양수를 나타내는 기호 $+$, $-$",
             "position": {
               "x": 0.505,
               "y": 0.62
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           },
           {
             "id": "const",
-            "text": "상수항: 문자 없이 수만으로 이루어진 항",
+            "text": "**상수항** 문자 없이 수만으로 이루어진 항",
             "position": {
               "x": 0.505,
               "y": 0.78
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           }
         ],
         "initial": {
@@ -426,12 +429,13 @@
           },
           {
             "id": "def",
-            "text": "계수: 문자 앞에 곱해진 수 (부호까지 포함)",
+            "text": "**계수** 문자 앞에 곱해진 수 (부호까지 포함)",
             "position": {
               "x": 0.505,
               "y": 0.8
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           }
         ],
         "initial": {
@@ -593,7 +597,8 @@
               "y": 0.5
             },
             "size": "md",
-            "color": "hand"
+            "color": "mint",
+            "weight": "bold"
           },
           {
             "id": "d2",
@@ -603,7 +608,8 @@
               "y": 0.5
             },
             "size": "md",
-            "color": "hand"
+            "color": "mint",
+            "weight": "bold"
           },
           {
             "id": "d3",
@@ -613,7 +619,8 @@
               "y": 0.5
             },
             "size": "md",
-            "color": "hand"
+            "color": "mint",
+            "weight": "bold"
           },
           {
             "id": "d4",
@@ -623,25 +630,28 @@
               "y": 0.5
             },
             "size": "md",
-            "color": "hand"
+            "color": "mint",
+            "weight": "bold"
           },
           {
             "id": "deg",
-            "text": "차수: 어떤 항에 문자가 곱해진 횟수",
+            "text": "**차수** 어떤 항에 문자가 곱해진 횟수",
             "position": {
               "x": 0.505,
               "y": 0.66
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           },
           {
             "id": "whole",
-            "text": "식의 차수 = 가장 높은 항의 차수 → 이 식은 3차식",
+            "text": "**식의 차수** 가장 높은 항의 차수 → 이 식은 3차식",
             "position": {
               "x": 0.505,
               "y": 0.8
             },
-            "size": "md"
+            "size": "md",
+            "kind": "note"
           }
         ],
         "initial": {
