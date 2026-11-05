@@ -1,3 +1,4 @@
+import {actionExpiry,instructionOpacity} from './action-lifetime';
 import type {TintColor} from './annotation-schema';
 import {itemsOf} from './items';
 import {treeNodes} from './tree';
@@ -34,30 +35,31 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  if(state.band)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},0,0,'legacy-band')!,yRange:state.band});
  let points:Array<Omit<StagePoint,'y'>&{y?:number;on?:string}>=(stage.type==='graph'||stage.type==='slider')&&!stage.initial?.hidden_points?(stage.points??[]).map((p,i)=>({...p,id:'point:'+i})):[];
  let pointIndex=points.length;
- const tints=new Map<string,{color:TintColor;expires:number}>();
+ const tints=new Map<string,{color:TintColor;expires:number;start:number}>();
  state.callouts=[];
+ let highlightEnd=Infinity,highlightStart=0;
  const tracks=new Map<string,Track>(),pulses=new Map<string,number>();
  const advance=(time:number)=>{for(const track of tracks.values()){const p=track.duration===0?1:Math.max(0,Math.min(1,(time-track.start)/track.duration));track.set(track.from+(track.to-track.from)*ease(p,track.easing));}};
- const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=actionAnchor(action),resolved=resolveAnchor(at,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms};})).sort((a,b)=>a.start-b.start);
+ const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=actionAnchor(action),resolved=resolveAnchor(at,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms,end:sentenceStarts[i+1]??sentenceStarts[i]+duration};})).sort((a,b)=>a.start-b.start);
  const time=Math.max(0,Number.isFinite(tMs)?tMs:0);
- for(const [eventIndex,{action,start}] of events.entries()){if(start>time)break;advance(start);
-  if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex);if(mark)state.chalk!.push(mark);continue;}
+ for(const [eventIndex,{action,start,end}] of events.entries()){if(start>time)break;advance(start);
+  if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex,end);if(mark)state.chalk!.push(mark);continue;}
   switch(action.type){
    case 'region':{
-    const elapsed=time-start,ttl=action.ttl_ms??0;
-    if(!ttl||elapsed<ttl)state.regions!.push({id:'region-event:'+eventIndex,action,elapsed,opacity:ttl?Math.min(1,(ttl-elapsed)/Math.min(200,ttl)):1});
+    const elapsed=time-start,opacity=instructionOpacity(start,actionExpiry(action,start,end),time);
+    if(opacity>0)state.regions!.push({id:'region-event:'+eventIndex,action,elapsed,opacity});
     break;
    }
-   case 'tint':tints.set(action.target,{color:action.color,expires:action.ttl_ms?start+action.ttl_ms:Infinity});break;
+   case 'tint':tints.set(action.target,{color:action.color,expires:actionExpiry(action,start,end),start});break;
    case 'callout':{
-    const elapsed=time-start,ttl=action.ttl_ms??0;
-    if(ttl===0||elapsed<ttl)state.callouts!.push({id:'callout:'+eventIndex,action,elapsed,opacity:ttl===0?1:Math.min(1,(ttl-elapsed)/200)});
+    const elapsed=time-start,opacity=instructionOpacity(start,actionExpiry(action,start,end),time);
+    if(opacity>0)state.callouts!.push({id:'callout:'+eventIndex,action,elapsed,opacity});
     break;
    }
    case 'param':{const name=action.name;tracks.set('param:'+name,{from:action.from??state.params[name]??0,to:action.to,start,duration:action.duration_ms??800,easing:action.easing,set:value=>{state.params[name]=value;}});break;}
    case 'draw':{const index=Number(action.target.slice(3));if(!state.visibleFns.includes(index))state.visibleFns.push(index);tracks.set(action.target,{from:0,to:1,start,duration:action.duration_ms??800,set:value=>{state.drawProgress[action.target]=value;}});break;}
    case 'point':points.push({id:'point:'+pointIndex++,x:action.x,y:action.y,x_tex:action.x_tex,y_tex:action.y_tex,on:action.on,c:action.c,label:action.label,guides:action.guides,label_pos:action.label_pos,label_offset:action.label_offset});break;
-   case 'highlight':state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
+   case 'highlight':highlightEnd=actionExpiry(action,start,end);highlightStart=start;state.highlight=[action.target].flat();state.dimOthers=action.dim_others??true;break;
    case 'reveal': {
     if(action.target==='item') {
      if(!state.revealed.item?.includes(action.id!)) {
@@ -84,6 +86,9 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'clear':if(!action.what||action.what==='all'||action.what==='region')state.regions=[];if(!action.what||action.what==='all'){state.band=null;state.chalk=[];state.callouts=[];}if(!action.what||action.what==='all'||action.what==='tint')tints.clear();if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
   }
  }
+ state.highlightOpacity=instructionOpacity(highlightStart,highlightEnd,time);
+ if(time>=highlightEnd)state.highlight=null;
+ state.tintOpacity=Object.fromEntries([...tints].map(([target,value])=>[target,instructionOpacity(value.start,value.expires,time)]));
  state.tints=Object.fromEntries([...tints].filter(([,value])=>value.expires>time).map(([target,value])=>[target,value.color]));
  advance(time);
  state.points=points.map(point=>{const fn=point.on?fns[Number(point.on.slice(3))]:undefined;return {...point,on:point.y===undefined?point.on:undefined,y:point.y??(fn?numeric(parseMath(fn.expr).left,{...state.params,x:point.x}):NaN)};});

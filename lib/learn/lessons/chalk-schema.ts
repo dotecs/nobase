@@ -1,9 +1,10 @@
 import {coordinate} from './coordinate';
 import {z} from 'zod';
 const finite=z.number().finite(),point=z.object({x:coordinate,y:coordinate}),target=z.string().min(1).max(160);
-const common={position:point.optional(),at:z.union([finite.nonnegative(),z.string().regex(/^@.+$/),point]).optional(),at_ms:finite.nonnegative().optional(),ttl_ms:finite.nonnegative().optional(),color:z.enum(['mark','hand','chalk','accent']).optional()};
+const common={position:point.optional(),at:z.union([finite.nonnegative(),z.string().regex(/^@.+$/),point]).optional(),at_ms:finite.nonnegative().optional(),ttl_ms:finite.nonnegative().optional(),until:z.enum(['sentence','scene']).optional(),color:z.enum(['mark','hand','chalk','accent']).optional()};
 const hasPoint=(a:{at?:unknown;position?:unknown})=>!!a.position||(typeof a.at==='object'&&a.at!==null);
 export const chalkOptions=[
+ z.object({type:z.literal('strike'),...common,target:target.optional(),targets:z.array(target).min(1).optional(),pairs:z.array(z.tuple([target,target])).min(1).optional(),stagger_ms:finite.nonnegative().optional(),direction:z.enum(['/','\\']).optional()}).refine(a=>[a.target,a.targets,a.pairs].filter(Boolean).length===1,'strike에는 target, targets, pairs 중 하나를 지정하세요.'),
  z.object({type:z.literal('pointer'),...common,target:target.optional()}).refine(a=>hasPoint(a)||!!a.target,'pointer 좌표 또는 대상이 필요합니다.'),
  z.object({type:z.literal('circle'),...common,target:target.optional(),rx:coordinate.pipe(z.number().positive()).optional(),ry:coordinate.pipe(z.number().positive()).optional()}).refine(a=>!!a.target||(hasPoint(a)&&a.rx!==undefined&&a.ry!==undefined),'circle에는 대상 또는 좌표와 반지름이 필요합니다.'),
  z.object({type:z.literal('underline'),...common,target,from:point.optional(),to:point.optional()}),

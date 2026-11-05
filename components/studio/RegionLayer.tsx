@@ -1,3 +1,4 @@
+import {instructionColor,targetOpacity} from '@/lib/learn/lessons/instruction-style';
 import { InlineMath } from 'react-katex';
 import { annotationColor } from '@/lib/learn/lessons/annotation-schema';
 import { intersectRegions, placeRegionLabels, regionBox, regionProgress, type RegionGeometry } from '@/lib/learn/lessons/region';
@@ -15,8 +16,6 @@ export function RegionLayer({ state, geometries, boxes, sx, axisY, domain }: {
     return mark.action.label && box ? [{ id:mark.id, x:box.x, bottom:Math.min(...geometries[mark.id].map(range => range.point ? axisY : range.y)) - 8,
       width:measured ? measured.right - measured.left : 0, height:measured ? measured.bottom - measured.top : 0 }] : [];
   }), Object.entries(boxes).filter(([id]) => /^(tick:|ytick:|item:|annotation:|memo:)/.test(id)).map(([, box]) => box));
-  const highlighted = (target: string, parent: string) => !state.highlight?.length || !state.dimOthers
-    || state.highlight.some(value => value === target || value === parent || value.startsWith(target + '/'));
   return <g className={styles.layer}>
     {marks.map(mark => {
       if (!mark.action.intersect_with) return null;
@@ -35,13 +34,12 @@ export function RegionLayer({ state, geometries, boxes, sx, axisY, domain }: {
     })}
     {marks.map(mark => {
       const parent = 'region:' + (mark.action.id ?? mark.id), ranges = geometries[mark.id];
-      const color = annotationColor(state.tints?.[parent] ?? mark.action.color ?? 'accent');
+      const color = instructionColor(state,parent,annotationColor(mark.action.color??'accent')) ?? annotationColor(mark.action.color??'accent');
       return <g key={mark.id} data-region={mark.action.id ?? mark.id} opacity={mark.opacity} style={{ color }}>
         {ranges.map(range => {
           const progress = regionProgress(mark.elapsed, range.order, mark.action.ranges.length), target = parent + '/' + range.index;
-          const tint = state.tints?.[target];
           return <g key={range.index} data-region-range={target} data-level={mark.action.level ?? 1}
-            opacity={highlighted(target, parent) ? 1 : .22} style={{ color:annotationColor(tint) }}>
+            opacity={targetOpacity(state,target,.22)} style={{ color:instructionColor(state,target) }}>
             {!range.point && <>
               {range.fromMarker && <line data-region-vertical="from" x1={range.left} x2={range.left} y1={axisY} y2={axisY + (range.y - axisY) * progress.vertical} />}
               {range.toMarker && <line data-region-vertical="to" x1={range.right} x2={range.right} y1={axisY} y2={axisY + (range.y - axisY) * progress.vertical} />}
@@ -55,7 +53,7 @@ export function RegionLayer({ state, geometries, boxes, sx, axisY, domain }: {
           </g>;
         })}
         {mark.action.label && labels[mark.id] && <foreignObject x={labels[mark.id].left} y={labels[mark.id].top} width={1} height={1} overflow="visible"
-          opacity={(highlighted(parent, parent) ? 1 : .22) * Math.min(1, mark.elapsed / 400)}>
+          opacity={targetOpacity(state,parent,.22) * Math.min(1, mark.elapsed / 400)}>
           <div className={styles.label} data-stage-target={'region-label:' + mark.id}><InlineMath math={mark.action.label} /></div>
         </foreignObject>}
       </g>;

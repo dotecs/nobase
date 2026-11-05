@@ -1,5 +1,5 @@
-import {annotationColor} from '@/lib/learn/lessons/annotation-schema';
-import { InlineMath } from 'react-katex';
+import {instructionColor,targetOpacity} from '@/lib/learn/lessons/instruction-style';
+import { StudioMath } from '../StudioMath';
 import { LessonText } from '@/components/learn/lesson/LessonText';
 import { layoutTree, type TreeStage as TreeStageData } from '@/lib/learn/lessons/tree';
 import type { StageState } from '@/lib/learn/lessons/stage-state';
@@ -8,7 +8,7 @@ import styles from './tree.module.css';
 export function TreeStage({ stage, state }: { stage: TreeStageData; state: StageState }) {
   const layout = layoutTree(stage.root, stage.direction);
   const visible = new Set(state.revealed.tree ?? layout.nodes.map(({ node }) => node.id));
-  const opacity = (id: string) => state.highlight?.length && state.dimOthers && !state.highlight.includes('tree:' + id) ? .25 : 1;
+  const opacity = (id: string) => targetOpacity(state,'tree:'+id);
   return <div className={styles.tree} role="group" aria-label="수형도" style={{ width: layout.width, height: layout.height }}>
     <svg className={styles.connections} width={layout.width} height={layout.height} aria-hidden="true">
       {layout.edges.filter(edge => visible.has(edge.id) && visible.has(edge.parent)).map(edge => <path
@@ -19,9 +19,9 @@ export function TreeStage({ stage, state }: { stage: TreeStageData; state: Stage
     </svg>
     {layout.nodes.filter(({ node }) => visible.has(node.id)).map(({ node, x, y, width, height }) => <div
       key={node.id} className={styles.node} data-stage-target={'tree:' + node.id} data-studio-tint={state.tints?.['tree:'+node.id]}
-      style={{ color:annotationColor(state.tints?.['tree:'+node.id]),left: x, top: y, width, height, opacity: opacity(node.id) * (state.treeReveal?.[node.id]?.card ?? 1) }}
+      style={{ color:instructionColor(state,'tree:'+node.id),left: x, top: y, width, height, opacity: opacity(node.id) * (state.treeReveal?.[node.id]?.card ?? 1) }}
     >
-      {node.tex && <InlineMath math={node.tex} />}
+      {node.tex && <StudioMath state={state} tex={node.tex} target={'tree:'+node.id} display={false} />}
       <LessonText authored text={node.label} />
     </div>)}
   </div>;

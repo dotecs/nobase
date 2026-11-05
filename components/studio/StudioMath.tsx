@@ -1,13 +1,23 @@
 import katex from 'katex';
 import { useMemo } from 'react';
-import { itemKatexOptions } from '@/lib/learn/lessons/items';
+import { targetKatexOptions } from '@/lib/learn/lessons/items';
+import type { StageState } from '@/lib/learn/lessons/stage-state';
+import { instructionColor, targetOpacity } from '@/lib/learn/lessons/instruction-style';
 
 /** KaTeX rendered directly so items can use `\\p{part}{…}` (→ data-stage-target spans) — react-katex does not expose trust/macros. */
-export function StudioMath({ tex, itemId, display = true }: { tex: string; itemId?: string; display?: boolean }) {
+export function StudioMath({ tex, itemId, target, display = true, state }: { tex: string; itemId?: string; target?: string; display?: boolean; state?: StageState }) {
+  const prefix = target ?? (itemId ? 'item:' + itemId : undefined);
   const html = useMemo(() => {
     try {
-      return katex.renderToString((display ? '\\displaystyle ' : '') + tex, { displayMode: false, throwOnError: false, strict: 'ignore', ...(itemId ? itemKatexOptions(itemId) : {}) });
+      return katex.renderToString((display ? '\\displaystyle ' : '') + tex, { displayMode: false, throwOnError: false, strict: 'ignore', ...(prefix ? targetKatexOptions(prefix) : {}) });
     } catch { return tex; }
-  }, [tex, itemId, display]);
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+  }, [tex, prefix, display]);
+  // Keep styles in the rendered markup: later target measurements must not erase them.
+  const styled = state ? html.replace(/(<span\b[^>]*data-stage-target="([^"]+)"[^>]*)(>)/g, (_match, tag: string, id: string) => {
+    const color=instructionColor(state,id);
+    const partPrefix=id.split('/')[0]+'/';
+    const opacity=state.highlight?.some(value=>value.startsWith(partPrefix)) ? targetOpacity(state,id) : 1;
+    return tag + ` style="${color?'color:'+color+';':''}opacity:${opacity}"` + '>';
+  }) : html;
+  return <span dangerouslySetInnerHTML={{ __html: styled }} />;
 }

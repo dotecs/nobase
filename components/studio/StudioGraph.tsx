@@ -1,5 +1,6 @@
 'use client';
 import {RegionLayer} from './RegionLayer';
+import {targetOpacity} from '@/lib/learn/lessons/instruction-style';
 import {regionGeometry,regionTargets} from '@/lib/learn/lessons/region';
 import {GraphPointLabels} from './GraphPointLabels';
 import {labelBox} from '@/lib/learn/lessons/point-labels';
@@ -33,7 +34,7 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
  const regionGeometries=Object.fromEntries(regionMarks.map(mark=>[mark.id,regionGeometry(mark,sx,sy(0),x)]));
  const regionBoxes=regionTargets(regionMarks,regionGeometries);
  const visiblePoints=state.points.filter(p=>Number.isFinite(p.y)&&p.x>=x[0]&&p.x<=x[1]&&p.y>=y[0]&&p.y<=y[1]);
- const opacity=(target:string)=>(state.highlight?.length&&state.dimOthers&&!state.highlight.includes(target)?0.22:1)*(1-.4*(state.pulses[target]??0));
+ const opacity=(target:string)=>targetOpacity(state,target,.22)*(1-.4*(state.pulses[target]??0));
  const hasX=y[0]<=0&&y[1]>=0,hasY=!numberLine&&x[0]<=0&&x[1]>=0;
  const space:ChalkSpace={x,y,sx,sy,fns,params:state.params,target:target=>{if(target.startsWith('region:'))return regionBoxes[target]??null;const tick=tickValue(target);if(tick!==null)return itemTargets['tick:'+tick]??null;if(target.startsWith('item:'))return itemTargets[target]??null;const point=state.points.find(p=>p.id===target);if(point)return {x:sx(point.x),y:sy(point.y),left:sx(point.x)-8,right:sx(point.x)+8,top:sy(point.y)-8,bottom:sy(point.y)+8};if(target.startsWith('fn:')||target.startsWith('axis:'))return {x:(viewport.left+right)/2,y:(viewport.top+bottom)/2,left:viewport.left,right,top:viewport.top,bottom};return null;}};
  return <div ref={ref} className={styles.container}><svg ref={svgRef} className={styles.graph} viewBox={`0 0 ${viewport.width} ${viewport.height}`} role="img" aria-label={aria} data-number-line={numberLine} data-unit-x={unitX} data-unit-y={unitY}>

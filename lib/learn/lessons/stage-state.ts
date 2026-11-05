@@ -6,6 +6,8 @@ export type StageLabel={text:string;tex?:string;at:{x:number;y:number};anchor?:'
 export type StageState={
  regions?:RegionMark[];
  regionMaxLevel?:number;
+ highlightOpacity?:number;
+ tintOpacity?:Record<string,number>;
  tints?:Record<string,TintColor>;
  callouts?:{id:string;action:CalloutAction;elapsed:number;opacity:number}[];
  warnings?:string[];

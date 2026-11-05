@@ -1,13 +1,14 @@
 import type {Action} from './action-schema';
 import type {ChalkAction} from './chalk-schema';
+import {actionExpiry,instructionOpacity} from './action-lifetime';
 import {parseMath} from '../mathcheck/parse';
 import {numeric} from '../mathcheck/evaluate';
 export type ChalkMark={id:string;action:ChalkAction;progress:number;opacity:number;elapsed:number;yRange?:[number,number]};
 export type ChalkPoint={x:number;y:number};
 export type TargetBox={left:number;top:number;right:number;bottom:number;x:number;y:number};
 export type ChalkSpace={sx:(n:number)=>number;sy:(n:number)=>number;x:[number,number];y:[number,number];target:(id:string)=>TargetBox|null;fns?:{expr:string}[];params?:Record<string,number>};
-export function isChalk(action:Action):action is ChalkAction{return ['pointer','circle','underline','arrow','bracket','shade','handwrite','flash'].includes(action.type);}
-export function chalkAt(action:ChalkAction,start:number,time:number,id:string):ChalkMark|null{const elapsed=time-start,ttl=action.ttl_ms??(action.type==='handwrite'?0:2500);if(elapsed<0||(ttl>0&&elapsed>=ttl))return null;return {id,action,elapsed,progress:Math.min(1,elapsed/400),opacity:ttl===0?1:Math.min(1,(ttl-elapsed)/Math.min(200,ttl))};}
+export function isChalk(action:Action):action is ChalkAction{return ['pointer','circle','underline','strike','arrow','bracket','shade','handwrite','flash'].includes(action.type);}
+export function chalkAt(action:ChalkAction,start:number,time:number,id:string,sentenceEnd=Infinity):ChalkMark|null{const elapsed=time-start,opacity=instructionOpacity(start,actionExpiry(action,start,sentenceEnd),time);if(elapsed<0||opacity<=0)return null;return {id,action,elapsed,progress:Math.min(1,elapsed/400),opacity};}
 export function chalkPoint(value:string|ChalkPoint,space:ChalkSpace):ChalkPoint|null{return typeof value==='string'?space.target(value):{x:space.sx(value.x),y:space.sy(value.y)};}
 /** Point on the edge of a target's box (6px outside) so arrows stop at the glyph instead of piercing it. */
 /** 2026-11-02 대표 결정: 분필 선은 흔들림 없이 곧게 그린다. wobble 인자는 호환용으로만 남긴다. */

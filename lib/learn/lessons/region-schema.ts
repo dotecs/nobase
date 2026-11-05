@@ -13,7 +13,7 @@ export const regionRangeSchema = z.object({
   if (from === to && range.open) context.addIssue({ code:'custom', message:'한 점 region은 닫힌 범위여야 합니다.' });
 });
 export const regionSchema = z.object({
-  type: z.literal('region'), id: z.string().regex(/^[a-z][a-z0-9-]*$/).optional(),
+  type: z.literal('region'), until:z.enum(['sentence','scene']).optional(), id: z.string().regex(/^[a-z][a-z0-9-]*$/).optional(),
   ranges: z.array(regionRangeSchema).min(1), level: z.number().int().min(1).optional(),
   color: z.enum(['accent', 'mint', 'mark', 'hand', 'chalk']).optional(),
   label: z.string().min(1).max(20000).optional(),

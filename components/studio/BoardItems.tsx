@@ -1,4 +1,4 @@
-import { annotationColor } from '@/lib/learn/lessons/annotation-schema';
+import {instructionColor,targetOpacity} from '@/lib/learn/lessons/instruction-style';
 import { StudioMath } from './StudioMath';
 import { LessonText } from '@/components/learn/lesson/LessonText';
 import { itemContent, itemPosition, type BoardItem } from '@/lib/learn/lessons/items';
@@ -16,16 +16,16 @@ export function BoardItems({ items, state, params, space, svg = false }: {
   const content = (item: BoardItem, grouped = false) => {
     const target = 'item:' + item.id;
     const visible = state.revealed.item?.includes(item.id) ?? true;
-    const dimmed = state.highlight?.length && state.dimOthers && !state.highlight.includes(target);
+    const dimmed = targetOpacity(state,target);
     return <div key={item.id} className={styles.item} data-grouped={grouped}
       data-stage-target={visible ? target : undefined} data-studio-tint={state.tints?.[target]} data-size={item.size ?? 'md'}
       data-align={item.align ?? 'middle'} data-color={item.color} data-weight={item.weight} data-kind={item.kind ?? 'plain'}
       style={{
-        color: annotationColor(state.tints?.[target]),
+        color: instructionColor(state,target),
         visibility: visible ? 'visible' : 'hidden',
-        opacity: (state.itemOpacity?.[item.id] ?? 1) * (dimmed ? .25 : 1),
+        opacity: (state.itemOpacity?.[item.id] ?? 1) * dimmed,
       }}>
-      {item.tex ? <StudioMath tex={itemContent(item, params)} itemId={item.id} /> : <LessonText authored text={itemContent(item, params)} />}
+      {item.tex ? <StudioMath state={state} tex={itemContent(item, params)} itemId={item.id} /> : <LessonText authored text={itemContent(item, params)} />}
     </div>;
   };
   const anchors = items.filter((item, index) => !item.group || items.findIndex(other => other.group === item.group) === index);

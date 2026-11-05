@@ -4,6 +4,7 @@ import { coordinate } from './coordinate';
 const finite = z.number().finite();
 const point = z.object({ x: coordinate, y: coordinate });
 const timing = {
+  until: z.enum(['sentence','scene']).optional(),
   at: z.union([finite.nonnegative(), z.string().regex(/^@.+$/)]).optional(),
   at_ms: finite.nonnegative().optional(), ttl_ms: finite.nonnegative().optional(),
 };

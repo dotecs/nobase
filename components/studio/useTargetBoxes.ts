@@ -24,12 +24,23 @@ export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGS
   useEffect(() => {
     const element = root.current;
     if (!element) return;
+    let frame = 0;
+    const moving = () => element.getAnimations({subtree:true}).some(animation =>
+      animation.playState === 'running' && animation.effect instanceof KeyframeEffect
+      && animation.effect.getKeyframes().some(keyframe => keyframe.transform !== undefined));
+    const follow = () => {
+      frame = 0;
+      measure();
+      if (moving()) frame = requestAnimationFrame(follow);
+    };
+    const followAnimation = () => { if (!frame) frame = requestAnimationFrame(follow); };
     const observer = new ResizeObserver(measure);
     const observeTargets = () => {
       observer.disconnect();
       observer.observe(element);
       element.querySelectorAll('[data-stage-target]').forEach(target => observer.observe(target));
       measure();
+      followAnimation();
     };
     const mutation = new MutationObserver(records => {
       if (records.some(record => record.type === 'childList')) observeTargets();
@@ -37,8 +48,21 @@ export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGS
     });
     mutation.observe(element, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['style', 'transform', 'viewBox', 'x', 'y'] });
     observeTargets();
+    element.addEventListener('animationstart', followAnimation);
+    element.addEventListener('animationend', followAnimation);
+    element.addEventListener('animationcancel', followAnimation);
+    element.addEventListener('transitionrun', followAnimation);
+    element.addEventListener('transitionend', followAnimation);
     window.addEventListener('resize', measure);
-    return () => { observer.disconnect(); mutation.disconnect(); window.removeEventListener('resize', measure); };
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect(); mutation.disconnect(); window.removeEventListener('resize', measure);
+      element.removeEventListener('animationstart', followAnimation);
+      element.removeEventListener('animationend', followAnimation);
+      element.removeEventListener('animationcancel', followAnimation);
+      element.removeEventListener('transitionrun', followAnimation);
+      element.removeEventListener('transitionend', followAnimation);
+    };
   }, [root, measure]);
   useEffect(measure, [measure, revision]);
   return targets;

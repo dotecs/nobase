@@ -41,7 +41,10 @@ export function itemTargetIds(stage: { type: string; items?: BoardItem[] }): Set
 }
 /** KaTeX options that turn `\p{name}{…}` into a measurable `data-stage-target` span. */
 export function itemKatexOptions(itemId: string) {
-  return { trust: (context: { command: string }) => context.command === '\\htmlData', macros: { '\\p': '\\htmlData{stage-target=item:' + itemId + '/#1}{#2}' } };
+  return targetKatexOptions('item:' + itemId);
+}
+export function targetKatexOptions(target: string) {
+  return { trust: (context: { command: string }) => context.command === '\\htmlData', macros: { '\\p': '\\htmlData{stage-target=' + target + '/#1}{#2}' } };
 }
 
 export function itemErrors(stage: { type: string; items?: BoardItem[]; initial?: { hidden_items?: string[] }; param?: { name: string } }): string[] {

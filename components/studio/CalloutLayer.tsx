@@ -1,6 +1,7 @@
-import { InlineMath } from 'react-katex';
+import { StudioMath } from './StudioMath';
 import { LessonText } from '@/components/learn/lesson/LessonText';
 import { annotationColor } from '@/lib/learn/lessons/annotation-schema';
+import {instructionColor} from '@/lib/learn/lessons/instruction-style';
 import { calloutGeometry, calloutTarget, placeCallouts } from '@/lib/learn/lessons/callout';
 import { chalkLine, type ChalkSpace, type TargetBox } from '@/lib/learn/lessons/chalk';
 import { itemContent } from '@/lib/learn/lessons/items';
@@ -16,7 +17,7 @@ export function CalloutLayer({ state, space, boxes, params = state.params }: {
     const box = boxes[calloutTarget(id, action)];
     return { id, x: space.sx(action.position.x), y: space.sy(action.position.y),
       width: box ? box.right - box.left : 0, height: box ? box.bottom - box.top : 0, align: action.align };
-  }), Object.entries(boxes).filter(([id]) => !ownTargets.has(id) && /^(item:|memo:|annotation:)/.test(id)).map(([, box]) => box));
+  }), Object.entries(boxes).filter(([id]) => ![...ownTargets].some(target => id === target || id.startsWith(target + '/')) && /^(item:|memo:|annotation:)/.test(id)).map(([, box]) => box));
   const named = Object.fromEntries(notes.filter(note => note.action.id).map(note => [calloutTarget(note.id, note.action), placements[note.id]]));
   return <g className={styles.layer}>{notes.map(({ id, action, elapsed, opacity }) => {
     const target = calloutTarget(id, action), box = placements[id];
@@ -33,8 +34,8 @@ export function CalloutLayer({ state, space, boxes, params = state.params }: {
       </>}
       <foreignObject x={box.left} y={box.top} width={1} height={1} overflow="visible">
         <div className={styles.note} data-stage-target={target} data-studio-tint={state.tints?.[target]} data-size={action.size ?? 'md'} data-align={action.align ?? 'middle'}
-          style={{ opacity: textProgress, color: annotationColor(state.tints?.[target]) }}>
-          {action.tex ? <InlineMath math={'\\displaystyle ' + content} /> : <LessonText authored text={content} />}
+          style={{ opacity: textProgress, color: instructionColor(state,target) }}>
+          {action.tex ? <StudioMath state={state} tex={content} target={target} /> : <LessonText authored text={content} />}
         </div>
       </foreignObject>
     </g>;

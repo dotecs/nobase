@@ -47,6 +47,82 @@ export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',titl
    {type:'region',id:'b',level:2,ranges:[{from:'-inf',to:0},{from:1,to:'inf'}],label:'x \\le 0,\\; x \\ge 1',color:'mint',intersect_with:'a'}
   ]}}
  ]},
+ {
+  "id": "precision-cancellation",
+  "tag": "derive",
+  "title": "지수의 차 · 같은 인수 약분",
+  "headline": {
+    "eyebrow": "7강 · 지수법칙",
+    "title": "같은 인수를 하나씩 약분해요",
+    "accent_bar": true
+  },
+  "stage": {
+    "type": "table",
+    "columns": [
+      "경우",
+      "$a^m \\div a^n$",
+      "예시"
+    ],
+    "rows": [
+      {
+        "cells": [
+          "$m=n$",
+          "$1$",
+          "$a^3 \\div a^3 = \\dfrac{\\p{n1}{a}\\times\\p{n2}{a}\\times\\p{n3}{a}}{\\p{d1}{a}\\times\\p{d2}{a}\\times\\p{d3}{a}} = \\p{one}{1}$"
+        ]
+      }
+    ]
+  },
+  "narration": [
+    {
+      "id": "precision-1",
+      "role": "say",
+      "text": "위아래 개수가 같으니 모두 약분되어 일, 즉 $1$이 됩니다.",
+      "cue": {
+        "actions": [
+          {
+            "type": "reveal",
+            "target": "row",
+            "index": 0
+          },
+          {
+            "type": "highlight",
+            "target": "row:0"
+          },
+          {
+            "type": "strike",
+            "pairs": [
+              [
+                "cell:0:2/n1",
+                "cell:0:2/d1"
+              ],
+              [
+                "cell:0:2/n2",
+                "cell:0:2/d2"
+              ],
+              [
+                "cell:0:2/n3",
+                "cell:0:2/d3"
+              ]
+            ],
+            "stagger_ms": 220,
+            "at": "@모두 약분되어"
+          },
+          {
+            "type": "circle",
+            "target": "cell:0:2/one",
+            "at": "@일, 즉"
+          }
+        ]
+      }
+    },
+    {
+      "id": "precision-2",
+      "role": "say",
+      "text": "같은 수의 거듭제곱을 나누면 일입니다. 앞 문장의 지시는 사라지고 식만 남습니다."
+    }
+  ]
+},
 ]});
 
 // Demonstration-only course; never used by the real lesson route.
