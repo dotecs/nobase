@@ -1,0 +1,7 @@
+.layer { stroke:currentColor; stroke-width:1.5; stroke-linejoin:round; fill:none; pointer-events:none; }
+.open { fill:var(--studio-bg); }
+.closed { fill:currentColor; }
+.band { fill:var(--studio-glow); fill-opacity:.24; stroke:none; }
+.label { width:max-content; color:inherit; font-family:var(--font-sans); font-size:var(--studio-type-label); line-height:1.2; white-space:nowrap; stroke:none; }
+.label :global(.katex) { font-size:1em; }
+@media(prefers-reduced-motion:reduce) { .layer line { stroke-dashoffset:0; } }

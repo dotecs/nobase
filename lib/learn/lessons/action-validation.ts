@@ -1,3 +1,4 @@
+import {regionLevelWarnings} from './region-validation';
 import {tickValue} from './pointing';
 import {itemsOf,itemTargetIds} from './items';
 import {treeNodes} from './tree';
@@ -10,9 +11,17 @@ export function actionErrors(scene:Scene):string[]{
  const treeIds=new Set(stage.type==='tree'?treeNodes(stage.root).map(n=>n.node.id):[]);
  const ratioChalk=!graph&&(stage.type==='board'||stage.type==='figure'||itemsOf(stage).length>0);
  const callouts=scene.narration.flatMap(sentence=>sentence.cue?.actions??[]).filter(action=>action.type==='callout');
+ const regions=scene.narration.flatMap(sentence=>sentence.cue?.actions??[]).filter(action=>action.type==='region');
+ const regionIds=new Map(regions.filter(region=>region.id).map(region=>[region.id!,region]));
  const itemIds=itemTargetIds(stage);
- const valid=(target:string)=>{if(target.startsWith('tick:'))return graph&&tickValue(target)!==null;if(target.startsWith('item:'))return itemIds.has(target.slice(5));if(target.startsWith('tree:'))return treeIds.has(target.slice(5));const cell=target.match(/^cell:(\d+):(\d+)$/);if(cell)return stage.type==='table'&&Number(cell[1])<stage.rows.length&&Number(cell[2])<stage.columns.length;if(target==='axis:x'||target==='axis:y'||target==='band')return graph;const match=target.match(/^(fn|point|step|node|row):(\d+)$/);return !!match&&Number(match[2])<counts[match[1] as keyof typeof counts];};
+ const valid=(target:string)=>{if(target.startsWith('region:')){const match=target.match(/^region:([a-z][a-z0-9-]*)(?:\/(\d+))?$/),region=match&&regionIds.get(match[1]);return !!region&&(match![2]===undefined||Number(match![2])<region.ranges.length);}if(target.startsWith('tick:'))return graph&&tickValue(target)!==null;if(target.startsWith('item:'))return itemIds.has(target.slice(5));if(target.startsWith('tree:'))return treeIds.has(target.slice(5));const cell=target.match(/^cell:(\d+):(\d+)$/);if(cell)return stage.type==='table'&&Number(cell[1])<stage.rows.length&&Number(cell[2])<stage.columns.length;if(target==='axis:x'||target==='axis:y'||target==='band')return graph;const match=target.match(/^(fn|point|step|node|row):(\d+)$/);return !!match&&Number(match[2])<counts[match[1] as keyof typeof counts];};
  const errors:string[]=[];
+ if(regionIds.size!==regions.filter(region=>region.id).length)errors.push('region ID 중복');
+ for(const region of regions){
+  if(!graph||!stage.number_line)errors.push('region은 number_line 수직선 무대 전용입니다.');
+  if(region.intersect_with&&(!regionIds.has(region.intersect_with)||region.intersect_with===region.id))errors.push('region intersect_with 참조 오류');
+ }
+
  for(const callout of callouts)if(callout.id){
   if(itemIds.has(callout.id))errors.push('callout ID 중복: '+callout.id);
   itemIds.add(callout.id);
@@ -21,7 +30,7 @@ export function actionErrors(scene:Scene):string[]{
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');
  for(const sentence of scene.narration)for(const action of sentence.cue?.actions??[]){
   if(typeof action.at==='string'){const result=resolveAnchor(action.at as At,sentence,null,1000);if(result.warning||result.source==='caption')errors.push(result.warning??'앵커는 TTS 대본에 있어야 합니다: '+action.at);}
-  if(action.type==='tint'&&(!/^(item|step|node|row|cell|tree):/.test(action.target)||!valid(action.target)))errors.push('tint 대상 범위 오류');
+  if(action.type==='tint'&&(!/^(item|step|node|row|cell|tree|region):/.test(action.target)||!valid(action.target)))errors.push('tint 대상 범위 오류');
   if(action.type==='callout'){
    if(action.target&&(!valid(action.target)||action.target==='item:'+action.id))errors.push('callout 대상 범위 오류');
    if(!graph&&[action.position,...(action.from?[action.from]:[])].some(p=>p.x<0||p.x>1||p.y<0||p.y>1))errors.push('callout 비율 좌표는 0~1이어야 합니다.');
@@ -48,4 +57,4 @@ export function actionErrors(scene:Scene):string[]{
  return errors;
 }
 
-export function actionWarnings(scene:Scene){return [...(scene.headline?.formula?[scene.id+': headline.formula는 더 이상 표시되지 않습니다. items로 옮기세요.']:[]),...(scene.narration.flatMap(s=>s.cue?.actions??[]).filter(a=>a.type==='handwrite').length>4?[scene.id+': 손글씨 메모는 4개 이하를 권장합니다.']:[]),...scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[])];}
+export function actionWarnings(scene:Scene){return [...regionLevelWarnings(scene),...(scene.headline?.formula?[scene.id+': headline.formula는 더 이상 표시되지 않습니다. items로 옮기세요.']:[]),...(scene.narration.flatMap(s=>s.cue?.actions??[]).filter(a=>a.type==='handwrite').length>4?[scene.id+': 손글씨 메모는 4개 이하를 권장합니다.']:[]),...scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[])];}

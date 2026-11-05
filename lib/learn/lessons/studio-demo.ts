@@ -39,6 +39,14 @@ export const studioDemo=lessonSchema.parse({id:'studio-demo',kind:'concept',titl
   ]}},
   {id:'expr-2',role:'say',text:'수와 문자 사이의 곱셈 기호를 생략해서 간결하게 표현해요.'}
  ]},
+ {id:'inequality-regions',tag:'explore',title:'두 조건을 동시에 만족하는 범위',headline:{eyebrow:'부등식 · 수직선',title:'두 조건을 동시에 만족하는 범위',accent_bar:true},stage:{type:'graph',number_line:true,x:[-3,3],y:[-1,1],fns:[],aria:'두 부등식 조건과 공통 해 영역'},narration:[
+  {id:'region-a',role:'say',text:'첫 번째 조건은 마이너스 일 이상, 이 미만입니다.',cue:{actions:[
+   {type:'region',id:'a',level:1,ranges:[{from:-1,to:2,open:'to'}],label:'-1 \\le x < 2',color:'accent'}
+  ]}},
+  {id:'region-b',role:'say',text:'두 번째 조건은 영 이하이거나 일 이상입니다. 겹치는 부분이 두 조건을 모두 만족해요.',cue:{actions:[
+   {type:'region',id:'b',level:2,ranges:[{from:'-inf',to:0},{from:1,to:'inf'}],label:'x \\le 0,\\; x \\ge 1',color:'mint',intersect_with:'a'}
+  ]}}
+ ]},
 ]});
 
 // Demonstration-only course; never used by the real lesson route.

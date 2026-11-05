@@ -1,4 +1,6 @@
 'use client';
+import {RegionLayer} from './RegionLayer';
+import {regionGeometry,regionTargets} from '@/lib/learn/lessons/region';
 import {GraphPointLabels} from './GraphPointLabels';
 import {labelBox} from '@/lib/learn/lessons/point-labels';
 import {tickValue} from '@/lib/learn/lessons/pointing';
@@ -23,11 +25,17 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
  useEffect(()=>{if(!ref.current||typeof ResizeObserver==='undefined')return;const observer=new ResizeObserver(([entry])=>{const width=Math.min(1200,Math.max(200,Math.round(entry.contentRect.width))),height=Math.min(750,Math.max(160,Math.round(entry.contentRect.height)));setSize(old=>old.width===width&&old.height===height?old:{width,height});});observer.observe(ref.current);return()=>observer.disconnect();},[]);
  const svgRef=useRef<SVGSVGElement>(null);
  const itemTargets=useTargetBoxes(ref,svgRef,JSON.stringify([state.camera,itemParams,state.revealed.item,size]));
- const viewport={...size,height:size.height,left:30,right:24,top:24,bottom:28},{x,y,sx,sy,unitX,unitY}=equalGraph(state.camera,viewport,aspect,numberLine),right=size.width-viewport.right,bottom=viewport.height-viewport.bottom;
+ const regionMarks=numberLine?state.regions??[]:[];
+ const labelReserve=Object.entries(itemTargets).filter(([target])=>target.startsWith('region-label:')).reduce((sum,[,box])=>sum+box.bottom-box.top+5,0);
+ const aboveAxis=numberLine&&state.regionMaxLevel?(state.regionMaxLevel*28+40+labelReserve):0;
+ const viewport={...size,height:Math.max(size.height,aboveAxis+92),left:30,right:24,top:24,bottom:28};
+ const {x,y,sx,sy,unitX,unitY}=equalGraph(state.camera,viewport,aspect,numberLine,aboveAxis),right=size.width-viewport.right,bottom=viewport.height-viewport.bottom;
+ const regionGeometries=Object.fromEntries(regionMarks.map(mark=>[mark.id,regionGeometry(mark,sx,sy(0),x)]));
+ const regionBoxes=regionTargets(regionMarks,regionGeometries);
  const visiblePoints=state.points.filter(p=>Number.isFinite(p.y)&&p.x>=x[0]&&p.x<=x[1]&&p.y>=y[0]&&p.y<=y[1]);
  const opacity=(target:string)=>(state.highlight?.length&&state.dimOthers&&!state.highlight.includes(target)?0.22:1)*(1-.4*(state.pulses[target]??0));
  const hasX=y[0]<=0&&y[1]>=0,hasY=!numberLine&&x[0]<=0&&x[1]>=0;
- const space:ChalkSpace={x,y,sx,sy,fns,params:state.params,target:target=>{const tick=tickValue(target);if(tick!==null)return itemTargets['tick:'+tick]??null;if(target.startsWith('item:'))return itemTargets[target]??null;const point=state.points.find(p=>p.id===target);if(point)return {x:sx(point.x),y:sy(point.y),left:sx(point.x)-8,right:sx(point.x)+8,top:sy(point.y)-8,bottom:sy(point.y)+8};if(target.startsWith('fn:')||target.startsWith('axis:'))return {x:(viewport.left+right)/2,y:(viewport.top+bottom)/2,left:viewport.left,right,top:viewport.top,bottom};return null;}};
+ const space:ChalkSpace={x,y,sx,sy,fns,params:state.params,target:target=>{if(target.startsWith('region:'))return regionBoxes[target]??null;const tick=tickValue(target);if(tick!==null)return itemTargets['tick:'+tick]??null;if(target.startsWith('item:'))return itemTargets[target]??null;const point=state.points.find(p=>p.id===target);if(point)return {x:sx(point.x),y:sy(point.y),left:sx(point.x)-8,right:sx(point.x)+8,top:sy(point.y)-8,bottom:sy(point.y)+8};if(target.startsWith('fn:')||target.startsWith('axis:'))return {x:(viewport.left+right)/2,y:(viewport.top+bottom)/2,left:viewport.left,right,top:viewport.top,bottom};return null;}};
  return <div ref={ref} className={styles.container}><svg ref={svgRef} className={styles.graph} viewBox={`0 0 ${viewport.width} ${viewport.height}`} role="img" aria-label={aria} data-number-line={numberLine} data-unit-x={unitX} data-unit-y={unitY}>
   <defs><filter id={id+'glow'} x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter><clipPath id={id+'clip'}><rect x={viewport.left} y={viewport.top} width={right-viewport.left} height={bottom-viewport.top}/></clipPath></defs>
   {state.band&&!state.chalk?.some(m=>m.id==='legacy-band')&&<rect className={styles.band} data-target="band" style={{opacity:.24*opacity('band')}} x={viewport.left} y={sy(Math.min(y[1],Math.max(...state.band)))} width={right-viewport.left} height={Math.max(0,sy(Math.max(y[0],Math.min(...state.band)))-sy(Math.min(y[1],Math.max(...state.band))))}/>}
@@ -38,6 +46,7 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
   </g>
   <g clipPath={`url(#${id}clip)`}>{state.visibleFns.map(i=>{const fn=fns[i];if(!fn)return null;const target='fn:'+i,d=curvePath(fn.expr,x,y,state.params,viewport),progress=Math.max(0,Math.min(1,state.drawProgress[target]??1));return <g key={i} opacity={opacity(target)} data-target={target}><path d={d} className={styles.glow} stroke={colors[fn.c]} pathLength={1} strokeDasharray={1} strokeDashoffset={1-progress} filter={`url(#${id}glow)`}/><path d={d} className={styles.curve} stroke={colors[fn.c]} pathLength={1} strokeDasharray={1} strokeDashoffset={1-progress}/></g>;})}</g>
   {visiblePoints.map(p=><g key={p.id} data-target={p.id} opacity={opacity(p.id)}>{p.guides&&<g className={styles.guides}><line x1={sx(p.x)} x2={sx(p.x)} y1={sy(p.y)} y2={sy(0)}/><line x1={sx(p.x)} x2={sx(0)} y1={sy(p.y)} y2={sy(p.y)}/></g>}<line className={styles.point} x1={sx(p.x)} x2={sx(p.x)} y1={sy(p.y)-9} y2={sy(p.y)+9} stroke={colors[p.c??'c1']} style={{filter:'drop-shadow(0 0 4px '+colors[p.c??'c1']+')'}}/></g>)}
+  {numberLine&&<RegionLayer state={state} geometries={regionGeometries} boxes={itemTargets} sx={sx} axisY={sy(0)} domain={x}/>}
   <GraphPointLabels points={visiblePoints} boxes={itemTargets} sx={sx} sy={sy} viewport={labelBox(0,0,size.width,size.height)} numberLine={numberLine} opacity={opacity}/>
   {state.labels.map((label,i)=><foreignObject key={i} x={sx(label.at.x)-(label.anchor==='end'?240:label.anchor==='middle'?120:0)} y={sy(label.at.y)-18} width={240} height={64} overflow="visible"><div className={styles.label} style={{textAlign:label.anchor==='end'?'right':label.anchor==='middle'?'center':'left'}}><span data-stage-target={'annotation:'+i}>{label.tex?renderMathMarkdown('$'+label.tex+'$'):label.text}</span></div></foreignObject>)}
   <BoardItems svg items={items} state={state} params={itemParams} space={{sx,sy}}/>

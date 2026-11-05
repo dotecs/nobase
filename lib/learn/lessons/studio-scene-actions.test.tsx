@@ -27,11 +27,11 @@ it('scene buttons select the exact index and allow the current scene to close th
 
 it('icon navigation retains accessible labels and invokes the final completion action', () => {
   const move = vi.fn(), complete = vi.fn();
-  const tree = SceneNav({scenes:studioDemo.scenes,index:4,ended:true,onMove:move,onComplete:complete});
+  const tree = SceneNav({scenes:studioDemo.scenes,index:studioDemo.scenes.length-1,ended:true,onMove:move,onComplete:complete});
   const actions = buttons(tree);
   const previous = actions.find(button => button.props['aria-label'] === '이전 장면')!;
   previous.props.onClick?.({} as React.MouseEvent<HTMLButtonElement>);
-  expect(move).toHaveBeenCalledWith(3);
+  expect(move).toHaveBeenCalledWith(studioDemo.scenes.length-2);
   const finish = actions.find(button => button.props['aria-label'] === '학습 홈으로')!;
   expect(finish.props.title).toBe('학습 홈으로');
   finish.props.onClick?.({} as React.MouseEvent<HTMLButtonElement>);

@@ -1,3 +1,4 @@
+import {regionSchema} from './region-schema';
 import {tintSchema,calloutSchema} from './annotation-schema';
 import {itemInitial} from './items';
 import {coordinate,pointTex} from './coordinate';
@@ -12,7 +13,7 @@ const range=z.tuple([finite,finite]).refine(([a,b])=>a<b&&b-a<=200,'축 범위�
 const target=z.string().min(1);
 export const initialStageSchema=z.object({...itemInitial,hidden_fns:z.array(index).optional(),hidden_points:z.boolean().optional()});
 export const actionSchema=z.preprocess(value=>value&&typeof value==='object'&&'type' in value&&value.type==='point'?pointTex(value):value,z.discriminatedUnion('type',[
- ...chalkOptions,tintSchema,calloutSchema,
+ ...chalkOptions,tintSchema,calloutSchema,regionSchema,
  z.object({type:z.literal('param'),name:target,to:finite,from:finite.optional(),...timing,duration_ms:time,easing:z.enum(['linear','ease','ease-in-out']).optional()}),
  z.object({type:z.literal('draw'),target:fn,...timing,duration_ms:time}),
  z.object({type:z.literal('point'),x:coordinate,y:coordinate.optional(),x_tex:z.string().optional(),y_tex:z.string().optional(),on:fn.optional(),guides:z.boolean().optional(),label_offset:z.object({x:finite,y:finite}).optional(),label_pos:z.enum(['ne','nw','se','sw','n','s']).optional(),label:z.string().optional(),c:z.enum(['c1','c2','c3']).optional(),...timing}).refine(p=>p.y!==undefined||p.on!==undefined,'점에는 y 또는 on이 필요합니다.'),
@@ -22,6 +23,6 @@ export const actionSchema=z.preprocess(value=>value&&typeof value==='object'&&'t
  z.object({type:z.literal('label'),text:z.string(),tex:z.string().optional(),position:z.object({x:finite,y:finite}).optional(),at:z.union([z.object({x:finite,y:finite}),finite.nonnegative(),z.string().regex(/^@.+$/)]).optional(),anchor:z.enum(['start','middle','end']).optional(),at_ms:time}).refine(a=>!!a.position||typeof a.at==='object','label 좌표가 필요합니다.'),
  z.object({type:z.literal('band'),y:z.tuple([finite,finite]).nullable(),...timing}),
  z.object({type:z.literal('pulse'),target,...timing}),
- z.object({type:z.literal('clear'),what:z.enum(['labels','points','highlight','tint','all']).optional(),...timing}),
+ z.object({type:z.literal('clear'),what:z.enum(['labels','points','highlight','tint','region','all']).optional(),...timing}),
 ]));
 export type Action=z.infer<typeof actionSchema>;
