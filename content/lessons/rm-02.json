@@ -286,14 +286,12 @@
               {
                 "type": "circle",
                 "target": "item:t3/coef",
-                "at": "@플러스",
-                "ttl_ms": 5000
+                "at": "@플러스"
               },
               {
                 "type": "circle",
                 "target": "item:t2/coef",
-                "at": "@마이너스를",
-                "ttl_ms": 5000
+                "at": "@마이너스를"
               }
             ]
           }
@@ -308,8 +306,7 @@
               {
                 "type": "circle",
                 "target": "item:t1",
-                "at": "@사엑스세제곱 앞에는",
-                "ttl_ms": 4000
+                "at": "@사엑스세제곱 앞에는"
               },
               {
                 "type": "handwrite",
@@ -333,8 +330,7 @@
               {
                 "type": "underline",
                 "target": "item:sign",
-                "at": "@부호를 기준으로",
-                "ttl_ms": 3000
+                "at": "@부호를 기준으로"
               },
               {
                 "type": "underline",
@@ -478,8 +474,7 @@
               {
                 "type": "underline",
                 "target": "item:def",
-                "at": "@문자 앞에",
-                "ttl_ms": 4000
+                "at": "@문자 앞에"
               },
               {
                 "type": "circle",
@@ -545,8 +540,7 @@
               {
                 "type": "circle",
                 "target": "item:t3/coef",
-                "at": "@플러스삼",
-                "ttl_ms": 3000
+                "at": "@플러스삼"
               },
               {
                 "type": "callout",
@@ -654,8 +648,7 @@
               {
                 "type": "circle",
                 "target": "item:t1/exp",
-                "at": "@오른쪽 위에",
-                "ttl_ms": 5000
+                "at": "@오른쪽 위에"
               },
               {
                 "type": "callout",
@@ -683,8 +676,7 @@
               {
                 "type": "circle",
                 "target": "item:t3/exp",
-                "at": "@와이는 사실",
-                "ttl_ms": 5000
+                "at": "@와이는 사실"
               },
               {
                 "type": "pointer",
@@ -767,8 +759,7 @@
               {
                 "type": "circle",
                 "target": "item:t1/coef",
-                "at": "@수에 아무리",
-                "ttl_ms": 3000
+                "at": "@수에 아무리"
               }
             ]
           }
@@ -954,7 +945,7 @@
           {
             "cells": [
               "$-8xy$ 와 $5x^2$",
-              "$xy$, $x$",
+              "$x\\p{y}{y}$, $\\p{x2}{x}$",
               "2, 2",
               "✕ 문자가 다르다"
             ],
@@ -964,7 +955,7 @@
         "items": [
           {
             "id": "sum",
-            "tex": "3x-5x=-2x",
+            "tex": "\\p{c1}{3}x\\p{c2}{-5}x=\\p{c3}{-2}x",
             "position": {
               "x": 0.5,
               "y": 0.94
@@ -1010,14 +1001,12 @@
               {
                 "type": "underline",
                 "target": "cell:0:1",
-                "at": "@문자는 둘 다",
-                "ttl_ms": 3000
+                "at": "@문자는 둘 다"
               },
               {
                 "type": "underline",
                 "target": "cell:0:2",
-                "at": "@차수는 둘 다",
-                "ttl_ms": 3000
+                "at": "@차수는 둘 다"
               }
             ]
           }
@@ -1043,14 +1032,12 @@
               {
                 "type": "underline",
                 "target": "cell:1:1",
-                "at": "@문자 에이",
-                "ttl_ms": 3000
+                "at": "@문자 에이"
               },
               {
                 "type": "underline",
                 "target": "cell:1:2",
-                "at": "@둘 다 이차입니다",
-                "ttl_ms": 3000
+                "at": "@둘 다 이차입니다"
               },
               {
                 "type": "reveal",
@@ -1087,8 +1074,7 @@
               {
                 "type": "underline",
                 "target": "cell:3:2",
-                "at": "@차수가 일과 이로",
-                "ttl_ms": 4000
+                "at": "@차수가 일과 이로"
               }
             ]
           }
@@ -1112,10 +1098,19 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "cell:4:1/y",
+                "at": "@와이가 있고"
+              },
+              {
+                "type": "circle",
+                "target": "cell:4:1/x2",
+                "at": "@뒤에는 없죠"
+              },
+              {
                 "type": "underline",
                 "target": "cell:4:1",
-                "at": "@문자가 달라서",
-                "ttl_ms": 4000
+                "at": "@문자가 달라서"
               }
             ]
           }
@@ -1139,9 +1134,19 @@
                 "at": "@삼엑스마이너스오엑스는"
               },
               {
-                "type": "underline",
-                "target": "item:sum",
+                "type": "circle",
+                "target": "item:sum/c1",
                 "at": "@계수만 더하면"
+              },
+              {
+                "type": "circle",
+                "target": "item:sum/c2",
+                "at": "@계수만 더하면+300"
+              },
+              {
+                "type": "underline",
+                "target": "item:sum/c3",
+                "at": "@계수만 더하면+700"
               },
               {
                 "type": "clear",

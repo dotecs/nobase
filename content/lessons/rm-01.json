@@ -285,8 +285,7 @@
                 },
                 "rx": 2.5,
                 "ry": 0.4,
-                "at": "@양의 정수는",
-                "ttl_ms": 5000
+                "at": "@양의 정수는"
               },
               {
                 "type": "handwrite",
@@ -414,7 +413,7 @@
         "items": [
           {
             "id": "frac",
-            "tex": "\\dfrac{b}{a}\\quad(a\\neq 0)",
+            "tex": "\\dfrac{\\p{num}{b}}{\\p{den}{a}}\\quad(\\p{cond}{a\\neq 0})",
             "position": {
               "x": 2.4,
               "y": 2
@@ -516,8 +515,7 @@
                 },
                 "rx": 0.45,
                 "ry": 0.3,
-                "at": "@빈 곳이",
-                "ttl_ms": 3500
+                "at": "@빈 곳이"
               },
               {
                 "type": "circle",
@@ -527,8 +525,7 @@
                 },
                 "rx": 0.45,
                 "ry": 0.3,
-                "at": "@빈 곳이+250",
-                "ttl_ms": 3500
+                "at": "@빈 곳이+250"
               }
             ]
           }
@@ -590,10 +587,14 @@
                 "at": "@에이분의비로"
               },
               {
+                "type": "circle",
+                "target": "item:frac/den",
+                "at": "@물론 분모"
+              },
+              {
                 "type": "underline",
-                "target": "item:frac",
-                "at": "@물론 분모",
-                "ttl_ms": 5000
+                "target": "item:frac/cond",
+                "at": "@영이 아니어야"
               }
             ]
           }
@@ -608,8 +609,7 @@
               {
                 "type": "circle",
                 "target": "point:8",
-                "at": "@삼은",
-                "ttl_ms": 4000
+                "at": "@삼은"
               },
               {
                 "type": "handwrite",
@@ -1121,8 +1121,7 @@
               {
                 "type": "underline",
                 "target": "axis:x",
-                "at": "@수직선이 완성됩니다",
-                "ttl_ms": 8000
+                "at": "@수직선이 완성됩니다"
               },
               {
                 "type": "handwrite",
@@ -1156,8 +1155,7 @@
               {
                 "type": "underline",
                 "target": "axis:x",
-                "at": "@수직선이다",
-                "ttl_ms": 4000
+                "at": "@수직선이다"
               }
             ]
           }
@@ -1214,7 +1212,7 @@
             "text": "어떤 실수든 자기 자신을 두 번 곱하면 0보다 크거나 같다"
           },
           {
-            "tex": "(-3)^2=9,\\quad 0^2=0,\\quad \\left(\\dfrac12\\right)^2=\\dfrac14",
+            "tex": "\\p{neg}{(-3)^2=9},\\quad \\p{zero}{0^2=0},\\quad \\p{half}{\\left(\\dfrac12\\right)^2=\\dfrac14}",
             "text": "음수를 제곱해도 양수, 0을 제곱하면 0. 음수는 나올 수 없다"
           }
         ]
@@ -1284,6 +1282,16 @@
                 "type": "highlight",
                 "target": "node:2",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "node:2/neg",
+                "at": "@음수를 제곱해도"
+              },
+              {
+                "type": "circle",
+                "target": "node:2/zero",
+                "at": "@영을 제곱하면"
               },
               {
                 "type": "underline",
@@ -1367,8 +1375,7 @@
               {
                 "type": "underline",
                 "target": "tree:real",
-                "at": "@실수는",
-                "ttl_ms": 3000
+                "at": "@실수는"
               },
               {
                 "type": "reveal",
@@ -1416,8 +1423,7 @@
               {
                 "type": "underline",
                 "target": "tree:int",
-                "at": "@정수는 다시",
-                "ttl_ms": 3000
+                "at": "@정수는 다시"
               },
               {
                 "type": "reveal",
@@ -1474,8 +1480,7 @@
               {
                 "type": "underline",
                 "target": "tree:int",
-                "at": "@정수는 아닌",
-                "ttl_ms": 2500
+                "at": "@정수는 아닌"
               }
             ]
           }
