@@ -56,6 +56,7 @@
 - 손글씨 `arrow_to`: 좌표 대신 **항상 `{"target":"item:frac","anchor":"top"}`** 형태. 끝점은 대상 bbox 가장자리 바깥(anchor `top/bottom/left/right`, 기본 `edge`=메모에서 가장 가까운 변). 분수의 분자·분모는 `item:frac` + top/bottom, 식 오른쪽에 붙는 판정(참/거짓)은 `anchor:"right"`.
 - 손글씨 줄바꿈은 `\n`으로 직접. 한 줄 12자 넘기지 않기.
 - `region`(수직선 전용): `{"type":"region","id":"sol","ranges":[{"from":"-inf","to":-7}],"level":1,"color":"accent","label":"x \\le -7","at":"@…","ttl_ms":0}`. 범위마다 `open:"from"|"to"|"both"`로 빈 원, 생략이면 채운 원, `"inf"`/`"-inf"`는 화살촉. **한 조건 = 한 region = 한 level**(여러 범위도 같은 높이), 조건이 다르면 level·색을 다르게. 연립부등식은 `intersect_with:"r1"`로 공통 구간 띠. `region:sol`·`region:sol/0`은 지시 대상. 경계 포함을 말할 땐 region 전체 대신 그 점(`point:i`)을 circle.
+- 수직선에서 눈금과 같은 값의 점(−7 위의 −7)은 `label`을 생략한다 — 눈금이 이미 읽어 준다. 점 라벨은 region 선·마커를 피해 자동 배치되지만, 중복 라벨은 처음부터 두지 않는다.
 - 수직선 bracket 라벨은 `label_pos`로 위/아래 선택, 눈금 숫자와 겹치지 않게. 점 라벨은 자동 회피(반대편 → 스택 → 인출선)하므로 `label:"auto"`면 충분.
 - `headline.accent_bar:true`: 장면 제목 앞 세로 악센트 바. 뿌리깊은수학은 전 장면 켠다.
 
