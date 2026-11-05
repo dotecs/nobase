@@ -126,8 +126,7 @@
               {
                 "type": "circle",
                 "target": "item:paren",
-                "at": "@괄호와",
-                "ttl_ms": 4000
+                "at": "@괄호와"
               }
             ]
           }
@@ -155,8 +154,7 @@
                 "type": "arrow",
                 "from": "item:a",
                 "to": "item:ab",
-                "at": "@에이를 비에도+200",
-                "ttl_ms": 6000
+                "at": "@에이를 비에도+200"
               },
               {
                 "type": "reveal",
@@ -174,20 +172,17 @@
                 "type": "arrow",
                 "from": "item:a",
                 "to": "item:ac",
-                "at": "@씨에도 곱해서+200",
-                "ttl_ms": 6000
+                "at": "@씨에도 곱해서+200"
               },
               {
                 "type": "circle",
                 "target": "item:a",
-                "at": "@에이에 비와",
-                "ttl_ms": 3000
+                "at": "@에이에 비와"
               },
               {
                 "type": "underline",
                 "target": "item:paren",
-                "at": "@비와 씨를",
-                "ttl_ms": 4000
+                "at": "@비와 씨를"
               }
             ]
           }
@@ -233,15 +228,15 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "-3(4x-7)"
+            "tex": "\\p{c}{-3}(\\p{t1}{4x}\\p{t2}{-7})"
           },
           {
-            "tex": "=(-3)\\times4x+(-3)\\times(-7)",
+            "tex": "=\\p{p1}{(-3)\\times4x}+\\p{p2}{(-3)\\times(-7)}",
             "concept_id": "c.distributive",
             "why": "괄호 안의 −7을 '−7을 더했다'로 보고, 앞의 −3을 각 항에 차례로 곱한다"
           },
           {
-            "tex": "=-12x+21",
+            "tex": "=\\p{r1}{-12x}\\p{r2}{+21}",
             "concept_id": "c.distributive",
             "why": "(−3)×4x=−12x, (−3)×(−7)=+21. 음수끼리 곱하면 양수"
           }
@@ -267,10 +262,9 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@앞에 있는",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "step:0/c",
+                "at": "@앞에 있는"
               }
             ]
           }
@@ -283,6 +277,11 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "step:0/t2",
+                "at": "@빼기 칠인데요"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 1,
@@ -294,15 +293,9 @@
                 "at": "@마이너스칠을 더했다고"
               },
               {
-                "type": "underline",
-                "target": "step:1",
+                "type": "circle",
+                "target": "step:1/p2",
                 "at": "@그대로 맞출"
-              },
-              {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@빼기 칠인데요",
-                "ttl_ms": 3000
               }
             ]
           }
@@ -329,33 +322,29 @@
                 "at": "@start"
               },
               {
+                "type": "underline",
+                "target": "step:1/p1",
+                "at": "@마이너스삼과 사엑스"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/r1",
+                "at": "@마이너스십이엑스"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/p2",
+                "at": "@마이너스삼과 마이너스칠"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/r2",
+                "at": "@플러스이십일"
+              },
+              {
                 "type": "flash",
                 "target": "step:2",
                 "at": "@괄호가 풀렸습니다"
-              },
-              {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@마이너스삼과 사엑스",
-                "ttl_ms": 3500
-              },
-              {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@마이너스십이엑스",
-                "ttl_ms": 3000
-              },
-              {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@마이너스삼과 마이너스칠",
-                "ttl_ms": 3500
-              },
-              {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@플러스이십일",
-                "ttl_ms": 3000
               }
             ]
           }
@@ -376,20 +365,20 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "(6x+12)\\div(-3)"
+            "tex": "(6x+12)\\p{div}{\\div(-3)}"
           },
           {
-            "tex": "=(6x+12)\\times\\left(-\\dfrac13\\right)",
+            "tex": "=(6x+12)\\times\\p{rec}{\\left(-\\dfrac13\\right)}",
             "concept_id": "c.reciprocal",
             "why": "나눗셈은 역수를 곱하는 것. −3=−3/1의 분모·분자를 바꾸면 −1/3"
           },
           {
-            "tex": "=6x\\times\\left(-\\dfrac13\\right)+12\\times\\left(-\\dfrac13\\right)",
+            "tex": "=\\p{p1}{6x\\times\\left(-\\dfrac13\\right)}+\\p{p2}{12\\times\\left(-\\dfrac13\\right)}",
             "concept_id": "c.distributive",
             "why": "곱셈은 순서가 상관없으므로 뒤에 곱해져 있어도 분배법칙은 그대로"
           },
           {
-            "tex": "=-2x-4",
+            "tex": "=\\p{r1}{-2x}\\p{r2}{-4}",
             "concept_id": "c.distributive",
             "why": "6x×(−1/3)=−2x, 12×(−1/3)=−4"
           }
@@ -413,6 +402,11 @@
                 "type": "highlight",
                 "target": "step:0",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/div",
+                "at": "@나누기 마이너스삼입니다"
               }
             ]
           }
@@ -436,8 +430,8 @@
                 "at": "@마이너스삼은"
               },
               {
-                "type": "underline",
-                "target": "step:1",
+                "type": "circle",
+                "target": "step:1/rec",
                 "at": "@마이너스를 앞으로"
               }
             ]
@@ -464,8 +458,7 @@
               {
                 "type": "underline",
                 "target": "step:2",
-                "at": "@차례대로",
-                "ttl_ms": 4000
+                "at": "@차례대로"
               }
             ]
           }
@@ -493,20 +486,28 @@
               },
               {
                 "type": "underline",
+                "target": "step:2/p1",
+                "at": "@육엑스에"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/r1",
+                "at": "@곱하면 마이너스이엑스"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/p2",
+                "at": "@십이에"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/r2",
+                "at": "@곱하면 마이너스사"
+              },
+              {
+                "type": "underline",
                 "target": "step:3",
                 "at": "@그래서"
-              },
-              {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@육엑스에",
-                "ttl_ms": 3500
-              },
-              {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@십이에",
-                "ttl_ms": 3500
               }
             ]
           }
@@ -618,14 +619,12 @@
               {
                 "type": "underline",
                 "target": "item:ab",
-                "at": "@공통으로 곱해져",
-                "ttl_ms": 7000
+                "at": "@공통으로 곱해져"
               },
               {
                 "type": "underline",
                 "target": "item:ac",
-                "at": "@공통으로 곱해져+300",
-                "ttl_ms": 7000
+                "at": "@공통으로 곱해져+300"
               },
               {
                 "type": "reveal",
@@ -672,20 +671,17 @@
               {
                 "type": "circle",
                 "target": "item:a",
-                "at": "@에이가 잘",
-                "ttl_ms": 4000
+                "at": "@에이가 잘"
               },
               {
                 "type": "underline",
                 "target": "item:ab",
-                "at": "@공통으로 곱해진",
-                "ttl_ms": 4000
+                "at": "@공통으로 곱해진"
               },
               {
                 "type": "underline",
                 "target": "item:ac",
-                "at": "@공통으로 곱해진+300",
-                "ttl_ms": 4000
+                "at": "@공통으로 곱해진+300"
               }
             ]
           }
@@ -706,15 +702,15 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "4x^2-6x"
+            "tex": "\\p{t1}{4x^2}\\p{t2}{-6x}"
           },
           {
-            "tex": "=2x\\times2x+2x\\times(-3)",
+            "tex": "=\\p{x1}{2x}\\times\\p{q1}{2x}+\\p{x2}{2x}\\times\\p{q2}{(-3)}",
             "concept_id": "c.common-factor",
             "why": "4x²은 2x를 두 번 곱한 것, −6x는 2x에 −3을 곱한 것으로 본다"
           },
           {
-            "tex": "=2x(2x-3)",
+            "tex": "=\\p{f}{2x}\\p{g}{(2x-3)}",
             "concept_id": "c.distributive",
             "why": "공통으로 곱해진 2x를 괄호 밖으로 — 분배법칙을 거꾸로 쓴 것"
           }
@@ -740,6 +736,11 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "step:0/t1",
+                "at": "@여기서 사엑스제곱이"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 1,
@@ -751,10 +752,14 @@
                 "at": "@알아보면서"
               },
               {
+                "type": "circle",
+                "target": "step:0/t2",
+                "at": "@동시에 마이너스육엑스는"
+              },
+              {
                 "type": "underline",
                 "target": "step:1",
-                "at": "@마이너스육엑스는",
-                "ttl_ms": 4000
+                "at": "@이엑스에 마이너스삼을"
               }
             ]
           }
@@ -767,9 +772,14 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:1",
+                "type": "circle",
+                "target": "step:1/x1",
                 "at": "@공통으로 곱해져"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/x2",
+                "at": "@공통으로 곱해져+250"
               },
               {
                 "type": "reveal",
@@ -784,9 +794,13 @@
               },
               {
                 "type": "underline",
-                "target": "step:2",
-                "at": "@뒤에는 각각에",
-                "ttl_ms": 4000
+                "target": "step:2/f",
+                "at": "@이엑스를 앞으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/g",
+                "at": "@뒤에는 각각에"
               }
             ]
           }
@@ -812,10 +826,9 @@
                 "at": "@원래 식으로"
               },
               {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@이엑스를 다시",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:2/f",
+                "at": "@이엑스를 다시"
               }
             ]
           }

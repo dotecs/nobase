@@ -28,7 +28,7 @@
         "items": [
           {
             "id": "frac",
-            "tex": "\\dfrac{A}{B}",
+            "tex": "\\dfrac{\\p{num}{A}}{\\p{den}{B}}",
             "position": {
               "x": 0.36,
               "y": 0.46
@@ -37,7 +37,7 @@
           },
           {
             "id": "cond",
-            "tex": "B \\neq 0",
+            "tex": "B \\neq \\p{zero}{0}",
             "position": {
               "x": 0.68,
               "y": 0.46
@@ -93,7 +93,7 @@
                   "y": 0.62
                 },
                 "arrow_to": {
-                  "target": "item:frac",
+                  "target": "item:frac/den",
                   "anchor": "bottom"
                 },
                 "at": "@아래에 있는"
@@ -106,7 +106,7 @@
                   "y": 0.26
                 },
                 "arrow_to": {
-                  "target": "item:frac",
+                  "target": "item:frac/num",
                   "anchor": "top"
                 },
                 "at": "@위에 있는"
@@ -130,8 +130,12 @@
               {
                 "type": "underline",
                 "target": "item:cond",
-                "at": "@다시 한 번",
-                "ttl_ms": 6000
+                "at": "@다시 한 번"
+              },
+              {
+                "type": "circle",
+                "target": "item:cond/zero",
+                "at": "@영이 될 수 없습니다"
               },
               {
                 "type": "handwrite",
@@ -171,7 +175,7 @@
           },
           {
             "id": "eq1",
-            "tex": "=\\dfrac{2\\times2}{5\\times2}=\\dfrac{4}{10}",
+            "tex": "=\\dfrac{2\\times\\p{m1}{2}}{5\\times\\p{m2}{2}}=\\p{r}{\\dfrac{4}{10}}",
             "position": {
               "x": 0.31,
               "y": 0.42
@@ -180,7 +184,7 @@
           },
           {
             "id": "eq2",
-            "tex": "=\\dfrac{2\\times3}{5\\times3}=\\dfrac{6}{15}",
+            "tex": "=\\dfrac{2\\times\\p{m1}{3}}{5\\times\\p{m2}{3}}=\\p{r}{\\dfrac{6}{15}}",
             "position": {
               "x": 0.545,
               "y": 0.42
@@ -189,7 +193,7 @@
           },
           {
             "id": "eq3",
-            "tex": "=\\dfrac{2\\times4}{5\\times4}=\\dfrac{8}{20}=\\cdots",
+            "tex": "=\\dfrac{2\\times\\p{m1}{4}}{5\\times\\p{m2}{4}}=\\p{r}{\\dfrac{8}{20}}=\\cdots",
             "position": {
               "x": 0.8,
               "y": 0.42
@@ -232,8 +236,7 @@
               {
                 "type": "underline",
                 "target": "item:rule",
-                "at": "@값이 변하지",
-                "ttl_ms": 5000
+                "at": "@값이 변하지"
               }
             ]
           }
@@ -252,10 +255,32 @@
                 "ttl_ms": 2500
               },
               {
+                "type": "underline",
+                "target": "item:rule",
+                "at": "@분모와 분자에"
+              },
+              {
                 "type": "reveal",
                 "target": "item",
                 "id": "eq1",
                 "at": "@이를 곱해"
+              },
+              {
+                "type": "tint",
+                "target": "item:eq1/m1",
+                "color": "mint",
+                "at": "@이를 곱해"
+              },
+              {
+                "type": "tint",
+                "target": "item:eq1/m2",
+                "color": "mint",
+                "at": "@이를 곱해"
+              },
+              {
+                "type": "underline",
+                "target": "item:eq1/r",
+                "at": "@십분의사를"
               },
               {
                 "type": "reveal",
@@ -264,16 +289,44 @@
                 "at": "@삼을 곱해"
               },
               {
+                "type": "tint",
+                "target": "item:eq2/m1",
+                "color": "mint",
+                "at": "@삼을 곱해"
+              },
+              {
+                "type": "tint",
+                "target": "item:eq2/m2",
+                "color": "mint",
+                "at": "@삼을 곱해"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq2/r",
+                "at": "@십오분의육을"
+              },
+              {
                 "type": "reveal",
                 "target": "item",
                 "id": "eq3",
                 "at": "@사를 곱해"
               },
               {
+                "type": "tint",
+                "target": "item:eq3/m1",
+                "color": "mint",
+                "at": "@사를 곱해"
+              },
+              {
+                "type": "tint",
+                "target": "item:eq3/m2",
+                "color": "mint",
+                "at": "@사를 곱해"
+              },
+              {
                 "type": "underline",
-                "target": "item:rule",
-                "at": "@분모와 분자에",
-                "ttl_ms": 3000
+                "target": "item:eq3/r",
+                "at": "@이십분의팔을"
               }
             ]
           }
@@ -288,14 +341,12 @@
               {
                 "type": "circle",
                 "target": "item:p25",
-                "at": "@다섯 조각",
-                "ttl_ms": 4000
+                "at": "@다섯 조각"
               },
               {
                 "type": "circle",
-                "target": "item:eq1",
-                "at": "@열 조각",
-                "ttl_ms": 4000
+                "target": "item:eq1/r",
+                "at": "@열 조각"
               }
             ]
           }
@@ -331,20 +382,20 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "\\dfrac{6}{24}"
+            "tex": "\\dfrac{\\p{n}{6}}{\\p{d}{24}}"
           },
           {
-            "tex": "=\\dfrac{6\\div2}{24\\div2}=\\dfrac{3}{12}",
+            "tex": "=\\dfrac{6\\div\\p{k1}{2}}{24\\div\\p{k2}{2}}=\\dfrac{\\p{n}{3}}{\\p{d}{12}}",
             "concept_id": "c.fraction-props",
             "why": "6과 24는 모두 2의 배수 — 분모·분자를 같은 수 2로 나눈다(분수의 성질)"
           },
           {
-            "tex": "=\\dfrac{3\\div3}{12\\div3}=\\dfrac{1}{4}",
+            "tex": "=\\dfrac{3\\div\\p{k1}{3}}{12\\div\\p{k2}{3}}=\\p{r}{\\dfrac{1}{4}}",
             "concept_id": "c.fraction-props",
             "why": "3과 12는 모두 3의 배수 — 3으로 한 번 더 나눈다"
           },
           {
-            "tex": "\\dfrac{1}{4}\\quad(\\text{기약분수})",
+            "tex": "\\p{r}{\\dfrac{1}{4}}\\quad(\\text{기약분수})",
             "concept_id": "c.reduce",
             "why": "1과 4를 함께 나눌 수 있는 수는 1뿐 — 더 이상 약분되지 않는다"
           }
@@ -370,10 +421,14 @@
                 "at": "@이십사분의육을"
               },
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@육과 이십사가",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "step:0/n",
+                "at": "@육과 이십사가"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/d",
+                "at": "@육과 이십사가+300"
               }
             ]
           }
@@ -397,10 +452,26 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@십이분의삼과",
-                "ttl_ms": 4000
+                "type": "tint",
+                "target": "step:1/k1",
+                "color": "mint",
+                "at": "@둘 다 이로"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/k2",
+                "color": "mint",
+                "at": "@둘 다 이로"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/d",
+                "at": "@이십사는 십이"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/n",
+                "at": "@육은 삼"
               }
             ]
           }
@@ -413,6 +484,16 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "step:1/n",
+                "at": "@삼과 십이가"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/d",
+                "at": "@삼과 십이가+300"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 2,
@@ -424,22 +505,31 @@
                 "at": "@삼으로 한 번"
               },
               {
+                "type": "tint",
+                "target": "step:2/k1",
+                "color": "mint",
+                "at": "@삼으로 한 번"
+              },
+              {
+                "type": "tint",
+                "target": "step:2/k2",
+                "color": "mint",
+                "at": "@삼으로 한 번"
+              },
+              {
                 "type": "underline",
-                "target": "step:1",
-                "at": "@삼과 십이가",
-                "ttl_ms": 4000
+                "target": "step:2/r",
+                "at": "@더 나누어 사분의일"
               },
               {
                 "type": "underline",
                 "target": "step:0",
-                "at": "@결국 이십사분의육은",
-                "ttl_ms": 3000
+                "at": "@결국 이십사분의육은"
               },
               {
                 "type": "underline",
-                "target": "step:2",
-                "at": "@사분의일입니다",
-                "ttl_ms": 3000
+                "target": "step:2/r",
+                "at": "@사분의일입니다"
               }
             ]
           }
@@ -452,6 +542,16 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@분모와 분자를"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@약분이라 하고"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 3,
@@ -463,21 +563,14 @@
                 "at": "@사분의일처럼"
               },
               {
+                "type": "circle",
+                "target": "step:3/r",
+                "at": "@사분의일처럼"
+              },
+              {
                 "type": "flash",
                 "target": "step:3",
                 "at": "@기약분수라고"
-              },
-              {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@분모와 분자를",
-                "ttl_ms": 4000
-              },
-              {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@약분이라 하고",
-                "ttl_ms": 3000
               }
             ]
           }
@@ -492,8 +585,7 @@
               {
                 "type": "underline",
                 "target": "step:3",
-                "at": "@답은 반드시",
-                "ttl_ms": 5000
+                "at": "@답은 반드시"
               },
               {
                 "type": "highlight",
@@ -524,20 +616,20 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "\\dfrac{1}{2}+\\dfrac{1}{3}"
+            "tex": "\\dfrac{1}{\\p{d1}{2}}+\\dfrac{1}{\\p{d2}{3}}"
           },
           {
-            "tex": "=\\dfrac{1\\times3}{2\\times3}+\\dfrac{1\\times2}{3\\times2}",
+            "tex": "=\\dfrac{1\\times\\p{m1}{3}}{2\\times\\p{m2}{3}}+\\dfrac{1\\times\\p{m3}{2}}{3\\times\\p{m4}{2}}",
             "concept_id": "c.fraction-props",
             "why": "분모 2와 3을 공통의 6으로 맞춘다 — 분모·분자에 같은 수를 곱해도 값은 그대로(분수의 성질)"
           },
           {
-            "tex": "=\\dfrac{3}{6}+\\dfrac{2}{6}",
+            "tex": "=\\p{f1}{\\dfrac{3}{6}}+\\p{f2}{\\dfrac{2}{6}}",
             "concept_id": "c.fraction-add",
             "why": "통분 완료 — 두 분수의 분모가 같아졌다"
           },
           {
-            "tex": "=\\dfrac{3+2}{6}=\\dfrac{5}{6}",
+            "tex": "=\\dfrac{\\p{sum}{3+2}}{6}=\\p{r}{\\dfrac{5}{6}}",
             "concept_id": "c.fraction-add",
             "why": "분모가 같을 때만 분자끼리 더한다"
           }
@@ -563,10 +655,14 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@두 분수의",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:0/d1",
+                "at": "@두 분수의 분모를"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/d2",
+                "at": "@두 분수의 분모를+300"
               }
             ]
           }
@@ -579,10 +675,14 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@분모가 이와",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "step:0/d1",
+                "at": "@분모가 이와"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/d2",
+                "at": "@분모가 이와+300"
               }
             ]
           }
@@ -606,10 +706,28 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@삼분의일에는",
-                "ttl_ms": 3000
+                "type": "tint",
+                "target": "step:1/m1",
+                "color": "mint",
+                "at": "@분모와 분자에는 삼을"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/m2",
+                "color": "mint",
+                "at": "@분모와 분자에는 삼을"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/m3",
+                "color": "mint",
+                "at": "@삼분의일에는"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/m4",
+                "color": "mint",
+                "at": "@삼분의일에는"
               }
             ]
           }
@@ -633,10 +751,19 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "step:2/f1",
+                "at": "@육분의삼과"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/f2",
+                "at": "@육분의이"
+              },
+              {
                 "type": "underline",
                 "target": "step:2",
-                "at": "@통분이라고",
-                "ttl_ms": 4000
+                "at": "@통분이라고"
               }
             ]
           }
@@ -658,6 +785,16 @@
                 "type": "highlight",
                 "target": "step:3",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/sum",
+                "at": "@분자끼리 더해"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/r",
+                "at": "@육분의오"
               },
               {
                 "type": "flash",
@@ -683,15 +820,15 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "\\dfrac{3}{5}\\times\\dfrac{7}{9}"
+            "tex": "\\dfrac{\\p{n1}{3}}{\\p{d1}{5}}\\times\\dfrac{\\p{n2}{7}}{\\p{d2}{9}}"
           },
           {
-            "tex": "=\\dfrac{3\\times7}{5\\times9}=\\dfrac{21}{45}",
+            "tex": "=\\dfrac{\\p{nn}{3\\times7}}{\\p{dd}{5\\times9}}=\\dfrac{\\p{n}{21}}{\\p{d}{45}}",
             "concept_id": "c.fraction-mul",
             "why": "통분 없이 분자끼리, 분모끼리 곱한다"
           },
           {
-            "tex": "=\\dfrac{21\\times\\frac13}{45\\times\\frac13}=\\dfrac{7}{15}",
+            "tex": "=\\dfrac{21\\times\\p{k1}{\\frac13}}{45\\times\\p{k2}{\\frac13}}=\\p{r}{\\dfrac{7}{15}}",
             "concept_id": "c.reduce",
             "why": "21과 45는 모두 3의 배수 — 3으로 나눈다 = 역수 $\\frac13$을 곱한다(약분)"
           }
@@ -739,9 +876,13 @@
               },
               {
                 "type": "underline",
-                "target": "step:1",
-                "at": "@분자 삼",
-                "ttl_ms": 3000
+                "target": "step:1/nn",
+                "at": "@분자 삼"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/dd",
+                "at": "@분모 오"
               }
             ]
           }
@@ -754,10 +895,14 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@둘 다 삼의",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:1/n",
+                "at": "@이십일과 사십오가"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/d",
+                "at": "@이십일과 사십오가+300"
               },
               {
                 "type": "reveal",
@@ -769,6 +914,23 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@삼으로 나누는"
+              },
+              {
+                "type": "tint",
+                "target": "step:2/k1",
+                "color": "mint",
+                "at": "@곧 삼분의일을"
+              },
+              {
+                "type": "tint",
+                "target": "step:2/k2",
+                "color": "mint",
+                "at": "@곧 삼분의일을"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/r",
+                "at": "@약분하면"
               }
             ]
           }
@@ -781,8 +943,8 @@
           "cue": {
             "actions": [
               {
-                "type": "flash",
-                "target": "step:2",
+                "type": "circle",
+                "target": "step:2/r",
                 "at": "@십오분의칠로"
               }
             ]
@@ -807,12 +969,12 @@
             "tex": "\\dfrac{\\;\\dfrac{D}{C}\\;}{\\;\\dfrac{B}{A}\\;}"
           },
           {
-            "tex": "=\\dfrac{\\dfrac{D}{C}\\times AC}{\\dfrac{B}{A}\\times AC}",
+            "tex": "=\\dfrac{\\dfrac{D}{\\p{c1}{C}}\\times \\p{a1}{A}\\p{c2}{C}}{\\dfrac{B}{\\p{a2}{A}}\\times \\p{a3}{A}\\p{c3}{C}}",
             "concept_id": "c.fraction-props",
             "why": "전체를 하나의 분수로 보고 분모·분자에 같은 수 $AC$를 곱한다(분수의 성질)"
           },
           {
-            "tex": "=\\dfrac{AD}{BC}",
+            "tex": "=\\dfrac{\\p{ad}{AD}}{\\p{bc}{BC}}",
             "concept_id": "c.reduce",
             "why": "위에서는 $C$와 $C$가, 아래에서는 $A$와 $A$가 약분된다"
           }
@@ -876,10 +1038,28 @@
                 "at": "@전체를 하나의"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@에이씨를",
-                "ttl_ms": 3000
+                "type": "tint",
+                "target": "step:1/a1",
+                "color": "mint",
+                "at": "@에이씨를"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/c2",
+                "color": "mint",
+                "at": "@에이씨를"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/a3",
+                "color": "mint",
+                "at": "@에이씨를"
+              },
+              {
+                "type": "tint",
+                "target": "step:1/c3",
+                "color": "mint",
+                "at": "@에이씨를"
               }
             ]
           }
@@ -906,16 +1086,44 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@안쪽에 있는",
-                "ttl_ms": 6000
+                "type": "strike",
+                "pairs": [
+                  [
+                    "step:1/c1",
+                    "step:1/c2"
+                  ]
+                ],
+                "at": "@위에서는"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/ad",
+                "at": "@에이디가"
+              },
+              {
+                "type": "strike",
+                "pairs": [
+                  [
+                    "step:1/a2",
+                    "step:1/a3"
+                  ]
+                ],
+                "at": "@아래에서는"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/bc",
+                "at": "@비씨가"
               },
               {
                 "type": "underline",
-                "target": "step:1",
-                "at": "@위에서는",
-                "ttl_ms": 5000
+                "target": "step:2/bc",
+                "at": "@안쪽에 있는"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/ad",
+                "at": "@바깥쪽에 있는"
               }
             ]
           }
