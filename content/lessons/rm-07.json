@@ -26,7 +26,7 @@
         "items": [
           {
             "id": "def",
-            "tex": "\\underbrace{a\\times a\\times\\cdots\\times a}_{n\\text{개}}=a^{n}",
+            "tex": "\\underbrace{a\\times a\\times\\cdots\\times a}_{n\\text{개}}=\\p{base}{a}^{\\p{exp}{n}}",
             "position": {
               "x": 0.5,
               "y": 0.4
@@ -35,7 +35,7 @@
           },
           {
             "id": "ex",
-            "tex": "2^{3}=2\\times2\\times2=8",
+            "tex": "\\p{pow}{2^{\\p{e}{3}}}=2\\times2\\times2=\\p{res}{8}",
             "position": {
               "x": 0.5,
               "y": 0.72
@@ -58,10 +58,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "item:def",
-                "at": "@거듭제곱을 한 횟수",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "item:def/exp",
+                "at": "@거듭제곱을 한 횟수"
               }
             ]
           }
@@ -76,8 +75,12 @@
               {
                 "type": "underline",
                 "target": "item:def",
-                "at": "@에이를 똑같이",
-                "ttl_ms": 4000
+                "at": "@에이를 똑같이"
+              },
+              {
+                "type": "circle",
+                "target": "item:def/base",
+                "at": "@곱해지는 에이를"
               },
               {
                 "type": "handwrite",
@@ -87,10 +90,15 @@
                   "y": 0.6
                 },
                 "arrow_to": {
-                  "x": 0.6,
-                  "y": 0.44
+                  "target": "item:def/base",
+                  "anchor": "bottom"
                 },
                 "at": "@곱해지는 에이를"
+              },
+              {
+                "type": "circle",
+                "target": "item:def/exp",
+                "at": "@나타내는 엔을"
               },
               {
                 "type": "handwrite",
@@ -100,8 +108,8 @@
                   "y": 0.22
                 },
                 "arrow_to": {
-                  "x": 0.625,
-                  "y": 0.34
+                  "target": "item:def/exp",
+                  "anchor": "top"
                 },
                 "at": "@나타내는 엔을"
               }
@@ -123,15 +131,13 @@
               },
               {
                 "type": "circle",
-                "target": "item:ex",
-                "at": "@이의세제곱은",
-                "ttl_ms": 3000
+                "target": "item:ex/pow",
+                "at": "@이의세제곱은"
               },
               {
-                "type": "underline",
-                "target": "item:ex",
-                "at": "@곱한 횟수이지",
-                "ttl_ms": 5000
+                "type": "circle",
+                "target": "item:ex/e",
+                "at": "@지수 삼은"
               }
             ]
           }
@@ -171,27 +177,27 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "a^{m}\\times a^{n}=a^{m+n}",
+            "tex": "a^{m}\\times a^{n}=a^{\\p{sum}{m+n}}",
             "concept_id": "c.exp-add",
             "why": "m번 곱한 것에 n번 더 곱하면 모두 m+n번 곱한 것"
           },
           {
-            "tex": "a^{3}\\times a^{5}=(a\\times a\\times a)\\times(a\\times a\\times a\\times a\\times a)",
+            "tex": "a^{3}\\times a^{5}=\\p{g1}{(a\\times a\\times a)}\\times\\p{g2}{(a\\times a\\times a\\times a\\times a)}",
             "concept_id": "c.power",
             "why": "거듭제곱을 곱셈으로 풀어 쓴다 (a의 n제곱 = a를 n번 곱한 것)"
           },
           {
-            "tex": "=a^{3+5}=a^{8}",
+            "tex": "=a^{\\p{sum}{3+5}}=a^{\\p{res}{8}}",
             "concept_id": "c.exp-add",
             "why": "a가 모두 8번 곱해져 있다"
           },
           {
-            "tex": "(a^{m})^{n}=(a^{n})^{m}=a^{mn}",
+            "tex": "(a^{m})^{n}=\\p{swap}{(a^{n})^{m}}=a^{\\p{prod}{mn}}",
             "concept_id": "c.exp-add",
             "why": "m개짜리 덩어리를 n번 곱하면 m×n번. 곱셈이라 m과 n의 순서를 바꿔도 같다"
           },
           {
-            "tex": "(a^{3})^{2}=(a\\times a\\times a)\\times(a\\times a\\times a)=a^{2\\times3}=a^{6}",
+            "tex": "(a^{3})^{2}=\\p{g1}{(a\\times a\\times a)}\\times\\p{g2}{(a\\times a\\times a)}=a^{\\p{prod}{2\\times3}}=a^{\\p{res}{6}}",
             "concept_id": "c.exp-add",
             "why": "3개짜리 덩어리가 2개 → 6개"
           }
@@ -217,8 +223,8 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:0",
+                "type": "circle",
+                "target": "step:0/sum",
                 "at": "@지수를 더합니다"
               }
             ]
@@ -241,6 +247,16 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/g1",
+                "at": "@세 개 곱해진"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/g2",
+                "at": "@다섯 개 곱해진"
               }
             ]
           }
@@ -264,8 +280,13 @@
                 "at": "@start"
               },
               {
-                "type": "flash",
-                "target": "step:2",
+                "type": "circle",
+                "target": "step:2/sum",
+                "at": "@삼 더하기 오"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/res",
                 "at": "@즉 팔입니다"
               }
             ]
@@ -290,8 +311,8 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:3",
+                "type": "circle",
+                "target": "step:3/prod",
                 "at": "@엠곱하기엔이"
               }
             ]
@@ -317,7 +338,27 @@
               },
               {
                 "type": "underline",
-                "target": "step:3",
+                "target": "step:4/g1",
+                "at": "@세 개짜리 덩어리가"
+              },
+              {
+                "type": "underline",
+                "target": "step:4/g2",
+                "at": "@두 개,"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/res",
+                "at": "@모두 여섯 개"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/swap",
+                "at": "@에이의제곱의세제곱과도"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/prod",
                 "at": "@순서를 바꿔도"
               }
             ]
@@ -347,7 +388,7 @@
             "cells": [
               "$m>n$",
               "$a^{m-n}$",
-              "$a^5\\div a^2=\\dfrac{a\\times a\\times a\\times a\\times a}{a\\times a}=a^{5-2}=a^3$"
+              "$a^5\\div a^2=\\dfrac{\\p{n1}{a}\\times\\p{n2}{a}\\times\\p{rest}{a\\times a\\times a}}{\\p{d1}{a}\\times\\p{d2}{a}}=a^{\\p{sub}{5-2}}=\\p{res}{a^3}$"
             ],
             "tone": "pos"
           },
@@ -355,7 +396,7 @@
             "cells": [
               "$m=n$",
               "$1$",
-              "$a^3\\div a^3=\\dfrac{a\\times a\\times a}{a\\times a\\times a}=1$"
+              "$a^3\\div a^3=\\dfrac{\\p{n1}{a}\\times\\p{n2}{a}\\times\\p{n3}{a}}{\\p{d1}{a}\\times\\p{d2}{a}\\times\\p{d3}{a}}=\\p{one}{1}$"
             ],
             "tone": "zero"
           },
@@ -363,7 +404,7 @@
             "cells": [
               "$m<n$",
               "$\\dfrac{1}{a^{n-m}}$",
-              "$a^2\\div a^5=\\dfrac{a\\times a}{a\\times a\\times a\\times a\\times a}=\\dfrac{1}{a^{5-2}}=\\dfrac{1}{a^3}$"
+              "$a^2\\div a^5=\\dfrac{\\p{n1}{a}\\times\\p{n2}{a}}{\\p{d1}{a}\\times\\p{d2}{a}\\times\\p{rest}{a\\times a\\times a}}=\\dfrac{1}{a^{\\p{sub}{5-2}}}=\\p{res}{\\dfrac{1}{a^3}}$"
             ],
             "tone": "neg"
           }
@@ -398,9 +439,34 @@
                 "at": "@start"
               },
               {
+                "type": "strike",
+                "pairs": [
+                  [
+                    "cell:0:2/n1",
+                    "cell:0:2/d1"
+                  ],
+                  [
+                    "cell:0:2/n2",
+                    "cell:0:2/d2"
+                  ]
+                ],
+                "stagger_ms": 220,
+                "at": "@두 개씩 약분되고"
+              },
+              {
                 "type": "underline",
-                "target": "row:0",
+                "target": "cell:0:2/rest",
+                "at": "@위에 세 개가"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:2/sub",
                 "at": "@오빼기이"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:2/res",
+                "at": "@그래서 에이의세제곱입니다"
               }
             ]
           }
@@ -424,10 +490,28 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "row:1",
-                "at": "@일이 됩니다",
-                "ttl_ms": 4000
+                "type": "strike",
+                "pairs": [
+                  [
+                    "cell:1:2/n1",
+                    "cell:1:2/d1"
+                  ],
+                  [
+                    "cell:1:2/n2",
+                    "cell:1:2/d2"
+                  ],
+                  [
+                    "cell:1:2/n3",
+                    "cell:1:2/d3"
+                  ]
+                ],
+                "stagger_ms": 220,
+                "at": "@모두 약분되어"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:2/one",
+                "at": "@일이 됩니다"
               }
             ]
           }
@@ -451,9 +535,34 @@
                 "at": "@start"
               },
               {
+                "type": "strike",
+                "pairs": [
+                  [
+                    "cell:2:2/n1",
+                    "cell:2:2/d1"
+                  ],
+                  [
+                    "cell:2:2/n2",
+                    "cell:2:2/d2"
+                  ]
+                ],
+                "stagger_ms": 220,
+                "at": "@약분하고 나면"
+              },
+              {
                 "type": "underline",
-                "target": "row:2",
-                "at": "@에이의세제곱분의일"
+                "target": "cell:2:2/rest",
+                "at": "@세 개 남습니다"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:2/sub",
+                "at": "@그래서 에이의세제곱분의일"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:2/res",
+                "at": "@분모에 에이의세제곱이"
               }
             ]
           }
@@ -503,22 +612,22 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "(ab)^{m}=a^{m}b^{m}",
+            "tex": "(ab)^{m}=a^{\\p{e1}{m}}b^{\\p{e2}{m}}",
             "concept_id": "c.exp-dist",
             "why": "ab를 m번 곱하면 a도 m번, b도 m번 곱해진다"
           },
           {
-            "tex": "\\left(\\dfrac{a}{b}\\right)^{m}=\\dfrac{a^{m}}{b^{m}}\\quad(b\\neq0)",
+            "tex": "\\left(\\dfrac{a}{b}\\right)^{m}=\\dfrac{a^{\\p{e1}{m}}}{b^{\\p{e2}{m}}}\\quad(\\p{cond}{b\\neq0})",
             "concept_id": "c.exp-dist",
             "why": "분수도 곱셈의 일종. 분모 b는 0이 아니어야 한다(4강)"
           },
           {
-            "tex": "(a^{2}b^{3})^{2}=a^{2}b^{3}\\times a^{2}b^{3}=a^{2}\\times a^{2}\\times b^{3}\\times b^{3}=a^{4}b^{6}",
+            "tex": "(a^{2}b^{3})^{2}=a^{2}b^{3}\\times a^{2}b^{3}=\\p{as}{a^{2}\\times a^{2}}\\times\\p{bs}{b^{3}\\times b^{3}}=\\p{res}{a^{4}b^{6}}",
             "concept_id": "c.exp-add",
             "why": "같은 덩어리를 두 번 곱한 뒤 a끼리, b끼리 모아 지수를 더한다"
           },
           {
-            "tex": "\\left(\\dfrac{a}{b}\\right)^{2}=\\dfrac{a}{b}\\times\\dfrac{a}{b}=\\dfrac{a\\times a}{b\\times b}=\\dfrac{a^{2}}{b^{2}}",
+            "tex": "\\left(\\dfrac{a}{b}\\right)^{2}=\\dfrac{a}{b}\\times\\dfrac{a}{b}=\\dfrac{\\p{num}{a\\times a}}{\\p{den}{b\\times b}}=\\p{res}{\\dfrac{a^{2}}{b^{2}}}",
             "concept_id": "c.fraction-mul",
             "why": "분수의 곱셈은 분자끼리, 분모끼리(4강)"
           }
@@ -544,9 +653,14 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:0",
+                "type": "circle",
+                "target": "step:0/e1",
                 "at": "@각각에 침투"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/e2",
+                "at": "@각각에 침투+300"
               }
             ]
           }
@@ -570,9 +684,19 @@
                 "at": "@start"
               },
               {
-                "type": "flash",
-                "target": "step:1",
-                "at": "@분모이기 때문에"
+                "type": "circle",
+                "target": "step:1/e1",
+                "at": "@분자와 분모에"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/e2",
+                "at": "@분자와 분모에+300"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/cond",
+                "at": "@비가 영이 아니라는"
               }
             ]
           }
@@ -597,7 +721,17 @@
               },
               {
                 "type": "underline",
-                "target": "step:2",
+                "target": "step:2/as",
+                "at": "@에이의제곱도 두 개"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/bs",
+                "at": "@비의세제곱도 두 개"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/res",
                 "at": "@에이의네제곱비의여섯제곱"
               }
             ]
@@ -623,9 +757,18 @@
               },
               {
                 "type": "underline",
-                "target": "step:3",
-                "at": "@비제곱분의에이제곱",
-                "ttl_ms": 4000
+                "target": "step:3/num",
+                "at": "@분자끼리"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/den",
+                "at": "@분모끼리"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/res",
+                "at": "@비제곱분의에이제곱"
               }
             ]
           }
@@ -665,7 +808,7 @@
           },
           {
             "id": "right",
-            "tex": "14^{3}=(2\\times7)^{3}=2^{3}\\times7^{3}=8\\times7^{3}",
+            "tex": "\\p{q}{14^{3}}=(2\\times7)^{3}=\\p{dist}{2^{3}\\times7^{3}}=\\p{res}{8\\times7^{3}}",
             "position": {
               "x": 0.5,
               "y": 0.6
@@ -691,8 +834,7 @@
               {
                 "type": "underline",
                 "target": "item:q",
-                "at": "@십사의세제곱",
-                "ttl_ms": 3000
+                "at": "@십사의세제곱"
               },
               {
                 "type": "reveal",
@@ -713,20 +855,17 @@
               {
                 "type": "underline",
                 "target": "item:wrong",
-                "at": "@안 됩니다",
-                "ttl_ms": 6000
+                "at": "@안 됩니다"
               },
               {
                 "type": "circle",
                 "target": "item:wrong/two",
-                "at": "@이의 지수는",
-                "ttl_ms": 3000
+                "at": "@이의 지수는"
               },
               {
                 "type": "circle",
                 "target": "item:wrong/exp",
-                "at": "@칠의 지수는",
-                "ttl_ms": 3000
+                "at": "@칠의 지수는"
               },
               {
                 "type": "handwrite",
@@ -755,9 +894,13 @@
               },
               {
                 "type": "underline",
-                "target": "item:right",
-                "at": "@각각 침투해서",
-                "ttl_ms": 5000
+                "target": "item:right/dist",
+                "at": "@각각 침투해서"
+              },
+              {
+                "type": "circle",
+                "target": "item:right/res",
+                "at": "@즉 팔곱하기칠의세제곱이"
               }
             ]
           }
@@ -771,14 +914,13 @@
             "actions": [
               {
                 "type": "underline",
-                "target": "item:right",
-                "at": "@이의세제곱곱하기칠의세제곱처럼",
-                "ttl_ms": 4000
+                "target": "item:right/dist",
+                "at": "@이의세제곱곱하기칠의세제곱처럼"
               },
               {
-                "type": "flash",
-                "target": "item:right",
-                "at": "@지수가 같을 때만"
+                "type": "circle",
+                "target": "item:right/q",
+                "at": "@십사의세제곱으로"
               },
               {
                 "type": "handwrite",

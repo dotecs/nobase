@@ -164,8 +164,7 @@
               {
                 "type": "underline",
                 "target": "item:root4",
-                "at": "@루트사라고",
-                "ttl_ms": 5000
+                "at": "@루트사라고"
               }
             ]
           }
@@ -354,10 +353,7 @@
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 2,
-                  "y": 0
-                },
+                "target": "point:0",
                 "at": "@루트사는"
               },
               {
@@ -370,10 +366,7 @@
               },
               {
                 "type": "pointer",
-                "position": {
-                  "x": 3,
-                  "y": 0
-                },
+                "target": "point:1",
                 "at": "@루트구는"
               }
             ]
@@ -396,12 +389,7 @@
               },
               {
                 "type": "circle",
-                "position": {
-                  "x": "sqrt(5)",
-                  "y": 0
-                },
-                "rx": 0.25,
-                "ry": 0.25,
+                "target": "point:2",
                 "at": "@루트오는"
               },
               {
@@ -468,22 +456,22 @@
         },
         "steps": [
           {
-            "tex": "\\sqrt a\\,\\sqrt b=\\sqrt{ab}",
+            "tex": "\\p{lhs}{\\sqrt a\\,\\sqrt b}=\\p{rhs}{\\sqrt{ab}}",
             "concept_id": "c.sqrt-mul",
             "why": "근호끼리 곱할 때는 안의 수를 곱해 한 근호 안에 넣는다"
           },
           {
-            "tex": "\\dfrac{\\sqrt b}{\\sqrt a}=\\sqrt{\\dfrac ba}",
+            "tex": "\\p{lhs}{\\dfrac{\\sqrt b}{\\sqrt a}}=\\p{rhs}{\\sqrt{\\dfrac ba}}",
             "concept_id": "c.sqrt-mul",
             "why": "근호끼리 나눌 때도 전체를 한 근호 안에 넣는다"
           },
           {
-            "tex": "\\sqrt2\\times\\sqrt3=\\sqrt{2\\times3}=\\sqrt6",
+            "tex": "\\sqrt2\\times\\sqrt3=\\sqrt{\\p{in}{2\\times3}}=\\p{res}{\\sqrt6}",
             "concept_id": "c.sqrt-mul",
             "why": "안의 수 2와 3을 보통 곱셈처럼 곱한다"
           },
           {
-            "tex": "\\dfrac{\\sqrt4}{\\sqrt6}=\\sqrt{\\dfrac46}=\\sqrt{\\dfrac23}",
+            "tex": "\\dfrac{\\sqrt4}{\\sqrt6}=\\sqrt{\\p{fr}{\\dfrac46}}=\\p{res}{\\sqrt{\\dfrac23}}",
             "concept_id": "c.reduce",
             "why": "근호 안의 분수도 4강에서 배운 대로 약분한다"
           }
@@ -511,8 +499,7 @@
               {
                 "type": "underline",
                 "target": "item:cond",
-                "at": "@에이와 비가",
-                "ttl_ms": 4000
+                "at": "@에이와 비가"
               }
             ]
           }
@@ -526,7 +513,12 @@
             "actions": [
               {
                 "type": "underline",
-                "target": "step:0",
+                "target": "step:0/lhs",
+                "at": "@근호와 근호를"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/rhs",
                 "at": "@하나의 근호 안에"
               }
             ]
@@ -549,6 +541,16 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/lhs",
+                "at": "@같은 근호끼리"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/rhs",
+                "at": "@전체를 근호 안에"
               }
             ]
           }
@@ -572,8 +574,13 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:2",
+                "type": "circle",
+                "target": "step:2/in",
+                "at": "@근호 안에 이 곱하기 삼"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/res",
                 "at": "@그래서 루트육"
               }
             ]
@@ -598,9 +605,14 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:3",
-                "at": "@약분하면"
+                "type": "circle",
+                "target": "step:3/fr",
+                "at": "@근호 안에 육분의사"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/res",
+                "at": "@삼분의이입니다"
               }
             ]
           }
@@ -654,7 +666,7 @@
           {
             "cells": [
               "$a>0$",
-              "$x=\\pm\\sqrt a$",
+              "$x=\\p{pm}{\\pm}\\sqrt a$",
               "2개"
             ],
             "tone": "pos"
@@ -706,8 +718,13 @@
                 "at": "@start"
               },
               {
-                "type": "flash",
-                "target": "row:0",
+                "type": "circle",
+                "target": "cell:0:2",
+                "at": "@두 개입니다"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1/pm",
                 "at": "@음수 쪽에도"
               }
             ]
@@ -721,8 +738,13 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "cell:0:1/pm",
+                "at": "@플러스마이너스 기호를"
+              },
+              {
                 "type": "underline",
-                "target": "row:0",
+                "target": "cell:0:1",
                 "at": "@플러스마이너스루트에이"
               }
             ]
@@ -745,6 +767,16 @@
                 "type": "highlight",
                 "target": "row:1",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:1",
+                "at": "@영 하나뿐"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:2",
+                "at": "@제곱근은 영입니다"
               }
             ]
           }
@@ -768,9 +800,14 @@
                 "at": "@start"
               },
               {
-                "type": "flash",
-                "target": "row:2",
+                "type": "underline",
+                "target": "cell:2:1",
                 "at": "@실수인 근이 없다고"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:2",
+                "at": "@실수인 근이 없다고+600"
               }
             ]
           }
@@ -852,6 +889,11 @@
                 "type": "highlight",
                 "target": "row:0",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1",
+                "at": "@루트칠과"
               }
             ]
           }
@@ -873,6 +915,11 @@
                 "type": "highlight",
                 "target": "row:1",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:1",
+                "at": "@영, 하나"
               }
             ]
           }
@@ -897,7 +944,7 @@
               },
               {
                 "type": "underline",
-                "target": "row:2",
+                "target": "cell:2:1",
                 "at": "@실근이 없습니다"
               }
             ]
