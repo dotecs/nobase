@@ -4,18 +4,19 @@ import { formatExact } from '@/lib/learn/lessons/format-num';
 import { labelBox, placePointLabels, type PointLabel } from '@/lib/learn/lessons/point-labels';
 import type { TargetBox } from '@/lib/learn/lessons/chalk';
 import type { StagePoint } from '@/lib/learn/lessons/stage-state';
+import { regionPointLabelObstacles, type RegionGeometry } from '@/lib/learn/lessons/region';
 import styles from './graph.module.css';
 
-export function GraphPointLabels({ points, boxes, sx, sy, viewport, numberLine, opacity }: {
+export function GraphPointLabels({ points, boxes, sx, sy, viewport, numberLine, opacity, regions = [] }: {
   points: StagePoint[]; boxes: Record<string, TargetBox>; sx: (n: number) => number; sy: (n: number) => number;
-  viewport: TargetBox; numberLine: boolean; opacity: (id: string) => number;
+  viewport: TargetBox; numberLine: boolean; regions?: RegionGeometry[]; opacity: (id: string) => number;
 }) {
   const round = (value: number) => Math.round(value * 10) / 10;
   const labels = points.filter(point => point.label);
   const measured = labels.every(point => boxes['label:' + point.id]);
   const input = {
-    labels: labels.map(point => ({ id: point.id, x: round(sx(point.x)), y: round(sy(point.y)), width: round(boxes['label:' + point.id]?.right - boxes['label:' + point.id]?.left || 160), height: round(boxes['label:' + point.id]?.bottom - boxes['label:' + point.id]?.top || 40), position: point.label_pos, offset: point.label_offset })),
-    obstacles: [...Object.entries(boxes).filter(([id]) => ['tick:', 'ytick:', 'item:', 'memo:', 'annotation:'].some(prefix=>id.startsWith(prefix))).map(([, box]) => Object.fromEntries(Object.entries(box).map(([key, value]) => [key, round(value)])) as TargetBox), ...points.map(point => labelBox(round(sx(point.x)) - 8, round(sy(point.y)) - 8, 16, 16))],
+    labels: labels.map(point => ({ id: point.id, x: round(sx(point.x)), y: round(sy(point.y)), width: round(boxes['label:' + point.id]?.right - boxes['label:' + point.id]?.left || 160), height: round(boxes['label:' + point.id]?.bottom - boxes['label:' + point.id]?.top || 40), preferSouth: numberLine && regions.some(range => Math.abs(sy(point.y) - range.axisY) < .1 && (range.fromMarker && Math.abs(sx(point.x) - range.left) < .1 || range.toMarker && Math.abs(sx(point.x) - range.right) < .1)), position: point.label_pos, offset: point.label_offset })),
+    obstacles: [...Object.entries(boxes).filter(([id]) => ['tick:', 'ytick:', 'item:', 'memo:', 'annotation:', 'region-label:'].some(prefix=>id.startsWith(prefix))).map(([, box]) => Object.fromEntries(Object.entries(box).map(([key, value]) => [key, round(value)])) as TargetBox), ...regionPointLabelObstacles(regions), ...points.map(point => labelBox(round(sx(point.x)) - 8, round(sy(point.y)) - 8, 16, 16))],
     viewport, numberLine,
   };
   const key = JSON.stringify(input);

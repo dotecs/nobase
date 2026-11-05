@@ -2,9 +2,10 @@ import { expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { RegionLayer } from '@/components/studio/RegionLayer';
 import { StudioGraph } from '@/components/studio/StudioGraph';
+import { GraphPointLabels } from '@/components/studio/GraphPointLabels';
 import { regionSchema, type RegionAction, type RegionMark } from './region-schema';
-import { intersectRegions, placeRegionLabels, regionGeometry, regionProgress, regionTargets } from './region';
-import { labelBox } from './point-labels';
+import { intersectRegions, placeRegionLabels, regionGeometry, regionProgress, regionTargets, regionPointLabelObstacles } from './region';
+import { labelBox, overlaps, placePointLabels } from './point-labels';
 import { studioDemo } from './studio-demo';
 import { stageStateAt } from './stage-state-at';
 import { actionErrors, actionWarnings } from './action-validation';
@@ -19,6 +20,29 @@ const b: RegionAction = { type:'region', id:'b', level:2, color:'mint', ranges:[
 const sx = (x: number) => 100 + x * 20;
 const mark = (action: RegionAction): RegionMark => ({ id:action.id!, action, elapsed:1000, opacity:1 });
 const geometry = (action: RegionAction) => regionGeometry(mark(action),sx,100,[-3,3]);
+it('rm-06 s5: a labelled −7 endpoint avoids region lines, markers and label, preferring south', () => {
+  const regions = regionGeometry(mark({type:'region',id:'sol',ranges:[{from:'-inf',to:-7}],label:'x \\le -7'}), x => 400 + x * 20, 140, [-12,0]);
+  const regionLabel = labelBox(220,80,110,28);
+  // A tall tick blocks the usual south slot; the second south slot must win over north.
+  const tick = labelBox(246,150,28,45);
+  const boxes = {'label:p':labelBox(0,0,30,24),'tick:-7':tick,'region-label:sol':regionLabel};
+  const shapes = regionPointLabelObstacles(regions);
+  expect(shapes.some(box => overlaps(box,labelBox(260,139,1,1)))).toBe(true);
+  expect(shapes.some(box => overlaps(box,labelBox(200,112,1,1)))).toBe(true);
+  expect(shapes.some(box => overlaps(box,labelBox(260,120,1,1)))).toBe(true);
+  const viewport = labelBox(0,0,500,300);
+  const result = placePointLabels([{id:'p',x:260,y:140,width:30,height:24,preferSouth:true}], [...shapes,tick,regionLabel], viewport, true).p;
+  expect(result.mode).toBe('stack');
+  expect(result.box.top).toBe(202);
+  expect([...shapes,tick,regionLabel].some(box => overlaps(box,result.box))).toBe(false);
+  const html = renderToStaticMarkup(<svg><GraphPointLabels points={[{id:'p',x:-7,y:0,c:'c1',label:'auto'}]} boxes={boxes} sx={x=>400+x*20} sy={()=>140} viewport={viewport} numberLine regions={regions} opacity={()=>1}/></svg>);
+  expect(html).toContain('data-label-mode="stack"');
+  expect(html).toContain('y="202"');
+  // If both ordinary slots are blocked, region label must also be avoided by leader placement.
+  const blocked = {...boxes,'tick:-7':labelBox(240,150,50,100)};
+  const avoided = renderToStaticMarkup(<svg><GraphPointLabels points={[{id:'p',x:-7,y:0,c:'c1',label:'auto'}]} boxes={blocked} sx={x=>400+x*20} sy={()=>140} viewport={viewport} numberLine regions={regions} opacity={()=>1}/></svg>);
+  expect(avoided).toContain('data-label-mode="leader"');
+});
 function withActions(actions: Action[]): Scene { return {...scene,narration:[{id:'one',role:'say',text:'조건을 봅니다',cue:{actions}}]}; }
 function render(actions: Action[]) {
   const state = stageStateAt(withActions(actions),1000,[0]);

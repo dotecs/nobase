@@ -2,7 +2,7 @@ import type { TargetBox, ChalkPoint } from './chalk';
 import { boxAnchor } from './pointing';
 
 export type LabelPosition = 'n' | 's' | 'ne' | 'nw' | 'se' | 'sw';
-export type PointLabel = { id: string; x: number; y: number; width: number; height: number; position?: LabelPosition; offset?: ChalkPoint };
+export type PointLabel = { id: string; x: number; y: number; width: number; height: number; position?: LabelPosition; offset?: ChalkPoint; preferSouth?: boolean };
 export type LabelPlacement = { box: TargetBox; mode: 'default' | 'opposite' | 'stack' | 'leader' | 'authored'; leader?: { start: ChalkPoint; end: ChalkPoint } };
 export function labelBox(left: number, top: number, width: number, height: number): TargetBox {
   return { left, top, right: left + width, bottom: top + height, x: left + width / 2, y: top + height / 2 };
@@ -37,6 +37,7 @@ export function placePointLabels(labels: PointLabel[], obstacles: TargetBox[], v
       const opposite = defaultLabelBox(label, numberLine, numberLine ? 'n' : 'sw');
       const stack = labelBox(initial.left, initial.top + label.height + 6, label.width, label.height);
       const candidates: [LabelPlacement['mode'], TargetBox][] = [['default', initial], ['opposite', opposite], ['stack', stack]];
+      if (label.preferSouth) candidates.splice(1, 2, ['stack', stack], ['opposite', opposite]);
       const clear = candidates.find(([, box]) => inside(box) && !collides(box));
       if (clear) result[label.id] = { mode: clear[0], box: clear[1] };
       else {
@@ -44,7 +45,7 @@ export function placePointLabels(labels: PointLabel[], obstacles: TargetBox[], v
         const ys = new Set([initial.top, label.y + 14, viewport.top, viewport.bottom - label.height, ...occupied.flatMap(box => [box.top - label.height - 6, box.bottom + 6])]);
         const spaces = [...xs].flatMap(x => [...ys].map(y => labelBox(x, y, label.width, label.height))).filter(inside);
         const distance = (box: TargetBox) => Math.hypot(box.x - label.x, box.y - label.y);
-        spaces.sort((a, b) => distance(a) - distance(b) || Number(b.top >= label.y) - Number(a.top >= label.y) || a.top - b.top || a.left - b.left);
+        spaces.sort((a, b) => (label.preferSouth ? Number(b.top >= label.y) - Number(a.top >= label.y) : 0) || distance(a) - distance(b) || Number(b.top >= label.y) - Number(a.top >= label.y) || a.top - b.top || a.left - b.left);
         const box = spaces.find(candidate => !collides(candidate)) ?? initial;
         result[label.id] = { box, mode: 'leader', leader: labelLeader(box, label) };
       }

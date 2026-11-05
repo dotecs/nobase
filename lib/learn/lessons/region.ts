@@ -41,6 +41,18 @@ export type RegionGeometry = {
   fromMarker: boolean; toMarker: boolean; leftArrow: boolean; rightArrow: boolean;
   openFrom: boolean; openTo: boolean; box: TargetBox;
 };
+/** Thin rendered shapes, rather than the empty interior of each range. */
+export function regionPointLabelObstacles(ranges: RegionGeometry[]): TargetBox[] {
+  return ranges.flatMap(range => [
+    ...(!range.point ? [labelBox(range.left, range.y - 1, range.right - range.left, 2)] : []),
+    ...[range.fromMarker ? range.left : null, range.toMarker && !range.point ? range.right : null].flatMap(x => x === null ? [] : [
+      labelBox(x - 5, range.axisY - 5, 10, 10),
+      ...(!range.point ? [labelBox(x - 1, range.y, 2, range.axisY - range.y)] : []),
+    ]),
+    ...(range.leftArrow ? [labelBox(range.left, range.y - 5, 9, 10)] : []),
+    ...(range.rightArrow ? [labelBox(range.right - 9, range.y - 5, 9, 10)] : []),
+  ]);
+}
 export function regionGeometry(mark: RegionMark, sx: (x: number) => number, axisY: number, domain: [number, number]): RegionGeometry[] {
   const y = axisY - (mark.action.level ?? 1) * 28;
   return mark.action.ranges.map((range, index) => ({ ...regionInterval(range), index }))
