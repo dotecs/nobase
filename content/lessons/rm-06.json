@@ -26,7 +26,7 @@
         "items": [
           {
             "id": "signs",
-            "tex": "<,\\quad >,\\quad \\le,\\quad \\ge",
+            "tex": "\\p{s1}{<},\\quad \\p{s2}{>},\\quad \\p{s3}{\\le},\\quad \\p{s4}{\\ge}",
             "position": {
               "x": 0.5,
               "y": 0.22
@@ -90,9 +90,23 @@
               },
               {
                 "type": "underline",
-                "target": "item:signs",
-                "at": "@네 가지가",
-                "ttl_ms": 4000
+                "target": "item:signs/s1",
+                "at": "@작다,"
+              },
+              {
+                "type": "underline",
+                "target": "item:signs/s2",
+                "at": "@크다,"
+              },
+              {
+                "type": "underline",
+                "target": "item:signs/s3",
+                "at": "@작거나 같다"
+              },
+              {
+                "type": "underline",
+                "target": "item:signs/s4",
+                "at": "@크거나 같다"
               }
             ]
           }
@@ -197,7 +211,7 @@
           {
             "cells": [
               "양수 $C$를 곱하거나 나눈다 ($C>0$)",
-              "$A\\times C<B\\times C$, $A\\div C<B\\div C$",
+              "$A\\times C\\p{s1}{<}B\\times C$, $A\\div C\\p{s2}{<}B\\div C$",
               "그대로"
             ],
             "tone": "pos"
@@ -205,7 +219,7 @@
           {
             "cells": [
               "음수 $C$를 곱하거나 나눈다 ($C<0$)",
-              "$A\\times C>B\\times C$, $A\\div C>B\\div C$",
+              "$A\\times C\\p{s1}{>}B\\times C$, $A\\div C\\p{s2}{>}B\\div C$",
               "바뀐다"
             ],
             "tone": "neg"
@@ -260,6 +274,11 @@
                 "type": "highlight",
                 "target": "row:2",
                 "at": "@양수이면"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:1/s1",
+                "at": "@부등호 방향은"
               }
             ]
           }
@@ -283,13 +302,18 @@
                 "at": "@음수이면"
               },
               {
+                "type": "circle",
+                "target": "cell:3:1/s1",
+                "at": "@부등호 방향이"
+              },
+              {
                 "type": "flash",
                 "target": "row:3",
                 "at": "@바뀝니다"
               },
               {
-                "type": "underline",
-                "target": "row:3",
+                "type": "circle",
+                "target": "cell:3:1/s2",
                 "at": "@뒤집힙니다"
               }
             ]
@@ -464,8 +488,7 @@
                   "x": 0,
                   "y": 0
                 },
-                "at": "@영을 기준으로",
-                "ttl_ms": 2500
+                "at": "@영을 기준으로"
               },
               {
                 "type": "bracket",
@@ -490,14 +513,12 @@
               {
                 "type": "circle",
                 "target": "point:0",
-                "at": "@이는 사보다",
-                "ttl_ms": 3000
+                "at": "@이는 사보다"
               },
               {
                 "type": "circle",
                 "target": "point:2",
-                "at": "@마이너스이는",
-                "ttl_ms": 4000
+                "at": "@마이너스이는"
               },
               {
                 "type": "handwrite",
@@ -528,30 +549,30 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "3x-3\\ge4(x+3)-8"
+            "tex": "3x-3\\ge\\p{par}{4(x+3)}-8"
           },
           {
-            "tex": "3x-3\\ge4x+4",
+            "tex": "3x\\p{c}{-3}\\ge\\p{rhs}{4x+4}",
             "concept_id": "c.distributive",
             "why": "분배법칙으로 괄호를 푼다: 4(x+3)=4x+12, 12−8=4"
           },
           {
-            "tex": "3x-3+3\\ge4x+4+3",
+            "tex": "3x\\p{c}{-3}\\p{l}{+3}\\p{ineq}{\\ge}4x+4\\p{r}{+3}",
             "concept_id": "c.ineq-props",
             "why": "좌변의 −3을 없애려고 양변에 3을 더한다. 같은 수를 더하면 방향 그대로"
           },
           {
-            "tex": "3x\\ge4x+7",
+            "tex": "3x\\ge\\p{t}{4x}+7",
             "concept_id": "c.like-terms",
             "why": "양변의 동류항을 정리한다"
           },
           {
-            "tex": "-x\\ge7",
+            "tex": "\\p{lhs}{\\p{m}{-}x}\\ge\\p{rhs}{7}",
             "concept_id": "c.ineq-props",
             "why": "우변의 4x를 없애려고 양변에서 4x를 뺀다. 같은 수를 빼면 방향 그대로"
           },
           {
-            "tex": "x\\le-7",
+            "tex": "x\\p{ineq}{\\le}-7",
             "concept_id": "c.ineq-props",
             "why": "양변에 −1을 곱한다. 음수를 곱했으므로 부등호 방향이 바뀐다"
           }
@@ -587,10 +608,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@우변에 괄호가",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:0/par",
+                "at": "@우변에 괄호가"
               },
               {
                 "type": "reveal",
@@ -604,8 +624,8 @@
                 "at": "@삼강의"
               },
               {
-                "type": "underline",
-                "target": "step:1",
+                "type": "circle",
+                "target": "step:1/rhs",
                 "at": "@정리해서"
               }
             ]
@@ -619,12 +639,6 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@좌변의 마이너스삼을",
-                "ttl_ms": 3000
-              },
-              {
                 "type": "reveal",
                 "target": "step",
                 "index": 2,
@@ -634,6 +648,25 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/c",
+                "at": "@좌변의 마이너스삼을"
+              },
+              {
+                "type": "strike",
+                "targets": [
+                  "step:2/c",
+                  "step:2/l"
+                ],
+                "stagger_ms": 200,
+                "at": "@양변에 삼을"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/ineq",
+                "at": "@부등호 방향은"
               },
               {
                 "type": "reveal",
@@ -657,10 +690,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:3",
-                "at": "@사엑스를 뺍니다",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:3/t",
+                "at": "@사엑스를 뺍니다"
               },
               {
                 "type": "reveal",
@@ -672,6 +704,11 @@
                 "type": "highlight",
                 "target": "step:4",
                 "at": "@좌변은 마이너스엑스"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/rhs",
+                "at": "@우변은 칠이"
               }
             ]
           }
@@ -684,10 +721,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:4",
-                "at": "@마이너스엑스 앞에",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:4/m",
+                "at": "@마이너스엑스 앞에"
               },
               {
                 "type": "reveal",
@@ -701,8 +737,8 @@
                 "at": "@양변에 마이너스일을"
               },
               {
-                "type": "flash",
-                "target": "step:5",
+                "type": "circle",
+                "target": "step:5/ineq",
                 "at": "@이 순간"
               }
             ]
@@ -803,8 +839,7 @@
               {
                 "type": "circle",
                 "target": "point:0",
-                "at": "@자신도 포함",
-                "ttl_ms": 4000
+                "at": "@자신도 포함"
               },
               {
                 "type": "handwrite",

@@ -53,7 +53,7 @@
           },
           {
             "id": "ex",
-            "tex": "2x+10=4",
+            "tex": "\\p{lhs}{2x+10}=\\p{rhs}{4}",
             "position": {
               "x": 0.5,
               "y": 0.82
@@ -87,8 +87,7 @@
               {
                 "type": "underline",
                 "target": "item:eqs",
-                "at": "@등호는",
-                "ttl_ms": 5000
+                "at": "@등호는"
               },
               {
                 "type": "flash",
@@ -165,10 +164,14 @@
                 "at": "@예를 들어"
               },
               {
-                "type": "underline",
-                "target": "item:ex",
-                "at": "@좌변은",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "item:ex/lhs",
+                "at": "@좌변은"
+              },
+              {
+                "type": "circle",
+                "target": "item:ex/rhs",
+                "at": "@우변은"
               }
             ]
           }
@@ -217,7 +220,7 @@
           {
             "cells": [
               "나누기",
-              "$A\\div C=B\\div C\\quad(C\\neq0)$",
+              "$A\\div C=B\\div C\\quad(\\p{cond}{C\\neq0})$",
               "양변을 같은 수로 나누어도 성립. 단, 0으로는 나눌 수 없다"
             ]
           },
@@ -322,10 +325,9 @@
                 "at": "@나누어도"
               },
               {
-                "type": "underline",
-                "target": "row:3",
-                "at": "@영으로는",
-                "ttl_ms": 6000
+                "type": "circle",
+                "target": "cell:3:1/cond",
+                "at": "@영으로는"
               }
             ]
           }
@@ -421,7 +423,7 @@
         "items": [
           {
             "id": "eq",
-            "tex": "2x+10=4",
+            "tex": "2\\p{x}{x}+10=4",
             "position": {
               "x": 0.5,
               "y": 0.2
@@ -430,7 +432,7 @@
           },
           {
             "id": "t1",
-            "tex": "x=1:\\quad 2\\cdot1+10=12\\neq4",
+            "tex": "x=\\p{v}{1}:\\quad 2\\cdot1+10=\\p{lhs}{12}\\neq4",
             "position": {
               "x": 0.5,
               "y": 0.42
@@ -439,7 +441,7 @@
           },
           {
             "id": "t2",
-            "tex": "x=-3:\\quad 2\\cdot(-3)+10=4",
+            "tex": "x=\\p{v}{-3}:\\quad 2\\cdot(-3)+10=\\p{lhs}{4}",
             "position": {
               "x": 0.5,
               "y": 0.56
@@ -485,8 +487,12 @@
               {
                 "type": "underline",
                 "target": "item:eq",
-                "at": "@방정식은",
-                "ttl_ms": 5000
+                "at": "@방정식은"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq/x",
+                "at": "@엑스 같은"
               }
             ]
           }
@@ -503,6 +509,11 @@
                 "target": "item",
                 "id": "t1",
                 "at": "@일을 넣으면"
+              },
+              {
+                "type": "circle",
+                "target": "item:t1/lhs",
+                "at": "@좌변이 십이라서"
               },
               {
                 "type": "handwrite",
@@ -522,6 +533,11 @@
                 "target": "item",
                 "id": "t2",
                 "at": "@마이너스삼을"
+              },
+              {
+                "type": "circle",
+                "target": "item:t2/lhs",
+                "at": "@좌변이 사가"
               },
               {
                 "type": "handwrite",
@@ -555,8 +571,7 @@
               {
                 "type": "underline",
                 "target": "item:q",
-                "at": "@묻는 문장이죠",
-                "ttl_ms": 5000
+                "at": "@묻는 문장이죠"
               },
               {
                 "type": "reveal",
@@ -608,25 +623,25 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "2x+10=4"
+            "tex": "\\p{a}{2}x\\p{c}{+10}=4"
           },
           {
-            "tex": "2x+10-10=4-10",
+            "tex": "2x\\p{c}{+10}\\p{l}{-10}=4\\p{r}{-10}",
             "concept_id": "c.equality-props",
             "why": "좌변에 $x$만 남기려고 상수항 $+10$부터 없앤다. 양변에서 같은 수 10을 빼도 등식은 성립"
           },
           {
-            "tex": "2x=-6",
+            "tex": "\\p{lhs}{\\p{a}{2}x}=\\p{rhs}{-6}",
             "concept_id": "c.like-terms",
             "why": "좌변 $10-10=0$, 우변 $4-10=-6$. 상수항끼리 계산(2강 동류항)"
           },
           {
-            "tex": "2x\\times\\dfrac12=-6\\times\\dfrac12",
+            "tex": "\\p{a}{2}x\\times\\p{l}{\\dfrac12}=\\p{b}{-6}\\times\\p{r}{\\dfrac12}",
             "concept_id": "c.equality-props",
             "why": "$x$에 곱해진 2를 없애려고 2의 역수 $\\frac12$을 양변에 곱한다(3강 역수). 양변에 같은 수를 곱해도 등식은 성립"
           },
           {
-            "tex": "x=-3",
+            "tex": "x=\\p{v}{-3}",
             "concept_id": "c.linear-eq-solve",
             "why": "좌변은 $2\\times\\frac12=1$이라 $x$만 남고, 우변은 $-3$. 이것이 해"
           }
@@ -662,10 +677,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:0",
-                "at": "@플러스십이",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "step:0/c",
+                "at": "@플러스십이"
               }
             ]
           }
@@ -678,10 +692,14 @@
           "cue": {
             "actions": [
               {
+                "type": "circle",
+                "target": "step:0/c",
+                "at": "@상수항 플러스십입니다"
+              },
+              {
                 "type": "underline",
-                "target": "step:0",
-                "at": "@상수항 플러스십입니다",
-                "ttl_ms": 3000
+                "target": "step:0/a",
+                "at": "@앞의 이를"
               },
               {
                 "type": "reveal",
@@ -695,10 +713,18 @@
                 "at": "@양변에서 십을"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@우변에서도",
-                "ttl_ms": 4000
+                "type": "strike",
+                "targets": [
+                  "step:1/c",
+                  "step:1/l"
+                ],
+                "stagger_ms": 200,
+                "at": "@양변에서 십을+400"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/r",
+                "at": "@우변에서도"
               }
             ]
           }
@@ -720,6 +746,16 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/lhs",
+                "at": "@좌변은 이엑스"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/rhs",
+                "at": "@우변은 마이너스육"
               }
             ]
           }
@@ -732,10 +768,9 @@
           "cue": {
             "actions": [
               {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@엑스 앞의 이를",
-                "ttl_ms": 3000
+                "type": "circle",
+                "target": "step:2/a",
+                "at": "@엑스 앞의 이를"
               },
               {
                 "type": "reveal",
@@ -750,9 +785,13 @@
               },
               {
                 "type": "underline",
-                "target": "step:3",
-                "at": "@양변에 똑같이",
-                "ttl_ms": 4000
+                "target": "step:3/l",
+                "at": "@이분의일을+300"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/r",
+                "at": "@양변에 똑같이"
               }
             ]
           }
@@ -776,8 +815,27 @@
                 "at": "@start"
               },
               {
-                "type": "flash",
-                "target": "step:4",
+                "type": "strike",
+                "targets": [
+                  "step:3/a",
+                  "step:3/l"
+                ],
+                "stagger_ms": 200,
+                "at": "@이 곱하기 이분의일은"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/b",
+                "at": "@우변은 마이너스육"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/r",
+                "at": "@우변은 마이너스육+400"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/v",
                 "at": "@엑스는마이너스삼"
               }
             ]
@@ -799,15 +857,15 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "x=-3\\ \\text{을}\\ 2x+10=4\\ \\text{에 넣는다}"
+            "tex": "x=\\p{v}{-3}\\ \\text{을}\\ 2x+10=4\\ \\text{에 넣는다}"
           },
           {
-            "tex": "2\\cdot(-3)+10=-6+10=4",
+            "tex": "2\\cdot\\p{v}{(-3)}+10=-6+10=\\p{res}{4}",
             "concept_id": "c.equation",
             "why": "좌변에 해를 넣어 계산. 등식이 참이 되는 값이 해"
           },
           {
-            "tex": "4=4\\quad\\checkmark",
+            "tex": "\\p{l}{4}=\\p{r}{4}\\quad\\checkmark",
             "concept_id": "c.equality",
             "why": "좌변과 우변이 같다 → 등식이 참 → $x=-3$이 해가 맞다"
           }
@@ -833,6 +891,11 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "step:0/v",
+                "at": "@엑스는마이너스삼을"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 1,
@@ -842,6 +905,11 @@
                 "type": "highlight",
                 "target": "step:1",
                 "at": "@넣으면"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/res",
+                "at": "@마이너스육플러스십은사"
               }
             ]
           }
@@ -863,6 +931,16 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/r",
+                "at": "@우변도 사"
+              },
+              {
+                "type": "underline",
+                "target": "step:2",
+                "at": "@좌변과 우변이"
               },
               {
                 "type": "flash",
