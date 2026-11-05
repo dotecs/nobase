@@ -128,14 +128,12 @@
               {
                 "type": "underline",
                 "target": "item:eq",
-                "at": "@방정식이 무엇을",
-                "ttl_ms": 6000
+                "at": "@방정식이 무엇을"
               },
               {
                 "type": "underline",
                 "target": "axis:x",
-                "at": "@와이는영의 교점",
-                "ttl_ms": 3000
+                "at": "@와이는영의 교점"
               }
             ]
           }
@@ -155,8 +153,7 @@
               {
                 "type": "underline",
                 "target": "axis:x",
-                "at": "@와이좌표가 영인",
-                "ttl_ms": 6000
+                "at": "@와이좌표가 영인"
               },
               {
                 "type": "handwrite",
@@ -339,35 +336,35 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "ax^2+bx+c=0\\quad(a\\neq0)"
+            "tex": "\\p{a}{a}x^2+bx+c=0\\quad(a\\neq0)"
           },
           {
-            "tex": "x^2+\\dfrac{b}{a}x+\\dfrac{c}{a}=0",
+            "tex": "\\p{lead}{x^2}+\\dfrac{b}{a}x+\\dfrac{c}{a}=0",
             "concept_id": "c.equality-props",
             "why": "양변을 최고차항 계수 a로 나눈다 (a≠0)"
           },
           {
-            "tex": "x^2+\\dfrac{b}{a}x=-\\dfrac{c}{a}",
+            "tex": "x^2+\\dfrac{b}{a}x=\\p{const}{-\\dfrac{c}{a}}",
             "concept_id": "c.equality-props",
             "why": "상수항을 우변으로 이항 (양변에서 c/a를 뺀다)"
           },
           {
-            "tex": "x^2+\\dfrac{b}{a}x+\\left(\\dfrac{b}{2a}\\right)^2=-\\dfrac{c}{a}+\\left(\\dfrac{b}{2a}\\right)^2",
+            "tex": "x^2+\\dfrac{b}{a}x+\\p{sq1}{\\left(\\dfrac{b}{2a}\\right)^2}=-\\dfrac{c}{a}+\\p{sq2}{\\left(\\dfrac{b}{2a}\\right)^2}",
             "concept_id": "c.perfect-square",
             "why": "일차항 계수를 2로 나눈 것의 제곱을 양변에 더해 좌변을 완전제곱식으로"
           },
           {
-            "tex": "\\left(x+\\dfrac{b}{2a}\\right)^2=\\dfrac{b^2-4ac}{4a^2}",
+            "tex": "\\p{lhs}{\\left(x+\\dfrac{b}{2a}\\right)^2}=\\p{rhs}{\\dfrac{b^2-4ac}{4a^2}}",
             "concept_id": "c.fraction-props",
             "why": "우변을 분모 4a²으로 통분해 한 덩어리로 정리"
           },
           {
-            "tex": "x+\\dfrac{b}{2a}=\\pm\\sqrt{\\dfrac{b^2-4ac}{4a^2}}",
+            "tex": "x+\\dfrac{b}{2a}=\\pm\\sqrt{\\p{rad}{\\dfrac{b^2-4ac}{4a^2}}}",
             "concept_id": "c.sqrt-props",
             "why": "X²=k 이면 X=±√k. 단, 루트 안이 0 이상이어야 실수 범위에서 가능"
           },
           {
-            "tex": "x=\\dfrac{-b\\pm\\sqrt{b^2-4ac}}{2a}",
+            "tex": "x=\\p{rhs}{\\dfrac{-b\\pm\\sqrt{b^2-4ac}}{2a}}",
             "concept_id": "c.equality-props",
             "why": "√(4a²)=2a로 분모를 빼내고 b/2a를 이항"
           }
@@ -413,9 +410,14 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@에이로 나눠"
+                "type": "circle",
+                "target": "step:0/a",
+                "at": "@계수 에이로"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/lead",
+                "at": "@이차항 계수가"
               }
             ]
           },
@@ -437,6 +439,11 @@
                 "type": "highlight",
                 "target": "step:2",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/const",
+                "at": "@우변으로 이항"
               }
             ]
           },
@@ -460,9 +467,14 @@
                 "at": "@start"
               },
               {
-                "type": "underline",
-                "target": "step:3",
+                "type": "circle",
+                "target": "step:3/sq1",
                 "at": "@제곱을"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/sq2",
+                "at": "@양변에 더합니다"
               }
             ]
           },
@@ -484,6 +496,16 @@
                 "type": "highlight",
                 "target": "step:4",
                 "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/lhs",
+                "at": "@좌변은"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/rhs",
+                "at": "@사 에이 제곱 분의"
               }
             ]
           },
@@ -510,6 +532,11 @@
                 "type": "flash",
                 "target": "step:5",
                 "at": "@여기서 멈춰야"
+              },
+              {
+                "type": "circle",
+                "target": "step:5/rad",
+                "at": "@우변이 영 이상"
               }
             ]
           },
@@ -536,6 +563,11 @@
                 "type": "underline",
                 "target": "step:6",
                 "at": "@근의 공식입니다"
+              },
+              {
+                "type": "circle",
+                "target": "step:6/rhs",
+                "at": "@우변이 모두"
               }
             ]
           },
@@ -557,7 +589,7 @@
         "type": "chain",
         "nodes": [
           {
-            "tex": "D=b^2-4ac",
+            "tex": "\\p{d}{D}=\\p{expr}{b^2-4ac}",
             "text": "근의 공식에서 루트 안에 있던 식. Discriminant의 머리글자 D."
           },
           {
@@ -596,6 +628,16 @@
                 "type": "flash",
                 "target": "node:0",
                 "at": "@판별식이라고"
+              },
+              {
+                "type": "circle",
+                "target": "node:0/expr",
+                "at": "@비 제곱 마이너스"
+              },
+              {
+                "type": "circle",
+                "target": "node:0/d",
+                "at": "@디로 표기"
               }
             ]
           },
@@ -621,8 +663,7 @@
               {
                 "type": "underline",
                 "target": "node:1",
-                "at": "@플러스 마이너스 루트 디",
-                "ttl_ms": 4000
+                "at": "@플러스 마이너스 루트 디"
               }
             ]
           },
@@ -658,8 +699,7 @@
               {
                 "type": "underline",
                 "target": "node:1",
-                "at": "@서로 다른 두 실근을",
-                "ttl_ms": 3500
+                "at": "@서로 다른 두 실근을"
               }
             ]
           },
@@ -770,8 +810,7 @@
               {
                 "type": "underline",
                 "target": "item:eq",
-                "at": "@이차식은",
-                "ttl_ms": 4000
+                "at": "@이차식은"
               },
               {
                 "type": "reveal",
@@ -815,8 +854,7 @@
               {
                 "type": "underline",
                 "target": "item:disc",
-                "at": "@디가 음수다는",
-                "ttl_ms": 4000
+                "at": "@디가 음수다는"
               },
               {
                 "type": "flash",
@@ -880,8 +918,7 @@
               {
                 "type": "underline",
                 "target": "item:disc",
-                "at": "@디가 영이 되어",
-                "ttl_ms": 3000
+                "at": "@디가 영이 되어"
               }
             ]
           }
@@ -909,7 +946,7 @@
           {
             "cells": [
               "$x^2+x-3=0$",
-              "$1^2-4\\cdot1\\cdot(-3)=13$",
+              "$\\p{b}{1}^2-4\\cdot\\p{a}{1}\\cdot\\p{c}{(-3)}=\\p{d}{13}$",
               "서로 다른 두 실근"
             ],
             "tone": "pos"
@@ -917,7 +954,7 @@
           {
             "cells": [
               "$9x^2-6x+1=0$",
-              "$(-6)^2-4\\cdot9\\cdot1=0$",
+              "$\\p{b}{(-6)^2}-\\p{m}{4\\cdot9\\cdot1}=\\p{d}{0}$",
               "중근"
             ],
             "tone": "zero"
@@ -925,7 +962,7 @@
           {
             "cells": [
               "$2x^2+x+3=0$",
-              "$1^2-4\\cdot2\\cdot3=-23$",
+              "$1^2-4\\cdot2\\cdot3=\\p{d}{-23}$",
               "실근 없음"
             ],
             "tone": "neg"
@@ -975,21 +1012,29 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "cell:0:1/b",
+                "at": "@비 대신 일"
+              },
+              {
                 "type": "underline",
-                "target": "row:0",
+                "target": "cell:0:1/a",
+                "at": "@에이 대신 일"
+              },
+              {
+                "type": "underline",
+                "target": "cell:0:1/c",
+                "at": "@씨 대신"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1/d",
                 "at": "@십삼이 나오죠"
               },
               {
-                "type": "circle",
-                "target": "cell:0:1",
-                "at": "@비 대신 일",
-                "ttl_ms": 5000
-              },
-              {
-                "type": "circle",
+                "type": "underline",
                 "target": "cell:0:2",
-                "at": "@서로 다른 두 실근을",
-                "ttl_ms": 3000
+                "at": "@서로 다른 두 실근을"
               }
             ]
           },
@@ -1013,21 +1058,24 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "cell:1:1/b",
+                "at": "@마이너스 육의 제곱"
+              },
+              {
                 "type": "underline",
-                "target": "row:1",
+                "target": "cell:1:1/m",
+                "at": "@빼기 사 곱하기 구"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:1/d",
                 "at": "@영이 나오면서"
               },
               {
-                "type": "circle",
-                "target": "cell:1:1",
-                "at": "@마이너스 육의 제곱",
-                "ttl_ms": 5000
-              },
-              {
-                "type": "circle",
+                "type": "underline",
                 "target": "cell:1:2",
-                "at": "@중근을",
-                "ttl_ms": 3000
+                "at": "@중근을"
               }
             ]
           },
@@ -1052,20 +1100,18 @@
               },
               {
                 "type": "underline",
-                "target": "row:2",
+                "target": "cell:2:1",
+                "at": "@일 빼기 사"
+              },
+              {
+                "type": "circle",
+                "target": "cell:2:1/d",
                 "at": "@음수가 나옵니다"
               },
               {
-                "type": "circle",
-                "target": "cell:2:1",
-                "at": "@일 빼기 사",
-                "ttl_ms": 5000
-              },
-              {
-                "type": "circle",
+                "type": "underline",
                 "target": "cell:2:2",
-                "at": "@실근을 갖지 않는다는",
-                "ttl_ms": 3000
+                "at": "@실근을 갖지 않는다는"
               }
             ]
           },
@@ -1087,20 +1133,20 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "b=2b'\\ \\text{라 두면}"
+            "tex": "b=2\\p{bp}{b'}\\ \\text{라 두면}"
           },
           {
-            "tex": "x=\\dfrac{-2b'\\pm\\sqrt{4b'^2-4ac}}{2a}",
+            "tex": "x=\\dfrac{-2b'\\pm\\sqrt{\\p{rad}{4b'^2-4ac}}}{2a}",
             "concept_id": "c.quadratic-formula",
             "why": "근의 공식의 b 자리에 2b′를 대입"
           },
           {
-            "tex": "x=\\dfrac{-2b'\\pm2\\sqrt{b'^2-ac}}{2a}",
+            "tex": "x=\\dfrac{-\\p{n1}{2}b'\\pm\\p{two}{2}\\sqrt{b'^2-ac}}{\\p{den}{2}a}",
             "concept_id": "c.sqrt-props",
             "why": "√(4k)=2√k. 루트 안의 공통인수 4를 밖으로"
           },
           {
-            "tex": "x=\\dfrac{-b'\\pm\\sqrt{b'^2-ac}}{a}",
+            "tex": "x=\\dfrac{-b'\\pm\\sqrt{\\p{dq}{b'^2-ac}}}{a}",
             "concept_id": "c.fraction-props",
             "why": "분자·분모를 2로 약분"
           }
@@ -1146,6 +1192,11 @@
                 "at": "@start"
               },
               {
+                "type": "circle",
+                "target": "step:0/bp",
+                "at": "@비 프라임이라고"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 2,
@@ -1157,15 +1208,24 @@
                 "at": "@루트 안에 사가"
               },
               {
-                "type": "underline",
-                "target": "step:2",
-                "at": "@이가 되고"
+                "type": "circle",
+                "target": "step:1/rad",
+                "at": "@루트 안에 사가"
               },
               {
                 "type": "underline",
-                "target": "step:0",
-                "at": "@비 프라임이라고",
-                "ttl_ms": 3000
+                "target": "step:2/two",
+                "at": "@이가 되고"
+              },
+              {
+                "type": "strike",
+                "targets": [
+                  "step:2/n1",
+                  "step:2/two",
+                  "step:2/den"
+                ],
+                "stagger_ms": 200,
+                "at": "@약분됩니다"
               }
             ]
           },
@@ -1194,10 +1254,9 @@
                 "at": "@결과는 같습니다"
               },
               {
-                "type": "underline",
-                "target": "step:3",
-                "at": "@비 프라임 제곱",
-                "ttl_ms": 3500
+                "type": "circle",
+                "target": "step:3/dq",
+                "at": "@비 프라임 제곱"
               }
             ]
           },

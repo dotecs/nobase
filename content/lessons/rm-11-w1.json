@@ -130,25 +130,25 @@
             "think": "문제의 '실근 없음'을 수식으로 번역한 줄. 첫 줄의 근거가 가장 무겁다."
           },
           {
-            "tex": "3^2-4\\cdot1\\cdot k<0",
+            "tex": "\\p{b}{3}^2-4\\cdot\\p{a}{1}\\cdot\\p{c}{k}<0",
             "concept_id": "c.discriminant",
             "why": "D=b²−4ac 에 a=1, b=3, c=k 대입",
             "think": "a, b, c를 정확히 읽는다. 상수항이 k라는 문자여도 c 자리는 c 자리."
           },
           {
-            "tex": "9-4k<0",
+            "tex": "\\p{nine}{9}-\\p{fk}{4k}<0",
             "concept_id": "c.quadratic-expr",
             "why": "계산 정리",
             "think": "여기까지는 계산. 다음 줄부터는 부등식 풀이로 넘어간다."
           },
           {
-            "tex": "-4k<-9",
+            "tex": "\\p{kt}{-4k}<-9",
             "concept_id": "c.ineq-props",
             "why": "양변에서 9를 뺀다 (부등호 방향 유지)",
             "think": "k가 있는 항만 남긴다. 더하고 빼는 건 방향이 안 바뀐다."
           },
           {
-            "tex": "k>\\dfrac94",
+            "tex": "k\\p{ineq}{>}\\dfrac94",
             "concept_id": "c.ineq-props",
             "why": "양변을 −4로 나눈다 → 부등호 방향이 바뀐다",
             "think": "음수로 나누는 순간 방향을 뒤집는다. 여기서 가장 많이 틀린다."
@@ -196,14 +196,23 @@
               },
               {
                 "type": "underline",
-                "target": "step:1",
-                "at": "@씨 자리에"
+                "target": "step:1/a",
+                "at": "@에이는 일"
               },
               {
                 "type": "underline",
-                "target": "step:1",
-                "at": "@에이는 일",
-                "ttl_ms": 4000
+                "target": "step:1/b",
+                "at": "@비는 삼"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/c",
+                "at": "@씨는 케이"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/c",
+                "at": "@씨 자리에"
               }
             ]
           },
@@ -216,6 +225,11 @@
           "cue": {
             "actions": [
               {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@start"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 2,
@@ -227,10 +241,9 @@
                 "at": "@정리하면"
               },
               {
-                "type": "underline",
-                "target": "step:1",
-                "at": "@start",
-                "ttl_ms": 4000
+                "type": "circle",
+                "target": "step:2/nine",
+                "at": "@구 마이너스 사 케이"
               }
             ]
           },
@@ -257,6 +270,11 @@
                 "type": "flash",
                 "target": "step:3",
                 "at": "@방향이 바뀐다"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/kt",
+                "at": "@케이가 있는 항만"
               }
             ]
           },
@@ -269,6 +287,16 @@
           "cue": {
             "actions": [
               {
+                "type": "strike",
+                "target": "step:2/nine",
+                "at": "@구를 빼면"
+              },
+              {
+                "type": "underline",
+                "target": "step:3",
+                "at": "@마이너스 사 케이는"
+              },
+              {
                 "type": "reveal",
                 "target": "step",
                 "index": 4,
@@ -280,15 +308,14 @@
                 "at": "@마이너스 사로 나누면"
               },
               {
-                "type": "underline",
-                "target": "step:4",
-                "at": "@이것이 답입니다"
+                "type": "circle",
+                "target": "step:4/ineq",
+                "at": "@부등호가 뒤집혀서"
               },
               {
                 "type": "underline",
-                "target": "step:3",
-                "at": "@마이너스 사 케이는",
-                "ttl_ms": 3500
+                "target": "step:4",
+                "at": "@이것이 답입니다"
               }
             ]
           },
@@ -384,8 +411,7 @@
               {
                 "type": "underline",
                 "target": "item:eq",
-                "at": "@start",
-                "ttl_ms": 3000
+                "at": "@start"
               }
             ]
           }
