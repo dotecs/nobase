@@ -778,11 +778,17 @@
                 "at": "@마이너스칠을 찍고"
               },
               {
-                "type": "bracket",
-                "axis": "x",
-                "from": -10.5,
-                "to": -7,
-                "label": "x ≤ −7",
+                "type": "region",
+                "id": "sol",
+                "ranges": [
+                  {
+                    "from": "-inf",
+                    "to": -7
+                  }
+                ],
+                "level": 1,
+                "color": "accent",
+                "label": "x \\le -7",
                 "at": "@왼쪽 전체가",
                 "ttl_ms": 0
               }
@@ -798,12 +804,7 @@
             "actions": [
               {
                 "type": "circle",
-                "position": {
-                  "x": -7,
-                  "y": 0
-                },
-                "rx": 0.35,
-                "ry": 0.35,
+                "target": "point:0",
                 "at": "@자신도 포함",
                 "ttl_ms": 4000
               },

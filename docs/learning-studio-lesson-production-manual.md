@@ -34,7 +34,7 @@
 | 유도·변형 | `steps` (`why` + `concept_id`) | 현재 줄만 밝고 나머지는 흐려짐(highlight dim_others). 한 문장에서 줄 2개를 다루면 둘 다 highlight |
 | 경우 비교·성질 나열 | `table` (`tone`) | **chain 카드 6개는 좁아서 깨진다** → 4개 초과면 table. 표 머리글과 셀 모두 `$…$` 수식 가능 |
 | 분류 | `tree` | |
-| 수직선 | `graph` + `number_line:true` | 점은 `label:"auto"`, 구간은 `bracket` |
+| 수직선 | `graph` + `number_line:true` | 점은 `label:"auto"`(짧은 세로 선으로 표시). **부등식의 해는 `region`**(채운 원/빈 원·무한 화살촉·조건별 level), 길이·이름 표시는 `bracket` |
 | 값 바꾸며 관찰 | `slider` | step은 분수 문자열, 꼭짓점이 y 범위 밖으로 안 나가게 param 범위 조정 |
 | 도형(정사각형 등) | `figure` + items·chalk | 이미지 또는 SVG 위에 비율 좌표(0~1)로 items·지시를 배치. 좌표는 **letterbox 여백을 뺀 실제 이미지 박스** 기준(LS4-9). items 없이도 좌표 지시 가능 |
 
@@ -55,6 +55,7 @@
 - **수식의 부분을 가리키기**: item의 tex 안에서 `\p{이름}{…}`으로 부분을 표시하면 `item:<id>/<이름>`이 지시 대상이 된다. 예: `\p{coef}{4}x^{\p{exp}{3}}` → `circle target:"item:t1/coef"`, `pointer target:"item:t1/exp"`. 생략된 지수 1의 자리는 `^{\p{cexp}{\vphantom{1}}}`(폭 0, 보이지 않음)로 만들어 가리킨다. **비율 좌표로 글자 위치를 어림하지 않는다.**
 - 손글씨 `arrow_to`: 좌표 대신 **항상 `{"target":"item:frac","anchor":"top"}`** 형태. 끝점은 대상 bbox 가장자리 바깥(anchor `top/bottom/left/right`, 기본 `edge`=메모에서 가장 가까운 변). 분수의 분자·분모는 `item:frac` + top/bottom, 식 오른쪽에 붙는 판정(참/거짓)은 `anchor:"right"`.
 - 손글씨 줄바꿈은 `\n`으로 직접. 한 줄 12자 넘기지 않기.
+- `region`(수직선 전용): `{"type":"region","id":"sol","ranges":[{"from":"-inf","to":-7}],"level":1,"color":"accent","label":"x \\le -7","at":"@…","ttl_ms":0}`. 범위마다 `open:"from"|"to"|"both"`로 빈 원, 생략이면 채운 원, `"inf"`/`"-inf"`는 화살촉. **한 조건 = 한 region = 한 level**(여러 범위도 같은 높이), 조건이 다르면 level·색을 다르게. 연립부등식은 `intersect_with:"r1"`로 공통 구간 띠. `region:sol`·`region:sol/0`은 지시 대상. 경계 포함을 말할 땐 region 전체 대신 그 점(`point:i`)을 circle.
 - 수직선 bracket 라벨은 `label_pos`로 위/아래 선택, 눈금 숫자와 겹치지 않게. 점 라벨은 자동 회피(반대편 → 스택 → 인출선)하므로 `label:"auto"`면 충분.
 - `headline.accent_bar:true`: 장면 제목 앞 세로 악센트 바. 뿌리깊은수학은 전 장면 켠다.
 
