@@ -1,3 +1,4 @@
+import {positionSchema} from './position';
 import { z } from 'zod';
 import { coordinate } from './coordinate';
 
@@ -16,7 +17,7 @@ export const calloutSchema = z.object({
   type: z.literal('callout'), id: z.string().regex(/^[a-z][a-z0-9-]*$/).optional(),
   target: z.string().min(1).max(160).optional(), from: point.optional(),
   anchor: z.enum(['top', 'bottom', 'left', 'right']).optional(),
-  position: point, tex: z.string().min(1).max(20000).optional(), text: z.string().min(1).max(20000).optional(),
+  position: positionSchema, tex: z.string().min(1).max(20000).optional(), text: z.string().min(1).max(20000).optional(),
   color: z.enum(['mint', 'accent', 'mark', 'hand', 'chalk']).optional(),
   size: z.enum(['sm', 'md', 'lg']).optional(), align: z.enum(['start', 'middle', 'end']).optional(),
   route: z.enum(['elbow', 'straight']).optional(), drop: finite.nonnegative().optional(), ...timing,

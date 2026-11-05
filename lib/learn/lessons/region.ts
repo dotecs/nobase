@@ -53,8 +53,8 @@ export function regionPointLabelObstacles(ranges: RegionGeometry[]): TargetBox[]
     ...(range.rightArrow ? [labelBox(range.right - 9, range.y - 5, 9, 10)] : []),
   ]);
 }
-export function regionGeometry(mark: RegionMark, sx: (x: number) => number, axisY: number, domain: [number, number]): RegionGeometry[] {
-  const y = axisY - (mark.action.level ?? 1) * 28;
+export function regionGeometry(mark: RegionMark, sx: (x: number) => number, axisY: number, domain: [number, number],levelHeight=28): RegionGeometry[] {
+  const y = axisY - (mark.action.level ?? 1) * levelHeight;
   return mark.action.ranges.map((range, index) => ({ ...regionInterval(range), index }))
     .sort((a, b) => a.from - b.from || a.to - b.to)
     .map((range, order) => ({ ...range, order }))

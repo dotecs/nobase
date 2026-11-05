@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState, type RefObject } from 'react';
 import type { TargetBox } from '@/lib/learn/lessons/chalk';
+import { overlayCoordinates } from '@/lib/learn/lessons/overlay-coordinates';
 
 /** Convert the rendered client rectangle back to the overlay's SVG coordinates. */
 export function localTargetBox(rect: Pick<DOMRect, 'left' | 'right' | 'top' | 'bottom'>, convert: (x: number, y: number) => { x: number; y: number }): TargetBox {
@@ -12,12 +13,12 @@ export function localTargetBox(rect: Pick<DOMRect, 'left' | 'right' | 'top' | 'b
 export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGSVGElement>, revision: string) {
   const [targets, setTargets] = useState<Record<string, TargetBox>>({});
   const measure = useCallback(() => {
-    const matrix = svg.current?.getScreenCTM();
-    if (!matrix || !root.current) return;
-    const inverse = matrix.inverse();
+    const overlay=svg.current;
+    if (!overlay || !root.current || !overlay.viewBox.baseVal.width) return;
+    const {toLocal}=overlayCoordinates(overlay.getBoundingClientRect(),overlay.viewBox.baseVal);
     const next: Record<string, TargetBox> = {};
     root.current.querySelectorAll<HTMLElement>('[data-stage-target]').forEach(element => {
-      next[element.dataset.stageTarget!] = localTargetBox(element.getBoundingClientRect(), (x, y) => new DOMPoint(x, y).matrixTransform(inverse));
+      next[element.dataset.stageTarget!] = localTargetBox(element.getBoundingClientRect(), toLocal);
     });
     setTargets(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
   }, [root, svg]);

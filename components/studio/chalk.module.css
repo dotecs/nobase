@@ -27,3 +27,6 @@
 .figureContent { position:absolute; inset:0; }
 
 .memo :global(.katex) { font-size:1em; }
+.layer[data-portrait="true"] { stroke-width:2px; }
+.layer[data-portrait="true"] path,.layer[data-portrait="true"] circle,.layer[data-portrait="true"] line,.layer[data-portrait="true"] rect { vector-effect:non-scaling-stroke; }
+.layer[data-portrait="true"] .memo { overflow-wrap:anywhere; white-space:pre-line; }

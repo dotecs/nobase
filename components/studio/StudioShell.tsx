@@ -1,4 +1,5 @@
 'use client';
+import {StageLayoutContext} from './StageLayout';
 import { useCallback,useEffect,useRef,useState,type ReactNode } from 'react';
 import { FiMaximize,FiMinimize,FiShield,FiSun,FiMoon,FiSidebar,FiX } from 'react-icons/fi';
 import type { Scene } from '@/lib/learn/lessons/schema';
@@ -8,6 +9,8 @@ import {StageFit} from './stages/StageFit';
 export function shouldAutoHideTransport(focused:boolean,coarse:boolean){return focused&&!coarse;}
 type Props={adminMode?:boolean;onAdminModeChange?:()=>void;reference?:ReactNode;sidebar?:ReactNode|((onNavigate:()=>void)=>ReactNode);scene:Scene;stage:ReactNode;controls?:ReactNode;player?:ReactNode;caption?:ReactNode;navigation?:ReactNode;theme?:'dark'|'light';onThemeChange?:(theme:'dark'|'light')=>void;overlay?:ReactNode;frame?:boolean;chrome?:boolean;focusMode?:boolean;onFocusChange?:(value:boolean)=>void};
 export default function StudioShell({adminMode,onAdminModeChange,reference,sidebar,scene,stage,controls,player,caption,navigation,theme,onThemeChange,overlay,frame=false,chrome=true,focusMode,onFocusChange}:Props){
+ const stageRef=useRef<HTMLDivElement>(null),[portrait,setPortrait]=useState(false);
+ useEffect(()=>{const el=stageRef.current;if(!el)return;const observer=new ResizeObserver(([entry])=>setPortrait(entry.contentRect.width<640));observer.observe(el);return()=>observer.disconnect();},[]);
  const [drawerOpen,setDrawerOpen]=useState(false),drawer=useRef<HTMLDialogElement>(null),drawerButton=useRef<HTMLButtonElement>(null);
  useEffect(()=>{const el=drawer.current;if(!el)return;if(drawerOpen&&!el.open)el.showModal();if(!drawerOpen&&el.open){el.close();drawerButton.current?.focus();}},[drawerOpen]);
  const playerRef=useRef<HTMLDivElement>(null),[playerHeight,setPlayerHeight]=useState(56);
@@ -31,7 +34,7 @@ export default function StudioShell({adminMode,onAdminModeChange,reference,sideb
   {focused&&chrome&&<button type="button" className={`${styles.focusButton} ${styles.exitFocus}`} aria-label="집중 모드 종료" onClick={exit}><FiMinimize aria-hidden="true"/><span className={styles.exitLabel}>집중 모드 종료</span></button>}
   <div className={styles.content}>
    <div className={styles.panel}>{sidebarContent}</div>
-   <div className={styles.stageColumn}><div className={styles.overlayTitle} data-scene-title="overlay" data-accent-bar={headline?.accent_bar}>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h2 title={title}>{title}</h2></div><div className={styles.stageTools}>{reference}{controls&&<div className={styles.parameterSlot}>{controls}</div>}</div><div key={scene.id} className={styles.stage}>{(['graph','slider','figure'].includes(scene.stage.type)||(scene.stage.type!=='board'&&(itemsOf(scene.stage).length>0||scene.narration.some(sentence=>sentence.cue?.actions?.some(action=>action.type==='callout')))))?stage:<StageFit intrinsic={scene.stage.type==='tree'||scene.stage.type==='board'||itemsOf(scene.stage).length>0}>{stage}</StageFit>}</div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&!navigation&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
+   <div className={styles.stageColumn}><div className={styles.overlayTitle} data-scene-title="overlay" data-accent-bar={headline?.accent_bar}>{headline?.eyebrow&&<p className={styles.eyebrow}>{headline.eyebrow}</p>}<h2 title={title}>{title}</h2></div><div className={styles.stageTools}>{reference}{controls&&<div className={styles.parameterSlot}>{controls}</div>}</div><div ref={stageRef} className={styles.stage} data-layout={portrait?'portrait':'landscape'}><StageLayoutContext.Provider value={portrait}>{(['graph','slider','figure'].includes(scene.stage.type)||(scene.stage.type!=='board'&&(itemsOf(scene.stage).length>0||scene.narration.some(sentence=>sentence.cue?.actions?.some(action=>action.type==='callout')))))?stage:<StageFit intrinsic={scene.stage.type==='tree'||scene.stage.type==='board'||itemsOf(scene.stage).length>0}>{stage}</StageFit>}</StageLayoutContext.Provider></div>{player&&<div ref={captionRef} className={styles.captionSlot} data-empty={!caption}>{caption}</div>}{player&&!navigation&&<div ref={playerRef} className={styles.playerSlot}>{player}</div>}</div>
   </div>
   <footer ref={navigation?playerRef:undefined} className={styles.navigation}>{navigation}</footer>
   <dialog ref={drawer} className={styles.drawer} aria-label="전체 교육 과정" onCancel={()=>setDrawerOpen(false)} onClick={e=>{if(e.target===e.currentTarget)setDrawerOpen(false);}}><button type="button" className={`${styles.focusButton} ${styles.iconButton}`} aria-label="닫기" title="과정 메뉴 닫기" onClick={()=>setDrawerOpen(false)}><FiX aria-hidden="true"/></button>{sidebarContent}</dialog>

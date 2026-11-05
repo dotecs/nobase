@@ -9,9 +9,9 @@ export function strikeTargets(action: StrikeAction, elapsed: number) {
     return local < 0 ? [] : targets.map(target => ({target,progress:Math.min(1,local/400)}));
   });
 }
-export function strikePoints(box: TargetBox, direction: '/'|'\\' = '/') {
+export function strikePoints(box: TargetBox, direction: '/'|'\\' = '/',extension=4) {
   const from = {x:box.left,y:direction === '/' ? box.bottom : box.top};
   const to = {x:box.right,y:direction === '/' ? box.top : box.bottom};
   const dx=to.x-from.x,dy=to.y-from.y,length=Math.hypot(dx,dy)||1;
-  return linePoints({x:from.x-4*dx/length,y:from.y-4*dy/length},{x:to.x+4*dx/length,y:to.y+4*dy/length});
+  return linePoints({x:from.x-extension*dx/length,y:from.y-extension*dy/length},{x:to.x+4*dx/length,y:to.y+4*dy/length});
 }

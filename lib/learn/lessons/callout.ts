@@ -26,21 +26,22 @@ export function placeCallouts(notes: { id: string; x: number; y: number; width: 
   return result;
 }
 
-export function calloutGeometry(action: CalloutAction, source: TargetBox | ChalkPoint, note: TargetBox) {
+export function calloutGeometry(action: CalloutAction, source: TargetBox | ChalkPoint, note: TargetBox, compact=false) {
   const anchor = action.anchor ?? 'bottom';
-  const dot = 'left' in source ? boxAnchor(source, note, anchor, 6) : source;
+  const dot = 'left' in source ? boxAnchor(source, note, anchor, compact?2:6) : source;
   const opposite = { bottom: 'top', top: 'bottom', left: 'right', right: 'left' } as const;
-  const end = boxAnchor(note, dot, opposite[anchor], 6);
+  const end = boxAnchor(note, dot, opposite[anchor], compact?2:6);
   const drop = action.drop ?? 24;
   const vertical = anchor === 'top' || anchor === 'bottom';
   const direction = anchor === 'top' || anchor === 'left' ? -1 : 1;
   const turn = vertical ? { x: dot.x, y: dot.y + direction * drop } : { x: dot.x + direction * drop, y: dot.y };
   const corner = vertical ? { x: end.x, y: turn.y } : { x: turn.x, y: end.y };
-  const points = (action.route === 'straight' ? [dot, end] : [dot, turn, corner, end])
+  const points = (compact || action.route === 'straight' ? [dot, end] : [dot, turn, corner, end])
     .filter((point, index, all) => !index || point.x !== all[index - 1].x || point.y !== all[index - 1].y);
   const previous = points.at(-2) ?? { x: end.x, y: end.y - 1 };
   const distance = Math.hypot(end.x - previous.x, end.y - previous.y) || 1;
   const dx = (end.x - previous.x) / distance, dy = (end.y - previous.y) / distance;
-  const head = [end, { x: end.x - dx * 9 - dy * 4, y: end.y - dy * 9 + dx * 4 }, { x: end.x - dx * 9 + dy * 4, y: end.y - dy * 9 - dx * 4 }];
+  const length=compact?6:9,half=compact?3:4;
+  const head = [end, { x: end.x - dx * length - dy * half, y: end.y - dy * length + dx * half }, { x: end.x - dx * length + dy * half, y: end.y - dy * length - dx * half }];
   return { dot, end, points, head };
 }

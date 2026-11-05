@@ -1,3 +1,4 @@
+import {nearBox,type Position} from './position';
 import type {Action} from './action-schema';
 import type {ChalkAction} from './chalk-schema';
 import {actionExpiry,instructionOpacity} from './action-lifetime';
@@ -6,10 +7,10 @@ import {numeric} from '../mathcheck/evaluate';
 export type ChalkMark={id:string;action:ChalkAction;progress:number;opacity:number;elapsed:number;yRange?:[number,number]};
 export type ChalkPoint={x:number;y:number};
 export type TargetBox={left:number;top:number;right:number;bottom:number;x:number;y:number};
-export type ChalkSpace={sx:(n:number)=>number;sy:(n:number)=>number;x:[number,number];y:[number,number];target:(id:string)=>TargetBox|null;fns?:{expr:string}[];params?:Record<string,number>};
+export type ChalkSpace={portrait?:boolean;noteBoxes?:Record<string,TargetBox>;sx:(n:number)=>number;sy:(n:number)=>number;x:[number,number];y:[number,number];target:(id:string)=>TargetBox|null;fns?:{expr:string}[];params?:Record<string,number>};
 export function isChalk(action:Action):action is ChalkAction{return ['pointer','circle','underline','strike','arrow','bracket','shade','handwrite','flash'].includes(action.type);}
 export function chalkAt(action:ChalkAction,start:number,time:number,id:string,sentenceEnd=Infinity):ChalkMark|null{const elapsed=time-start,opacity=instructionOpacity(start,actionExpiry(action,start,sentenceEnd),time);if(elapsed<0||opacity<=0)return null;return {id,action,elapsed,progress:Math.min(1,elapsed/400),opacity};}
-export function chalkPoint(value:string|ChalkPoint,space:ChalkSpace):ChalkPoint|null{return typeof value==='string'?space.target(value):{x:space.sx(value.x),y:space.sy(value.y)};}
+export function chalkPoint(value:string|Position,space:ChalkSpace):ChalkPoint|null{if(typeof value==='string')return space.target(value);if('near' in value){const box=space.target(value.near);return box?nearBox(box,0,0,value.side,value.gap):null;}return {x:space.sx(value.x),y:space.sy(value.y)};}
 /** Point on the edge of a target's box (6px outside) so arrows stop at the glyph instead of piercing it. */
 /** 2026-11-02 대표 결정: 분필 선은 흔들림 없이 곧게 그린다. wobble 인자는 호환용으로만 남긴다. */
 export function chalkLine(points:ChalkPoint[],_wobble=false,close=false){void _wobble;if(!points.length)return '';return points.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+','+p.y.toFixed(2)).join(' ')+(close?' Z':'');}

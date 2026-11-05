@@ -1,4 +1,6 @@
 'use client';
+import {usePortrait} from './StageLayout';
+import {PortraitSurface} from './PortraitSurface';
 import {useLessonCompletion} from './useLessonCompletion';
 import {ReferenceChip} from './ReferenceChip';
 import {CourseSidebar} from './CourseSidebar';
@@ -44,4 +46,4 @@ export function StudioViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=E
  </StudioPlayer></StudioFrame>;
 }
 
-function ChalkStage({scene,state,children}:{scene:import('@/lib/learn/lessons/schema').Scene;state:import('@/lib/learn/lessons/stage-state').StageState;children:React.ReactNode}){return ['graph','slider'].includes(scene.stage.type)?children:<ChalkSurface scene={scene} state={state} marks={state.chalk??[]} revision={scene.id+JSON.stringify(state.revealed)}>{children}</ChalkSurface>;}
+function ChalkStage({scene,state,children}:{scene:import('@/lib/learn/lessons/schema').Scene;state:import('@/lib/learn/lessons/stage-state').StageState;children:React.ReactNode}){const portrait=usePortrait();if(portrait&&scene.stage.type!=='figure')return <PortraitSurface scene={scene} state={state}>{children}</PortraitSurface>;return ['graph','slider'].includes(scene.stage.type)?children:<ChalkSurface scene={scene} state={state} marks={state.chalk??[]} revision={scene.id+JSON.stringify(state.revealed)}>{children}</ChalkSurface>;}

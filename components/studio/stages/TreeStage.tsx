@@ -1,3 +1,5 @@
+import {usePortrait} from '../StageLayout';
+import {treeNodes} from '@/lib/learn/lessons/tree';
 import {instructionColor,targetOpacity} from '@/lib/learn/lessons/instruction-style';
 import { StudioMath } from '../StudioMath';
 import { LessonText } from '@/components/learn/lesson/LessonText';
@@ -6,9 +8,11 @@ import type { StageState } from '@/lib/learn/lessons/stage-state';
 import styles from './tree.module.css';
 
 export function TreeStage({ stage, state }: { stage: TreeStageData; state: StageState }) {
+  const portrait=usePortrait();
   const layout = layoutTree(stage.root, stage.direction);
   const visible = new Set(state.revealed.tree ?? layout.nodes.map(({ node }) => node.id));
   const opacity = (id: string) => targetOpacity(state,'tree:'+id);
+  if(portrait)return <div className={styles.portraitTree}>{treeNodes(stage.root).filter(({node})=>visible.has(node.id)).map(({node,ancestors})=><div key={node.id} data-stage-target={'tree:'+node.id} style={{marginLeft:ancestors.length*8,color:instructionColor(state,'tree:'+node.id),opacity:opacity(node.id)}}>{node.tex&&<StudioMath state={state} tex={node.tex} target={'tree:'+node.id}/>}<LessonText authored text={node.label}/></div>)}</div>;
   return <div className={styles.tree} role="group" aria-label="수형도" style={{ width: layout.width, height: layout.height }}>
     <svg className={styles.connections} width={layout.width} height={layout.height} aria-hidden="true">
       {layout.edges.filter(edge => visible.has(edge.id) && visible.has(edge.parent)).map(edge => <path

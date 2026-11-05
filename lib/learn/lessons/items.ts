@@ -1,5 +1,6 @@
+import {positionSchema} from './position';
 import { z } from 'zod';
-import { coordinate } from './coordinate';
+import {nearBox} from './position';
 import { formulaValues } from './format-num';
 import { snapToStep } from './stage-controls';
 import type { Scene } from './schema';
@@ -14,7 +15,8 @@ export const itemsSchema = z.array(z.object({
   id: itemId,
   tex: z.string().min(1).max(20000).optional(),
   text: z.string().min(1).max(20000).optional(),
-  position: z.object({ x: coordinate, y: coordinate }).optional(),
+  position: positionSchema.optional(),
+  order:z.number().finite().optional(),
   group: itemId.optional(),
   gap: z.string().regex(/^\d+(?:\.\d+)?(?:em|px)$/).optional(),
   size: z.enum(['sm', 'md', 'lg', 'xl']).optional(),
@@ -63,7 +65,7 @@ export function itemErrors(stage: { type: string; items?: BoardItem[]; initial?:
     if (!follower && !item.position) errors.push('item 또는 group 첫 항의 position이 필요합니다.');
     if (!item.group && item.gap) errors.push('gap에는 group이 필요합니다.');
     if (item.group) groups.add(item.group);
-    if (!graph && Object.values(item.position ?? {}).some(value => value < 0 || value > 1)) errors.push('비그래프 item 좌표는 0~1이어야 합니다: ' + item.id);
+    if (!graph && item.position && !('near' in item.position) && Object.values(item.position).some(value => value < 0 || value > 1)) errors.push('비그래프 item 좌표는 0~1이어야 합니다: ' + item.id);
     for (const match of (item.tex ?? item.text ?? '').matchAll(/\{\{([^}]+)\}\}/g)) {
       if (stage.type !== 'slider' || match[1] !== stage.param?.name) errors.push('없는 item 파라미터: ' + match[1]);
     }
@@ -86,6 +88,7 @@ export function itemContent(item: BoardItem, params: Record<string, number>) {
 }
 
 /** Graph callers supply data scales; other stages supply normalized canvas scales. */
-export function itemPosition(item: BoardItem, space: Pick<ChalkSpace, 'sx' | 'sy'>) {
+export function itemPosition(item: BoardItem, space: Pick<ChalkSpace, 'sx' | 'sy'> & Partial<Pick<ChalkSpace,'target'>>) {
+  if(item.position&&'near' in item.position){const target=space.target?.(item.position.near),own=space.target?.('item:'+item.id);const box=target&&nearBox(target,own?own.right-own.left:0,own?own.bottom-own.top:0,item.position.side,item.position.gap);return box?{x:box.x,y:box.top}:{x:0,y:0};}
   return { x: space.sx(item.position!.x), y: space.sy(item.position!.y) };
 }

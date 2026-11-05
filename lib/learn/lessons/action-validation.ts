@@ -31,20 +31,22 @@ export function actionErrors(scene:Scene):string[]{
   errors.push(...duplicateParts('item:'+callout.id,callout.tex??''));
  }
 
+ for(const item of itemsOf(stage))if(item.position&&'near' in item.position&&(!valid(item.position.near)||item.position.near==='item:'+item.id))errors.push('item near 대상 오류');
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');
  for(const sentence of scene.narration)for(const action of sentence.cue?.actions??[]){
+  if('position' in action&&action.position&&'near' in action.position&&!valid(action.position.near))errors.push('near 대상 범위 오류');
   if(typeof action.at==='string'){const result=resolveAnchor(action.at as At,sentence,null,1000);if(result.warning||result.source==='caption')errors.push(result.warning??'앵커는 TTS 대본에 있어야 합니다: '+action.at);}
   if(action.type==='tint'&&(!/^(item|step|node|row|cell|tree|region):/.test(action.target)||!valid(action.target)))errors.push('tint 대상 범위 오류');
   if(action.type==='callout'){
    if(action.target&&(!valid(action.target)||action.target==='item:'+action.id))errors.push('callout 대상 범위 오류');
-   if(!graph&&[action.position,...(action.from?[action.from]:[])].some(p=>p.x<0||p.x>1||p.y<0||p.y>1))errors.push('callout 비율 좌표는 0~1이어야 합니다.');
+   if(!graph&&[...('x' in action.position?[action.position]:[]),...(action.from?[action.from]:[])].some(p=>p.x<0||p.x>1||p.y<0||p.y>1))errors.push('callout 비율 좌표는 0~1이어야 합니다.');
    for(const match of (action.tex??action.text??'').matchAll(/\{\{([^}]+)\}\}/g))if(stage.type!=='slider'||match[1]!==stage.param.name)errors.push('없는 callout 파라미터: '+match[1]);
   }
   if(action.type==='strike'&&(action.pairs?.flat()??action.targets??[action.target!]).some(target=>!valid(target)))errors.push('strike 대상 범위 오류');
   if(isChalk(action)){if(action.type==='handwrite'&&action.arrow_to&&'target' in action.arrow_to&&!valid(action.arrow_to.target))errors.push('메모 화살표 대상 오류');if('target' in action&&action.target&&!valid(action.target))errors.push('칠판 대상 범위 오류');if(action.type==='arrow'&&[action.from,action.to].some(p=>typeof p==='string'?!valid(p):!(graph||ratioChalk)))errors.push('화살표 대상 또는 좌표 오류');if(['bracket','shade'].includes(action.type)&&!graph)errors.push('칠판 좌표는 그래프 무대에서 사용하세요.');if((action.type==='handwrite'||(action.type==='circle'&&!action.target))&&!(graph||ratioChalk))errors.push('칠판 좌표는 그래프 또는 board에서 사용하세요.');if(action.type==='pointer'&&(typeof action.at==='object'||action.position)&&!(graph||ratioChalk))errors.push('pointer 좌표는 그래프 전용입니다.');if(action.type==='shade'&&[...action.region.matchAll(/fn:(\d+)/g)].some(m=>Number(m[1])>=counts.fn))errors.push('shade 함수 범위 오류');}
   if(ratioChalk&&isChalk(action)) {
    const coordinates:{x:number;y:number}[]=[];
-   if(action.position)coordinates.push(action.position);
+   if(action.position&&'x' in action.position)coordinates.push(action.position);
    if(typeof action.at==='object')coordinates.push(action.at);
    if(action.type==='arrow'){if(typeof action.from!=='string')coordinates.push(action.from);if(typeof action.to!=='string')coordinates.push(action.to);}
    if(action.type==='underline'){if(action.from)coordinates.push(action.from);if(action.to)coordinates.push(action.to);}

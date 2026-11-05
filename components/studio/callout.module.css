@@ -9,3 +9,7 @@
 .note :global(.katex) { font-size:1em; }
 .note :global(.katex-display) { margin:0; }
 @media(prefers-reduced-motion:reduce) { .dot,.head,.note { opacity:1 !important; } .line { stroke-dashoffset:0; } }
+:global([data-layout="portrait"]) .note { font-size:18px; white-space:normal; overflow-wrap:anywhere; }
+:global([data-layout="portrait"]) .note[data-size="sm"] { font-size:15px; }
+:global([data-layout="portrait"]) .note[data-size="lg"] { font-size:24px; }
+:global([data-layout="portrait"]) .line { stroke-width:2px; vector-effect:non-scaling-stroke; }

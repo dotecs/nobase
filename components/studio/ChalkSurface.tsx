@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {containedImageBox,figureSpace} from '@/lib/learn/lessons/figure-space';
 import {localTargetBox} from './useTargetBoxes';
+import {overlayCoordinates} from '@/lib/learn/lessons/overlay-coordinates';
 import type { TargetBox, ChalkMark } from '@/lib/learn/lessons/chalk';
 import type { Scene } from '@/lib/learn/lessons/schema';
 import type { StageState } from '@/lib/learn/lessons/stage-state';
@@ -39,8 +40,8 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
     const element=root.current,image=element?.querySelector<HTMLImageElement>('[data-figure-image]');
     if(!element||!image)return;
     const measure=()=>{
-      const rect=element.getBoundingClientRect(),box=containedImageBox(image.getBoundingClientRect(),image.naturalWidth,image.naturalHeight);
-      const next=box&&rect.width&&rect.height?localTargetBox(box,(x,y)=>({x:(x-rect.left)*element.offsetWidth/rect.width,y:(y-rect.top)*element.offsetHeight/rect.height})):null;
+      const rect=svg.current?.getBoundingClientRect(),box=containedImageBox(image.getBoundingClientRect(),image.naturalWidth,image.naturalHeight);
+      const next=box&&rect?.width&&rect.height?localTargetBox(box,overlayCoordinates(rect,{x:0,y:0,width:element.offsetWidth,height:element.offsetHeight}).toLocal):null;
       setImageBox(previous=>JSON.stringify(previous)===JSON.stringify(next)?previous:next);
     };
     const observer=new ResizeObserver(measure);observer.observe(element);observer.observe(image);
@@ -54,7 +55,7 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
     x:[0,normalized?1:size.width] as [number,number], y:[0,normalized?1:size.height] as [number,number], target:(id:string)=>targets[id]??null };
   return <div ref={root} className={styles.surface} data-canvas={canvas} data-board={scene.stage.type === 'board'}>
     {scene.stage.type === 'figure' ? <div className={styles.figureContent}>{children}</div> : canvas ? <div className={styles.canvasContent}><StageFit intrinsic={scene.stage.type === 'tree'}>{children}</StageFit></div> : children}
-    <BoardItems items={ready?items:[]} state={state} params={itemParameters(scene.stage, state.params)} space={coordinates} />
+    <BoardItems items={ready?items:[]} state={state} params={itemParameters(scene.stage, state.params)} space={{...coordinates,target:space.target}} />
     <svg ref={svg} className={styles.overlay} viewBox={'0 0 ' + size.width + ' ' + size.height}>
       {ready && <CalloutLayer state={state} space={space} boxes={targets} params={itemParameters(scene.stage,state.params)} />}
       <ChalkLayer marks={ready?marks:[]} space={{

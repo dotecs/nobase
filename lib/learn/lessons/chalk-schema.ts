@@ -1,7 +1,8 @@
+import {positionSchema} from './position';
 import {coordinate} from './coordinate';
 import {z} from 'zod';
 const finite=z.number().finite(),point=z.object({x:coordinate,y:coordinate}),target=z.string().min(1).max(160);
-const common={position:point.optional(),at:z.union([finite.nonnegative(),z.string().regex(/^@.+$/),point]).optional(),at_ms:finite.nonnegative().optional(),ttl_ms:finite.nonnegative().optional(),until:z.enum(['sentence','scene']).optional(),color:z.enum(['mark','hand','chalk','accent']).optional()};
+const common={position:positionSchema.optional(),at:z.union([finite.nonnegative(),z.string().regex(/^@.+$/),point]).optional(),at_ms:finite.nonnegative().optional(),ttl_ms:finite.nonnegative().optional(),until:z.enum(['sentence','scene']).optional(),color:z.enum(['mark','hand','chalk','accent']).optional()};
 const hasPoint=(a:{at?:unknown;position?:unknown})=>!!a.position||(typeof a.at==='object'&&a.at!==null);
 export const chalkOptions=[
  z.object({type:z.literal('strike'),...common,target:target.optional(),targets:z.array(target).min(1).optional(),pairs:z.array(z.tuple([target,target])).min(1).optional(),stagger_ms:finite.nonnegative().optional(),direction:z.enum(['/','\\']).optional()}).refine(a=>[a.target,a.targets,a.pairs].filter(Boolean).length===1,'strike에는 target, targets, pairs 중 하나를 지정하세요.'),

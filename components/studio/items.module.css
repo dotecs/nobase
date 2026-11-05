@@ -22,3 +22,11 @@
 .group[data-size="lg"] { font-size:34px; }
 .group[data-size="xl"] { font-size:44px; }
 .item[data-grouped="true"] { position:relative; transform:none; flex:none; white-space:nowrap; }
+.item[data-portrait-item="true"] { font-size:var(--studio-type-md); overflow-wrap:anywhere; white-space:normal; }
+.item[data-portrait-item="true"][data-size="xl"] { font-size:var(--studio-type-xl); }
+.item[data-portrait-item="true"][data-size="lg"] { font-size:var(--studio-type-lg); }
+.item[data-portrait-item="true"][data-size="sm"] { font-size:var(--studio-type-sm); }
+:global([data-layout="portrait"]) .item { font-size:var(--studio-type-md); }
+:global([data-layout="portrait"]) .item[data-size="xl"] { font-size:var(--studio-type-xl); }
+:global([data-layout="portrait"]) .item[data-size="lg"] { font-size:var(--studio-type-lg); }
+:global([data-layout="portrait"]) .item[data-size="sm"] { font-size:var(--studio-type-sm); }
