@@ -1,6 +1,8 @@
 import {graphScale,type GraphViewport} from './graph';
-export function equalGraph(camera:{x:[number,number];y:[number,number]},viewport:GraphViewport,aspect:'equal'|'free'='equal',numberLine=false){
- if(numberLine){const w=viewport.width-viewport.left-viewport.right,h=viewport.height-viewport.top-viewport.bottom,unit=w/(camera.x[1]-camera.x[0]),cy=(camera.y[0]+camera.y[1])/2;const y:[number,number]=[cy-h/unit/2,cy+h/unit/2];return {x:camera.x,y,...graphScale(camera.x,y,viewport),unitX:unit,unitY:unit};}
+export function equalGraph(camera:{x:[number,number];y:[number,number]},viewport:GraphViewport,aspect:'equal'|'free'='equal',numberLine=false,aboveAxis=0){
+ if(numberLine){const w=viewport.width-viewport.left-viewport.right,h=viewport.height-viewport.top-viewport.bottom,unit=w/(camera.x[1]-camera.x[0]),cy=(camera.y[0]+camera.y[1])/2;const y:[number,number]=[cy-h/unit/2,cy+h/unit/2];const scale=graphScale(camera.x,y,viewport);
+  if(aboveAxis>0){const desired=Math.max(viewport.top+aboveAxis,Math.min(viewport.height-viewport.bottom-12,scale.sy(0))),shift=desired-scale.sy(0);y[0]+=shift/unit;y[1]+=shift/unit;}
+  return {x:camera.x,y,...graphScale(camera.x,y,viewport),unitX:unit,unitY:unit};}
  const w=viewport.width-viewport.left-viewport.right,h=viewport.height-viewport.top-viewport.bottom,unit=Math.min(w/(camera.x[1]-camera.x[0]),h/(camera.y[1]-camera.y[0])),cx=(camera.x[0]+camera.x[1])/2,cy=(camera.y[0]+camera.y[1])/2;
  const x:[number,number]=aspect==='equal'?[cx-w/unit/2,cx+w/unit/2]:camera.x,y:[number,number]=aspect==='equal'?[cy-h/unit/2,cy+h/unit/2]:camera.y;
  return {x,y,...graphScale(x,y,viewport),unitX:w/(x[1]-x[0]),unitY:h/(y[1]-y[0])};

@@ -17,6 +17,8 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  if(sentenceStarts.length!==scene.narration.length||sentenceStarts.some((value,i)=>!Number.isFinite(value)||value<0||(i>0&&value<sentenceStarts[i-1])))throw new Error('Invalid sentence timeline');
  const stage=scene.stage,isGraph=stage.type==='graph'||stage.type==='slider',fns=stage.type==='graph'?stage.fns:stage.type==='slider'?[{expr:stage.expr}]:[];
  const state:StageState={params:stage.type==='slider'?{[stage.param.name]:stage.param.init}:{},drawProgress:{},visibleFns:fns.flatMap((_,i)=>isGraph&&stage.initial?.hidden_fns?.includes(i)?[]:[i]),points:[],highlight:null,dimOthers:true,camera:isGraph?{x:[...stage.x],y:[...stage.y]}:{x:[-4,4],y:[-3,7]},labels:[],band:stage.type==='graph'&&stage.band?[...stage.band]:null,revealed:{step:[],node:[],row:[]},pulses:{},warnings:[],chalk:[]};
+ state.regions=[];
+ state.regionMaxLevel=Math.max(0,...scene.narration.flatMap(sentence=>sentence.cue?.actions??[]).filter(action=>action.type==='region').map(action=>action.level??1));
  const items=itemsOf(stage);
  if(items.length) {
   const initial='initial' in stage?stage.initial:undefined;
@@ -41,6 +43,11 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  for(const [eventIndex,{action,start}] of events.entries()){if(start>time)break;advance(start);
   if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex);if(mark)state.chalk!.push(mark);continue;}
   switch(action.type){
+   case 'region':{
+    const elapsed=time-start,ttl=action.ttl_ms??0;
+    if(!ttl||elapsed<ttl)state.regions!.push({id:'region-event:'+eventIndex,action,elapsed,opacity:ttl?Math.min(1,(ttl-elapsed)/Math.min(200,ttl)):1});
+    break;
+   }
    case 'tint':tints.set(action.target,{color:action.color,expires:action.ttl_ms?start+action.ttl_ms:Infinity});break;
    case 'callout':{
     const elapsed=time-start,ttl=action.ttl_ms??0;
@@ -74,7 +81,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
    case 'label':{const position=action.position??(typeof action.at==='object'?action.at:undefined);if(position)state.labels.push({text:action.text,tex:action.tex,at:{...position},anchor:action.anchor});break;}
    case 'band':state.band=action.y?[...action.y]:null;state.chalk=state.chalk!.filter(m=>m.id!=='legacy-band');if(action.y)state.chalk!.push({...chalkAt({type:'shade',region:'above:axis',ttl_ms:0,color:'accent'},start,time,'legacy-band')!,yRange:action.y});break;
    case 'pulse':pulses.set(action.target,start);break;
-   case 'clear':if(!action.what||action.what==='all'){state.band=null;state.chalk=[];state.callouts=[];}if(!action.what||action.what==='all'||action.what==='tint')tints.clear();if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
+   case 'clear':if(!action.what||action.what==='all'||action.what==='region')state.regions=[];if(!action.what||action.what==='all'){state.band=null;state.chalk=[];state.callouts=[];}if(!action.what||action.what==='all'||action.what==='tint')tints.clear();if(!action.what||action.what==='all'||action.what==='labels')state.labels=[];if(!action.what||action.what==='all'||action.what==='points')points=[];if(!action.what||action.what==='all'||action.what==='highlight'){state.highlight=null;pulses.clear();}break;
   }
  }
  state.tints=Object.fromEntries([...tints].filter(([,value])=>value.expires>time).map(([target,value])=>[target,value.color]));
