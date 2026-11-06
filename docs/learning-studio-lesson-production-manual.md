@@ -59,6 +59,7 @@
 - 대상은 요소 기준(`item:<id>`, `step:i`, `row:i`, `tree:<id>`, `axis:x`). bbox로 그려지므로 레이아웃이 바뀌어도 따라간다.
 - **수식의 부분을 가리키기**: item의 tex 안에서 `\p{이름}{…}`으로 부분을 표시하면 `item:<id>/<이름>`이 지시 대상이 된다. 예: `\p{coef}{4}x^{\p{exp}{3}}` → `circle target:"item:t1/coef"`, `pointer target:"item:t1/exp"`. 생략된 지수 1의 자리는 `^{\p{cexp}{\vphantom{1}}}`(폭 0, 보이지 않음)로 만들어 가리킨다. **비율 좌표로 글자 위치를 어림하지 않는다.**
 - 손글씨 `arrow_to`: 좌표 대신 **항상 `{"target":"item:frac","anchor":"top"}`** 형태. 끝점은 대상 bbox 가장자리 바깥(anchor `top/bottom/left/right`, 기본 `edge`=메모에서 가장 가까운 변). 분수의 분자·분모는 `item:frac` + top/bottom, 식 오른쪽에 붙는 판정(참/거짓)은 `anchor:"right"`.
+- **식 안의 항끼리 잇는 화살표**(분배법칙 A → AB, A → AC 등)는 `"bend":"up"`으로 식 위를 지나는 곡선으로. 여러 개면 `height`를 다르게(가까운 것 34, 먼 것 62) 줘서 서로 겹치지 않게. 직선 화살표는 식을 가로지르므로 같은 줄 항끼리는 쓰지 않는다.
 - 손글씨 줄바꿈은 `\n`으로 직접. 한 줄 12자 넘기지 않기.
 - `region`(수직선 전용): `{"type":"region","id":"sol","ranges":[{"from":"-inf","to":-7}],"level":1,"color":"accent","label":"x \\le -7","at":"@…","ttl_ms":0}`. 범위마다 `open:"from"|"to"|"both"`로 빈 원, 생략이면 채운 원, `"inf"`/`"-inf"`는 화살촉. **한 조건 = 한 region = 한 level**(여러 범위도 같은 높이), 조건이 다르면 level·색을 다르게. 연립부등식은 `intersect_with:"r1"`로 공통 구간 띠. `region:sol`·`region:sol/0`은 지시 대상. 경계 포함을 말할 땐 region 전체 대신 그 점(`point:i`)을 circle.
 - 수직선에서 눈금과 같은 값의 점(−7 위의 −7)은 `label`을 생략한다 — 눈금이 이미 읽어 준다. 점 라벨은 region 선·마커를 피해 자동 배치되지만, 중복 라벨은 처음부터 두지 않는다.
