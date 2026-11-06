@@ -65,13 +65,7 @@
     {
      "no": 11,
      "title": "이차방정식의 판별식",
-     "lesson_id": "rm-11",
-     "worked": [
-      {
-       "title": "문제풀이 1 · 실근을 갖지 않을 조건",
-       "lesson_id": "rm-11-w1"
-      }
-     ]
+     "lesson_id": "rm-11"
     }
    ]
   },

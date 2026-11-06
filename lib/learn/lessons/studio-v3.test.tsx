@@ -4,7 +4,9 @@ it('loads Poor Story only through studio route layouts without preload',()=>{con
 
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CourseSidebar} from '@/components/studio/CourseSidebar';
-import root from '@/content/curricula/root-math.json';
+import rootBase from '@/content/curricula/root-math.json';
+// Worked lessons are not in the published curriculum right now; keep the sidebar contract covered with a fixture.
+const root={...rootBase,chapters:rootBase.chapters.map(chapter=>({...chapter,items:chapter.items.map(item=>item.lesson_id==='rm-11'?{...item,worked:[{title:'문제풀이 1 · 실근을 갖지 않을 조건',lesson_id:'rm-11-w1'}]}:item)}))};
 import {studioDemo} from './studio-demo';
 import {currentChapter} from './curriculum';
 it('opens chapter 02 and marks current or worked lessons while disabling unavailable entries',()=>{for(const id of ['rm-11','rm-11-w1']){expect(currentChapter(root,id)).toBe(2);const html=renderToStaticMarkup(<CourseSidebar lesson={{...studioDemo,id}} index={0} course={{curriculum:root,available:['rm-11','rm-11-w1']}}/>);expect(html).toContain('aria-current="page"');expect(html).toContain('aria-disabled="true"');expect(html).not.toContain('href="/learn/lesson/rm-01"');}});
