@@ -843,14 +843,36 @@
               },
               {
                 "type": "handwrite",
-                "text": "x = −8 → 좌변 −27, 우변 −28\n−27 ≥ −28 ✓",
+                "tex": "3x-3\\ge4(x+3)-8",
                 "position": {
-                  "x": -4.5,
-                  "y": 1.6
+                  "x": -5.6,
+                  "y": 2.0
                 },
                 "align": "start",
-                "at": "@예를 들어",
-                "ttl_ms": 10000
+                "until": "sentence",
+                "at": "@원래 식에"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\text{좌변: }3\\times(-8)-3=-27",
+                "position": {
+                  "x": -5.6,
+                  "y": 1.35
+                },
+                "align": "start",
+                "until": "sentence",
+                "at": "@좌변은"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\text{우변: }4\\times(-8+3)-8=-28",
+                "position": {
+                  "x": -5.6,
+                  "y": 0.7
+                },
+                "align": "start",
+                "until": "sentence",
+                "at": "@우변은"
               }
             ]
           }

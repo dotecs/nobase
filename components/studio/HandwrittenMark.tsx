@@ -42,7 +42,7 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
   anchor.x = Math.max(left + offset + 8, Math.min(right - width + offset, anchor.x));
   anchor.y = Math.max(top + 32, Math.min(bottom - height + 26, anchor.y));
   }
-  const rotation = space.portrait?0:action.rotate ?? -4;
+  const rotation = space.portrait?0:action.rotate ?? 0;
   const bounds = rotatedMemoBounds({ left: anchor.x - offset, top: anchor.y - 26, width, height }, anchor, rotation);
   const arrowTo = space.portrait&&action.arrow_to&&!('target' in action.arrow_to)?undefined:action.arrow_to;
   const destination = arrowTo ? ('target' in arrowTo ? targetAnchor(arrowTo.target, bounds, space, arrowTo.anchor) : chalkPoint(arrowTo, space)) : null;
