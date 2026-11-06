@@ -1,0 +1,1300 @@
+{
+  "id": "rm-10",
+  "kind": "concept",
+  "title": "이차방정식의 해법",
+  "pack_id": "root-math",
+  "ability_ids": [
+    "05-3"
+  ],
+  "intro": "이차방정식을 푸는 두 가지 길: 완전제곱식 꼴로 바꿔 제곱근으로, 또는 인수분해해서 AB=0으로. 그리고 근과 계수의 관계.",
+  "goal": "이차방정식을 (x+A)²=B 꼴로 바꾸거나 인수분해해서 풀고, 두 근의 합과 곱을 계수로 구한다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "이차방정식 — 우변이 0인 이차식의 등식",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "이차방정식",
+        "accent": "이차방정식",
+        "subtitle": "정리하면 (이차식) = 0 꼴, 이차항의 계수는 0이 아니다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "eq",
+            "tex": "\\p{a}{a}x^2+bx+c\\p{z}{=0}\\quad\\p{cond}{(a\\neq0)}",
+            "position": {
+              "x": 0.5,
+              "y": 0.3
+            },
+            "size": "xl"
+          },
+          {
+            "id": "q",
+            "text": "$x$가 무엇이면 이 등식이 참이 될까?",
+            "position": {
+              "x": 0.5,
+              "y": 0.52
+            },
+            "size": "md"
+          },
+          {
+            "id": "m1",
+            "text": "**방법 1** 제곱근의 성질 이용 (8강)",
+            "position": {
+              "x": 0.5,
+              "y": 0.68
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "m2",
+            "text": "**방법 2** 인수분해 이용 (9강)",
+            "position": {
+              "x": 0.5,
+              "y": 0.82
+            },
+            "size": "md",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "q",
+            "m1",
+            "m2"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 이차방정식의 해법에 대해서 알아보겠습니다. 이차방정식도 방정식의 한 종류라서 등식의 꼴로 나옵니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 이차방정식의 해법에 대해서 알아보겠습니다. 이차방정식도 방정식의 한 종류라서, 등식의 꼴로 나옵니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@등식의 꼴로"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "정리했을 때 좌변에 $x$에 대한 이차식이 오고 우변이 0이 되는 방정식을 모두 이차방정식이라고 합니다.",
+          "tts": "정리했을 때, 좌변에 엑스에 대한 이차식이 오고, 우변이 영이 되는 방정식을, 모두 이차방정식이라고 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@좌변에 엑스에"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq/z",
+                "at": "@우변이 영이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "이때 이차항의 계수 $a$는 0이면 안 됩니다. $a$가 0이면 $x^2$이 사라져서 더 이상 이차방정식이 아니니까요.",
+          "tts": "이때 이차항의 계수 에이는, 영이면 안 됩니다. 에이가 영이면 엑스제곱이 사라져서, 더 이상 이차방정식이 아니니까요.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:eq/a",
+                "at": "@이차항의 계수 에이는"
+              },
+              {
+                "type": "underline",
+                "target": "item:eq/cond",
+                "at": "@영이면 안 됩니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-4",
+          "role": "say",
+          "text": "5강에서 본 것처럼 방정식은 \"$x$가 무엇이면 참이 되느냐\"는 물음입니다. 답을 찾는 방법은 크게 두 가지, 8강의 제곱근의 성질을 이용하는 방법과 9강의 인수분해를 이용하는 방법입니다.",
+          "tts": "오강에서 본 것처럼, 방정식은, 엑스가 무엇이면 참이 되느냐는 물음입니다. 답을 찾는 방법은 크게 두 가지, 팔강의 제곱근의 성질을 이용하는 방법과, 구강의 인수분해를 이용하는 방법입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "q",
+                "at": "@엑스가 무엇이면"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "m1",
+                "at": "@팔강의 제곱근의"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "m2",
+                "at": "@구강의 인수분해를"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "방법 1 — (x+A)²=B 꼴로 보면 B의 부호가 답을 정한다",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "제곱근의 성질 이용",
+        "accent": "제곱근",
+        "subtitle": "(x+A)² = B 에서 괄호 안을 한 덩어리로 본다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "table",
+        "columns": [
+          "$B$의 부호",
+          "$x$의 값",
+          "근의 종류"
+        ],
+        "rows": [
+          {
+            "cells": [
+              "$B>0$",
+              "$x+A=\\p{pm}{\\pm\\sqrt B}\\ \\Rightarrow\\ x=\\p{res}{-A\\pm\\sqrt B}$",
+              "서로 다른 두 실근"
+            ],
+            "tone": "pos"
+          },
+          {
+            "cells": [
+              "$B=0$",
+              "$x+A=0\\ \\Rightarrow\\ x=\\p{res}{-A}$",
+              "서로 같은 두 실근 = 중근"
+            ],
+            "tone": "zero"
+          },
+          {
+            "cells": [
+              "$B<0$",
+              "실수 중에는 없다",
+              "실근 없음 (두 허근)"
+            ],
+            "tone": "neg"
+          }
+        ],
+        "items": [
+          {
+            "id": "form",
+            "tex": "\\p{sq}{(\\p{in}{x+A})^2}=\\p{b}{B}",
+            "position": {
+              "x": 0.5,
+              "y": 0.12
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden": "all",
+          "hidden_items": [
+            "form"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "첫 번째 방법입니다. 모든 이차방정식은 좌변이 완전제곱식, 우변이 상수인 이 꼴로 바꿀 수 있습니다. 바꾸는 순서는 바로 다음 장면에서 봅니다.",
+          "tts": "첫 번째 방법입니다. 모든 이차방정식은, 좌변이 완전제곱식, 우변이 상수인 이 꼴로 바꿀 수 있습니다. 바꾸는 순서는 바로 다음 장면에서 봅니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "form",
+                "at": "@모든 이차방정식은"
+              },
+              {
+                "type": "circle",
+                "target": "item:form/sq",
+                "at": "@좌변이 완전제곱식"
+              },
+              {
+                "type": "circle",
+                "target": "item:form/b",
+                "at": "@우변이 상수인"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "괄호 안의 $x+A$를 한 덩어리로 보세요. 그러면 이 식은 \"무엇을 제곱하면 $B$가 되느냐\"는 물음이고, 8강에서 본 대로 $B$의 부호가 답을 정합니다.",
+          "tts": "괄호 안의 엑스 플러스 에이를, 한 덩어리로 보세요. 그러면 이 식은, 무엇을 제곱하면 비가 되느냐는 물음이고, 팔강에서 본 대로, 비의 부호가 답을 정합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:form/in",
+                "at": "@한 덩어리로"
+              },
+              {
+                "type": "circle",
+                "target": "item:form/b",
+                "at": "@비의 부호가"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$B$가 양수이면 덩어리는 $\\pm\\sqrt B$입니다. 양변에 $-A$를 더하면 $x=-A\\pm\\sqrt B$, 서로 다른 두 실근이 나옵니다.",
+          "tts": "비가 양수이면, 덩어리는 플러스마이너스 루트 비입니다. 양변에 마이너스 에이를 더하면, 엑스는 마이너스 에이 플러스마이너스 루트 비, 서로 다른 두 실근이 나옵니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:0",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1/pm",
+                "at": "@덩어리는 플러스마이너스"
+              },
+              {
+                "type": "circle",
+                "target": "cell:0:1/res",
+                "at": "@엑스는 마이너스 에이"
+              },
+              {
+                "type": "underline",
+                "target": "cell:0:2",
+                "at": "@서로 다른 두 실근이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-4",
+          "role": "say",
+          "text": "$B$가 0이면 제곱해서 0이 되는 덩어리는 0뿐이라 $x+A=0$, 곧 $x=-A$입니다. 이것을 \"근이 하나\"라고 세지 않고 두 근이 겹친 것으로 봅니다. 그래서 이름도 중근입니다.",
+          "tts": "비가 영이면, 제곱해서 영이 되는 덩어리는 영뿐이라, 엑스 플러스 에이는 영, 곧 엑스는 마이너스 에이입니다. 이것을 근이 하나라고 세지 않고, 두 근이 겹친 것으로 봅니다. 그래서 이름도 중근입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:1",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "cell:1:1/res",
+                "at": "@곧 엑스는"
+              },
+              {
+                "type": "underline",
+                "target": "cell:1:2",
+                "at": "@이름도 중근"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-5",
+          "role": "say",
+          "text": "$B$가 음수이면, 1강에서 본 대로 어떤 실수든 제곱하면 0 이상이라 제곱해서 음수가 되는 실수는 없습니다. 이때는 실근이 존재하지 않는다고 해석합니다.",
+          "tts": "비가 음수이면, 일강에서 본 대로, 어떤 실수든 제곱하면 영 이상이라, 제곱해서 음수가 되는 실수는 없습니다. 이때는 실근이 존재하지 않는다고 해석합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "row",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "row:2",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "cell:2:1",
+                "at": "@음수가 되는 실수는"
+              },
+              {
+                "type": "underline",
+                "target": "cell:2:2",
+                "at": "@실근이 존재하지"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "완전제곱식 꼴로 바꾸는 다섯 단계",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "완전제곱식 꼴로 바꾸기",
+        "accent": "완전제곱식",
+        "subtitle": "예시: 3x² + 4x − 1 = 0",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "steps",
+        "items": [
+          {
+            "id": "goal",
+            "tex": "\\text{목표: }(x+A)^2=B",
+            "position": {
+              "x": 0.86,
+              "y": 0.06
+            },
+            "size": "sm"
+          }
+        ],
+        "steps": [
+          {
+            "tex": "\\p{a}{3}x^2+4x-1=0"
+          },
+          {
+            "tex": "x^2+\\dfrac43x\\p{c}{-\\dfrac13}=0",
+            "concept_id": "c.equality-props",
+            "why": "① 이차항의 계수 3으로 양변을 나눈다. 모든 항에 $\\frac13$이 곱해진다(3강 분배 법칙)"
+          },
+          {
+            "tex": "x^2+\\p{b}{\\dfrac43}x=\\p{r}{\\dfrac13}",
+            "concept_id": "c.equality-props",
+            "why": "② 상수항을 우변으로 이항한다. 양변에 $\\frac13$을 더한 것과 같다"
+          },
+          {
+            "tex": "x^2+\\dfrac43x\\p{l}{+\\left(\\dfrac23\\right)^2}=\\dfrac13\\p{rr}{+\\left(\\dfrac23\\right)^2}",
+            "concept_id": "c.perfect-square",
+            "why": "③ 일차항의 계수 $\\frac43$을 2로 나눈 $\\frac23$의 제곱을 양변에 더한다. 완전제곱식을 만들기 위해서(9강)"
+          },
+          {
+            "tex": "\\p{sq}{\\left(x+\\dfrac23\\right)^2}=\\p{v}{\\dfrac79}",
+            "concept_id": "c.perfect-square",
+            "why": "④ 좌변을 완전제곱식으로 고친다. 우변은 $\\frac13+\\frac49=\\frac79$"
+          },
+          {
+            "tex": "x+\\dfrac23=\\p{pm}{\\pm\\dfrac{\\sqrt7}{3}}",
+            "concept_id": "c.sqrt-props",
+            "why": "⑤ 제곱해서 $\\frac79$이 되는 덩어리는 $\\pm\\sqrt{\\frac79}=\\pm\\frac{\\sqrt7}{3}$(8강)"
+          },
+          {
+            "tex": "x=\\p{ans}{-\\dfrac23\\pm\\dfrac{\\sqrt7}{3}}",
+            "concept_id": "c.sqrt-solve",
+            "why": "양변에 $-\\frac23$을 더한다. 서로 다른 두 실근"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "그럼 일반형을 완전제곱식 꼴로 바꾸는 순서를 봅시다. 다섯 단계이고, 예시는 $3x^2+4x-1=0$입니다. 11강에서 근의 공식을 유도할 때도 이 순서를 그대로 씁니다.",
+          "tts": "그럼 일반형을 완전제곱식 꼴로 바꾸는 순서를 봅시다. 다섯 단계이고, 예시는, 삼엑스제곱플러스사엑스마이너스일은영입니다. 십일강에서 근의 공식을 유도할 때도, 이 순서를 그대로 씁니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:goal",
+                "at": "@완전제곱식 꼴로"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@예시는"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@예시는"
+              },
+              {
+                "type": "handwrite",
+                "text": "→ 11강 근의 공식",
+                "position": {
+                  "near": "step:0",
+                  "side": "above",
+                  "gap": 8
+                },
+                "at": "@십일강에서"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "첫째, 이차항의 계수로 양변을 나눕니다. 계수가 3이니 양변을 3으로 나누면, 분배 법칙에 따라 모든 항에 $\\frac13$이 곱해집니다.",
+          "tts": "첫째, 이차항의 계수로 양변을 나눕니다. 계수가 삼이니, 양변을 삼으로 나누면, 분배 법칙에 따라 모든 항에 삼분의일이 곱해집니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:0/a",
+                "at": "@계수가 삼이니"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@양변을 삼으로"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@양변을 삼으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:1",
+                "at": "@모든 항에"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "둘째, 상수항을 우변으로 이항합니다. 양변에 $\\frac13$을 더하면 좌변의 $-\\frac13$은 없어지고 우변에 $\\frac13$이 남습니다.",
+          "tts": "둘째, 상수항을 우변으로 이항합니다. 양변에 삼분의일을 더하면, 좌변의 마이너스 삼분의일은 없어지고, 우변에 삼분의일이 남습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:1/c",
+                "at": "@상수항을"
+              },
+              {
+                "type": "strike",
+                "target": "step:1/c",
+                "at": "@없어지고"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@우변에 삼분의일이"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@우변에 삼분의일이"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/r",
+                "at": "@우변에 삼분의일이+300"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "셋째, 일차항의 계수를 2로 나눈 수의 제곱을 양변에 더합니다. $\\frac43$을 2로 나누면 $\\frac23$이고, 그 제곱을 양변에 똑같이 더합니다. 9강에서 본 완전제곱식을 만들기 위해서입니다.",
+          "tts": "셋째, 일차항의 계수를 이로 나눈 수의 제곱을, 양변에 더합니다. 삼분의사를 이로 나누면 삼분의이이고, 그 제곱을 양변에 똑같이 더합니다. 구강에서 본 완전제곱식을 만들기 위해서입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:2/b",
+                "at": "@삼분의사를"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\dfrac43\\div2=\\dfrac23",
+                "position": {
+                  "near": "step:2",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@삼분의사를"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@그 제곱을"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@그 제곱을"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/l",
+                "at": "@양변에 똑같이"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/rr",
+                "at": "@양변에 똑같이+300"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-5",
+          "role": "say",
+          "text": "넷째, 좌변을 완전제곱식으로 고칩니다. 좌변은 $\\left(x+\\frac23\\right)^2$, 우변은 계산하면 $\\frac79$입니다.",
+          "tts": "넷째, 좌변을 완전제곱식으로 고칩니다. 좌변은 엑스 플러스 삼분의이의 제곱, 우변은 계산하면 구분의칠입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 4,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:4",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/sq",
+                "at": "@좌변은 엑스"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/v",
+                "at": "@구분의칠입니다"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\dfrac13+\\dfrac49=\\dfrac39+\\dfrac49=\\dfrac79",
+                "position": {
+                  "near": "step:4",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@우변은 계산하면"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-6",
+          "role": "say",
+          "text": "다섯째, 제곱근을 이용합니다. 제곱해서 $\\frac79$이 되는 덩어리는 $\\pm\\frac{\\sqrt7}{3}$이고, 양변에 $-\\frac23$을 더하면 해가 나옵니다. 서로 다른 두 실근입니다.",
+          "tts": "다섯째, 제곱근을 이용합니다. 제곱해서 구분의칠이 되는 덩어리는, 플러스마이너스 삼분의 루트 칠이고, 양변에 마이너스 삼분의이를 더하면 해가 나옵니다. 서로 다른 두 실근입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 5,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:5",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:5/pm",
+                "at": "@플러스마이너스 삼분의"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\sqrt{\\dfrac79}=\\dfrac{\\sqrt7}{\\sqrt9}=\\dfrac{\\sqrt7}{3}",
+                "position": {
+                  "near": "step:5",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@플러스마이너스 삼분의"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 6,
+                "at": "@양변에 마이너스"
+              },
+              {
+                "type": "highlight",
+                "target": "step:6",
+                "at": "@양변에 마이너스"
+              },
+              {
+                "type": "circle",
+                "target": "step:6/ans",
+                "at": "@해가 나옵니다"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "방법 2 — AB=0이면 A=0 또는 B=0",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "인수분해 이용",
+        "accent": "인수분해",
+        "subtitle": "곱해서 0이면 적어도 하나는 0",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "rule",
+            "tex": "\\p{ab}{AB=0}\\ \\Leftrightarrow\\ \\p{a}{A=0}\\ \\text{또는}\\ \\p{b}{B=0}",
+            "position": {
+              "x": 0.5,
+              "y": 0.35
+            },
+            "size": "xl"
+          },
+          {
+            "id": "note",
+            "text": "**AB=0의 성질** 0이 아닌 두 수의 곱은 0이 될 수 없다",
+            "position": {
+              "x": 0.5,
+              "y": 0.66
+            },
+            "size": "md",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "rule",
+            "note"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "두 번째 방법은 9강에서 배운 인수분해를 이용합니다. 이차식을 두 일차식의 곱으로 나타낸 다음, 성질 하나를 씁니다. 두 수 $A$와 $B$를 곱해서 0이 나왔다면 $A$가 0이거나 $B$가 0입니다.",
+          "tts": "두 번째 방법은, 구강에서 배운 인수분해를 이용합니다. 이차식을 두 일차식의 곱으로 나타낸 다음, 성질 하나를 씁니다. 두 수 에이와 비를 곱해서 영이 나왔다면, 에이가 영이거나, 비가 영입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rule",
+                "at": "@두 수 에이와"
+              },
+              {
+                "type": "circle",
+                "target": "item:rule/ab",
+                "at": "@곱해서 영이"
+              },
+              {
+                "type": "underline",
+                "target": "item:rule/a",
+                "at": "@에이가 영이거나"
+              },
+              {
+                "type": "underline",
+                "target": "item:rule/b",
+                "at": "@비가 영입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "0이 아닌 두 수를 곱해서 0이 나오는 경우는 없기 때문입니다. 둘 다 0일 수도 있고요. 이 성질로 이차방정식을 두 개의 일차방정식으로 나눠서 풉니다.",
+          "tts": "영이 아닌 두 수를 곱해서, 영이 나오는 경우는 없기 때문입니다. 둘 다 영일 수도 있고요. 이 성질로, 이차방정식을 두 개의 일차방정식으로 나눠서 풉니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "note",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "item:note",
+                "at": "@영이 아닌 두 수를"
+              },
+              {
+                "type": "flash",
+                "target": "item:rule",
+                "at": "@이 성질로"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "인수분해로 풀기 — 우변을 0으로",
+      "tag": "example",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "인수분해로 풀기",
+        "accent": "인수분해",
+        "subtitle": "예시: 2x² = −3x + 2",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "steps",
+        "items": [
+          {
+            "id": "goal",
+            "tex": "\\text{목표: }AB=0",
+            "position": {
+              "x": 0.88,
+              "y": 0.06
+            },
+            "size": "sm"
+          }
+        ],
+        "steps": [
+          {
+            "tex": "2x^2=\\p{r1}{-3x}\\p{r2}{+2}"
+          },
+          {
+            "tex": "2x^2+3x-2=\\p{z}{0}",
+            "concept_id": "c.equality-props",
+            "why": "① 우변을 0으로 만든다. $-3x$와 $+2$를 좌변으로 이항"
+          },
+          {
+            "tex": "\\p{f1}{(2x-1)}\\p{f2}{(x+2)}=0",
+            "concept_id": "c.factoring",
+            "why": "② 좌변을 인수분해한다(9강)"
+          },
+          {
+            "tex": "\\p{e1}{2x-1=0}\\ \\text{또는}\\ \\p{e2}{x+2=0}",
+            "concept_id": "c.zero-product",
+            "why": "③ $AB=0$의 성질"
+          },
+          {
+            "tex": "x=\\p{x1}{\\dfrac12}\\ \\text{또는}\\ x=\\p{x2}{-2}",
+            "concept_id": "c.linear-eq-solve",
+            "why": "④ 두 일차방정식을 각각 푼다(5강). 서로 다른 두 실근"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "예시는 $2x^2=-3x+2$입니다. 인수분해를 하려면 먼저 우변을 0으로 만들어야 합니다. 문제는 일부러 우변에 항을 남겨서 내기도 합니다.",
+          "tts": "예시는, 이엑스제곱은 마이너스삼엑스 플러스이입니다. 인수분해를 하려면, 먼저 우변을 영으로 만들어야 합니다. 문제는 일부러 우변에 항을 남겨서 내기도 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "item:goal",
+                "at": "@우변을 영으로"
+              },
+              {
+                "type": "underline",
+                "target": "step:0/r1",
+                "at": "@우변에 항을"
+              },
+              {
+                "type": "underline",
+                "target": "step:0/r2",
+                "at": "@우변에 항을+300"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "우변의 $-3x$와 $+2$를 좌변으로 이항하면 $2x^2+3x-2=0$이 됩니다.",
+          "tts": "우변의 마이너스삼엑스와 플러스이를, 좌변으로 이항하면, 이엑스제곱 플러스삼엑스 마이너스이는 영이 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:0/r1",
+                "at": "@마이너스삼엑스와"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/r2",
+                "at": "@플러스이를"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@좌변으로 이항하면"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@좌변으로 이항하면"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/z",
+                "at": "@영이 됩니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-3",
+          "role": "say",
+          "text": "좌변을 인수분해하면 $(2x-1)(x+2)$입니다. 다시 전개해 보면 $2x^2+4x-x-2$, 곧 $2x^2+3x-2$라서 맞습니다.",
+          "tts": "좌변을 인수분해하면, 이엑스 마이너스일과 엑스 플러스이의 곱입니다. 다시 전개해 보면, 이엑스제곱 플러스사엑스 마이너스엑스 마이너스이, 곧 이엑스제곱 플러스삼엑스 마이너스이라서 맞습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/f1",
+                "at": "@이엑스 마이너스일과"
+              },
+              {
+                "type": "circle",
+                "target": "step:2/f2",
+                "at": "@엑스 플러스이의"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\begin{aligned}&2x^2+4x-x-2\\\\&=2x^2+3x-2\\end{aligned}",
+                "position": {
+                  "near": "step:2",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@다시 전개해"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-4",
+          "role": "say",
+          "text": "곱이 0이니 $2x-1=0$ 또는 $x+2=0$입니다. 각각 풀면 $x=\\frac12$ 또는 $x=-2$, 서로 다른 두 실근입니다.",
+          "tts": "곱이 영이니, 이엑스 마이너스일은 영, 또는 엑스 플러스이는 영입니다. 각각 풀면, 엑스는 이분의일, 또는 엑스는 마이너스이, 서로 다른 두 실근입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/e1",
+                "at": "@이엑스 마이너스일은"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/e2",
+                "at": "@엑스 플러스이는"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 4,
+                "at": "@각각 풀면"
+              },
+              {
+                "type": "highlight",
+                "target": "step:4",
+                "at": "@각각 풀면"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/x1",
+                "at": "@엑스는 이분의일"
+              },
+              {
+                "type": "circle",
+                "target": "step:4/x2",
+                "at": "@엑스는 마이너스이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-5",
+          "role": "say",
+          "text": "확인해 봅시다. $x=-2$를 원래 식에 넣으면 좌변은 8, 우변도 8이라 참입니다.",
+          "tts": "확인해 봅시다. 엑스에 마이너스이를 원래 식에 넣으면, 좌변은 팔, 우변도 팔이라 참입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "step:0",
+                "at": "@원래 식에"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\text{좌변: }2\\times(-2)^2=8",
+                "position": {
+                  "near": "step:0",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@좌변은 팔"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\text{우변: }-3\\times(-2)+2=8",
+                "position": {
+                  "near": "step:1",
+                  "side": "right",
+                  "gap": 24
+                },
+                "until": "sentence",
+                "at": "@우변도 팔"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "근과 계수의 관계 — 근을 구하지 않고 합과 곱을 안다",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "10강 · 이차방정식의 해법",
+        "title": "근과 계수의 관계",
+        "accent": "근과 계수",
+        "subtitle": "두 근 α, β의 합과 곱은 계수로 정해진다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "steps",
+        "items": [
+          {
+            "id": "res",
+            "tex": "\\p{sum}{\\alpha+\\beta=-\\dfrac ba}\\qquad\\p{prod}{\\alpha\\beta=\\dfrac ca}",
+            "position": {
+              "x": 0.5,
+              "y": 0.9
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "res"
+          ]
+        },
+        "steps": [
+          {
+            "tex": "ax^2+bx+c=0\\ \\Rightarrow\\ x^2\\p{b}{+\\dfrac ba}x\\p{c}{+\\dfrac ca}=0",
+            "concept_id": "c.equality-props",
+            "why": "양변을 $a$로 나눠 이차항의 계수를 1로"
+          },
+          {
+            "tex": "x=\\alpha\\ \\text{또는}\\ x=\\beta\\ \\Rightarrow\\ \\p{z}{x-\\alpha=0\\ \\text{또는}\\ x-\\beta=0}",
+            "concept_id": "c.zero-product",
+            "why": "두 근이 $\\alpha$, $\\beta$라는 뜻"
+          },
+          {
+            "tex": "\\p{prod}{(x-\\alpha)(x-\\beta)}=0",
+            "concept_id": "c.zero-product",
+            "why": "$AB=0$의 성질을 거꾸로"
+          },
+          {
+            "tex": "x^2\\p{s}{-(\\alpha+\\beta)}x\\p{p}{+\\alpha\\beta}=0",
+            "concept_id": "c.distributive",
+            "why": "전개(3강 분배 법칙)"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "해를 구했다면 알아 두면 좋은 관계가 하나 있습니다. 이차방정식의 두 근을 $\\alpha$, $\\beta$라고 하면, 두 근의 합은 $-\\frac ba$, 두 근의 곱은 $\\frac ca$입니다.",
+          "tts": "해를 구했다면, 알아 두면 좋은 관계가 하나 있습니다. 이차방정식의 두 근을 알파, 베타라고 하면, 두 근의 합은 마이너스 에이분의비, 두 근의 곱은 에이분의씨입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "res",
+                "at": "@두 근의 합은"
+              },
+              {
+                "type": "circle",
+                "target": "item:res/sum",
+                "at": "@마이너스 에이분의비"
+              },
+              {
+                "type": "circle",
+                "target": "item:res/prod",
+                "at": "@에이분의씨입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-2",
+          "role": "say",
+          "text": "합이나 곱만 묻는 문제라면 근을 구하는 과정을 건너뛰고 계수만으로 답을 낼 수 있습니다. 왜 그런지 유도해 봅시다.",
+          "tts": "합이나 곱만 묻는 문제라면, 근을 구하는 과정을 건너뛰고, 계수만으로 답을 낼 수 있습니다. 왜 그런지 유도해 봅시다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:res",
+                "at": "@계수만으로"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-3",
+          "role": "say",
+          "text": "먼저 양변을 $a$로 나눠 이차항의 계수를 1로 만듭니다. 그리고 두 근이 $\\alpha$, $\\beta$라는 것은 $x-\\alpha=0$ 또는 $x-\\beta=0$이라는 뜻입니다.",
+          "tts": "먼저 양변을 에이로 나눠, 이차항의 계수를 일로 만듭니다. 그리고 두 근이 알파, 베타라는 것은, 엑스 마이너스 알파는 영, 또는 엑스 마이너스 베타는 영이라는 뜻입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "highlight",
+                "target": "step:0",
+                "at": "@start"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@두 근이 알파"
+              },
+              {
+                "type": "highlight",
+                "target": "step:1",
+                "at": "@두 근이 알파"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/z",
+                "at": "@엑스 마이너스 알파는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-4",
+          "role": "say",
+          "text": "앞에서 본 $AB=0$의 성질을 거꾸로 쓰면 $(x-\\alpha)(x-\\beta)=0$이고, 이것을 전개하면 $x^2-(\\alpha+\\beta)x+\\alpha\\beta=0$입니다.",
+          "tts": "앞에서 본, 에이비는 영의 성질을 거꾸로 쓰면, 엑스 마이너스 알파와 엑스 마이너스 베타의 곱은 영이고, 이것을 전개하면, 엑스제곱 마이너스, 알파 더하기 베타 엑스, 플러스 알파베타는 영입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@거꾸로 쓰면"
+              },
+              {
+                "type": "highlight",
+                "target": "step:2",
+                "at": "@거꾸로 쓰면"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/prod",
+                "at": "@엑스 마이너스 알파와"
+              },
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@전개하면"
+              },
+              {
+                "type": "highlight",
+                "target": "step:3",
+                "at": "@전개하면"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-5",
+          "role": "say",
+          "text": "두 식은 같은 방정식이니 계수가 같아야 합니다. $x$의 계수끼리 비교하면 $\\alpha+\\beta=-\\frac ba$, 상수항끼리 비교하면 $\\alpha\\beta=\\frac ca$입니다. 합에 마이너스가 붙는 것은 이 비교에서 부호가 반대이기 때문입니다.",
+          "tts": "두 식은 같은 방정식이니, 계수가 같아야 합니다. 엑스의 계수끼리 비교하면, 알파 더하기 베타는 마이너스 에이분의비, 상수항끼리 비교하면, 알파베타는 에이분의씨입니다. 합에 마이너스가 붙는 것은, 이 비교에서 부호가 반대이기 때문입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "highlight",
+                "target": [
+                  "step:0",
+                  "step:3"
+                ],
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/b",
+                "at": "@엑스의 계수끼리"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/s",
+                "at": "@엑스의 계수끼리+300"
+              },
+              {
+                "type": "underline",
+                "target": "item:res/sum",
+                "at": "@알파 더하기 베타는"
+              },
+              {
+                "type": "underline",
+                "target": "step:0/c",
+                "at": "@상수항끼리"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/p",
+                "at": "@상수항끼리+300"
+              },
+              {
+                "type": "underline",
+                "target": "item:res/prod",
+                "at": "@알파베타는 에이분의씨"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "title": "확인",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "계수부터 보았나?",
+        "accent": "계수",
+        "subtitle": "합과 곱은 근을 구하지 않아도 계수로 안다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "$x^2-5x+6=0$ 의 두 근의 합은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$6$"
+          },
+          {
+            "id": "d",
+            "text_md": "$-6$"
+          }
+        ],
+        "correct": "a",
+        "explain": "$a=1,\\ b=-5$이므로 두 근의 합은 $-\\frac ba=-\\frac{-5}{1}=5$. 실제로 $(x-2)(x-3)=0$에서 두 근 $2,\\ 3$의 합도 $5$다. $6$은 두 근의 곱 $\\frac ca$이다.",
+        "trace_concept_id": "c.root-coef"
+      },
+      "narration": [
+        {
+          "id": "s7-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 두 근의 합을 물으면 근을 구하기 전에 계수부터 보세요. 모르겠으면 '모르겠어요'를 누르면 어느 개념에서 막혔는지 되짚어 드립니다. 다음 시간에는 11강 이차방정식의 판별식입니다.",
+          "tts": "마지막으로 한 문제. 두 근의 합을 물으면, 근을 구하기 전에 계수부터 보세요. 모르겠으면 모르겠어요를 누르면, 어느 개념에서 막혔는지 되짚어 드립니다. [concluding, relaxed] 다음 시간에는 십일강, 이차방정식의 판별식입니다.",
+          "cue": {
+            "actions": []
+          }
+        }
+      ]
+    }
+  ]
+}
