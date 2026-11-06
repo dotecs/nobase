@@ -1083,6 +1083,156 @@
         ],
         "correct": "b"
       }
+    },
+    {
+      "id": "c.factoring",
+      "ability_id": "03-2",
+      "name": "전개와 인수분해",
+      "one_line": "곱으로 된 식을 풀어 더하기로 나열하면 전개, 거꾸로 더하기로 된 식을 곱의 꼴로 바꾸면 인수분해. 곱해진 각 식을 인수라 한다.",
+      "lesson_id": "rm-09",
+      "check_question": {
+        "stem_md": "$x^2+5x+6=(x+2)(x+3)$ 에서 $(x+2)$ 를 무엇이라 하나?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "인수"
+          },
+          {
+            "id": "b",
+            "text_md": "계수"
+          },
+          {
+            "id": "c",
+            "text_md": "상수항"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.cross-mult",
+      "ability_id": "03-2",
+      "name": "크로스 곱",
+      "one_line": "$x^2$의 계수와 상수항을 각각 두 수의 곱으로 나눠 위아래로 적고 대각선끼리 곱한다(크로스 곱). 상수항이 양수면 크로스 곱의 합, 음수면 차가 일차항의 계수가 되는 조합을 찾는다.",
+      "lesson_id": "rm-09",
+      "check_question": {
+        "stem_md": "$x^2-5x+6$ 을 인수분해하면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$(x-2)(x-3)$"
+          },
+          {
+            "id": "b",
+            "text_md": "$(x+2)(x+3)$"
+          },
+          {
+            "id": "c",
+            "text_md": "$(x-1)(x-6)$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.diff-squares",
+      "ability_id": "03-2",
+      "name": "합차 공식",
+      "one_line": "$a^2-b^2=(a-b)(a+b)$. 제곱에서 제곱을 뺀 꼴은 차와 합의 곱으로 인수분해된다. 더하기로 이어진 $a^2+b^2$ 은 해당되지 않는다.",
+      "lesson_id": "rm-09",
+      "check_question": {
+        "stem_md": "$x^2-16$ 을 인수분해하면?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$(x-4)(x+4)$"
+          },
+          {
+            "id": "b",
+            "text_md": "$(x-4)^2$"
+          },
+          {
+            "id": "c",
+            "text_md": "$(x-8)(x+2)$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.sqrt-solve",
+      "ability_id": "05-3",
+      "name": "제곱근을 이용한 풀이",
+      "one_line": "이차방정식을 $(x+A)^2=B$ 꼴로 바꾸고 제곱근의 성질로 푼다. $B>0$이면 서로 다른 두 실근 $x=-A\\pm\\sqrt B$, $B=0$이면 중근 $x=-A$, $B<0$이면 실근 없음.",
+      "lesson_id": "rm-10",
+      "check_question": {
+        "stem_md": "$(x-1)^2=4$ 의 해는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$x=3$ 또는 $x=-1$"
+          },
+          {
+            "id": "b",
+            "text_md": "$x=5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x=\\pm2$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.zero-product",
+      "ability_id": "05-3",
+      "name": "AB=0의 성질",
+      "one_line": "$AB=0$이면 $A=0$ 또는 $B=0$. 인수분해한 이차방정식을 두 일차방정식으로 나눠 푼다.",
+      "lesson_id": "rm-10",
+      "check_question": {
+        "stem_md": "$(x-2)(x+5)=0$ 의 해는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$x=2$ 또는 $x=-5$"
+          },
+          {
+            "id": "b",
+            "text_md": "$x=-2$ 또는 $x=5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$x=10$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.root-coef",
+      "ability_id": "05-3",
+      "name": "근과 계수의 관계",
+      "one_line": "$ax^2+bx+c=0$의 두 근 $\\alpha,\\beta$에 대해 $\\alpha+\\beta=-\\dfrac ba$, $\\alpha\\beta=\\dfrac ca$. 근을 구하지 않고 합과 곱을 안다.",
+      "lesson_id": "rm-10",
+      "check_question": {
+        "stem_md": "$2x^2-6x+1=0$ 의 두 근의 합은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-3$"
+          },
+          {
+            "id": "c",
+            "text_md": "$\\frac12$"
+          }
+        ],
+        "correct": "a"
+      }
     }
   ],
   "edges": [
@@ -1379,6 +1529,76 @@
     {
       "source_id": "c.quadratic-expr",
       "target_id": "c.perfect-square",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.distributive",
+      "target_id": "c.factoring",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.common-factor",
+      "target_id": "c.factoring",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.factoring",
+      "target_id": "c.cross-mult",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.factoring",
+      "target_id": "c.diff-squares",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.factoring",
+      "target_id": "c.perfect-square",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.cross-mult",
+      "target_id": "c.quadratic-eq",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.quadratic-eq",
+      "target_id": "c.sqrt-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.sqrt-props",
+      "target_id": "c.sqrt-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.perfect-square",
+      "target_id": "c.sqrt-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.equality-props",
+      "target_id": "c.sqrt-solve",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.quadratic-eq",
+      "target_id": "c.zero-product",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.zero-product",
+      "target_id": "c.root-coef",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.quadratic-eq",
+      "target_id": "c.root-coef",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.sqrt-solve",
+      "target_id": "c.quadratic-formula",
       "type": "prerequisite"
     }
   ]
