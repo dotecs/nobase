@@ -80,7 +80,9 @@ export function itemParameters(stage: Scene['stage'], params: Record<string, num
 }
 
 export function itemContent(item: BoardItem, params: Record<string, number>) {
-  if (item.tex) return formulaValues(item.tex, params);
+  // In an expression group an item such as "+bd" is a continuation of the previous item. KaTeX would read a
+  // leading sign as unary and drop the binary spacing, so give it an empty left operand.
+  if (item.tex) { const tex = formulaValues(item.tex, params); return item.group && /^\s*[+\-−]/.test(tex) ? '{}' + tex : tex; }
   return (item.text ?? '').split(/(\$\$[\s\S]*?\$\$|\$[^$]*?\$)/g).map(part => part.startsWith('$')
     ? formulaValues(part, params)
     : part.replace(/(?:[+\-−]\s*)?\{\{[a-zA-Z]+\}\}/g, value => '$' + formulaValues(value, params) + '$')
