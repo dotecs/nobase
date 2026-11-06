@@ -1,0 +1,30 @@
+import {expect,it} from 'vitest';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {lessonClock,initialLessonTime,parseResume,sceneNeedsContinue,sceneTitle} from './lesson-clock';
+import {buildTimeline} from './timeline';
+import {stageStateAt} from './stage-state-at';
+import {studioDemo} from './studio-demo';
+import {LessonNavigation} from '@/components/studio/LessonNavigation';
+import {Transport} from '@/components/studio/Transport';
+import {CourseSidebar} from '@/components/studio/CourseSidebar';
+import {StudioComplete} from '@/components/studio/StudioComplete';
+const durations=Object.fromEntries(studioDemo.scenes.flatMap(s=>s.narration.map(n=>[n.id,1000])));
+const clock=lessonClock(studioDemo,durations);
+it('sums exactly the existing scene timeline lengths',()=>{expect(clock.total).toBe(studioDemo.scenes.reduce((sum,s)=>sum+buildTimeline(s,durations).totalMs,0));});
+it.each([-1,0,1])('maps each chapter boundary offset %s without losing time',offset=>{
+  clock.sceneStarts.slice(1).forEach((start,i)=>{const t=start+offset,p=clock.toScene(t);expect(p.index).toBe(offset<0?i:i+1);expect(clock.toLesson(p.index,p.local)).toBe(t);});
+});
+it('clamps both ends and maps T to the final scene end',()=>{expect(clock.toScene(-1)).toEqual({index:0,local:0});expect(clock.toScene(clock.total+10)).toEqual({index:studioDemo.scenes.length-1,local:clock.lengths.at(-1)});expect(clock.toLesson(0,-1)).toBe(0);});
+it('uses caption fallback durations until audio metadata arrives',()=>{const fallback=lessonClock(studioDemo),updated=lessonClock(studioDemo,{[studioDemo.scenes[0].narration[0].id]:9876});expect(updated.total-fallback.total).toBe(9876-buildTimeline(studioDemo.scenes[0]).entries[0].durationMs);});
+it('restores the exact earlier stage state after seeking across chapters in both directions',()=>{
+  const early=clock.toScene(1300),later=clock.toScene(clock.sceneStarts[1]+700);
+  const state=(p:{index:number;local:number})=>stageStateAt(studioDemo.scenes[p.index],p.local,buildTimeline(studioDemo.scenes[p.index],durations).starts,{durations});
+  const before=state(early);expect(state(later).params).not.toEqual(before.params);expect(state(clock.toScene(1300))).toEqual(before);
+});
+it('restores lesson time and gives a valid scene hash precedence',()=>{const raw=JSON.stringify({lessonId:studioDemo.id,title:studioDemo.title,time:4200});expect(initialLessonTime(studioDemo,clock,'',raw)).toBe(4200);expect(initialLessonTime(studioDemo,clock,'#'+studioDemo.scenes[1].id,raw)).toBe(clock.sceneStarts[1]);expect(parseResume('broken')).toBeNull();expect(parseResume('{"time":-1}')).toBeNull();});
+it('stops only at interactive quiz and slider scene endings',()=>{for(const scene of studioDemo.scenes)expect(sceneNeedsContinue(scene)).toBe(['quiz','slider'].includes(scene.stage.type));});
+it('uses scene.title ahead of the authored headline for contents',()=>{expect(sceneTitle({...studioDemo.scenes[0],title:'목차 제목',headline:{title:'칠판 제목'}})).toBe('목차 제목');});
+it('keeps chapter marks on one lesson range and exposes chapter titles',()=>{const html=renderToStaticMarkup(<Transport chapters={[{time:0,title:'처음'},{time:1000,title:'둘째'}]} time={500} total={2000} playing={false} rate={1} captions audio={false} onPlay={()=>{}} onPause={()=>{}} onSeek={()=>{}} onRate={()=>{}} onCaptions={()=>{}}/>);expect((html.match(/type="range"/g)??[])).toHaveLength(1);expect(html).toContain('title="둘째"');expect(html).toContain('left:50%');});
+it.each([false,true])('keeps scene tools only in admin mode: %s',admin=>{const html=renderToStaticMarkup(<LessonNavigation admin={admin} sceneBar={false} onScope={()=>{}} player="재생 막대" scenes={studioDemo.scenes} index={0} ended={false} waiting onContinue={()=>{}} onMove={()=>{}} onComplete={()=>{}} autoAdvance={false} onToggleAutoAdvance={()=>{}} completionLabel="다음 강의"/>);expect(html.includes('aria-label="이전 장면"')).toBe(admin);expect(html.includes('aria-label="장면별 재생 막대"')).toBe(admin);expect(html).toContain('다음 강 자동 재생');expect(html).toContain('계속');});
+it('shows time progress and no scene list in the course sidebar',()=>{const html=renderToStaticMarkup(<CourseSidebar lesson={studioDemo} time={25} total={100}/>);expect(html).toContain('value="25"');expect(html).toContain('25%');expect(html).not.toContain('강의 구성');expect(html).not.toContain('강의 장면 구성');});
+it('shows lesson progress instead of production scene counts in learner completion',()=>{const html=renderToStaticMarkup(<StudioComplete open seen={1} total={4} elapsed={4000} gaps={[]} next={{href:'/learn',label:'학습 홈으로'}} onClose={()=>{}} onProceed={async()=>{}} lessonProgress={1}/>);expect(html).toContain('강의 진행률');expect(html).toContain('100%');expect(html).not.toContain('본 장면');});

@@ -20,17 +20,9 @@ it('uses a transparent stage and an absolutely positioned transport dock',()=>{
  expect(css).toContain('grid-row:1/3');
 });
 
-it('lists all scene titles with one current scene and authored descriptions',()=>{
- const lesson=prototypeLesson();
- lesson.scenes[1].headline={title:'둘째 장면',subtitle:'이 장면의 설명'};
- const html=renderToStaticMarkup(<CourseSidebar lesson={lesson} index={1}/>);
- expect(html).toContain('aria-label="강의 장면 구성"');
- expect(html).toContain('둘째 장면');
- expect(html).toContain('이 장면의 설명');
- expect((html.match(/aria-current="step"/g)??[])).toHaveLength(1);
- expect((html.match(/data-scene-current=/g)??[])).toHaveLength(lesson.scenes.length);
- const moved=renderToStaticMarkup(<CourseSidebar lesson={lesson} index={0}/>);
- expect(moved).not.toContain('둘째 장면<em>현재</em>');
+it('replaces scene-count progress with lesson-time progress in the sidebar',()=>{
+ const html=renderToStaticMarkup(<CourseSidebar lesson={prototypeLesson()} time={30} total={120}/>);
+ expect(html).toContain('25%');expect(html).toContain('aria-label="강 전체 진행률"');expect(html).not.toContain('강의 장면 구성');
 });
 it('renders labeled icon actions and a left-aligned title',()=>{
  const html=renderToStaticMarkup(<StudioShell scene={prototypeLesson().scenes[0]} stage="무대" onAdminModeChange={()=>{}} adminMode/>);

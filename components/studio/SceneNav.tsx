@@ -1,9 +1,9 @@
 'use client';
-import { FiChevronLeft, FiChevronRight, FiCheck, FiSkipForward } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiCheck } from 'react-icons/fi';
 import type { Scene } from '@/lib/learn/lessons/schema';
 import styles from './navigation.module.css';
 
-export function SceneNav({ scenes, index, ended, onMove, onComplete, player, autoAdvance = false, onToggleAutoAdvance, completionLabel = '학습 홈으로' }: {
+export function SceneNav({ scenes, index, ended, onMove, onComplete, player, completionLabel = '학습 홈으로' }: {
   autoAdvance?: boolean; onToggleAutoAdvance?: () => void;
   completionLabel?: string; player?: React.ReactNode; scenes: Pick<Scene, 'id' | 'title'>[];
   index: number; ended: boolean; onMove: (index: number) => void; onComplete: () => void;
@@ -21,10 +21,7 @@ export function SceneNav({ scenes, index, ended, onMove, onComplete, player, aut
         {last ? <FiCheck aria-hidden="true" /> : <FiChevronRight aria-hidden="true" />}
       </button>
     </div>
-    {onToggleAutoAdvance && <button type="button" className={styles.autoAdvance} aria-label="다음 장면 자동 이동" aria-pressed={autoAdvance}
-      title={autoAdvance?'자동 넘김 켜짐 — 장면이 끝나면 다음 장면을 재생합니다':'자동 넘김 꺼짐 — 장면이 끝나면 멈춥니다'} onClick={onToggleAutoAdvance}>
-      <FiSkipForward aria-hidden="true"/><span>자동 넘김</span><small>{autoAdvance?'켬':'끔'}</small>
-    </button>}
+
     </div>
   </nav>;
 }

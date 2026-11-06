@@ -31,3 +31,7 @@
 .autoAdvance:hover { background:var(--studio-panel); }
 .autoAdvance[aria-pressed="true"] { color:var(--studio-accent); background:var(--studio-panel); }
 @media(max-width:1279px) and (max-height:500px) and (orientation:landscape) { .actions { gap:4px; } .autoAdvance { padding:0 6px; } .autoAdvance span { display:none; } }
+
+.lessonNav { width:100%; display:flex; flex-direction:column; gap:4px; }
+.options { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+.continue { min-height:44px; padding:0 20px; border:0; border-radius:var(--radius-button); background:var(--studio-accent); color:var(--studio-bg); font-weight:600; }

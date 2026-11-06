@@ -1,3 +1,5 @@
+import {renderToStaticMarkup} from 'react-dom/server';
+import {LessonNavigation} from '@/components/studio/LessonNavigation';
 import { Children, isValidElement, type ReactNode, type ReactElement, type ButtonHTMLAttributes } from 'react';
 import { expect, it, vi } from 'vitest';
 import { CourseSidebar } from '@/components/studio/CourseSidebar';
@@ -12,17 +14,9 @@ function buttons(node: ReactNode): Button[] {
   });
 }
 
-it('scene buttons select the exact index and allow the current scene to close the menu', () => {
-  const selected = vi.fn();
-  const tree = CourseSidebar({lesson:studioDemo, index:0, onSelectScene:selected});
-  const choices = buttons(tree);
-  expect(choices).toHaveLength(studioDemo.scenes.length);
-  for (const index of [1, 0, 4]) {
-    expect(choices[index].props.disabled).toBe(false);
-    expect(choices[index].props['aria-label']).toContain((index + 1) + '번 장면');
-    choices[index].props.onClick?.({} as React.MouseEvent<HTMLButtonElement>);
-    expect(selected).toHaveBeenLastCalledWith(index);
-  }
+it('keeps scene navigation out of the curriculum sidebar', () => {
+ const html=renderToStaticMarkup(<CourseSidebar lesson={studioDemo} time={10} total={100}/>);
+ expect(html).not.toContain('강의 장면 구성');expect(html).not.toContain('번 장면:');expect(html).toContain('10%');
 });
 
 it('icon navigation retains accessible labels and invokes the final completion action', () => {
@@ -51,14 +45,9 @@ it('renders exactly one previous/next pair on ordinary scenes and disables previ
   expect(move).toHaveBeenCalledWith(1);
 });
 
-it('exposes automatic scene advance as an optional off-by-default toggle', () => {
-  const toggle = vi.fn();
-  const props = {scenes:studioDemo.scenes,index:0,ended:false,onMove:vi.fn(),onComplete:vi.fn(),onToggleAutoAdvance:toggle};
-  const off = buttons(SceneNav(props)).find(button => button.props['aria-label'] === '다음 장면 자동 이동')!;
-  expect(off.props['aria-pressed']).toBe(false);
-  off.props.onClick?.({} as React.MouseEvent<HTMLButtonElement>);
-  expect(toggle).toHaveBeenCalledTimes(1);
-  const on = buttons(SceneNav({...props,autoAdvance:true})).find(button => button.props['aria-label'] === '다음 장면 자동 이동')!;
-  expect(on.props['aria-pressed']).toBe(true);
-  expect(on.props.title).toContain('다음 장면을 재생');
+it('exposes next-lesson autoplay separately from mandatory within-lesson playback', () => {
+ const toggle=vi.fn(),props={admin:false,sceneBar:false,onScope:vi.fn(),player:null,scenes:studioDemo.scenes,index:0,ended:false,waiting:false,onContinue:vi.fn(),onMove:vi.fn(),onComplete:vi.fn(),autoAdvance:false,onToggleAutoAdvance:toggle,completionLabel:'다음 강의'};
+ const off=buttons(LessonNavigation(props)).find(button=>button.props['aria-label']==='다음 강 자동 재생')!;
+ expect(off.props['aria-pressed']).toBe(false);off.props.onClick?.({} as React.MouseEvent<HTMLButtonElement>);expect(toggle).toHaveBeenCalledTimes(1);
+ const on=buttons(LessonNavigation({...props,autoAdvance:true})).find(button=>button.props['aria-label']==='다음 강 자동 재생')!;expect(on.props['aria-pressed']).toBe(true);
 });

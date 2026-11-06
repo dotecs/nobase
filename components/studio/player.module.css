@@ -24,3 +24,8 @@
 .captions svg { width:20px; height:20px; }
 .captions[aria-pressed="true"] { color:var(--studio-accent); background:var(--studio-panel); }
 .speed:hover,.captions:hover { background:var(--studio-panel); }
+
+.track { position:relative; flex:1; min-width:32px; display:flex; align-items:center; }
+.track .scrub { width:100%; margin:0; }
+.chapter { position:absolute; width:2px; height:10px; top:7px; background:var(--studio-text); transform:translateX(-1px); opacity:.75; pointer-events:auto; }
+@media(max-width:767px) { .player { flex-wrap:wrap; height:auto; min-height:72px; padding:4px 8px; column-gap:8px; } .track { order:5; flex-basis:100%; height:24px; } .time { margin-right:auto; font-size:12px; } }

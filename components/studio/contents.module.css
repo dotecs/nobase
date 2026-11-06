@@ -1,0 +1,17 @@
+.contents { position:relative; min-width:0; color:var(--studio-text); pointer-events:auto; }
+.current { display:flex; align-items:center; gap:6px; max-width:100%; min-height:32px; padding:0; border:0; background:transparent; color:var(--studio-muted); text-align:left; font-size:13px; cursor:pointer; }
+.current>svg { flex:none; transition:transform 160ms; }
+.current>svg[data-open="true"] { transform:rotate(90deg); }
+.current>span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; animation:appear 240ms; }
+.panel { position:absolute; top:100%; left:0; z-index:30; width:380px; max-width:calc(100vw - 32px); max-height:60dvh; overflow:auto; border:1px solid var(--studio-grid); border-radius:16px; background:var(--studio-bg); box-shadow:0 12px 40px var(--studio-shadow); padding:12px; }
+.heading { display:flex; justify-content:space-between; align-items:center; padding-left:8px; }
+.heading button { display:grid; place-items:center; width:44px; height:44px; border:0; background:transparent; color:var(--studio-text); }
+.panel ol { margin:0; padding:0; list-style:none; }
+.panel li>button { width:100%; display:flex; align-items:center; gap:12px; padding:12px 8px; min-height:44px; text-align:left; border:0; border-radius:10px; background:transparent; color:var(--studio-text); cursor:pointer; }
+.panel li>button:hover,.panel li>button[aria-current] { background:var(--studio-panel); color:var(--studio-accent); }
+.panel li>button>span { flex:1; }
+.panel small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:270px; margin-top:4px; color:var(--studio-muted); }
+.panel button:focus-visible,.current:focus-visible { outline:2px solid var(--studio-accent); outline-offset:2px; }
+@keyframes appear { from { opacity:0; } to { opacity:1; } }
+@media(max-width:767px) { .current { min-height:36px; } .panel { position:fixed; left:8px; right:8px; bottom:8px; top:auto; width:auto; max-width:none; z-index:40; box-shadow:0 0 0 100vmax var(--studio-shadow); } }
+@media(prefers-reduced-motion:reduce) { .current>span { animation:none; } }

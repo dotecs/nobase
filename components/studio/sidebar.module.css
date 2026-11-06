@@ -61,3 +61,6 @@
 .scenes li[data-scene-current="true"] b,.scenes li[data-scene-current="true"] .sceneText { color:var(--studio-accent); }
 .scenes em { display:inline-block; margin-left:6px; font-size:10px; font-style:normal; }
 .scenes small { margin-top:4px; color:var(--studio-muted); font-size:11px; line-height:1.5; }
+
+.resume { display:flex; align-items:center; gap:10px; margin:8px 0 16px; color:var(--studio-accent); padding:10px; border-radius:10px; background:var(--studio-panel); text-decoration:none; }
+.resume small { display:block; color:var(--studio-muted); margin-top:4px; }

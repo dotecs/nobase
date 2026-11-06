@@ -137,3 +137,17 @@
 .courseButton { width:44px; height:44px; padding:0; border:0; background:transparent; justify-content:center; }
 .courseButton svg { width:20px; height:20px; }
 .drawer .iconButton:hover,.courseButton:hover { background:var(--studio-panel); color:var(--studio-text); }
+
+/* A lesson owns the heading; the contents overlay never participates in stage layout. */
+.studio[data-continuous="true"] { grid-template-rows:88px minmax(0,1fr); }
+.studio[data-continuous="true"] .topbar { position:relative; z-index:8; }
+.studio[data-continuous="true"] .overlayTitle { opacity:1; overflow:visible; z-index:8; pointer-events:auto; }
+.studio[data-continuous="true"][data-focus="true"],.studio[data-continuous="true"][data-chrome="false"] { grid-template-rows:minmax(0,1fr); }
+.stage[data-transition="out"] { opacity:0; transition:opacity 120ms linear; pointer-events:none; }
+.stage[data-transition="in"] { animation:sceneIn 120ms linear; pointer-events:none; }
+@keyframes sceneIn { from { opacity:0; } to { opacity:1; } }
+@media(max-width:1023px) { .studio[data-continuous="true"] { grid-template-rows:120px minmax(0,1fr); } .studio[data-continuous="true"] .topbar { grid-template-rows:36px auto; } }
+@media(prefers-reduced-motion:reduce) { .stage[data-transition] { transition:none; animation:none; } }
+
+.studio[data-continuous="true"][data-focus="true"] .stage[data-layout="portrait"] { margin-top:88px; }
+.studio[data-continuous="true"][data-focus="true"] .stage[data-layout="landscape"] { padding-top:88px; }
