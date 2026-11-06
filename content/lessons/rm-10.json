@@ -1049,7 +1049,7 @@
             "tex": "\\p{sum}{\\alpha+\\beta=-\\dfrac ba}\\qquad\\p{prod}{\\alpha\\beta=\\dfrac ca}",
             "position": {
               "x": 0.5,
-              "y": 0.9
+              "y": 0.79
             },
             "size": "lg"
           }
