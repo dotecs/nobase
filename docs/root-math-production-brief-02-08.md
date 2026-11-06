@@ -7,7 +7,7 @@
 - 파일: `content/lessons/rm-0N.json`. `kind:"concept"`, `pack_id:"root-math"`, `ability_ids`는 아래 표. `intro`(한 줄), `goal`(120자 이내).
 - 장면 5~7개, 문장 18~28개. 마지막 장면은 `tag:"check"` + `quiz` 무대(`trace_concept_id` 필수). 첫 문장은 "이번 시간에는 …"(인사말 금지). 마지막 문장에서 다음 강 예고: "다음 시간에는 n강 ○○입니다."
 - `headline`: `eyebrow:"n강 · 제목"`, `title`(짧게), `accent`(title의 부분 문자열), `subtitle`. **`formula`는 쓰지 않는다** — 수식은 무대 `items`로 칠판에 쓴다.
-- `tts`: 식은 한 덩어리로 붙여 읽는다("엑스제곱플러스이엑스", "이분의일"). 앵커 `@…`는 tts의 부분 문자열. 문장 첫 액션은 `@start`. `[short pause]`, `[slight emphasis]` 같은 지시어 허용(앵커에 포함 금지).
+- `tts`: 식은 한 덩어리로 붙여 읽는다("엑스제곱플러스이엑스", "이분의일"). 앵커 `@…`는 tts의 부분 문자열. 문장 첫 액션은 `@start`. `[short pause]`,  강조 태그(slight emphasis 등)는 쓰지 않는다 — 매뉴얼 §4.
 - `text`: 수식은 `$…$`. 자막 42자 기준으로 의미 단위가 끊기게 쓴다(문장 끝 → 쉼표 순).
 - 수는 정확한 꼴(분수·√). 좌표에 식 문자열 허용(`"1/2"`, `"sqrt(5)"`, `"-(3/2)"`).
 - 지시(chalk)는 **문장마다 1~3개**, 손글씨 메모는 장면당 최대 4개, pointer·circle은 문장당 2개 이하. 지시 대상은 가능하면 `item:<id>`·`step:i`·`node:i`·`row:i`·`tree:<id>`처럼 **요소 기준**으로.
