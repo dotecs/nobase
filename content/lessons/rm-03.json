@@ -570,56 +570,43 @@
           {
             "id": "ab",
             "tex": "AB",
+            "size": "lg",
+            "group": "expr",
             "position": {
-              "x": 0.38,
+              "x": 0.5,
               "y": 0.4
             },
-            "size": "lg"
+            "gap": "0.12em"
           },
           {
             "id": "plus",
-            "tex": "+",
-            "position": {
-              "x": 0.425,
-              "y": 0.4
-            },
-            "size": "lg"
+            "tex": "\\,+\\,",
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "ac",
             "tex": "AC",
-            "position": {
-              "x": 0.451,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "eq",
-            "tex": "=",
-            "position": {
-              "x": 0.495,
-              "y": 0.4
-            },
-            "size": "lg"
+            "tex": "\\,=\\,",
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "a",
             "tex": "A",
-            "position": {
-              "x": 0.522,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "paren",
             "tex": "(B+C)",
-            "position": {
-              "x": 0.575,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           }
         ],
         "initial": {
