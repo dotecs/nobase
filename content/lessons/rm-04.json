@@ -90,11 +90,11 @@
                 "text": "분모",
                 "position": {
                   "x": 0.43,
-                  "y": 0.62
+                  "y": 0.56
                 },
                 "arrow_to": {
                   "target": "item:frac/den",
-                  "anchor": "bottom"
+                  "anchor": "right"
                 },
                 "at": "@아래에 있는"
               },
@@ -103,11 +103,11 @@
                 "text": "분자",
                 "position": {
                   "x": 0.43,
-                  "y": 0.26
+                  "y": 0.36
                 },
                 "arrow_to": {
                   "target": "item:frac/num",
-                  "anchor": "top"
+                  "anchor": "right"
                 },
                 "at": "@위에 있는"
               }
@@ -966,7 +966,7 @@
         "type": "steps",
         "steps": [
           {
-            "tex": "\\dfrac{\\;\\dfrac{D}{C}\\;}{\\;\\dfrac{B}{A}\\;}"
+            "tex": "\\dfrac{\\;\\dfrac{\\p{od}{D}}{\\p{ic}{C}}\\;}{\\;\\dfrac{\\p{ib}{B}}{\\p{oa}{A}}\\;}"
           },
           {
             "tex": "=\\dfrac{\\dfrac{D}{\\p{c1}{C}}\\times \\p{a1}{A}\\p{c2}{C}}{\\dfrac{B}{\\p{a2}{A}}\\times \\p{a3}{A}\\p{c3}{C}}",
@@ -1116,14 +1116,58 @@
                 "at": "@비씨가"
               },
               {
-                "type": "underline",
-                "target": "step:2/bc",
+                "type": "highlight",
+                "target": [
+                  "step:0",
+                  "step:2"
+                ],
                 "at": "@안쪽에 있는"
               },
               {
-                "type": "underline",
-                "target": "step:2/ad",
+                "type": "tint",
+                "target": "step:0/ib",
+                "color": "mint",
+                "at": "@안쪽에 있는"
+              },
+              {
+                "type": "tint",
+                "target": "step:0/ic",
+                "color": "mint",
+                "at": "@안쪽에 있는"
+              },
+              {
+                "type": "tint",
+                "target": "step:2/bc",
+                "color": "mint",
+                "at": "@곱해 분모로"
+              },
+              {
+                "type": "tint",
+                "target": "step:0/oa",
+                "color": "hand",
                 "at": "@바깥쪽에 있는"
+              },
+              {
+                "type": "tint",
+                "target": "step:0/od",
+                "color": "hand",
+                "at": "@바깥쪽에 있는"
+              },
+              {
+                "type": "tint",
+                "target": "step:2/ad",
+                "color": "hand",
+                "at": "@곱해 분자로"
+              },
+              {
+                "type": "handwrite",
+                "text": "안쪽 B·C → 분모\n바깥쪽 A·D → 분자",
+                "position": {
+                  "x": 0.62,
+                  "y": 0.14
+                },
+                "align": "start",
+                "at": "@이렇게 기억하세요"
               }
             ]
           }
