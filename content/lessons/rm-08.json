@@ -687,7 +687,23 @@
             ],
             "tone": "neg"
           }
-        ]
+        ],
+        "items": [
+          {
+            "id": "ex",
+            "tex": "x^2=9",
+            "position": {
+              "x": 0.2,
+              "y": 0.76
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "ex"
+          ]
+        }
       },
       "narration": [
         {
@@ -726,6 +742,39 @@
                 "type": "circle",
                 "target": "cell:0:1/pm",
                 "at": "@음수 쪽에도"
+              },
+              {
+                "type": "handwrite",
+                "tex": "x^2=9",
+                "position": {
+                  "x": 0.16,
+                  "y": 0.79
+                },
+                "align": "start",
+                "at": "@엑스제곱은구를",
+                "until": "sentence"
+              },
+              {
+                "type": "handwrite",
+                "tex": "3^2=9\\ \\to\\ 3=\\sqrt9",
+                "position": {
+                  "x": 0.36,
+                  "y": 0.72
+                },
+                "align": "start",
+                "at": "@먼저 삼이",
+                "until": "sentence"
+              },
+              {
+                "type": "handwrite",
+                "tex": "(-3)^2=(-3)\\times(-3)=9",
+                "position": {
+                  "x": 0.36,
+                  "y": 0.86
+                },
+                "align": "start",
+                "at": "@마이너스삼도",
+                "until": "sentence"
               }
             ]
           }
@@ -746,6 +795,17 @@
                 "type": "underline",
                 "target": "cell:0:1",
                 "at": "@루트 에이라고"
+              },
+              {
+                "type": "handwrite",
+                "tex": "x^2=9\\ \\to\\ x=\\pm3",
+                "position": {
+                  "x": 0.36,
+                  "y": 0.79
+                },
+                "align": "start",
+                "at": "@플러스마이너스삼이지만",
+                "until": "sentence"
               }
             ]
           }
