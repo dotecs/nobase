@@ -11,7 +11,7 @@
   "scenes": [
     {
       "id": "s1",
-      "title": "이차방정식 — 우변이 0인 이차식의 등식",
+      "title": "이차방정식",
       "tag": "define",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -158,7 +158,7 @@
     },
     {
       "id": "s2",
-      "title": "방법 1 — (x+A)²=B 꼴로 보면 B의 부호가 답을 정한다",
+      "title": "(x+A)²=B 꼴로 풀기",
       "tag": "define",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -367,7 +367,7 @@
     },
     {
       "id": "s3",
-      "title": "완전제곱식 꼴로 바꾸는 다섯 단계",
+      "title": "완전제곱식 만들기 5단계",
       "tag": "derive",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -675,7 +675,7 @@
     },
     {
       "id": "s4",
-      "title": "방법 2 — AB=0이면 A=0 또는 B=0",
+      "title": "AB=0의 성질",
       "tag": "define",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -776,7 +776,7 @@
     },
     {
       "id": "s5",
-      "title": "인수분해로 풀기 — 우변을 0으로",
+      "title": "인수분해로 풀기",
       "tag": "example",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -1032,7 +1032,7 @@
     },
     {
       "id": "s6",
-      "title": "근과 계수의 관계 — 근을 구하지 않고 합과 곱을 안다",
+      "title": "근과 계수의 관계",
       "tag": "derive",
       "headline": {
         "eyebrow": "10강 · 이차방정식의 해법",
@@ -1250,7 +1250,7 @@
     },
     {
       "id": "s7",
-      "title": "확인",
+      "title": "확인 문제",
       "tag": "check",
       "headline": {
         "eyebrow": "확인",

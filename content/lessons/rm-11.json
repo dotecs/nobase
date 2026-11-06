@@ -11,7 +11,7 @@
   "scenes": [
     {
       "id": "s1",
-      "title": "근을 구하지 않고 근의 종류를 알 수 있을까?",
+      "title": "근의 종류를 미리 알 수 있을까",
       "tag": "translate",
       "stage": {
         "type": "graph",
@@ -320,7 +320,7 @@
     },
     {
       "id": "s2",
-      "title": "근의 공식을 다시 유도하며 \"루트 안\"을 찾는다",
+      "title": "근의 공식 다시 보기",
       "tag": "derive",
       "stage": {
         "type": "steps",
@@ -578,7 +578,7 @@
     },
     {
       "id": "s3",
-      "title": "루트 안의 식에 이름을 붙인다: 판별식 D",
+      "title": "판별식 D",
       "tag": "define",
       "stage": {
         "type": "chain",
@@ -773,7 +773,7 @@
     },
     {
       "id": "s4",
-      "title": "D의 부호를 그래프로 번역한다",
+      "title": "D의 부호와 그래프",
       "tag": "explore",
       "stage": {
         "type": "slider",
@@ -965,7 +965,7 @@
     },
     {
       "id": "s5",
-      "title": "근을 구하지 않고 판별만 해 본다",
+      "title": "판별식으로 판별하기",
       "tag": "example",
       "stage": {
         "type": "table",
@@ -1169,7 +1169,7 @@
     },
     {
       "id": "s6",
-      "title": "일차항 계수가 짝수면: 짝수 공식",
+      "title": "짝수 공식",
       "tag": "derive",
       "stage": {
         "type": "steps",
@@ -1341,7 +1341,7 @@
     },
     {
       "id": "s7",
-      "title": "확인",
+      "title": "확인 문제",
       "tag": "check",
       "stage": {
         "type": "quiz",

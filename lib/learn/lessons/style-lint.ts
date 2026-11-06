@@ -22,6 +22,8 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
 export function styleWarnings(scene: Scene): string[] {
   const out: string[] = [];
   for (const sentence of scene.narration) for (const rule of rules) { const message = rule.test(sentence, scene); if (message) out.push(`${sentence.id} [${rule.code}] ${message}`); }
+  const title = (scene as Scene & { title?: string }).title;
+  if (title && (title.length > 18 || title.includes(' — '))) out.push(`${scene.id} [scene-title] 장면 제목은 목차에 보인다 — 18자 이내 명사구, " — 설명" 없이 (§9)`);
   const rowItems = scene.stage.type !== 'board' ? [] : (scene.stage.items ?? []).filter(item => !item.group && item.tex && item.position?.y !== undefined);
   const byRow = new Map<number, number>();
   for (const item of rowItems) { const key = Math.round((item.position!.y as number) * 50); byRow.set(key, (byRow.get(key) ?? 0) + 1); }
