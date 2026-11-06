@@ -37,3 +37,15 @@ export function arrowEndpoints(from: string | ChalkPoint, to: string | ChalkPoin
   const end = typeof to === 'string' ? targetAnchor(to, source, space) : destination;
   return start && end ? { start, end } : null;
 }
+
+/** Endpoints for a bent arrow: from/to the top (bend up) or bottom (bend down) edge midpoints, 6px outside. */
+export function bentArrowEndpoints(from: string | ChalkPoint, to: string | ChalkPoint, bend: 'up' | 'down', space: ChalkSpace) {
+  const edge = (value: string | ChalkPoint) => {
+    if (typeof value !== 'string') return { x: space.sx(value.x), y: space.sy(value.y) };
+    const box = space.target(value) as { left: number; right: number; top: number; bottom: number } | null;
+    if (!box) return null;
+    return { x: (box.left + box.right) / 2, y: bend === 'up' ? box.top - 6 : box.bottom + 6 };
+  };
+  const start = edge(from), end = edge(to);
+  return start && end ? { start, end } : null;
+}

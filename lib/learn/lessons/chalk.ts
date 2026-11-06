@@ -14,6 +14,7 @@ export function chalkPoint(value:string|Position,space:ChalkSpace):ChalkPoint|nu
 /** Point on the edge of a target's box (6px outside) so arrows stop at the glyph instead of piercing it. */
 /** 2026-11-02 대표 결정: 분필 선은 흔들림 없이 곧게 그린다. wobble 인자는 호환용으로만 남긴다. */
 export function chalkLine(points:ChalkPoint[],_wobble=false,close=false){void _wobble;if(!points.length)return '';return points.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+','+p.y.toFixed(2)).join(' ')+(close?' Z':'');}
+export function arcPoints(from:ChalkPoint,to:ChalkPoint,lift:number){const c={x:(from.x+to.x)/2,y:Math.min(from.y,to.y)+lift};return Array.from({length:25},(_,i)=>{const u=i/24,v=1-u;return {x:v*v*from.x+2*u*v*c.x+u*u*to.x,y:v*v*from.y+2*u*v*c.y+u*u*to.y};});}
 export function linePoints(from:ChalkPoint,to:ChalkPoint){return Array.from({length:13},(_,i)=>({x:from.x+(to.x-from.x)*i/12,y:from.y+(to.y-from.y)*i/12}));}
 export function circlePoints(center:ChalkPoint,rx:number,ry:number){return Array.from({length:49},(_,i)=>({x:center.x+Math.cos(i/48*Math.PI*2)*rx,y:center.y+Math.sin(i/48*Math.PI*2)*ry}));}
 export function bracketPoints(from:ChalkPoint,to:ChalkPoint,normal:ChalkPoint){const length=Math.hypot(to.x-from.x,to.y-from.y),depth=Math.min(10,length/8),points:ChalkPoint[]=[];const add=(u:number,v:number)=>points.push({x:from.x+(to.x-from.x)*u/length+normal.x*v,y:from.y+(to.y-from.y)*u/length+normal.y*v});if(!length)return [];add(0,0);add(0,depth);add(length,depth);add(length,0);return points;}

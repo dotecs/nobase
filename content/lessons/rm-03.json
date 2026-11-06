@@ -100,12 +100,12 @@
                 "type": "handwrite",
                 "text": "× 생략",
                 "position": {
-                  "x": 0.36,
-                  "y": 0.2
+                  "x": 0.42,
+                  "y": 0.18
                 },
                 "arrow_to": {
-                  "x": 0.413,
-                  "y": 0.36
+                  "target": "item:a",
+                  "anchor": "right"
                 },
                 "at": "@곱하기가 생략",
                 "ttl_ms": 8000
@@ -141,7 +141,9 @@
                 "type": "arrow",
                 "from": "item:a",
                 "to": "item:ab",
-                "at": "@에이를 비에도+200"
+                "at": "@에이를 비에도+200",
+                "bend": "up",
+                "height": 34
               },
               {
                 "type": "reveal",
@@ -159,7 +161,9 @@
                 "type": "arrow",
                 "from": "item:a",
                 "to": "item:ac",
-                "at": "@씨에도 곱해서+200"
+                "at": "@씨에도 곱해서+200",
+                "bend": "up",
+                "height": 62
               },
               {
                 "type": "circle",
