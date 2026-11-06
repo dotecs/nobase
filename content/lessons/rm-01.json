@@ -34,10 +34,7 @@
         "aspect": "equal",
         "fns": [],
         "initial": {
-          "hidden_points": true,
-          "hidden_items": [
-            "ints"
-          ]
+          "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
         "points": [
@@ -97,19 +94,7 @@
             "c": "c1"
           }
         ],
-        "number_line": true,
-        "items": [
-          {
-            "id": "ints",
-            "tex": "\\cdots,\\ -2,\\ -1,\\ 0,\\ 1,\\ 2,\\ \\cdots",
-            "position": {
-              "x": -5.3,
-              "y": 2
-            },
-            "size": "lg",
-            "align": "start"
-          }
-        ]
+        "number_line": true
       },
       "narration": [
         {
@@ -222,12 +207,6 @@
                 "rx": 0.35,
                 "ry": 0.35,
                 "at": "@영도 포함됩니다"
-              },
-              {
-                "type": "reveal",
-                "target": "item",
-                "id": "ints",
-                "at": "@정수는 수직선"
               }
             ]
           }
@@ -673,10 +652,7 @@
         "aspect": "equal",
         "fns": [],
         "initial": {
-          "hidden_points": true,
-          "hidden_items": [
-            "irr"
-          ]
+          "hidden_points": true
         },
         "aria": "−5부터 5까지의 수직선",
         "points": [
@@ -746,26 +722,9 @@
             "y": 0,
             "c": "c3",
             "label": "auto"
-          },
-          {
-            "x": "-sqrt(3)",
-            "y": 0,
-            "c": "c3",
-            "label": "auto"
           }
         ],
-        "number_line": true,
-        "items": [
-          {
-            "id": "irr",
-            "tex": "\\pi,\\ \\sqrt{2},\\ \\sqrt{3},\\ \\cdots",
-            "position": {
-              "x": 2.6,
-              "y": 2
-            },
-            "size": "lg"
-          }
-        ]
+        "number_line": true
       },
       "narration": [
         {
@@ -892,12 +851,6 @@
                 },
                 "at": "@삼점일사일오구",
                 "ttl_ms": 6000
-              },
-              {
-                "type": "reveal",
-                "target": "item",
-                "id": "irr",
-                "at": "@대표적으로"
               }
             ]
           }
@@ -916,14 +869,6 @@
                 "c": "c3",
                 "label": "auto",
                 "at": "@루트이도"
-              },
-              {
-                "type": "point",
-                "x": "-sqrt(3)",
-                "y": 0,
-                "c": "c3",
-                "label": "auto",
-                "at": "@루트이도+400"
               },
               {
                 "type": "handwrite",
