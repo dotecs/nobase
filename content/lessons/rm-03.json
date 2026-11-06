@@ -26,56 +26,43 @@
           {
             "id": "a",
             "tex": "A",
+            "size": "lg",
+            "group": "expr",
             "position": {
-              "x": 0.4,
+              "x": 0.5,
               "y": 0.4
             },
-            "size": "lg"
+            "gap": "0.12em"
           },
           {
             "id": "paren",
             "tex": "(B+C)",
-            "position": {
-              "x": 0.452,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "eq",
-            "tex": "=",
-            "position": {
-              "x": 0.517,
-              "y": 0.4
-            },
-            "size": "lg"
+            "tex": "\\,=\\,",
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "ab",
             "tex": "AB",
-            "position": {
-              "x": 0.552,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "plus",
-            "tex": "+",
-            "position": {
-              "x": 0.588,
-              "y": 0.4
-            },
-            "size": "lg"
+            "tex": "\\,+\\,",
+            "size": "lg",
+            "group": "expr"
           },
           {
             "id": "ac",
             "tex": "AC",
-            "position": {
-              "x": 0.621,
-              "y": 0.4
-            },
-            "size": "lg"
+            "size": "lg",
+            "group": "expr"
           }
         ],
         "initial": {
