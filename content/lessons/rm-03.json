@@ -379,8 +379,8 @@
             "id": "chk",
             "tex": "(-3)\\times\\left(-\\dfrac13\\right)=1",
             "position": {
-              "x": 0.76,
-              "y": 0.53
+              "x": 0.9,
+              "y": 0.95
             },
             "size": "md"
           }
@@ -449,7 +449,8 @@
                   "y": 0.1
                 },
                 "align": "start",
-                "at": "@서로 곱해서 일이"
+                "at": "@서로 곱해서 일이",
+                "until": "sentence"
               },
               {
                 "type": "handwrite",
@@ -459,7 +460,8 @@
                   "y": 0.24
                 },
                 "align": "start",
-                "at": "@자리를 바꾸면"
+                "at": "@자리를 바꾸면",
+                "until": "sentence"
               },
               {
                 "type": "handwrite",
@@ -469,13 +471,8 @@
                   "y": 0.38
                 },
                 "align": "start",
-                "at": "@마이너스를 앞으로"
-              },
-              {
-                "type": "reveal",
-                "target": "item",
-                "id": "chk",
-                "at": "@마이너스 삼분의일입니다"
+                "at": "@마이너스를 앞으로",
+                "until": "sentence"
               }
             ]
           }

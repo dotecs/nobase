@@ -33,7 +33,7 @@ export function HandwrittenMark({ mark, space, scale }: { mark: ChalkMark; space
   const top = Math.min(space.sy(space.y[0]), space.sy(space.y[1]));
   const bottom = Math.max(space.sy(space.y[0]), space.sy(space.y[1]));
   const fontSize = space.portrait?20:Math.max(28 * Math.min(1, (right - left) / 1100), 14 / Math.max(.1, scale));
-  const maxWidth = space.portrait?Math.max(1,right-left-24):Math.max(1, Math.min(260 * fontSize / 28, right - left - 12));
+  const maxWidth = space.portrait?Math.max(1,right-left-24):Math.max(1, Math.min(440 * fontSize / 28, right - left - 12));
   const width = Math.min(maxWidth, measured?.width ?? maxWidth);
   const height = measured?.height ?? Math.max(110, fontSize * 5);
   const offset = !space.portrait&&action.align === 'middle' ? width / 2 : 0;
