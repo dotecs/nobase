@@ -12,6 +12,8 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
   { code: 'tts-plus-run', test: s => new RegExp(NUM + '플러스' + NUM).test(s.tts ?? '') ? '숫자끼리 덧셈은 "삼 더하기 오"처럼 띄어 읽기 (§4)' : null },
   { code: 'tts-long-run', test: s => { const m = (s.tts ?? '').match(/[가-힣]{9,}/g)?.find(w => /루트|플러스마이너스/.test(w)); return m ? `"${m}" 붙여 읽기 길음 — 의미 단위로 띄우기 (§4)` : null; } },
   { code: 'tts-saisiot', test: s => /지수법칙/.test(s.tts ?? '') ? '"지수 법칙"으로 띄어 쓰기(지숫법칙 발음 방지) (§4)' : null },
+  { code: 'tts-paren-reading', test: s => /괄호 (?!안|모두)/.test(s.tts ?? '') ? '식을 읽을 때 "괄호"는 빼고 "엑스 더하기 이 곱하기 삼엑스 마이너스 이"처럼 (§9)' : null },
+  { code: 'memo-times-mark', test: s => (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && typeof a.tex === 'string' && /\\times\s*$/.test(a.tex as string)) ? '틀림 표시로 \\times 금지(곱하기와 혼동) — "\\neq 11"처럼 (§9)' : null },
   { code: 'root-count', test: s => /근의 개수|(?<!["“])근이 (?:[01]개|하나|한 개)/.test(s.text) ? '근은 개수가 아니라 종류로 말하기 (§1)' : null },
   { code: 'memo-rotate', test: s => (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && a.rotate !== undefined && a.rotate !== 0) ? '손글씨 기울이지 않기 (§3)' : null },
   { code: 'memo-coord-arrow', test: (s, scene) => !['graph','slider'].includes(scene.stage.type) && (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && a.arrow_to && typeof a.arrow_to === 'object' && !('target' in (a.arrow_to as object))) ? '손글씨 arrow_to는 좌표 대신 {target, anchor} (§3)' : null },
