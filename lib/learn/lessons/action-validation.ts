@@ -1,3 +1,4 @@
+import {movePairs} from './move';
 import {sentenceInstruction} from './action-lifetime';
 import {regionLevelWarnings} from './region-validation';
 import {tickValue} from './pointing';
@@ -33,9 +34,16 @@ export function actionErrors(scene:Scene):string[]{
 
  for(const item of itemsOf(stage))if(item.position&&'near' in item.position&&(!valid(item.position.near)||item.position.near==='item:'+item.id))errors.push('item near 대상 오류');
  if(graph&&stage.initial?.hidden_fns?.some(i=>i>=counts.fn))errors.push('initial.hidden_fns 범위 오류');
+ const moveDestinations=new Set<string>();
  for(const sentence of scene.narration)for(const action of sentence.cue?.actions??[]){
   if('position' in action&&action.position&&'near' in action.position&&!valid(action.position.near))errors.push('near 대상 범위 오류');
   if(typeof action.at==='string'){const result=resolveAnchor(action.at as At,sentence,null,1000);if(result.warning||result.source==='caption')errors.push(result.warning??'앵커는 TTS 대본에 있어야 합니다: '+action.at);}
+  if(action.type==='move')for(const [from,to] of movePairs(action)){
+   if(!valid(from)||!valid(to))errors.push('move 대상 범위 오류');
+   if(!to.includes('/')||!itemIds.has(to))errors.push('move 도착은 부분 대상이어야 합니다.');
+   if(moveDestinations.has(to))errors.push('move 도착 대상 중복: '+to);
+   moveDestinations.add(to);
+  }
   if(action.type==='tint'&&(!/^(item|step|node|row|cell|tree|region):/.test(action.target)||!valid(action.target)))errors.push('tint 대상 범위 오류');
   if(action.type==='callout'){
    if(action.target&&(!valid(action.target)||action.target==='item:'+action.id))errors.push('callout 대상 범위 오류');

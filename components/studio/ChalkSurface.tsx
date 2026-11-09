@@ -1,4 +1,5 @@
 'use client';
+import {MoveLayer} from './MoveLayer';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {containedImageBox,figureSpace} from '@/lib/learn/lessons/figure-space';
 import {localTargetBox} from './useTargetBoxes';
@@ -65,5 +66,6 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
         target: id => targets[id] ?? null,
       }} />
     </svg>
+    <MoveLayer root={root} state={state}/>
   </div>;
 }

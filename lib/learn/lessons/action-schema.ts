@@ -1,3 +1,4 @@
+import {moveSchema} from './move';
 import {regionSchema} from './region-schema';
 import {tintSchema,calloutSchema} from './annotation-schema';
 import {itemInitial} from './items';
@@ -13,7 +14,7 @@ const range=z.tuple([finite,finite]).refine(([a,b])=>a<b&&b-a<=200,'축 범위�
 const target=z.string().min(1);
 export const initialStageSchema=z.object({...itemInitial,hidden_fns:z.array(index).optional(),hidden_points:z.boolean().optional()});
 export const actionSchema=z.preprocess(value=>value&&typeof value==='object'&&'type' in value&&value.type==='point'?pointTex(value):value,z.discriminatedUnion('type',[
- ...chalkOptions,tintSchema,calloutSchema,regionSchema,
+ ...chalkOptions,moveSchema,tintSchema,calloutSchema,regionSchema,
  z.object({type:z.literal('param'),name:target,to:finite,from:finite.optional(),...timing,duration_ms:time,easing:z.enum(['linear','ease','ease-in-out']).optional()}),
  z.object({type:z.literal('draw'),target:fn,...timing,duration_ms:time}),
  z.object({type:z.literal('point'),x:coordinate,y:coordinate.optional(),x_tex:z.string().optional(),y_tex:z.string().optional(),on:fn.optional(),guides:z.boolean().optional(),label_offset:z.object({x:finite,y:finite}).optional(),label_pos:z.enum(['ne','nw','se','sw','n','s']).optional(),label:z.string().optional(),c:z.enum(['c1','c2','c3']).optional(),...timing}).refine(p=>p.y!==undefined||p.on!==undefined,'점에는 y 또는 on이 필요합니다.'),

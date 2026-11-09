@@ -1,4 +1,5 @@
 'use client';
+import {MoveLayer} from './MoveLayer';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import type {Scene} from '@/lib/learn/lessons/schema';
 import type {StageState} from '@/lib/learn/lessons/stage-state';
@@ -46,5 +47,6 @@ export function PortraitSurface({scene,state,children}:{scene:Scene;state:StageS
       <CalloutLayer state={state} space={space} boxes={boxes}/>
       <ChalkLayer marks={marks} space={space}/>
     </svg>
+    <MoveLayer root={root} state={state}/>
   </div>;
 }

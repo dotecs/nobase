@@ -1,0 +1,6 @@
+.layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; overflow: visible; }
+.copy { position: absolute; top: 0; left: 0; width: max-content; transform-origin: 0 0; pointer-events: none; will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+ .copy { display: none; }
+ .targets :global([data-move-arrived="true"]) { opacity: var(--move-arrival-opacity, 1) !important; }
+}

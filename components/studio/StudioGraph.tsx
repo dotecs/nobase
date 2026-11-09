@@ -1,4 +1,5 @@
 'use client';
+import {MoveLayer} from './MoveLayer';
 import {usePortrait} from './StageLayout';
 import {RegionLayer} from './RegionLayer';
 import {targetOpacity} from '@/lib/learn/lessons/instruction-style';
@@ -54,5 +55,5 @@ export const StudioGraph=memo(function StudioGraph({fns,aria,state,aspect='equal
   {state.labels.map((label,i)=><foreignObject key={i} x={sx(label.at.x)-(label.anchor==='end'?240:label.anchor==='middle'?120:0)} y={sy(label.at.y)-18} width={240} height={64} overflow="visible"><div className={styles.label} style={{textAlign:label.anchor==='end'?'right':label.anchor==='middle'?'center':'left'}}><span data-stage-target={'annotation:'+i}>{label.tex?renderMathMarkdown('$'+label.tex+'$'):label.text}</span></div></foreignObject>)}
   <BoardItems svg items={portrait?[]:items} state={state} params={itemParams} space={{sx,sy,target:space.target}}/>
   <CalloutLayer state={portrait?{...state,callouts:[]}:state} space={space} boxes={itemTargets} params={itemParams}/><ChalkLayer marks={portrait?(state.chalk??[]).filter(mark=>mark.action.type!=='handwrite'&&!('target' in mark.action&&mark.action.target?.startsWith('item:'))):state.chalk??[]} space={space}/>
- </svg></div>;
+ </svg>{!portrait&&<MoveLayer root={ref} state={state}/>}</div>;
 });

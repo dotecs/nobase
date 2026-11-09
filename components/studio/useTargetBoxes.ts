@@ -18,6 +18,7 @@ export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGS
     const {toLocal}=overlayCoordinates(overlay.getBoundingClientRect(),overlay.viewBox.baseVal);
     const next: Record<string, TargetBox> = {};
     root.current.querySelectorAll<HTMLElement>('[data-stage-target]').forEach(element => {
+      if(element.closest('[data-move-clone]'))return;
       next[element.dataset.stageTarget!] = localTargetBox(element.getBoundingClientRect(), toLocal);
     });
     setTargets(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
@@ -39,11 +40,13 @@ export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGS
     const observeTargets = () => {
       observer.disconnect();
       observer.observe(element);
-      element.querySelectorAll('[data-stage-target]').forEach(target => observer.observe(target));
+      element.querySelectorAll('[data-stage-target]').forEach(target => {if(!target.closest('[data-move-clone]'))observer.observe(target);});
       measure();
       followAnimation();
     };
     const mutation = new MutationObserver(records => {
+      records=records.filter(record=>!(record.target instanceof Element&&record.target.closest('[data-move-layer]')));
+      if(!records.length)return;
       if (records.some(record => record.type === 'childList')) observeTargets();
       else measure();
     });

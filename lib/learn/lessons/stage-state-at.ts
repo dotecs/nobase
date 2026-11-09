@@ -1,3 +1,4 @@
+import {movesAt} from './move';
 import {actionExpiry,instructionOpacity} from './action-lifetime';
 import type {TintColor} from './annotation-schema';
 import {itemsOf} from './items';
@@ -42,6 +43,7 @@ export function stageStateAt(scene:Scene,tMs:number,sentenceStarts:number[],opti
  const advance=(time:number)=>{for(const track of tracks.values()){const p=track.duration===0?1:Math.max(0,Math.min(1,(time-track.start)/track.duration));track.set(track.from+(track.to-track.from)*ease(p,track.easing));}};
  const events=scene.narration.flatMap((sentence,i)=>sentenceActions(scene,sentence).map(action=>{const duration=options.durations?.[sentence.id]??(sentenceStarts[i+1]!==undefined?sentenceStarts[i+1]-sentenceStarts[i]:captionDuration(sentence.text,1)),at=actionAnchor(action),resolved=resolveAnchor(at,sentence,options.alignments?.[sentence.id]??null,duration);if(resolved.warning)state.warnings!.push(resolved.warning);return {action,start:sentenceStarts[i]+resolved.ms,end:sentenceStarts[i+1]??sentenceStarts[i]+duration};})).sort((a,b)=>a.start-b.start);
  const time=Math.max(0,Number.isFinite(tMs)?tMs:0);
+ state.moves=movesAt(events,time);
  for(const [eventIndex,{action,start,end}] of events.entries()){if(start>time)break;advance(start);
   if(isChalk(action)){const mark=chalkAt(action,start,time,'chalk:'+eventIndex,end);if(mark)state.chalk!.push(mark);continue;}
   switch(action.type){

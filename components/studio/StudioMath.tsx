@@ -1,3 +1,4 @@
+import moveStyles from './move.module.css';
 import katex from 'katex';
 import { useMemo } from 'react';
 import { targetKatexOptions } from '@/lib/learn/lessons/items';
@@ -16,8 +17,9 @@ export function StudioMath({ tex, itemId, target, display = true, state }: { tex
   const styled = state ? html.replace(/(<span\b[^>]*data-stage-target="([^"]+)"[^>]*)(>)/g, (_match, tag: string, id: string) => {
     const color=instructionColor(state,id);
     const partPrefix=id.split('/')[0]+'/';
-    const opacity=state.highlight?.some(value=>value.startsWith(partPrefix)) ? targetOpacity(state,id) : 1;
-    return tag + ` style="${color?'color:'+color+';':''}opacity:${opacity}"` + '>';
+    const destination=state.moves?.find(move=>move.to===id);
+    const opacity=destination&&!destination.arrived?0:state.highlight?.some(value=>value.startsWith(partPrefix)) ? targetOpacity(state,id) : 1;
+    return tag + (destination?' data-move-destination="true" data-move-arrived="'+destination.arrived+'"':'') + ` style="${color?'color:'+color+';':''}${destination?.arrived?'--move-arrival-opacity:'+Math.min(1,destination.arrivalElapsed/160)+';':''}opacity:${opacity}"` + '>';
   }) : html;
-  return <span dangerouslySetInnerHTML={{ __html: styled }} />;
+  return <span className={moveStyles.targets} dangerouslySetInnerHTML={{ __html: styled }} />;
 }

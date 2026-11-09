@@ -63,7 +63,7 @@ function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AU
     referenceLessonId={adminOn&&chrome?referenceLessonId:undefined} showCaptions={captions} onToggleCaptions={()=>setCaptions(value=>!value)} audioUrls={audio} alignments={alignments} durations={known} worked={lesson.kind==='worked'} onEvent={nav.ready?emit:undefined} onDuration={recordDuration} refreshAudio={refreshAudio}
     onPrevious={()=>adminOn?move(index-1):seekLesson(nav.time-5000,true)} onNext={()=>adminOn?(index===lesson.scenes.length-1?completion.show():move(index+1)):seekLesson(nav.time+5000,true)} onResume={()=>{setManual(null);if(nav.time>=clock.total)seekLesson(0,true);}} onSeek={()=>setManual(null)}>
     {({state,sentenceStart,bar,caption,pause,seek,ended})=>{
-      const explored=exploredState(scene,state,manual),display=nav.phase?{...explored,chalk:[],callouts:[],regions:[],tints:{},tintOpacity:{},highlight:null,highlightOpacity:0,dimOthers:false,pulses:{}}:explored;
+      const explored=exploredState(scene,state,manual),display=nav.phase?{...explored,suppressMoves:true,chalk:[],callouts:[],regions:[],tints:{},tintOpacity:{},highlight:null,highlightOpacity:0,dimOthers:false,pulses:{}}:explored;
       const value=scene.stage.type==='slider'?display.params[scene.stage.param.name]:0;
       const explore=(value:number)=>{pause();seek(sentenceStart);setManual(value);};
       const player=<>{bar}{events.notice&&<p role="status">{events.notice}</p>}</>;
