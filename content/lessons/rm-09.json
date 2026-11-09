@@ -569,7 +569,7 @@
         "items": [
           {
             "id": "ex",
-            "tex": "4x^2\\p{pm}{\\pm}\\p{k}{11}x+\\p{c}{6}",
+            "tex": "\\p{a}{4}x^2\\p{pm}{\\pm}\\p{k}{11}x+\\p{c}{6}",
             "position": {
               "x": 0.5,
               "y": 0.14
@@ -578,21 +578,29 @@
           },
           {
             "id": "fa",
-            "tex": "\\p{n}{4}=\\p{a1}{1\\times4}=\\p{a2}{2\\times2}",
+            "tex": "\\begin{array}{ccc}\\p{a1}{1}&\\quad&\\p{a2}{2}\\\\[0.5em]\\p{c1}{4}&\\quad&\\p{c2}{2}\\end{array}",
             "position": {
               "x": 0.3,
-              "y": 0.32
+              "y": 0.36
             },
-            "size": "md"
+            "size": "lg"
           },
           {
             "id": "fb",
-            "tex": "\\p{n}{6}=\\p{b1}{1\\times6}=\\p{b2}{2\\times3}=\\p{b3}{3\\times2}=\\p{b4}{6\\times1}",
+            "tex": "\\begin{array}{ccc}\\p{b1}{1}&\\quad&\\p{b2}{2}\\\\[0.5em]\\p{d1}{6}&\\quad&\\p{d2}{3}\\end{array}",
             "position": {
               "x": 0.66,
-              "y": 0.32
+              "y": 0.36
             },
-            "size": "md"
+            "size": "lg",
+            "group": "six",
+            "gap": "1.2em"
+          },
+          {
+            "id": "fbr",
+            "tex": "\\begin{array}{ccc}\\p{b3}{3}&\\quad&\\p{b4}{6}\\\\[0.5em]\\p{d3}{2}&\\quad&\\p{d4}{1}\\end{array}",
+            "size": "lg",
+            "group": "six"
           },
           {
             "id": "res1",
@@ -617,6 +625,7 @@
           "hidden_items": [
             "fa",
             "fb",
+            "fbr",
             "res1",
             "res2"
           ]
@@ -646,51 +655,44 @@
         {
           "id": "s4-2",
           "role": "say",
-          "text": "4는 $1\\times4$, $2\\times2$로, 6은 $1\\times6$, $2\\times3$으로 쓸 수 있습니다. 상수항 쪽만 순서를 뒤집어 $3\\times2$, $6\\times1$까지 적어 두면 빠짐없이 따질 수 있어요.",
-          "tts": "사는 일 곱하기 사, 이 곱하기 이로, 육은 일 곱하기 육, 이 곱하기 삼으로 쓸 수 있습니다. 상수항 쪽만 순서를 뒤집어, 삼 곱하기 이, 육 곱하기 일까지 적어 두면, 빠짐없이 따질 수 있어요.",
+          "text": "먼저 이차항의 계수 4를 두 수의 곱으로 나눠 위아래로 적습니다. 1과 4, 2와 2입니다.",
+          "tts": "먼저 이차항의 계수 사를, 두 수의 곱으로 나눠 위아래로 적습니다. 일과 사, 이와 이입니다.",
           "cue": {
             "actions": [
+              {
+                "type": "circle",
+                "target": "item:ex/a",
+                "at": "@이차항의 계수 사를"
+              },
               {
                 "type": "reveal",
                 "target": "item",
                 "id": "fa",
-                "at": "@사는"
+                "at": "@위아래로"
               },
               {
-                "type": "underline",
-                "at": "@일 곱하기 사",
-                "target": "item:fa/a1"
+                "type": "tint",
+                "target": "item:fa/a1",
+                "color": "mint",
+                "at": "@일과 사"
               },
               {
-                "type": "underline",
-                "at": "@이 곱하기 이로",
-                "target": "item:fa/a2"
+                "type": "tint",
+                "target": "item:fa/c1",
+                "color": "mint",
+                "at": "@일과 사"
               },
               {
-                "type": "reveal",
-                "target": "item",
-                "id": "fb",
-                "at": "@육은"
+                "type": "tint",
+                "target": "item:fa/a2",
+                "color": "mint",
+                "at": "@이와 이입니다"
               },
               {
-                "type": "underline",
-                "at": "@일 곱하기 육",
-                "target": "item:fb/b1"
-              },
-              {
-                "type": "underline",
-                "at": "@이 곱하기 삼으로",
-                "target": "item:fb/b2"
-              },
-              {
-                "type": "underline",
-                "at": "@삼 곱하기 이",
-                "target": "item:fb/b3"
-              },
-              {
-                "type": "underline",
-                "at": "@육 곱하기 일까지",
-                "target": "item:fb/b4"
+                "type": "tint",
+                "target": "item:fa/c2",
+                "color": "mint",
+                "at": "@이와 이입니다"
               }
             ]
           }
@@ -698,52 +700,259 @@
         {
           "id": "s4-3",
           "role": "say",
-          "text": "하나씩 맞춰 봅니다. 위에 1과 1, 아래에 4와 6을 적으면 크로스 곱은 6과 4, 합이 10이라 아닙니다. 위에 1과 2, 아래에 4와 3이면 크로스 곱은 3과 8, 합이 딱 11입니다.",
-          "tts": "하나씩 맞춰 봅니다. 위에 일과 일, 아래에 사와 육을 적으면, 크로스 곱은 육과 사, 합이 십이라 아닙니다. 위에 일과 이, 아래에 사와 삼이면, 크로스 곱은 삼과 팔, 합이 딱 십일입니다.",
+          "text": "상수항 6도 같은 방법으로 1과 6, 2와 3을 적습니다. 그리고 처음이니까, 위아래를 뒤집은 3과 2, 6과 1까지 적어 둡니다.",
+          "tts": "상수항 육도 같은 방법으로, 일과 육, 이와 삼을 적습니다. 그리고 처음이니까, 위아래를 뒤집은 삼과 이, 육과 일까지 적어 둡니다.",
           "cue": {
             "actions": [
               {
                 "type": "circle",
-                "at": "@위에 일과 일",
-                "target": "item:fa/a1"
+                "target": "item:ex/c",
+                "at": "@상수항 육도"
               },
               {
-                "type": "circle",
-                "at": "@위에 일과 일+300",
-                "target": "item:fb/b1"
+                "type": "reveal",
+                "target": "item",
+                "id": "fb",
+                "at": "@일과 육"
               },
               {
-                "type": "handwrite",
-                "tex": "\\begin{matrix}1&1\\\\4&6\\end{matrix}\\ \\to\\ 6+4=10\\ \\times",
-                "position": {
-                  "x": 0.18,
-                  "y": 0.5
-                },
-                "align": "start",
-                "at": "@합이 십이라",
-                "until": "sentence"
+                "type": "tint",
+                "target": "item:fb/b1",
+                "color": "mint",
+                "at": "@일과 육"
               },
               {
-                "type": "underline",
-                "at": "@위에 일과 이",
-                "target": "item:fb/b2"
+                "type": "tint",
+                "target": "item:fb/d1",
+                "color": "mint",
+                "at": "@일과 육"
               },
               {
-                "type": "handwrite",
-                "tex": "\\begin{matrix}1&2\\\\4&3\\end{matrix}\\ \\to\\ 3+8=11\\ \\checkmark",
-                "position": {
-                  "x": 0.56,
-                  "y": 0.5
-                },
-                "align": "start",
-                "at": "@합이 딱 십일",
-                "until": "sentence"
+                "type": "tint",
+                "target": "item:fb/b2",
+                "color": "mint",
+                "at": "@이와 삼을"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d2",
+                "color": "mint",
+                "at": "@이와 삼을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "fbr",
+                "at": "@위아래를 뒤집은"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b3",
+                "color": "mint",
+                "at": "@삼과 이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d3",
+                "color": "mint",
+                "at": "@삼과 이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b4",
+                "color": "mint",
+                "at": "@육과 일까지"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d4",
+                "color": "mint",
+                "at": "@육과 일까지"
               }
             ]
           }
         },
         {
           "id": "s4-4",
+          "role": "say",
+          "text": "2와 3이 위에 있느냐 아래에 있느냐에 따라 크로스 곱이 달라지거든요. 이렇게 뒤집은 것까지 적어 두면 모든 경우의 수를 빠짐없이 따질 수 있습니다.",
+          "tts": "이와 삼이, 위에 있느냐 아래에 있느냐에 따라, 크로스 곱이 달라지거든요. 이렇게 뒤집은 것까지 적어 두면, 모든 경우의 수를 빠짐없이 따질 수 있습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "tint",
+                "target": "item:fb/b2",
+                "color": "accent",
+                "at": "@이와 삼이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d2",
+                "color": "accent",
+                "at": "@이와 삼이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b3",
+                "color": "accent",
+                "at": "@아래에 있느냐"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d3",
+                "color": "accent",
+                "at": "@아래에 있느냐"
+              },
+              {
+                "type": "handwrite",
+                "text": "뒤집어 적으면 모든 경우 확인",
+                "position": {
+                  "x": 0.66,
+                  "y": 0.55
+                },
+                "align": "middle",
+                "at": "@모든 경우의 수를",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-5",
+          "role": "say",
+          "text": "4 쪽까지 뒤집을 필요는 없습니다. 한쪽만 뒤집어도 모든 조합이 나오니까요.",
+          "tts": "사 쪽까지 뒤집을 필요는 없습니다. 한쪽만 뒤집어도, 모든 조합이 나오니까요.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:fa",
+                "at": "@사 쪽까지"
+              },
+              {
+                "type": "underline",
+                "target": "item:fbr",
+                "at": "@한쪽만 뒤집어도"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-6",
+          "role": "say",
+          "text": "이제 왼쪽에서 한 쌍, 오른쪽에서 한 쌍을 골라 바로 크로스 곱을 해 봅니다. 1과 4, 1과 6을 고르면 $1\\times6$, $4\\times1$, 합이 10이라 아닙니다.",
+          "tts": "이제 왼쪽에서 한 쌍, 오른쪽에서 한 쌍을 골라, 바로 크로스 곱을 해 봅니다. 일과 사, 일과 육을 고르면, 일 곱하기 육, 사 곱하기 일, 합이 십이라 아닙니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "tint",
+                "target": "item:fa/a1",
+                "color": "mint",
+                "at": "@일과 사, 일과"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/c1",
+                "color": "mint",
+                "at": "@일과 사, 일과"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/b1",
+                "color": "mint",
+                "at": "@일과 육을"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d1",
+                "color": "mint",
+                "at": "@일과 육을"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/a1",
+                "to": "item:fb/d1",
+                "at": "@일 곱하기 육"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/c1",
+                "to": "item:fb/b1",
+                "at": "@사 곱하기 일"
+              },
+              {
+                "type": "handwrite",
+                "tex": "1\\times6+4\\times1=10\\ \\times",
+                "position": {
+                  "x": 0.3,
+                  "y": 0.56
+                },
+                "align": "middle",
+                "at": "@합이 십이라",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-7",
+          "role": "say",
+          "text": "1과 4, 2와 3을 고르면 $1\\times3$, $4\\times2$, 합이 딱 11입니다.",
+          "tts": "일과 사, 이와 삼을 고르면, 일 곱하기 삼, 사 곱하기 이, 합이 딱 십일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "tint",
+                "target": "item:fa/a1",
+                "color": "mint",
+                "at": "@일과 사"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/c1",
+                "color": "mint",
+                "at": "@일과 사"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/b2",
+                "color": "mint",
+                "at": "@이와 삼을"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d2",
+                "color": "mint",
+                "at": "@이와 삼을"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/a1",
+                "to": "item:fb/d2",
+                "at": "@일 곱하기 삼"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/c1",
+                "to": "item:fb/b2",
+                "at": "@사 곱하기 이"
+              },
+              {
+                "type": "handwrite",
+                "tex": "1\\times3+4\\times2=11\\ \\checkmark",
+                "position": {
+                  "x": 0.66,
+                  "y": 0.56
+                },
+                "align": "middle",
+                "at": "@합이 딱",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-8",
           "role": "say",
           "text": "찾은 배열 그대로 적으면 $(x\\ 2)(4x\\ 3)$입니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니 두 괄호 모두 플러스, 일차항이 마이너스면 두 괄호 모두 마이너스입니다.",
           "tts": "찾은 배열 그대로 적으면, 괄호 엑스 이, 괄호 사엑스 삼입니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니, 두 괄호 모두 플러스, 일차항이 마이너스면, 두 괄호 모두 마이너스입니다.",
@@ -812,7 +1021,7 @@
         "items": [
           {
             "id": "ex",
-            "tex": "6x^2\\p{pm}{\\pm}\\p{k}{x}\\p{c}{-12}",
+            "tex": "\\p{a}{6}x^2\\p{pm}{\\pm}\\p{k}{x}\\p{c}{-12}",
             "position": {
               "x": 0.5,
               "y": 0.14
@@ -821,21 +1030,29 @@
           },
           {
             "id": "fa",
-            "tex": "\\p{n}{6}=\\p{a1}{1\\times6}=\\p{a2}{2\\times3}",
+            "tex": "\\begin{array}{ccc}\\p{a1}{1}&\\quad&\\p{a2}{2}\\\\[0.5em]\\p{c1}{6}&\\quad&\\p{c2}{3}\\end{array}",
             "position": {
               "x": 0.22,
-              "y": 0.32
+              "y": 0.34
             },
-            "size": "md"
+            "size": "lg"
           },
           {
             "id": "fb",
-            "tex": "\\p{n}{12}=\\p{b1}{1\\times12}=\\p{b2}{2\\times6}=\\p{b3}{3\\times4}=\\p{r}{4\\times3=6\\times2=12\\times1}",
+            "tex": "\\begin{array}{ccccc}\\p{b1}{1}&\\quad&\\p{b2}{2}&\\quad&\\p{b3}{3}\\\\[0.5em]\\p{d1}{12}&\\quad&\\p{d2}{6}&\\quad&\\p{d3}{4}\\end{array}",
             "position": {
               "x": 0.64,
-              "y": 0.32
+              "y": 0.34
             },
-            "size": "md"
+            "size": "lg",
+            "group": "twelve",
+            "gap": "1.2em"
+          },
+          {
+            "id": "fbr",
+            "tex": "\\begin{array}{ccccc}\\p{b4}{4}&\\quad&\\p{b5}{6}&\\quad&\\p{b6}{12}\\\\[0.5em]\\p{d4}{3}&\\quad&\\p{d5}{2}&\\quad&\\p{d6}{1}\\end{array}",
+            "size": "lg",
+            "group": "twelve"
           },
           {
             "id": "res1",
@@ -870,6 +1087,7 @@
           "hidden_items": [
             "fa",
             "fb",
+            "fbr",
             "res1",
             "res2",
             "note"
@@ -900,10 +1118,15 @@
         {
           "id": "s5-2",
           "role": "say",
-          "text": "6은 $1\\times6$, $2\\times3$, 12는 $1\\times12$, $2\\times6$, $3\\times4$, 그리고 뒤집은 세 가지까지 모두 여섯 가지입니다.",
-          "tts": "육은 일 곱하기 육, 이 곱하기 삼, 십이는 일 곱하기 십이, 이 곱하기 육, 삼 곱하기 사, 그리고 뒤집은 세 가지까지, 모두 여섯 가지입니다.",
+          "text": "6은 1과 6, 2와 3으로 적고, 12는 1과 12, 2와 6, 3과 4, 그리고 뒤집은 4와 3, 6과 2, 12와 1까지 적습니다.",
+          "tts": "육은 일과 육, 이와 삼으로 적고, 십이는 일과 십이, 이와 육, 삼과 사, 그리고 뒤집은, 사와 삼, 육과 이, 십이와 일까지 적습니다.",
           "cue": {
             "actions": [
+              {
+                "type": "circle",
+                "target": "item:ex/a",
+                "at": "@육은"
+              },
               {
                 "type": "reveal",
                 "target": "item",
@@ -911,14 +1134,33 @@
                 "at": "@육은"
               },
               {
-                "type": "underline",
-                "at": "@일 곱하기 육",
-                "target": "item:fa/a1"
+                "type": "tint",
+                "target": "item:fa/a1",
+                "color": "mint",
+                "at": "@일과 육"
               },
               {
-                "type": "underline",
-                "at": "@이 곱하기 삼,",
-                "target": "item:fa/a2"
+                "type": "tint",
+                "target": "item:fa/c1",
+                "color": "mint",
+                "at": "@일과 육"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/a2",
+                "color": "mint",
+                "at": "@이와 삼으로"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/c2",
+                "color": "mint",
+                "at": "@이와 삼으로"
+              },
+              {
+                "type": "circle",
+                "target": "item:ex/c",
+                "at": "@십이는"
               },
               {
                 "type": "reveal",
@@ -927,24 +1169,82 @@
                 "at": "@십이는"
               },
               {
-                "type": "underline",
-                "at": "@일 곱하기 십이",
-                "target": "item:fb/b1"
+                "type": "tint",
+                "target": "item:fb/b1",
+                "color": "mint",
+                "at": "@일과 십이"
               },
               {
-                "type": "underline",
-                "at": "@이 곱하기 육,",
-                "target": "item:fb/b2"
+                "type": "tint",
+                "target": "item:fb/d1",
+                "color": "mint",
+                "at": "@일과 십이"
               },
               {
-                "type": "underline",
-                "at": "@삼 곱하기 사",
-                "target": "item:fb/b3"
+                "type": "tint",
+                "target": "item:fb/b2",
+                "color": "mint",
+                "at": "@이와 육,"
               },
               {
-                "type": "underline",
-                "at": "@뒤집은 세 가지",
-                "target": "item:fb/r"
+                "type": "tint",
+                "target": "item:fb/d2",
+                "color": "mint",
+                "at": "@이와 육,"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/b3",
+                "color": "mint",
+                "at": "@삼과 사,"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d3",
+                "color": "mint",
+                "at": "@삼과 사,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "fbr",
+                "at": "@그리고 뒤집은"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b4",
+                "color": "mint",
+                "at": "@사와 삼"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d4",
+                "color": "mint",
+                "at": "@사와 삼"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b5",
+                "color": "mint",
+                "at": "@육과 이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d5",
+                "color": "mint",
+                "at": "@육과 이"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/b6",
+                "color": "mint",
+                "at": "@십이와 일까지"
+              },
+              {
+                "type": "tint",
+                "target": "item:fbr/d6",
+                "color": "mint",
+                "at": "@십이와 일까지"
               }
             ]
           }
@@ -952,28 +1252,54 @@
         {
           "id": "s5-3",
           "role": "say",
-          "text": "위에 2와 3, 아래에 3과 4를 적으면 크로스 곱은 8과 9, 차가 딱 1입니다. 그래서 $(2x\\ 3)(3x\\ 4)$의 꼴이 됩니다.",
-          "tts": "위에 이와 삼, 아래에 삼과 사를 적으면, 크로스 곱은 팔과 구, 차가 딱 일입니다. 그래서, 괄호 이엑스 삼, 괄호 삼엑스 사의 꼴이 됩니다.",
+          "text": "2와 3, 3과 4를 고르면 $2\\times4$, $3\\times3$, 크로스 곱은 8과 9, 차가 딱 1입니다. 그래서 $(2x\\ 3)(3x\\ 4)$의 꼴이 됩니다.",
+          "tts": "이와 삼, 삼과 사를 고르면, 이 곱하기 사, 삼 곱하기 삼, 크로스 곱은 팔과 구, 차가 딱 일입니다. 그래서, 괄호 이엑스 삼, 괄호 삼엑스 사의 꼴이 됩니다.",
           "cue": {
             "actions": [
               {
-                "type": "circle",
-                "at": "@위에 이와 삼",
-                "target": "item:fa/a2"
+                "type": "tint",
+                "target": "item:fa/a2",
+                "color": "mint",
+                "at": "@이와 삼,"
               },
               {
-                "type": "circle",
-                "at": "@아래에 삼과 사",
-                "target": "item:fb/b3"
+                "type": "tint",
+                "target": "item:fa/c2",
+                "color": "mint",
+                "at": "@이와 삼,"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/b3",
+                "color": "mint",
+                "at": "@삼과 사를"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d3",
+                "color": "mint",
+                "at": "@삼과 사를"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/a2",
+                "to": "item:fb/d3",
+                "at": "@이 곱하기 사"
+              },
+              {
+                "type": "arrow",
+                "from": "item:fa/c2",
+                "to": "item:fb/b3",
+                "at": "@삼 곱하기 삼"
               },
               {
                 "type": "handwrite",
-                "tex": "\\begin{matrix}2&3\\\\3&4\\end{matrix}\\ \\to\\ 9-8=1\\ \\checkmark",
+                "tex": "3\\times3-2\\times4=1\\ \\checkmark",
                 "position": {
-                  "x": 0.36,
-                  "y": 0.5
+                  "x": 0.5,
+                  "y": 0.52
                 },
-                "align": "start",
+                "align": "middle",
                 "at": "@차가 딱 일",
                 "until": "sentence"
               }

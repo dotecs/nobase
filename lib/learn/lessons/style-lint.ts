@@ -5,7 +5,8 @@ type Sentence = { id: string; text: string; tts?: string; cue?: { actions?: Acti
 type Item = { id: string; tex?: string; text?: string; position?: { x?: number; y?: number }; group?: string };
 type Scene = { id: string; stage: { type: string; items?: Item[] }; narration: Sentence[] };
 
-const NUM = '(?:일|이|삼|사|오|육|칠|팔|구|십|영)';
+const texVisible = (tex: string) => tex.replace(/\\(?:[dt]?frac|sqrt|text|mathrm|p)(?![a-zA-Z])/g, '').replace(/\\[a-zA-Z]+/g, 'X').replace(/\\./g, ' ').replace(/[{}^_]/g, '').length;
+const NUM ='(?:일|이|삼|사|오|육|칠|팔|구|십|영)';
 const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string | null }> = [
   { code: 'tts-emphasis', test: s => /\[[^\]]*emphasi[sz]/i.test(s.tts ?? '') ? '강조 지시어 금지 — 쉼표·[short pause]로 대신 (§4)' : null },
   { code: 'tts-plus-run', test: s => new RegExp(NUM + '플러스' + NUM).test(s.tts ?? '') ? '숫자끼리 덧셈은 "삼 더하기 오"처럼 띄어 읽기 (§4)' : null },
@@ -15,8 +16,11 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
   { code: 'memo-rotate', test: s => (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && a.rotate !== undefined && a.rotate !== 0) ? '손글씨 기울이지 않기 (§3)' : null },
   { code: 'memo-coord-arrow', test: (s, scene) => !['graph','slider'].includes(scene.stage.type) && (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && a.arrow_to && typeof a.arrow_to === 'object' && !('target' in (a.arrow_to as object))) ? '손글씨 arrow_to는 좌표 대신 {target, anchor} (§3)' : null },
   { code: 'memo-long-line', test: s => { const long = (s.cue?.actions ?? []).find(a => a.type === 'handwrite' && typeof a.text === 'string' && (a.text as string).split('\n').some(line => line.length > 22)); return long ? '손글씨 한 줄 22자 초과 — \\n으로 끊기 (§3)' : null; } },
+  // tex 손글씨도 줄바꿈된다(rm-09 s5-3 "2×4=8, 3×3=9 → 9−8=1 ✓"가 두 줄로 깨짐). 보이는 글자 수로 근사.
+  { code: 'memo-long-tex', test: s => { const long = (s.cue?.actions ?? []).find(a => a.type === 'handwrite' && typeof a.tex === 'string' && !/\\begin/.test(a.tex as string) && texVisible(a.tex as string) > 18); return long ? `손글씨 수식 "${long.tex}" 길음 — 한 식만 남기고 줄이기 (§9)` : null; } },
   { code: 'memo-example-lifetime', test: s => /예를 들어|넣으면|대입/.test(s.tts ?? '') && (s.cue?.actions ?? []).some(a => a.type === 'handwrite' && !a.arrow_to && a.until === undefined && a.ttl_ms === undefined) ? '예시·대입 필기는 until:"sentence" (§3)' : null },
-  { code: 'arrow-straight-items', test: s => (s.cue?.actions ?? []).some(a => a.type === 'arrow' && typeof a.from === 'string' && typeof a.to === 'string' && String(a.from).startsWith('item:') && String(a.to).startsWith('item:') && !a.bend) ? '같은 줄 항끼리 화살표는 bend:"up" (§3)' : null },
+  // 위아래 두 줄 배열(크로스 곱 대각선)은 직선 화살표가 맞다 — 여러 줄 tex(\\) 항이 끝점이면 제외.
+  { code: 'arrow-straight-items', test: (s, scene) => { const multi = (t: unknown) => { const id = String(t).slice(5).split('/')[0]; return /\\\\/.test(scene.stage.items?.find(i => i.id === id)?.tex ?? ''); }; return (s.cue?.actions ?? []).some(a => a.type === 'arrow' && typeof a.from === 'string' && typeof a.to === 'string' && String(a.from).startsWith('item:') && String(a.to).startsWith('item:') && !a.bend && !multi(a.from) && !multi(a.to)) ? '같은 줄 항끼리 화살표는 bend:"up" (§3)' : null; } },
 ];
 
 export function styleWarnings(scene: Scene): string[] {
