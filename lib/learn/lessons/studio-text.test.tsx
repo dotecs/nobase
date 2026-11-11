@@ -9,3 +9,16 @@ describe('StudioText', () => {
     expect(html).toMatch(/<strong>.*축 대칭<\/strong>/);
   });
 });
+
+import { LessonText } from '@/components/learn/lesson/LessonText';
+describe('LessonText authored', () => {
+  it('board note bold wrapping math', () => {
+    const html = renderToStaticMarkup(<LessonText authored text="**$y$축 대칭** $x$ 대신 $-x$ 를 대입"/>);
+    expect(html).not.toContain('**');
+    expect(html).toMatch(/<strong>.*축 대칭<\/strong>/);
+  });
+  it('plain bold still works and student text keeps asterisks', () => {
+    expect(renderToStaticMarkup(<LessonText authored text="**방정식** 등식"/>)).toContain('<strong>방정식</strong>');
+    expect(renderToStaticMarkup(<LessonText text="**a**"/>)).toContain('**a**');
+  });
+});
