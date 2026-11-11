@@ -7,7 +7,7 @@ import type { Curriculum } from '@/lib/learn/lessons/curriculum';
 import { FREE_GUEST_LESSON_ID, COACHING_CTA, lessonLoginHref } from '@/lib/learn/lessons/free-access';
 import styles from './free.module.css';
 
-export const metadata = { title: '뿌리깊은수학 무료 강의 | 노베이스구조대', description: '수 체계부터 함수까지, 수학 기초를 처음부터 다시 쌓는 20강 무료 강의', robots: { index: false, follow: false } };
+export const metadata = { title: '뿌리깊은수학 무료 강의', description: '수 체계부터 함수까지, 수학 기초를 처음부터 다시 쌓는 20강 무료 강의', robots: { index: false, follow: false } };
 
 const lessonHref = (id: string) => '/learn/lesson/' + encodeURIComponent(id);
 

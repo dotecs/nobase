@@ -20,3 +20,8 @@ describe('free lesson access', () => {
     expect(renderToStaticMarkup(<StudioComplete {...props} cta={{ label: '코칭 상담하기', href: 'https://talk.naver.com/w4jod1' }} />)).toContain('코칭 상담하기');
   });
 });
+
+import { readFileSync } from 'node:fs';
+it('middleware lets guests open the first free lesson', () => {
+  expect(readFileSync('lib/supabase-middleware.ts', 'utf8')).toContain(`'/learn/lesson/${FREE_GUEST_LESSON_ID}'`);
+});
