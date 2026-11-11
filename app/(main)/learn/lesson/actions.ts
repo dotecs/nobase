@@ -5,6 +5,7 @@ import { lessonEventsSchema } from '@/lib/learn/lessons/events';
 import { audioDurationSchema } from '@/lib/learn/lessons/audio-duration';
 import { audioHash,LESSON_VOICE } from '@/lib/learn/lessons/audio';
 import type { LessonEvent } from '@/lib/learn/lessons/types';
+import { isStudioTheme,saveStudioTheme } from '@/lib/learn/user-settings';
 export async function loadConceptCard(id:string){try{await requireLearner();const data=await conceptCardData(id);return data?{data}:{error:'개념을 찾을 수 없습니다.'};}catch(error){return {error:runtimeError(error,'lesson.conceptCard')};}}
 export async function recordLessonEvents(id:string,version:number,input:LessonEvent[]):Promise<{error?:string}>{
  try{const user=await requireLearner();const events=lessonEventsSchema.parse(input),lesson=await publishedLesson(id,version);if(!lesson)throw new Error('Published lesson missing');
@@ -21,3 +22,5 @@ export async function recordLessonAudioDuration(id:string,version:number,sentenc
  const result=await lessonDb().from('learn_lesson_audio').update({duration_ms:input.durationMs}).eq('lesson_id',id).eq('lesson_version',version).eq('sentence_id',input.sentenceId).eq('text_hash',audioHash(sentence,process.env.ELEVENLABS_VOICE_ID||LESSON_VOICE)).is('duration_ms',null);if(result.error)throw result.error;return {};
  }catch(error){return {error:runtimeError(error,'lesson.audioDuration')};}
 }
+
+export async function saveLessonTheme(theme:string):Promise<{error?:string}>{try{const user=await requireLearner();if(!isStudioTheme(theme))throw new Error('Invalid theme');await saveStudioTheme(user.id,theme);return {};}catch(error){return {error:runtimeError(error,'lesson.theme')};}}

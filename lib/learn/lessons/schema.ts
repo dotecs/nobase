@@ -35,7 +35,7 @@ export const stageSchema=z.discriminatedUnion('type',[
     if(!validGraphExpression(s.expr,s.param.name)||s.param.min>=s.param.max||s.param.init<s.param.min||s.param.init>s.param.max)ctx.addIssue({code:'custom',message:'슬라이더 식 또는 범위를 확인하세요.'});
   }),
   z.object({type:z.literal('table'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),columns:z.array(text).min(1),rows:z.array(z.object({cells:z.array(z.string()),tone:z.enum(['pos','zero','neg']).optional()}))}).refine(s=>s.rows.every(r=>r.cells.length===s.columns.length),'표 열 수가 다릅니다.'),
-  questionSchema.safeExtend({type:z.literal('quiz'),explain:text,trace_concept_id:id}),
+  questionSchema.safeExtend({type:z.literal('quiz'),explain:text,trace_concept_id:id,graph:graphSchema.optional()}),
   z.object({type:z.literal('figure'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),svg:text.optional(),image_path:z.string().regex(/^\/(?!\/)[^\s]*$/).optional(),caption:text}).refine(s=>Boolean(s.svg)!==Boolean(s.image_path),'SVG 또는 이미지 하나를 지정하세요.').refine(s=>!s.svg||(/^<svg[\s>]/.test(s.svg)&&!/<script|<foreignObject|\bon\w+\s*=|(?:href|src)\s*=\s*["'](?:https?:|javascript:)/i.test(s.svg)),'안전한 정적 SVG만 허용합니다.'),
 ]).superRefine((stage,ctx)=>{for(const message of itemErrors(stage))ctx.addIssue({code:'custom',message});});
 export const sentenceSchema=z.object({id,role:z.enum(['say','think','write']),text,tts:text.optional(),cue:z.object({actions:z.array(actionSchema).optional(),step:z.number().int().nonnegative().optional(),node:z.number().int().nonnegative().optional(),row:z.number().int().nonnegative().optional(),highlight:text.optional()}).optional()});

@@ -27,16 +27,17 @@ import {StudioStage} from './stages/StudioStage';
 import {StageControls} from './stages/StageControls';
 import {TraceDrawer} from './TraceDrawer';
 const EMPTY_AUDIO:Record<string,string>={},EMPTY_DURATIONS:Record<string,number|null>={},EMPTY_GRAPH={nodes:[] as ConceptNode[],edges:[] as ConceptEdge[]};
-export type StudioViewerProps={autoplayFirst?:boolean;admin?:boolean;referenceLessonId?:string;course?:CurriculumView;alignments?:Record<string,Alignment|null>;frame?:boolean;chrome?:boolean;lesson:Lesson;graph?:typeof EMPTY_GRAPH;audio?:Record<string,string>;durations?:Record<string,number|null>;record?:(events:LessonEvent[])=>Promise<{error?:string}>;loadConcept?:ConceptLoader;recordDuration?:(id:string,ms:number)=>Promise<unknown>;refreshAudio?:()=>Promise<Record<string,string>>;startPractice?:()=>Promise<{id?:string;error?:string;empty_reason?:string|null}>};
+export type StudioViewerProps={initialTheme?:'dark'|'light';saveTheme?:(theme:'dark'|'light')=>Promise<unknown>;autoplayFirst?:boolean;admin?:boolean;referenceLessonId?:string;course?:CurriculumView;alignments?:Record<string,Alignment|null>;frame?:boolean;chrome?:boolean;lesson:Lesson;graph?:typeof EMPTY_GRAPH;audio?:Record<string,string>;durations?:Record<string,number|null>;record?:(events:LessonEvent[])=>Promise<{error?:string}>;loadConcept?:ConceptLoader;recordDuration?:(id:string,ms:number)=>Promise<unknown>;refreshAudio?:()=>Promise<Record<string,string>>;startPractice?:()=>Promise<{id?:string;error?:string;empty_reason?:string|null}>};
 
 export function StudioViewer(props:StudioViewerProps){return <LessonViewer key={props.lesson.id} {...props}/>;}
 
-function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AUDIO,durations=EMPTY_DURATIONS,record,loadConcept,recordDuration,startPractice,refreshAudio,frame=false,chrome=true,admin=false,referenceLessonId=lesson.id,autoplayFirst=false}:StudioViewerProps){
+function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AUDIO,durations=EMPTY_DURATIONS,record,loadConcept,recordDuration,startPractice,refreshAudio,frame=false,chrome=true,admin=false,referenceLessonId=lesson.id,autoplayFirst=false,initialTheme,saveTheme}:StudioViewerProps){
   const [measured,setMeasured]=useState<Record<string,number>>({});
   const known=useMemo(()=>({...durations,...measured}),[durations,measured]);
   const clock=useMemo(()=>lessonClock(lesson,known),[lesson,known]);
   const nav=useLessonNavigation(lesson,clock,autoplayFirst),index=nav.cursor.index,scene=lesson.scenes[index],events=useLessonEvents(record);
-  const [theme,setTheme]=useState<'dark'|'light'>('dark'),[focused,setFocused]=useState(false),[captions,setCaptions]=useState(true),[manual,setManual]=useState<number|null>(null),[concept,setConcept]=useState<string|null>(null),[trace,setTrace]=useState<string|null>(null),[gaps,setGaps]=useState<string[]>([]),[notice,setNotice]=useState('');
+  const [theme,setThemeState]=useState<'dark'|'light'>(initialTheme??'dark'),[focused,setFocused]=useState(false),[captions,setCaptions]=useState(true),[manual,setManual]=useState<number|null>(null),[concept,setConcept]=useState<string|null>(null),[trace,setTrace]=useState<string|null>(null),[gaps,setGaps]=useState<string[]>([]),[notice,setNotice]=useState('');
+  const changeTheme=(next:'dark'|'light')=>{setThemeState(next);void saveTheme?.(next);};
   const [waiting,setWaiting]=useState(false),[answered,setAnswered]=useState(false),[sceneBar,setSceneBar]=useState(false);
   useEffect(()=>{setTrace(null);setConcept(null);setManual(null);setWaiting(false);setAnswered(false);},[scene.id]);
   const names=useMemo(()=>Object.fromEntries(graph.nodes.map(n=>[n.id,n.name])),[graph]);
@@ -68,7 +69,7 @@ function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AU
       const explore=(value:number)=>{pause();seek(sentenceStart);setManual(value);};
       const player=<>{bar}{events.notice&&<p role="status">{events.notice}</p>}</>;
       return <StudioShell lessonTitle={lesson.title} contents={<LessonContents scenes={lesson.scenes} index={index} completed={nav.completed} onSelect={target=>{pause();move(target);}}/>} transition={nav.phase}
-        adminMode={adminMode} onAdminModeChange={admin&&chrome?toggleAdminMode:undefined} frame={frame} chrome={chrome} focusMode={focused} onFocusChange={setFocused} theme={theme} onThemeChange={setTheme} scene={scene}
+        adminMode={adminMode} onAdminModeChange={admin&&chrome?toggleAdminMode:undefined} frame={frame} chrome={chrome} focusMode={focused} onFocusChange={setFocused} theme={theme} onThemeChange={changeTheme} scene={scene}
         reference={adminOn&&chrome?<ReferenceChip key={referenceLessonId+'#'+scene.id} lessonId={referenceLessonId} id={scene.id}/>:undefined}
         sidebar={<CourseSidebar lesson={lesson} course={shownCourse} time={nav.time} total={clock.total}/>}
         controls={['graph','slider'].includes(scene.stage.type)?<StageControls scene={scene} value={value} onGrab={()=>explore(value)} onExplore={explore}/>:undefined}

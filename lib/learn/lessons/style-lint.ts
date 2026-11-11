@@ -14,6 +14,7 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
   { code: 'tts-ordered-pair', test: s => /\(\s*-?[\w\\]+(?:_\d)?\s*,\s*-?[\w\\]+(?:_\d)?\s*\)/.test(s.text) && !/콤마/.test(s.tts ?? '') ? '순서쌍 (a, b)는 "에이 콤마 비"로 읽기 (§9)' : null },
   { code: 'tts-subscript', test: s => /_\{?[1-9]/.test(s.text) && /(?:엑스|와이|에프|에이|비) (?:일|이|삼|사)(?=[ ,.은는이가을를의]|$)/.test(s.tts ?? '') ? '아래첨자는 영어로 — x₁ "엑스 원", x₂ "엑스 투", x₃ "엑스 쓰리" (§9)' : null },
   { code: 'tts-gyojeom', test: s => /교점/.test(s.tts ?? '') ? '"교점"은 [교쩜] — tts에는 "교쩜"으로 (§9)' : null },
+  { code: 'spoken-formula', test: (s, scene) => scene.stage.type !== 'quiz' && /\$[^$]*[^\s$]\s*=\s*[^\s$][^$]*\$/.test(s.text) && !(s.cue?.actions ?? []).some(a => ['handwrite','reveal','move','callout','underline','circle','highlight'].includes(a.type) && !('target' in a && typeof a.target === 'string' && a.target.startsWith('axis:'))) ? '말하는 식이 칠판에 새로 나타나지 않음 — 이미 보이는 식이면 무시, 아니면 handwrite/reveal (§9)' : null },
   { code: 'tts-compound', test: s => /일대일대응|일대일함수/.test(s.tts ?? '') ? '"일대일 대응"처럼 띄어 쓰기(일대 일대응으로 끊겨 읽힘) (§9)' : null },
   { code: 'tts-saisiot', test: s => /지수법칙/.test(s.tts ?? '') ? '"지수 법칙"으로 띄어 쓰기(지숫법칙 발음 방지) (§4)' : null },
   { code: 'tts-paren-reading', test: s => /괄호 (?!안|모두|사이|밖)/.test(s.tts ?? '') ? '식을 읽을 때 "괄호"는 빼고 "엑스 더하기 이 곱하기 삼엑스 마이너스 이"처럼 (§9)' : null },

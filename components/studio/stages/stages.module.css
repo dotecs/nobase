@@ -59,3 +59,7 @@
 .tableCards h3 { margin:0 0 12px; font-size:24px; }
 .tableCards section+section { margin-top:12px; }
 .cardLabel { font-size:15px; color:var(--studio-muted); margin-bottom:8px; }
+
+/* 확인 문제에 상황 그래프를 붙일 때(quiz.graph) */
+.quizGraph { width:min(100%,520px); margin:0 auto 12px; }
+.quizGraph svg { width:100%; height:auto; max-height:36vh; }
