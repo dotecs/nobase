@@ -82,3 +82,15 @@ it.each(Array.from({length:11},(_,i)=>'rm-'+String(i+1).padStart(2,'0')))('keeps
   expect(html).not.toContain('data-move-clone');expect(s.moves).toEqual([]);
  }
 });
+
+it('keeps all constant-six factor pairs in one compact group, separate from four',()=>{
+ if(moveFixture.stage.type!=='board')throw new Error('board fixture expected');
+ const items=moveFixture.stage.items;
+ expect(items.filter(item=>item.group==='six').map(item=>item.id)).toEqual(['fb','fbr']);
+ expect(items.find(item=>item.id==='fa')?.group).toBe('four');
+ expect(items.find(item=>item.id==='fbr')?.position).toBeUndefined();
+ expect(actionErrors(moveFixture)).toEqual([]);
+ const css=readFileSync('components/studio/items.module.css','utf8');
+ expect(css).toContain('(max-width: 767px) and (orientation: portrait)');
+ expect(css).toContain('calc(var(--studio-type-xl) * .8)');
+});

@@ -30,3 +30,11 @@
 :global([data-layout="portrait"]) .item[data-size="xl"] { font-size:var(--studio-type-xl); }
 :global([data-layout="portrait"]) .item[data-size="lg"] { font-size:var(--studio-type-lg); }
 :global([data-layout="portrait"]) .item[data-size="sm"] { font-size:var(--studio-type-sm); }
+
+/* Keep related math compact on phones; desktop notation sizes are unchanged. */
+@media (max-width: 767px) and (orientation: portrait) {
+ :global([data-layout="portrait"]) .item { font-size:calc(var(--studio-type-md) * .8); }
+ :global([data-layout="portrait"]) .item[data-size="xl"] { font-size:calc(var(--studio-type-xl) * .8); }
+ :global([data-layout="portrait"]) .item[data-size="lg"] { font-size:calc(var(--studio-type-lg) * .8); }
+ :global([data-layout="portrait"]) .item[data-size="sm"] { font-size:calc(var(--studio-type-sm) * .8); }
+}
