@@ -11,6 +11,7 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
   { code: 'tts-emphasis', test: s => /\[[^\]]*emphasi[sz]/i.test(s.tts ?? '') ? '강조 지시어 금지 — 쉼표·[short pause]로 대신 (§4)' : null },
   { code: 'tts-plus-run', test: s => new RegExp(NUM + '플러스' + NUM).test(s.tts ?? '') ? '숫자끼리 덧셈은 "삼 더하기 오"처럼 띄어 읽기 (§4)' : null },
   { code: 'tts-long-run', test: s => { const m = (s.tts ?? '').match(/[가-힣]{9,}/g)?.find(w => /루트|플러스마이너스/.test(w)); return m ? `"${m}" 붙여 읽기 길음 — 의미 단위로 띄우기 (§4)` : null; } },
+  { code: 'tts-ordered-pair', test: s => /\(\s*-?[\w\\]+(?:_\d)?\s*,\s*-?[\w\\]+(?:_\d)?\s*\)/.test(s.text) && !/콤마/.test(s.tts ?? '') ? '순서쌍 (a, b)는 "에이 콤마 비"로 읽기 (§9)' : null },
   { code: 'tts-compound', test: s => /일대일대응|일대일함수/.test(s.tts ?? '') ? '"일대일 대응"처럼 띄어 쓰기(일대 일대응으로 끊겨 읽힘) (§9)' : null },
   { code: 'tts-saisiot', test: s => /지수법칙/.test(s.tts ?? '') ? '"지수 법칙"으로 띄어 쓰기(지숫법칙 발음 방지) (§4)' : null },
   { code: 'tts-paren-reading', test: s => /괄호 (?!안|모두|사이|밖)/.test(s.tts ?? '') ? '식을 읽을 때 "괄호"는 빼고 "엑스 더하기 이 곱하기 삼엑스 마이너스 이"처럼 (§9)' : null },
