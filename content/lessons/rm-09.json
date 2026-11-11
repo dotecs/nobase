@@ -603,11 +603,20 @@
             "group": "six"
           },
           {
+            "id": "fac",
+            "tex": "(\\p{a}{1}x+\\p{b}{2})(\\p{c}{4}x+\\p{d}{3})",
+            "position": {
+              "x": 0.5,
+              "y": 0.6
+            },
+            "size": "lg"
+          },
+          {
             "id": "res1",
             "tex": "4x^2\\p{s0}{+}11x+6=(x\\p{s1}{+}2)(4x\\p{s2}{+}3)",
             "position": {
               "x": 0.5,
-              "y": 0.72
+              "y": 0.73
             },
             "size": "lg"
           },
@@ -627,7 +636,8 @@
             "fb",
             "fbr",
             "res1",
-            "res2"
+            "res2",
+            "fac"
           ]
         }
       },
@@ -984,12 +994,87 @@
           }
         },
         {
-          "id": "s4-8",
+          "id": "s4-7b",
           "role": "say",
-          "text": "찾은 배열 그대로 적으면 $(x\\ 2)(4x\\ 3)$입니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니 두 괄호 모두 플러스, 일차항이 마이너스면 두 괄호 모두 마이너스입니다.",
-          "tts": "찾은 배열 그대로 적으면, 엑스 이 곱하기 사엑스 삼입니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니, 두 괄호 모두 플러스, 일차항이 마이너스면, 두 괄호 모두 마이너스입니다.",
+          "text": "고른 수를 그대로 가져오면, 윗줄은 $1x+2$, 아랫줄은 $4x+3$이 됩니다.",
+          "tts": "고른 수를 그대로 가져오면, 윗줄은 일엑스 더하기 이, 아랫줄은 사엑스 더하기 삼이 됩니다.",
           "cue": {
             "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "fac",
+                "at": "@고른 수를"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/a1",
+                "color": "mint",
+                "at": "@윗줄은"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/b2",
+                "color": "mint",
+                "at": "@윗줄은"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:fa/a1",
+                    "item:fac/a"
+                  ],
+                  [
+                    "item:fb/b2",
+                    "item:fac/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@윗줄은"
+              },
+              {
+                "type": "tint",
+                "target": "item:fa/c1",
+                "color": "mint",
+                "at": "@아랫줄은"
+              },
+              {
+                "type": "tint",
+                "target": "item:fb/d2",
+                "color": "mint",
+                "at": "@아랫줄은"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:fa/c1",
+                    "item:fac/c"
+                  ],
+                  [
+                    "item:fb/d2",
+                    "item:fac/d"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@아랫줄은"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-8",
+          "role": "say",
+          "text": "$1x$는 그냥 $x$라고 씁니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니 두 괄호 모두 플러스, 일차항이 마이너스면 두 괄호 모두 마이너스입니다.",
+          "tts": "일엑스는 그냥 엑스라고 씁니다. 이제 부호를 정합니다. 일차항이 플러스면 크로스 곱이 둘 다 양수여야 하니, 두 괄호 모두 플러스, 일차항이 마이너스면, 두 괄호 모두 마이너스입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "strike",
+                "target": "item:fac/a",
+                "at": "@그냥 엑스라고"
+              },
               {
                 "type": "reveal",
                 "target": "item",
@@ -1087,11 +1172,20 @@
             "group": "twelve"
           },
           {
+            "id": "fac",
+            "tex": "(\\p{a}{2}x\\quad\\p{b}{3})(\\p{c}{3}x\\quad\\p{d}{4})",
+            "position": {
+              "x": 0.5,
+              "y": 0.62
+            },
+            "size": "lg"
+          },
+          {
             "id": "res1",
             "tex": "6x^2\\p{s0}{+}x-12=(2x\\p{s1}{+}3)(3x\\p{s2}{-}4)",
             "position": {
               "x": 0.5,
-              "y": 0.66
+              "y": 0.72
             },
             "size": "lg"
           },
@@ -1100,7 +1194,7 @@
             "tex": "6x^2\\p{s0}{-}x-12=(2x\\p{s1}{-}3)(3x\\p{s2}{+}4)",
             "position": {
               "x": 0.5,
-              "y": 0.8
+              "y": 0.83
             },
             "size": "lg"
           },
@@ -1122,7 +1216,8 @@
             "fbr",
             "res1",
             "res2",
-            "note"
+            "note",
+            "fac"
           ]
         }
       },
@@ -1334,6 +1429,42 @@
                 "align": "middle",
                 "at": "@차가 딱 일",
                 "until": "sentence"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "fac",
+                "at": "@그래서"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:fa/a2",
+                    "item:fac/a"
+                  ],
+                  [
+                    "item:fb/b3",
+                    "item:fac/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@그래서"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:fa/c2",
+                    "item:fac/c"
+                  ],
+                  [
+                    "item:fb/d3",
+                    "item:fac/d"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@삼엑스 사의"
               }
             ]
           }
