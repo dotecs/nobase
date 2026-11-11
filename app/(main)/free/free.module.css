@@ -15,9 +15,8 @@
 .chapter ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .row { display: flex; align-items: center; gap: 6px; }
 .lesson { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; color: var(--color-ink); text-decoration: none; }
-.lesson:hover, .video:hover { background: var(--color-surface, #f4f6fa); }
+.lesson:hover { background: var(--color-surface, #f4f6fa); }
 .name { min-width: 0; }
-.video { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 6px 8px; border-radius: 8px; color: var(--color-muted); text-decoration: none; white-space: nowrap; }
 .textbook { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; padding: 20px 24px; border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; }
 .textbook h2 { font-size: 18px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; }
 .textbook p { font-size: 14px; color: var(--color-muted); }
