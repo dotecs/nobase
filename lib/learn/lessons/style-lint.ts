@@ -12,6 +12,8 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
   { code: 'tts-plus-run', test: s => new RegExp(NUM + '플러스' + NUM).test(s.tts ?? '') ? '숫자끼리 덧셈은 "삼 더하기 오"처럼 띄어 읽기 (§4)' : null },
   { code: 'tts-long-run', test: s => { const m = (s.tts ?? '').match(/[가-힣]{9,}/g)?.find(w => /루트|플러스마이너스/.test(w)); return m ? `"${m}" 붙여 읽기 길음 — 의미 단위로 띄우기 (§4)` : null; } },
   { code: 'tts-ordered-pair', test: s => /\(\s*-?[\w\\]+(?:_\d)?\s*,\s*-?[\w\\]+(?:_\d)?\s*\)/.test(s.text) && !/콤마/.test(s.tts ?? '') ? '순서쌍 (a, b)는 "에이 콤마 비"로 읽기 (§9)' : null },
+  { code: 'tts-subscript', test: s => /_\{?[1-9]/.test(s.text) && /(?:엑스|와이|에프|에이|비) (?:일|이|삼|사)(?=[ ,.은는이가을를의]|$)/.test(s.tts ?? '') ? '아래첨자는 영어로 — x₁ "엑스 원", x₂ "엑스 투", x₃ "엑스 쓰리" (§9)' : null },
+  { code: 'tts-gyojeom', test: s => /교점/.test(s.tts ?? '') ? '"교점"은 [교쩜] — tts에는 "교쩜"으로 (§9)' : null },
   { code: 'tts-compound', test: s => /일대일대응|일대일함수/.test(s.tts ?? '') ? '"일대일 대응"처럼 띄어 쓰기(일대 일대응으로 끊겨 읽힘) (§9)' : null },
   { code: 'tts-saisiot', test: s => /지수법칙/.test(s.tts ?? '') ? '"지수 법칙"으로 띄어 쓰기(지숫법칙 발음 방지) (§4)' : null },
   { code: 'tts-paren-reading', test: s => /괄호 (?!안|모두|사이|밖)/.test(s.tts ?? '') ? '식을 읽을 때 "괄호"는 빼고 "엑스 더하기 이 곱하기 삼엑스 마이너스 이"처럼 (§9)' : null },

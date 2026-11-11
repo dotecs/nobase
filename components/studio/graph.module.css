@@ -9,6 +9,8 @@
 .curve { stroke-width: 2.5; }
 .glow { stroke-width: 6; opacity: .4; }
 .point { fill:none; stroke-width: 3; stroke-linecap: round; }
+/* 좌표평면 위의 점은 둥근 점, 수직선 위의 점은 짧은 세로선(.point) */
+.dot { stroke:var(--studio-bg); stroke-width: 1.5; }
 .pointLabel { color:var(--studio-text); font-size: var(--studio-type-label); font-family: var(--font-sans); fill: var(--studio-text); paint-order: stroke; stroke: var(--studio-bg); stroke-width: 4; stroke-linejoin: round; }
 .band { fill: var(--studio-glow); opacity: .24; }
 .label { color: var(--studio-text); font-size: 19px; white-space: nowrap; }
