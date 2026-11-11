@@ -49,11 +49,11 @@ describe('pack import without a remote database', () => {
     expect(store.get('learn_items')?.map(row => row.version)).toEqual([1, 2]);
     expect((await importValidated(client, data)).added).toBe(0);
   });
-  it('실제 저장소 팩의 30개 소주제·23개 엣지를 검증한다', async () => {
+  it('실제 저장소 팩의 45개 소주제·37개 엣지를 검증한다', async () => {
     const result = validatePack(await readRepositoryPack('root-math'));
     expect(result.errors).toEqual([]);
-    expect(result.data?.abilities).toHaveLength(30);
-    expect(result.data?.edges).toHaveLength(23);
+    expect(result.data?.abilities).toHaveLength(45);
+    expect(result.data?.edges).toHaveLength(37);
   });
   it('테이블 미적용 오류는 안내문으로 변환한다', () => {
     expect(message({ code: '42P01' })).toContain('마이그레이션 미적용');

@@ -3,7 +3,9 @@
   "kind": "concept",
   "title": "함수 지식의 틀",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "19-1"
+  ],
   "intro": "앞으로 배울 모든 함수는 같은 다섯 단계로 배운다. 그 틀을 먼저 세운다.",
   "goal": "함수를 이해한다는 것의 뜻과, 함수를 배우는 다섯 단계를 안다.",
   "scenes": [

@@ -3,7 +3,10 @@
   "kind": "concept",
   "title": "방정식과 부등식의 의미",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "16-1",
+    "16-2"
+  ],
   "intro": "방정식은 두 그래프가 만나는 곳, 부등식은 한 그래프가 위에 있는 곳을 찾는 일이다.",
   "goal": "f(x)=g(x)의 해를 교점의 x좌표로, f(x)≥g(x)의 해를 그래프의 위아래로 읽는다.",
   "scenes": [

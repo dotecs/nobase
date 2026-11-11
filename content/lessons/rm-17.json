@@ -3,7 +3,9 @@
   "kind": "concept",
   "title": "그래프의 평행이동",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "17-1"
+  ],
   "intro": "그래프를 모양 그대로 옮기면 관계식에는 반대 부호로 대입된다. 관계식은 점을 담는 그릇이기 때문이다.",
   "goal": "x축으로 p, y축으로 q만큼 평행이동하면 x에 x−p, y에 y−q를 대입한다는 것과 그 이유를 이해한다.",
   "scenes": [

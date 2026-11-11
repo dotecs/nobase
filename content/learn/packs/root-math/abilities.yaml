@@ -358,3 +358,183 @@
   request_ability: null
   source_node_id: null
   status: draft
+- id: 12-1
+  pack_id: root-math
+  unit_id: u12
+  order_in_unit: 1
+  name: 함수의 뜻과 조건
+  action: 두 집합 사이의 대응이 함수인지 판단한다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 12-2
+  pack_id: root-math
+  unit_id: u12
+  order_in_unit: 2
+  name: 정의역·공역·치역
+  action: 함수의 정의역·공역·치역을 구분해 구한다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 12-3
+  pack_id: root-math
+  unit_id: u12
+  order_in_unit: 3
+  name: 함수의 표현 f(x)
+  action: f(x) 기호를 읽고 함숫값을 계산한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 13-1
+  pack_id: root-math
+  unit_id: u13
+  order_in_unit: 1
+  name: 합성함수의 뜻과 기호
+  action: (f∘g)(x)를 f(g(x))로 바꿔 읽는다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 13-2
+  pack_id: root-math
+  unit_id: u13
+  order_in_unit: 2
+  name: 합성함수 계산
+  action: 합성함수의 값과 식을 구한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 14-1
+  pack_id: root-math
+  unit_id: u14
+  order_in_unit: 1
+  name: 일대일대응
+  action: 대응이 일대일대응인지 판단한다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 14-2
+  pack_id: root-math
+  unit_id: u14
+  order_in_unit: 2
+  name: 역함수
+  action: 역함수 식을 원래 함수로 바꿔 읽고 값을 구한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 15-1
+  pack_id: root-math
+  unit_id: u15
+  order_in_unit: 1
+  name: 좌표평면과 순서쌍
+  action: 점을 순서쌍 (a, b)로 나타내고 좌표평면에 찍는다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 15-2
+  pack_id: root-math
+  unit_id: u15
+  order_in_unit: 2
+  name: 그래프 위의 점과 관계식
+  action: 그래프 위의 점 (a, b)를 관계식에 넣어 b=f(a)를 세운다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 16-1
+  pack_id: root-math
+  unit_id: u16
+  order_in_unit: 1
+  name: 방정식의 해와 교점
+  action: f(x)=g(x)의 해를 두 그래프 교점의 x좌표로 읽는다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 16-2
+  pack_id: root-math
+  unit_id: u16
+  order_in_unit: 2
+  name: 부등식의 해와 그래프
+  action: 그래프의 위아래로 부등식의 해를 구한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 17-1
+  pack_id: root-math
+  unit_id: u17
+  order_in_unit: 1
+  name: 그래프의 평행이동
+  action: 평행이동한 그래프의 식을 x→x-p, y→y-q로 구한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 18-1
+  pack_id: root-math
+  unit_id: u18
+  order_in_unit: 1
+  name: 그래프의 대칭이동
+  action: x축·y축 대칭이동한 그래프의 식을 구한다
+  slide_pages: ""
+  kind: procedure
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 19-1
+  pack_id: root-math
+  unit_id: u19
+  order_in_unit: 1
+  name: 함수 지식의 틀
+  action: 함수 문제를 관계식·그래프·점의 틀로 정리한다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft
+- id: 20-1
+  pack_id: root-math
+  unit_id: u20
+  order_in_unit: 1
+  name: 상수함수와 수직선
+  action: 상수함수 y=c와 직선 x=c를 구분한다
+  slide_pages: ""
+  kind: concept
+  is_supplement: false
+  request_ability: null
+  source_node_id: null
+  status: draft

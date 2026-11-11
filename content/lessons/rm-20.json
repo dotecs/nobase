@@ -3,7 +3,9 @@
   "kind": "concept",
   "title": "상수함수",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "20-1"
+  ],
   "intro": "x와 상관없이 값이 일정한 함수 y=a. 그래프는 x축에 평행한 직선이다.",
   "goal": "상수함수 y=a의 뜻과 그래프를 알고, y축에 평행한 직선 x=a는 함수가 아님을 안다.",
   "scenes": [

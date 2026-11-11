@@ -1236,7 +1236,7 @@
     },
     {
       "id": "c.function",
-      "ability_id": null,
+      "ability_id": "12-1",
       "name": "함수의 뜻",
       "one_line": "재료(input)를 넣으면 결과물(output)을 내어 주는 장치. 정의역의 원소 하나에 결과값 하나를 대응시킨다.",
       "lesson_id": "rm-12",
@@ -1261,7 +1261,7 @@
     },
     {
       "id": "c.domain-range",
-      "ability_id": null,
+      "ability_id": "12-2",
       "name": "정의역·공역·치역",
       "one_line": "정의역은 재료의 집합, 공역은 결과물로 예상한 집합, 치역은 실제로 대응된 결과값만 모은 집합. 치역은 공역의 일부다.",
       "lesson_id": "rm-12",
@@ -1286,7 +1286,7 @@
     },
     {
       "id": "c.function-condition",
-      "ability_id": null,
+      "ability_id": "12-1",
       "name": "함수가 될 조건",
       "one_line": "① 정의역의 모든 원소가 대응에 참여하고 ② 각 원소가 오직 하나의 결과값에 대응될 때만 함수다. 공역의 원소에는 조건이 없다.",
       "lesson_id": "rm-12",
@@ -1311,7 +1311,7 @@
     },
     {
       "id": "c.function-notation",
-      "ability_id": null,
+      "ability_id": "12-3",
       "name": "함수의 표현 f(x)",
       "one_line": "$f(x)$는 하나의 기호다. $x$를 미지수로 쓰는 식이며, $f(\\square)$가 나오면 원래 식의 $x$ 자리에 $\\square$를 통째로 대입한다.",
       "lesson_id": "rm-12",
@@ -1336,7 +1336,7 @@
     },
     {
       "id": "c.composite",
-      "ability_id": null,
+      "ability_id": "13-1",
       "name": "합성함수의 뜻",
       "one_line": "$f$의 결과물을 다시 $g$의 재료로 넣으면, 처음과 끝만 본 대응도 하나의 함수가 된다. 이것이 합성함수.",
       "lesson_id": "rm-13",
@@ -1361,7 +1361,7 @@
     },
     {
       "id": "c.composite-notation",
-      "ability_id": null,
+      "ability_id": "13-1",
       "name": "합성함수의 기호",
       "one_line": "$(g\\circ f)(x)=g(f(x))$. 기호에서는 나중에 적용하는 $g$가 앞에 온다. 기호를 만나면 먼저 $g(f(x))$로 바꿔 쓴다.",
       "lesson_id": "rm-13",
@@ -1386,7 +1386,7 @@
     },
     {
       "id": "c.one-to-one",
-      "ability_id": null,
+      "ability_id": "14-1",
       "name": "일대일대응",
       "one_line": "공역의 원소까지 모두 대응에 참여하고, 각각 화살표를 하나씩만 받는 함수. 일대일대응이면 역함수가 존재한다.",
       "lesson_id": "rm-14",
@@ -1411,7 +1411,7 @@
     },
     {
       "id": "c.inverse",
-      "ability_id": null,
+      "ability_id": "14-2",
       "name": "역함수",
       "one_line": "일대일대응 $f$의 화살표를 뒤집은 함수 $f^{-1}$. $f(a)=b \\Leftrightarrow f^{-1}(b)=a$ — 넣는 것과 나오는 것이 자리를 바꾼다.",
       "lesson_id": "rm-14",
@@ -1436,7 +1436,7 @@
     },
     {
       "id": "c.coordinate-plane",
-      "ability_id": null,
+      "ability_id": "15-1",
       "name": "좌표평면과 점",
       "one_line": "수직선 두 개를 직각으로 놓은 평면. 점 $(a,b)$ 하나가 '재료 $a$를 넣으면 결과물 $b$가 나온다'는 대응 하나를 나타낸다.",
       "lesson_id": "rm-15",
@@ -1461,7 +1461,7 @@
     },
     {
       "id": "c.function-graph",
-      "ability_id": null,
+      "ability_id": "15-2",
       "name": "함수의 그래프",
       "one_line": "함수의 대응을 나타내는 점들을 좌표평면에 모두 찍었을 때 생기는 선(곡선).",
       "lesson_id": "rm-15",
@@ -1486,7 +1486,7 @@
     },
     {
       "id": "c.point-on-graph",
-      "ability_id": null,
+      "ability_id": "15-2",
       "name": "그래프 위의 점",
       "one_line": "'점 $(a,b)$가 그래프 위에 있다 = 그래프가 점 $(a,b)$를 지난다' ⇔ 관계식에 $x=a$, $y=b$를 대입하면 등식이 성립한다. $y=f(x)$이면 $b=f(a)$.",
       "lesson_id": "rm-15",
@@ -1511,7 +1511,7 @@
     },
     {
       "id": "c.eq-graph",
-      "ability_id": null,
+      "ability_id": "16-1",
       "name": "방정식과 그래프의 교점",
       "one_line": "방정식 $f(x)=g(x)$의 해는 두 그래프 $y=f(x)$, $y=g(x)$의 교점의 $x$좌표와 같다.",
       "lesson_id": "rm-16",
@@ -1536,7 +1536,7 @@
     },
     {
       "id": "c.ineq-graph",
-      "ability_id": null,
+      "ability_id": "16-2",
       "name": "부등식과 그래프의 위아래",
       "one_line": "$f(x)\\ge g(x)$의 해는 $y=f(x)$의 그래프가 $y=g(x)$의 그래프보다 위에 있거나 만나는 $x$의 범위. 교점을 기준으로 나누고, 등호가 있으면 교점도 포함한다.",
       "lesson_id": "rm-16",
@@ -1561,7 +1561,7 @@
     },
     {
       "id": "c.translation",
-      "ability_id": null,
+      "ability_id": "17-1",
       "name": "그래프의 평행이동",
       "one_line": "그래프를 $x$축 방향으로 $p$, $y$축 방향으로 $q$만큼 평행이동하면 관계식의 $x$에 $x-p$, $y$에 $y-q$를 대입한다. 점이 늘어날 만큼 미리 빼 두므로 부호가 반대다.",
       "lesson_id": "rm-17",
@@ -1586,7 +1586,7 @@
     },
     {
       "id": "c.reflection",
-      "ability_id": null,
+      "ability_id": "18-1",
       "name": "그래프의 대칭이동",
       "one_line": "$x$축 대칭이동은 $y$ 대신 $-y$, $y$축 대칭이동은 $x$ 대신 $-x$를 대입한다. 뒤집히는 좌표의 부호를 미리 바꿔 넣는다.",
       "lesson_id": "rm-18",
@@ -1611,7 +1611,7 @@
     },
     {
       "id": "c.function-framework",
-      "ability_id": null,
+      "ability_id": "19-1",
       "name": "함수 지식의 틀",
       "one_line": "함수를 이해한다 = 관계식·그래프·둘의 관계를 안다. 모든 함수는 ① 정의 ② 기본형 관계식과 그래프 ③ 평행·대칭이동 ④ 방정식 ⑤ 부등식의 다섯 단계로 배운다.",
       "lesson_id": "rm-19",
@@ -1636,7 +1636,7 @@
     },
     {
       "id": "c.constant-function",
-      "ability_id": null,
+      "ability_id": "20-1",
       "name": "상수함수",
       "one_line": "$x$ 값에 상관없이 함숫값이 일정한 함수 $y=a$ ($y=0\\times x+a$). 그래프는 $x$축에 평행한 직선이고, $x$축은 $y=0$.",
       "lesson_id": "rm-20",
@@ -1661,7 +1661,7 @@
     },
     {
       "id": "c.vertical-line",
-      "ability_id": null,
+      "ability_id": "20-1",
       "name": "y축에 평행한 직선",
       "one_line": "$x$좌표가 $a$인 점을 모두 모은 직선 $x=a$. $x$ 하나에 $y$가 끝없이 많이 대응되므로 함수의 그래프가 아니라 직선의 방정식이다.",
       "lesson_id": "rm-20",

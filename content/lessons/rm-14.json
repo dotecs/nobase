@@ -3,7 +3,10 @@
   "kind": "concept",
   "title": "역함수",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "14-1",
+    "14-2"
+  ],
   "intro": "일대일대응이면 화살표를 뒤집어도 함수가 된다. 그 뒤집은 함수, 역함수를 익힌다.",
   "goal": "일대일대응과 역함수의 뜻을 이해하고, f⁻¹(b)=a를 f(a)=b로 바꿔 계산한다.",
   "scenes": [

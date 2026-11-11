@@ -3,7 +3,9 @@
   "kind": "concept",
   "title": "그래프의 대칭이동",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "18-1"
+  ],
   "intro": "x축으로 뒤집으면 y의 부호가, y축으로 뒤집으면 x의 부호가 바뀐다. 관계식에는 그 부호를 미리 바꿔 넣는다.",
   "goal": "x축 대칭은 y 대신 −y, y축 대칭은 x 대신 −x를 대입한다는 것과 그 이유를 이해한다.",
   "scenes": [

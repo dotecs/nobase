@@ -182,3 +182,115 @@
   origin: book_order
   status: hypothesis
   reason: 교재 단원·소주제 순서
+- id: 30d5ce9a-be80-52e6-95fa-c6308247d5de
+  pack_id: root-math
+  source_id: 12-1
+  target_id: 12-2
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 2977f8b0-cd5e-5622-969d-0806659a76b1
+  pack_id: root-math
+  source_id: 12-2
+  target_id: 12-3
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 4a7d9d85-aeec-55a2-9c5c-c44e9b0d6378
+  pack_id: root-math
+  source_id: 12-3
+  target_id: 13-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 1466184f-128c-5abb-ab56-06fd5f0254ac
+  pack_id: root-math
+  source_id: 13-1
+  target_id: 13-2
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: a3eac4f0-5425-52df-a3ce-ddddc795e165
+  pack_id: root-math
+  source_id: 13-2
+  target_id: 14-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 98896adf-20f9-58b7-b076-b22e42e3299c
+  pack_id: root-math
+  source_id: 14-1
+  target_id: 14-2
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: c0573341-9202-53af-8142-8dc020e9ecb8
+  pack_id: root-math
+  source_id: 14-2
+  target_id: 15-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: f18a9fe0-32d0-52a9-841d-da335d4538f5
+  pack_id: root-math
+  source_id: 15-1
+  target_id: 15-2
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 28f126e5-11a5-5c3a-9f0d-0bab2c3bbcc3
+  pack_id: root-math
+  source_id: 15-2
+  target_id: 16-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 33443562-3d2b-517c-81e5-d396603e41f3
+  pack_id: root-math
+  source_id: 16-1
+  target_id: 16-2
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 3f9c4298-48e0-5891-9199-cf573637ddb3
+  pack_id: root-math
+  source_id: 16-2
+  target_id: 17-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: cacdde2b-168b-52e8-ac42-6c5b9f2ec181
+  pack_id: root-math
+  source_id: 17-1
+  target_id: 18-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 4c4b2db7-ad29-5c12-ad20-1c8e27105637
+  pack_id: root-math
+  source_id: 18-1
+  target_id: 19-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서
+- id: 2b13982c-ebcf-5236-bb1e-9e0da305a082
+  pack_id: root-math
+  source_id: 19-1
+  target_id: 20-1
+  type: prerequisite
+  origin: book_order
+  status: hypothesis
+  reason: 교재 단원·소주제 순서

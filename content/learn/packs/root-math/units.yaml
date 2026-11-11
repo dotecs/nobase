@@ -46,3 +46,57 @@
   title: 제곱근의 성질
   slide_pages: p45-49
   tier: mvp1
+- id: u12
+  pack_id: root-math
+  order: 9
+  title: 함수의 정의
+  slide_pages: ""
+  tier: mvp1
+- id: u13
+  pack_id: root-math
+  order: 10
+  title: 합성함수
+  slide_pages: ""
+  tier: mvp1
+- id: u14
+  pack_id: root-math
+  order: 11
+  title: 역함수
+  slide_pages: ""
+  tier: mvp1
+- id: u15
+  pack_id: root-math
+  order: 12
+  title: 함수의 관계식과 그래프
+  slide_pages: ""
+  tier: mvp1
+- id: u16
+  pack_id: root-math
+  order: 13
+  title: 방정식과 부등식의 의미
+  slide_pages: ""
+  tier: mvp1
+- id: u17
+  pack_id: root-math
+  order: 14
+  title: 그래프의 평행이동
+  slide_pages: ""
+  tier: mvp1
+- id: u18
+  pack_id: root-math
+  order: 15
+  title: 그래프의 대칭이동
+  slide_pages: ""
+  tier: mvp1
+- id: u19
+  pack_id: root-math
+  order: 16
+  title: 함수 지식의 틀
+  slide_pages: ""
+  tier: mvp1
+- id: u20
+  pack_id: root-math
+  order: 17
+  title: 상수함수
+  slide_pages: ""
+  tier: mvp1

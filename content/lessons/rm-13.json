@@ -3,7 +3,10 @@
   "kind": "concept",
   "title": "합성함수",
   "pack_id": "root-math",
-  "ability_ids": [],
+  "ability_ids": [
+    "13-1",
+    "13-2"
+  ],
   "intro": "두 함수가 이어지면 그 자체가 하나의 함수가 된다. 합성함수와 그 기호를 익힌다.",
   "goal": "합성함수의 뜻을 이해하고, (g∘f)(x)를 g(f(x))로 바꿔 계산한다.",
   "scenes": [
