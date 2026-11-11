@@ -75,11 +75,11 @@ it.each([.3,.5,1])('maps actual DOM positions without double scaling at %s',scal
  const rect={left:10+30*scale,top:20+60*scale,right:10+50*scale,bottom:20+90*scale} as DOMRect;
  expect(measuredMoveBox(rect,root,1000,600)).toEqual(labelBox(30,60,20,30));
 });
-it.each(Array.from({length:11},(_,i)=>'rm-'+String(i+1).padStart(2,'0')))('keeps existing %s scenes renderable without move content changes',id=>{
+it.each(Array.from({length:20},(_,i)=>'rm-'+String(i+1).padStart(2,'0')))('keeps authored %s scenes renderable with every move landed at scene end',id=>{
  const lesson=lessonSchema.parse(JSON.parse(readFileSync('content/lessons/'+id+'.json','utf8')));
- for(const scene of lesson.scenes){const starts=scene.narration.map((_,i)=>i*2000),s=stageStateAt(scene,starts.at(-1)!+1500,starts);
+ for(const scene of lesson.scenes){const starts=scene.narration.map((_,i)=>i*20000),s=stageStateAt(scene,starts.at(-1)!+19000,starts);
   const html=renderToStaticMarkup(<ChalkSurface scene={scene} state={s} marks={s.chalk??[]} revision={scene.id}><StudioStage scene={scene} state={s} onWhy={()=>{}} onTrace={()=>{}} onQuiz={()=>{}}/></ChalkSurface>);
-  expect(html).not.toContain('data-move-clone');expect(s.moves).toEqual([]);
+  expect(html).not.toContain('data-move-clone');expect((s.moves??[]).filter(m=>m.flying||!m.arrived)).toEqual([]);
  }
 });
 
