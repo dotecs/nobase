@@ -34,4 +34,9 @@
 
 .lessonNav { width:100%; display:flex; flex-direction:column; gap:4px; }
 .options { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+.waitingHint { color:var(--studio-accent); font-size:.9rem; font-weight:600; }
+@keyframes continuePulse { 0%,100% { box-shadow:0 0 0 0 color-mix(in srgb, var(--studio-accent) 55%, transparent); } 50% { box-shadow:0 0 0 8px transparent; } }
+.continue[data-waiting="true"] { animation:continuePulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .continue[data-waiting="true"] { animation:none; } }
 .continue { min-height:44px; padding:0 20px; border:0; border-radius:var(--radius-button); background:var(--studio-accent); color:var(--studio-bg); font-weight:600; }
+@media(max-width:640px) { .options { flex-wrap:wrap; } .waitingHint { flex-basis:100%; text-align:right; font-size:.82rem; } }

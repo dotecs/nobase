@@ -28,6 +28,9 @@ const rules: Array<{ code: string; test: (s: Sentence, scene: Scene) => string |
 export function styleWarnings(scene: Scene): string[] {
   const out: string[] = [];
   for (const sentence of scene.narration) for (const rule of rules) { const message = rule.test(sentence, scene); if (message) out.push(`${sentence.id} [${rule.code}] ${message}`); }
+  // 조작 장면은 마지막 문장에서 무엇을 해 보고 언제 '계속'을 누르는지 말한다 — 말없이 멈추면 고장으로 보인다(rm-11 s4).
+  const last = scene.narration.at(-1);
+  if (scene.stage.type === 'slider' && last && !/계속/.test(last.text)) out.push(`${last.id} [slider-continue] 슬라이더 장면은 끝에서 멈춘다 — 마지막 문장에 "직접 움직여 … 계속을 누르세요" 안내 (§9)`);
   const title = (scene as Scene & { title?: string }).title;
   if (title && (title.length > 18 || title.includes(' — '))) out.push(`${scene.id} [scene-title] 장면 제목은 목차에 보인다 — 18자 이내 명사구, " — 설명" 없이 (§9)`);
   const rowItems = scene.stage.type !== 'board' ? [] : (scene.stage.items ?? []).filter(item => !item.group && item.tex && item.position?.y !== undefined);
