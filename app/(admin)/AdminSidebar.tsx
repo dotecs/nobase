@@ -39,6 +39,7 @@ export default function AdminSidebar({ counts }: { counts: AdminBadgeCounts }) {
     { href: '/admin/learn/authoring', label: '문항 데이터화', icon: <FaBook /> },
     { href: '/admin/learn/lessons', label: '시각 레슨', icon: <FaBook /> },
     { href: '/admin/learn/learners', label: '학습자', icon: <FaUsers /> },
+    { href: '/admin/learn/free-viewers', label: '무료 강의 시청자', icon: <FaUsers /> },
     { href: '/admin/cohorts', label: '기수 관리', icon: <FaCalendarAlt /> },
     {
       href: '/admin/enrollments',

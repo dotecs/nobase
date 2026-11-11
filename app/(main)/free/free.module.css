@@ -1,0 +1,23 @@
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.main { flex: 1; width: min(var(--container-max, 1120px), calc(100% - 32px)); margin-inline: auto; padding-bottom: 80px; word-break: keep-all; overflow-wrap: anywhere; }
+.hero { padding-block: 64px 40px; }
+.eyebrow { font-size: 14px; font-weight: 600; color: var(--color-primary, #2f6fed); margin-bottom: 12px; }
+.title { font-size: clamp(32px, 4.5vw, 52px); line-height: 1.25; font-weight: 700; letter-spacing: -.04em; color: var(--color-ink); margin-bottom: 20px; }
+.lead { font-size: 17px; line-height: 28px; color: var(--color-muted); max-width: 640px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.primary, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 12px; font-weight: 600; font-size: 16px; text-decoration: none; }
+.primary { background: var(--color-primary, #2f6fed); color: #fff; }
+.secondary { background: #fee500; color: #191919; }
+.note { margin-top: 14px; font-size: 14px; color: var(--color-muted); }
+.list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.chapter { border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; padding: 20px; }
+.chapter h2 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--color-ink); }
+.chapter ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.chapter a { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; color: var(--color-ink); text-decoration: none; }
+.chapter a:hover { background: var(--color-surface, #f4f6fa); }
+.no { min-width: 36px; font-size: 13px; color: var(--color-muted); }
+.badge { margin-left: auto; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #e8f0ff; color: #2f6fed; white-space: nowrap; }
+.cta { margin-top: 48px; padding: 32px; border-radius: 20px; background: var(--color-surface, #f4f6fa); }
+.cta h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--color-ink); }
+.cta p { color: var(--color-muted); margin-bottom: 20px; }
+@media (max-width: 767px) { .hero { padding-block: 40px 28px; } .actions > * { flex: 1 1 100%; } .cta { padding: 24px; } }

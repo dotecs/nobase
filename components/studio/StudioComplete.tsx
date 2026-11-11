@@ -5,9 +5,9 @@ import { formatTimelineTime } from '@/lib/learn/lessons/timeline';
 import type { NextLessonAction } from '@/lib/learn/lessons/curriculum';
 import styles from './complete.module.css';
 
-export function StudioComplete({ lessonProgress, autoNext=false, open, seen, total, elapsed, gaps, next, onClose, onProceed, onPractice, notice }: {
+export function StudioComplete({ lessonProgress, autoNext=false, open, seen, total, elapsed, gaps, next, onClose, onProceed, onPractice, cta, notice }: {
   lessonProgress?: number; autoNext?: boolean; open: boolean; seen: number; total: number; elapsed: number; gaps: { id: string; name: string }[];
-  next: NextLessonAction; onClose: () => void; onProceed: () => Promise<void>; onPractice?: () => void; notice?: string;
+  next: NextLessonAction; onClose: () => void; onProceed: () => Promise<void>; onPractice?: () => void; cta?: { label: string; href: string }; notice?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const leaving = useRef(false);
@@ -33,7 +33,7 @@ export function StudioComplete({ lessonProgress, autoNext=false, open, seen, tot
     {notice && <p role="status">{notice}</p>}{countdown!==null&&<p role="status">{countdown}초 후 다음 강을 재생합니다. <button type="button" onClick={()=>setCountdown(null)}>자동 재생 취소</button></p>}
     <div className={styles.actions}>
       <a data-completion-next href={next.href} className={styles.primary} onClick={async event => { event.preventDefault(); if (leaving.current) return; leaving.current = true; try { await onProceed(); } finally { leaving.current = false; } }}>{next.label}{next.lessonId && <span aria-hidden="true"> →</span>}</a>
-      {onPractice ? <button type="button" onClick={()=>{setCountdown(null);onPractice();}}>연습 문제로</button> : <Link href="/learn">연습 문제로</Link>}
+      {onPractice ? <button type="button" onClick={()=>{setCountdown(null);onPractice();}}>연습 문제로</button> : cta ? <a href={cta.href} target="_blank" rel="noopener noreferrer" data-completion-cta>{cta.label}</a> : <Link href="/learn">연습 문제로</Link>}
       <button type="button" onClick={onClose}>닫기</button>
     </div>
   </dialog>;

@@ -42,9 +42,12 @@ export async function GET(request: NextRequest) {
       // SECURITY DEFINER + RLS 미우회 이슈를 백엔드 레이어에서 봉인.
       const admin = createAdminSupabaseClient();
       const accountAge = Date.now() - Date.parse(session.user.created_at);
-      if (/^\/courses\/[^/]+\/free\//.test(returnTo) && accountAge >= 0 && accountAge <= 5 * 60 * 1000) {
+      // 무료 강의에서 가입한 사람을 리드로 표시한다: 영상 무료강의는 free_lesson, 러닝 스튜디오 무료강의(/free, /learn/lesson)는 studio_free.
+      const leadSource = /^\/courses\/[^/]+\/free\//.test(returnTo) ? 'free_lesson'
+        : /^\/(free(\/|$|\?)|learn\/lesson\/)/.test(returnTo) ? 'studio_free' : null;
+      if (leadSource && accountAge >= 0 && accountAge <= 5 * 60 * 1000) {
         const { error: leadError } = await (admin as any).from('profiles')
-          .update({ lead_source: 'free_lesson' })
+          .update({ lead_source: leadSource })
           .eq('user_id', session.user.id).is('lead_source', null);
         if (leadError) console.error('[lead_source] update failed', leadError.code);
       }
