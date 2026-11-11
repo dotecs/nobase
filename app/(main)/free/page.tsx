@@ -28,10 +28,10 @@ export default async function FreeLessonsPage({ searchParams }: { searchParams: 
           <Link className={styles.primary} href={lessonHref(FREE_GUEST_LESSON_ID)}>1강 바로 보기</Link>
           {!user && <Link className={styles.secondary} href={loginHref}>카카오 로그인하고 전체 보기</Link>}
         </div>
-        <p className={styles.note}>{user ? '로그인되어 있어 20강과 교재를 모두 볼 수 있어요. 본 강의는 자동으로 기록돼요.' : `1~${FREE_GUEST_COUNT}강은 로그인 없이, ${FREE_GUEST_COUNT + 1}강부터와 교재는 카카오 로그인 후 무료로 볼 수 있어요.`}</p>
+        <p className={styles.note}>{user ? '로그인되어 있어 20강을 모두 볼 수 있어요. 본 강의는 자동으로 기록돼요.' : `1~${FREE_GUEST_COUNT}강은 로그인 없이, ${FREE_GUEST_COUNT + 1}강부터는 카카오 로그인 후 무료로 볼 수 있어요.`}</p>
       </section>
       {materials.textbook && <section className={styles.textbook}>
-        <div><h2>교재</h2><p>강의와 같은 순서로 정리된 「뿌리깊은수학」 통합본 PDF{user ? '' : ' · 카카오 로그인 후 받기'}</p>
+        <div><h2>교재</h2><p>강의와 같은 순서로 정리된 「뿌리깊은수학」 통합본 PDF</p>
           {query.textbook && <p role="alert" className={styles.alert}>교재를 열지 못했어요. 잠시 뒤 다시 시도해 주세요.</p>}</div>
         <a className={styles.secondaryOutline} href="/free/textbook">교재 PDF 받기</a>
       </section>}
