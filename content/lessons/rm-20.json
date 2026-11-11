@@ -1,0 +1,693 @@
+{
+  "id": "rm-20",
+  "kind": "concept",
+  "title": "상수함수",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "x와 상관없이 값이 일정한 함수 y=a. 그래프는 x축에 평행한 직선이다.",
+  "goal": "상수함수 y=a의 뜻과 그래프를 알고, y축에 평행한 직선 x=a는 함수가 아님을 안다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "상수함수",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "20강 · 상수함수",
+        "title": "x와 상관없이\n일정한 함수",
+        "accent": "일정한",
+        "subtitle": "기본형 관계식 y=a (x의 계수가 0)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "def",
+            "text": "$x$ 값에 상관없이 $y$ 값이 일정한 함수",
+            "position": {
+              "x": 0.5,
+              "y": 0.2
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "eq",
+            "tex": "y=\\p{a}{a}",
+            "position": {
+              "x": 0.5,
+              "y": 0.44
+            },
+            "size": "xl"
+          },
+          {
+            "id": "eq2",
+            "tex": "(y=\\p{z}{0}\\times \\p{x}{x}+a)",
+            "position": {
+              "x": 0.5,
+              "y": 0.66
+            },
+            "size": "xl"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "def",
+            "eq",
+            "eq2"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 상수함수를 알아보겠습니다. 19강의 틀로 보면 1단계 정의와 2단계 관계식과 그래프를 다루는 시간입니다. 상수는 변하지 않는 수라는 뜻이죠.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 상수함수를 알아보겠습니다. 십구강의 틀로 보면, 일단계 정의와, 이단계 관계식과 그래프를 다루는 시간입니다. 상수는, 변하지 않는 수라는 뜻이죠.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "그래서 상수함수는 $x$의 값에 상관없이 함숫값이 일정한 함수입니다. 기본형 관계식은 $y=a$입니다.",
+          "tts": "그래서 상수함수는, 엑스의 값에 상관없이, 함숫값이 일정한 함수입니다. 기본형 관계식은, 와이는 에이입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "def",
+                "at": "@그래서 상수함수는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "eq",
+                "at": "@기본형 관계식은"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq/a",
+                "at": "@와이는 에이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "$x$가 없는데 함수라니 낯설 수 있습니다. $x$ 앞에 0이 곱해져 있다고 보면 됩니다. $x$에 어떤 수를 넣어도 0이 되니, $y$는 언제나 $a$입니다.",
+          "tts": "엑스가 없는데 함수라니, 낯설 수 있습니다. 엑스 앞에 영이 곱해져 있다고 보면 됩니다. 엑스에 어떤 수를 넣어도 영이 되니, 와이는 언제나 에이입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "eq2",
+                "at": "@엑스 앞에 영이"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq2/z",
+                "at": "@엑스 앞에 영이"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq2/x",
+                "at": "@어떤 수를 넣어도"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "상수함수의 그래프",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "20강 · 상수함수",
+        "title": "x축에 평행한\n직선",
+        "accent": "평행한",
+        "subtitle": "y=a의 그래프는 y좌표가 a인 점을 모두 모은 직선",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -2,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "상수함수 y=1, 2, 3, −1의 그래프",
+        "fns": [
+          {
+            "expr": "1",
+            "c": "c1"
+          },
+          {
+            "expr": "2",
+            "c": "c1"
+          },
+          {
+            "expr": "3",
+            "c": "c1"
+          },
+          {
+            "expr": "-1",
+            "c": "c2"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "$y=1$의 그래프를 그려 봅시다. $y$좌표가 1인 점을 모두 모으면, $x$축에 평행한 직선이 됩니다.",
+          "tts": "와이는 일의 그래프를 그려 봅시다. 와이좌표가 일인 점을 모두 모으면, 엑스축에 평행한 직선이 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": -2.5,
+                "y": 1,
+                "at": "@와이좌표가 일인",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": -0.5,
+                "y": 1,
+                "at": "@와이좌표가 일인+250",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 1.5,
+                "y": 1,
+                "at": "@와이좌표가 일인+500",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 1,
+                "at": "@와이좌표가 일인+750",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "draw",
+                "target": "fn:0",
+                "at": "@엑스축에 평행한",
+                "duration_ms": 1200
+              },
+              {
+                "type": "handwrite",
+                "text": "y = 1",
+                "position": {
+                  "x": 3.3,
+                  "y": 1.5
+                },
+                "align": "middle",
+                "at": "@엑스축에 평행한",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "$y=2$, $y=3$도 마찬가지이고, $y=-1$처럼 음수이면 $x$축 아래에 놓입니다.",
+          "tts": "와이는 이, 와이는 삼도 마찬가지이고, 와이는 마이너스 일처럼 음수이면, 엑스축 아래에 놓입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "draw",
+                "target": "fn:1",
+                "at": "@와이는 이",
+                "duration_ms": 1200
+              },
+              {
+                "type": "draw",
+                "target": "fn:2",
+                "at": "@와이는 삼도",
+                "duration_ms": 1200
+              },
+              {
+                "type": "draw",
+                "target": "fn:3",
+                "at": "@마이너스 일처럼",
+                "duration_ms": 1200
+              },
+              {
+                "type": "handwrite",
+                "text": "y = −1",
+                "position": {
+                  "x": 3.2,
+                  "y": -1.5
+                },
+                "align": "middle",
+                "at": "@엑스축 아래에",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$x$축 위의 점은 $y$좌표가 모두 0이니, $x$축 자체를 관계식으로 쓰면 $y=0$입니다.",
+          "tts": "엑스축 위의 점은, 와이좌표가 모두 영이니, 엑스축 자체를 관계식으로 쓰면, 와이는 영입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@엑스축 위의 점은"
+              },
+              {
+                "type": "handwrite",
+                "text": "y = 0",
+                "position": {
+                  "x": -3.2,
+                  "y": 0.5
+                },
+                "align": "middle",
+                "at": "@와이는 영입니다",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-4",
+          "role": "say",
+          "text": "모든 $x$에 $y$값이 하나씩 대응되니, 상수함수는 함수의 조건을 만족합니다.",
+          "tts": "모든 엑스에, 와이값이 하나씩 대응되니, 상수함수는 함수의 조건을 만족합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": 2,
+                "y": 1,
+                "at": "@하나씩 대응되니",
+                "guides": false,
+                "c": "c1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "y축에 평행한 직선",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "20강 · 상수함수",
+        "title": "x=3은\n함수가 아니다",
+        "accent": "함수가 아니다",
+        "subtitle": "x 하나에 y가 끝없이 많이 대응된다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -2,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "x좌표가 3인 점들이 모여 이룬 직선 x=3",
+        "fns": [
+          {
+            "expr": "1",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "이와 함께 $y$축에 평행한 직선도 알아 둡시다. 이런 직선 위의 점들은 $x$좌표가 모두 같습니다.",
+          "tts": "이와 함께, 와이축에 평행한 직선도 알아 둡시다. 이런 직선 위의 점들은, 엑스좌표가 모두 같습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "axis:y",
+                "at": "@와이축에 평행한"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0,
+                  "y": 3.5
+                },
+                "at": "@엑스좌표가 모두"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "$x$좌표가 3인 점을 모두 모으면 $y$축에 평행한 직선이 되고, 이 직선을 $x=3$이라고 씁니다.",
+          "tts": "엑스좌표가 삼인 점을 모두 모으면, 와이축에 평행한 직선이 되고, 이 직선을, 엑스는 삼이라고 씁니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": 3,
+                "y": -1.75,
+                "at": "@엑스좌표가 삼인+0",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -1.5,
+                "at": "@엑스좌표가 삼인+60",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -1.25,
+                "at": "@엑스좌표가 삼인+120",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -1.0,
+                "at": "@엑스좌표가 삼인+180",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -0.75,
+                "at": "@엑스좌표가 삼인+240",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -0.5,
+                "at": "@엑스좌표가 삼인+300",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": -0.25,
+                "at": "@엑스좌표가 삼인+360",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 0.0,
+                "at": "@엑스좌표가 삼인+420",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 0.25,
+                "at": "@엑스좌표가 삼인+480",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 0.5,
+                "at": "@엑스좌표가 삼인+540",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 0.75,
+                "at": "@엑스좌표가 삼인+600",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 1.0,
+                "at": "@엑스좌표가 삼인+660",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 1.25,
+                "at": "@엑스좌표가 삼인+720",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 1.5,
+                "at": "@엑스좌표가 삼인+780",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 1.75,
+                "at": "@엑스좌표가 삼인+840",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 2.0,
+                "at": "@엑스좌표가 삼인+900",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 2.25,
+                "at": "@엑스좌표가 삼인+960",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 2.5,
+                "at": "@엑스좌표가 삼인+1020",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 2.75,
+                "at": "@엑스좌표가 삼인+1080",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 3.0,
+                "at": "@엑스좌표가 삼인+1140",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 3.25,
+                "at": "@엑스좌표가 삼인+1200",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 3.5,
+                "at": "@엑스좌표가 삼인+1260",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 3.75,
+                "at": "@엑스좌표가 삼인+1320",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 3,
+                "y": 4.0,
+                "at": "@엑스좌표가 삼인+1380",
+                "guides": false,
+                "c": "c1"
+              },
+              {
+                "type": "handwrite",
+                "text": "x = 3",
+                "position": {
+                  "x": 2.2,
+                  "y": 3.5
+                },
+                "align": "middle",
+                "at": "@엑스는 삼이라고",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "하지만 이 직선은 함수의 그래프가 아닙니다. $x=3$ 하나에 $y$값이 끝없이 많이 대응되니, 결과값은 오직 하나여야 한다는 함수의 조건을 어기기 때문이죠. 그래서 직선의 방정식이라고만 부릅니다.",
+          "tts": "하지만 이 직선은, 함수의 그래프가 아닙니다. 엑스는 삼 하나에, 와이값이 끝없이 많이 대응되니, 결과값은 오직 하나여야 한다는 함수의 조건을 어기기 때문이죠. 그래서, 직선의 방정식이라고만 부릅니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "x 하나에 y가 여럿\n→ 함수가 아님",
+                "position": {
+                  "x": -2.2,
+                  "y": 2.6
+                },
+                "align": "middle",
+                "at": "@끝없이 많이",
+                "until": "sentence"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 3,
+                  "y": 3
+                },
+                "at": "@와이값이 끝없이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "문제에서 $x=3$을 만나면, $x$의 값이 3이라는 뜻일 수도 있고, 이런 직선을 뜻할 수도 있다는 것을 기억해 두세요.",
+          "tts": "문제에서 엑스는 삼을 만나면, 엑스의 값이 삼이라는 뜻일 수도 있고, 이런 직선을 뜻할 수도 있다는 것을, 기억해 두세요.",
+          "cue": {
+            "actions": [
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 3,
+                  "y": 1
+                },
+                "at": "@이런 직선을"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "함수의 그래프가\n아닌 것은",
+        "accent": "아닌 것",
+        "subtitle": "x 하나에 y가 하나인지 확인합니다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "다음 중 함수의 그래프가 **아닌** 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$x=2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$y=2$"
+          },
+          {
+            "id": "c",
+            "text_md": "$y=0$"
+          },
+          {
+            "id": "d",
+            "text_md": "$y=-5$"
+          }
+        ],
+        "correct": "a",
+        "explain": "$x=2$는 $x$ 하나에 $y$가 끝없이 많이 대응되므로 함수가 아니다. 나머지는 모두 상수함수.",
+        "trace_concept_id": "c.vertical-line"
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. $x$ 하나에 $y$가 하나씩만 대응되는지 확인해 보세요.",
+          "tts": "마지막으로 한 문제. 엑스 하나에, 와이가 하나씩만 대응되는지 확인해 보세요."
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 상수함수을 알아봤습니다. 함수 단원은 다음 일차함수로 이어집니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 상수함수을 알아봤습니다. 함수 단원은, 다음 일차함수로 이어집니다."
+        }
+      ]
+    }
+  ]
+}

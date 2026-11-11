@@ -1,0 +1,640 @@
+{
+  "id": "rm-19",
+  "kind": "concept",
+  "title": "함수 지식의 틀",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "앞으로 배울 모든 함수는 같은 다섯 단계로 배운다. 그 틀을 먼저 세운다.",
+  "goal": "함수를 이해한다는 것의 뜻과, 함수를 배우는 다섯 단계를 안다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "앞으로 배울 함수",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "19강 · 함수 지식의 틀",
+        "title": "앞으로 배울\n여덟 가지 함수",
+        "accent": "여덟 가지",
+        "subtitle": "상수함수부터 삼각함수까지",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "t0",
+            "text": "**상수함수**",
+            "position": {
+              "x": 0.2,
+              "y": 0.26
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t1",
+            "text": "**일차함수**",
+            "position": {
+              "x": 0.4,
+              "y": 0.26
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t2",
+            "text": "**이차함수**",
+            "position": {
+              "x": 0.6000000000000001,
+              "y": 0.26
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t3",
+            "text": "**유리함수**",
+            "position": {
+              "x": 0.8,
+              "y": 0.26
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t4",
+            "text": "**무리함수**",
+            "position": {
+              "x": 0.2,
+              "y": 0.46
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t5",
+            "text": "**지수함수**",
+            "position": {
+              "x": 0.4,
+              "y": 0.46
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t6",
+            "text": "**로그함수**",
+            "position": {
+              "x": 0.6000000000000001,
+              "y": 0.46
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "t7",
+            "text": "**삼각함수**",
+            "position": {
+              "x": 0.8,
+              "y": 0.46
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "next",
+            "tex": "\\text{합성}\\cdot\\text{역함수}\\ \\to\\ \\text{미분}\\cdot\\text{적분}",
+            "position": {
+              "x": 0.5,
+              "y": 0.74
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "t0",
+            "t1",
+            "t2",
+            "t3",
+            "t4",
+            "t5",
+            "t6",
+            "t7",
+            "next"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 함수 지식의 틀을 알아보겠습니다. 수학이라는 과목에서 함수는 아주 큰 부분을 차지합니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 함수 지식의 틀을 알아보겠습니다. 수학이라는 과목에서, 함수는 아주 큰 부분을 차지합니다.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "앞으로 배울 함수는 크게 여덟 가지입니다. 상수함수, 일차함수, 이차함수, 유리함수, 무리함수, 지수함수, 로그함수, 그리고 삼각함수입니다.",
+          "tts": "앞으로 배울 함수는, 크게 여덟 가지입니다. 상수함수, 일차함수, 이차함수, 유리함수, 무리함수, 지수함수, 로그함수, 그리고 삼각함수입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t0",
+                "at": "@상수함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t1",
+                "at": "@일차함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t2",
+                "at": "@이차함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t3",
+                "at": "@유리함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t4",
+                "at": "@무리함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t5",
+                "at": "@지수함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t6",
+                "at": "@로그함수,"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "t7",
+                "at": "@삼각함수입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "각 함수를 익힌 뒤에는 두 함수를 합성해 보기도 하고, 역함수를 생각해 보기도 하며, 나아가 미분과 적분까지 이어집니다. 그 모든 것의 기초는 각 함수를 이해하는 일입니다.",
+          "tts": "각 함수를 익힌 뒤에는, 두 함수를 합성해 보기도 하고, 역함수를 생각해 보기도 하며, 나아가 미분과 적분까지 이어집니다. 그 모든 것의 기초는, 각 함수를 이해하는 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "next",
+                "at": "@두 함수를 합성해"
+              },
+              {
+                "type": "underline",
+                "target": "item:next",
+                "at": "@미분과 적분까지"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "함수를 이해한다는 것",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "19강 · 함수 지식의 틀",
+        "title": "관계식과 그래프,\n그리고 둘의 관계",
+        "accent": "둘의 관계",
+        "subtitle": "함수를 이해한다 = 관계식·그래프·그 관계를 안다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "rel",
+            "text": "**관계식**",
+            "position": {
+              "x": 0.3,
+              "y": 0.45
+            },
+            "size": "xl",
+            "kind": "note"
+          },
+          {
+            "id": "arr",
+            "tex": "\\Longleftrightarrow",
+            "position": {
+              "x": 0.5,
+              "y": 0.45
+            },
+            "size": "xl"
+          },
+          {
+            "id": "gr",
+            "text": "**그래프**",
+            "position": {
+              "x": 0.7,
+              "y": 0.45
+            },
+            "size": "xl",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "arr",
+            "gr"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "함수를 이해한다는 것은, 그 함수의 관계식을 알고, 관계식에 해당하는 그래프를 알고, 둘 사이의 관계를 이해하는 것입니다.",
+          "tts": "함수를 이해한다는 것은, 그 함수의 관계식을 알고, 관계식에 해당하는 그래프를 알고, 둘 사이의 관계를 이해하는 것입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:rel",
+                "at": "@관계식을 알고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "gr",
+                "at": "@그래프를 알고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "arr",
+                "at": "@둘 사이의"
+              },
+              {
+                "type": "circle",
+                "target": "item:arr",
+                "at": "@둘 사이의"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "15강에서 본 것처럼, 그래프 위의 점은 관계식을 만족하고, 관계식을 만족하는 점을 모으면 그래프가 됩니다.",
+          "tts": "십오강에서 본 것처럼, 그래프 위의 점은 관계식을 만족하고, 관계식을 만족하는 점을 모으면, 그래프가 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:gr",
+                "at": "@그래프 위의 점은"
+              },
+              {
+                "type": "underline",
+                "target": "item:rel",
+                "at": "@관계식을 만족하는 점을"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "함수를 배우는 다섯 단계",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "19강 · 함수 지식의 틀",
+        "title": "모든 함수는\n다섯 단계로 배운다",
+        "accent": "다섯 단계",
+        "subtitle": "정의 → 관계식과 그래프 → 이동 → 방정식 → 부등식",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "st0",
+            "text": "**1단계** 함수 정의하기",
+            "position": {
+              "x": 0.12,
+              "y": 0.14
+            },
+            "size": "lg",
+            "align": "start"
+          },
+          {
+            "id": "st1",
+            "text": "**2단계** 기본형 관계식과 그래프의 관계 파악하기",
+            "position": {
+              "x": 0.12,
+              "y": 0.27
+            },
+            "size": "lg",
+            "align": "start"
+          },
+          {
+            "id": "st2",
+            "text": "**3단계** 평행이동과 대칭이동",
+            "position": {
+              "x": 0.12,
+              "y": 0.4
+            },
+            "size": "lg",
+            "align": "start"
+          },
+          {
+            "id": "st3",
+            "text": "**4단계** 방정식",
+            "position": {
+              "x": 0.12,
+              "y": 0.53
+            },
+            "size": "lg",
+            "align": "start"
+          },
+          {
+            "id": "st4",
+            "text": "**5단계** 부등식",
+            "position": {
+              "x": 0.12,
+              "y": 0.66
+            },
+            "size": "lg",
+            "align": "start"
+          },
+          {
+            "id": "rf0",
+            "text": "12강",
+            "position": {
+              "x": 0.86,
+              "y": 0.14
+            },
+            "size": "sm",
+            "kind": "note"
+          },
+          {
+            "id": "rf1",
+            "text": "15강",
+            "position": {
+              "x": 0.86,
+              "y": 0.27
+            },
+            "size": "sm",
+            "kind": "note"
+          },
+          {
+            "id": "rf2",
+            "text": "17·18강",
+            "position": {
+              "x": 0.86,
+              "y": 0.4
+            },
+            "size": "sm",
+            "kind": "note"
+          },
+          {
+            "id": "rf3",
+            "text": "16강",
+            "position": {
+              "x": 0.86,
+              "y": 0.53
+            },
+            "size": "sm",
+            "kind": "note"
+          },
+          {
+            "id": "rf4",
+            "text": "16강",
+            "position": {
+              "x": 0.86,
+              "y": 0.66
+            },
+            "size": "sm",
+            "kind": "note"
+          },
+          {
+            "id": "omit",
+            "text": "함수에 따라 생략되는 단계도 있다",
+            "position": {
+              "x": 0.5,
+              "y": 0.82
+            },
+            "size": "md",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "st0",
+            "st1",
+            "st2",
+            "st3",
+            "st4",
+            "rf0",
+            "rf1",
+            "rf2",
+            "rf3",
+            "rf4",
+            "omit"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "그래서 모든 함수는 다섯 단계로 배워 나간다고 생각하면 체계가 잡힙니다.",
+          "tts": "그래서 모든 함수는, 다섯 단계로 배워 나간다고 생각하면, 체계가 잡힙니다.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "1단계는 함수를 정의하는 것, 2단계는 기본형 관계식과 그래프의 관계를 파악하는 것입니다. 12강과 15강에서 한 일이죠.",
+          "tts": "일단계는 함수를 정의하는 것, 이단계는 기본형 관계식과 그래프의 관계를 파악하는 것입니다. 십이강과 십오강에서 한 일이죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "st0",
+                "at": "@일단계는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rf0",
+                "at": "@십이강과"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "st1",
+                "at": "@이단계는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rf1",
+                "at": "@십오강에서"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "3단계는 평행이동과 대칭이동으로 더 넓은 그래프와 관계식을 다루는 것입니다. 17강과 18강에서 배웠습니다.",
+          "tts": "삼단계는, 평행이동과 대칭이동으로, 더 넓은 그래프와 관계식을 다루는 것입니다. 십칠강과 십팔강에서 배웠습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "st2",
+                "at": "@삼단계는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rf2",
+                "at": "@십칠강과"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "4단계와 5단계는 방정식과 부등식입니다. 함수에서 나온 정보를 실제로 활용하는 단계로, 16강에서 그 의미를 봤습니다.",
+          "tts": "사단계와 오단계는, 방정식과 부등식입니다. 함수에서 나온 정보를 실제로 활용하는 단계로, 십육강에서 그 의미를 봤습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "st3",
+                "at": "@사단계와"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "st4",
+                "at": "@오단계는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rf3",
+                "at": "@십육강에서"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rf4",
+                "at": "@십육강에서+200"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-5",
+          "role": "say",
+          "text": "간단한 함수는 앞쪽 몇 단계가 생략되기도 합니다. 그래도 이 다섯 단계의 틀을 의식하며 배우면 함수 지식을 훨씬 체계적으로 쌓을 수 있습니다.",
+          "tts": "간단한 함수는, 앞쪽 몇 단계가 생략되기도 합니다. 그래도 이 다섯 단계의 틀을 의식하며 배우면, 함수 지식을 훨씬 체계적으로 쌓을 수 있습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "omit",
+                "at": "@생략되기도"
+              },
+              {
+                "type": "underline",
+                "target": "item:omit",
+                "at": "@생략되기도"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "지금 몇 단계를\n배우고 있나",
+        "accent": "몇 단계",
+        "subtitle": "틀을 알면 새 함수도 순서대로 정리됩니다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "함수를 배우는 다섯 단계 중, 그래프를 옮기고 뒤집으며 관계식을 다루는 단계는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "3단계 평행이동과 대칭이동"
+          },
+          {
+            "id": "b",
+            "text_md": "2단계 기본형 관계식과 그래프"
+          },
+          {
+            "id": "c",
+            "text_md": "4단계 방정식"
+          },
+          {
+            "id": "d",
+            "text_md": "1단계 함수 정의하기"
+          }
+        ],
+        "correct": "a",
+        "explain": "그래프를 옮기고 뒤집는 것은 3단계 평행이동과 대칭이동.",
+        "trace_concept_id": "c.function-framework"
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 17강과 18강에서 무엇을 했는지 떠올려 보세요.",
+          "tts": "마지막으로 한 문제. 십칠강과 십팔강에서 무엇을 했는지 떠올려 보세요."
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 함수 지식의 틀을 알아봤습니다. 다음 시간에는 20강 상수함수입니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 함수 지식의 틀을 알아봤습니다. 다음 시간에는 이십강, 상수함수입니다."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1496 @@
+{
+  "id": "rm-12",
+  "kind": "concept",
+  "title": "함수의 정의",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "재료를 넣으면 결과물이 나오는 공장, 함수. 함수가 되는 조건과 f(x)라는 기호를 익힌다.",
+  "goal": "정의역·공역·치역을 구분하고, 함수가 될 두 조건과 f(x)의 대입을 이해한다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "함수는 공장",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "함수는\n재료를 결과물로 바꾸는 공장",
+        "accent": "공장",
+        "subtitle": "재료(input)를 넣으면 결과물(output)이 나온다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "in",
+            "text": "재료 (input)",
+            "position": {
+              "x": 0.5,
+              "y": 0.16
+            },
+            "size": "lg"
+          },
+          {
+            "id": "box",
+            "tex": "\\boxed{\\;\\text{함수}\\;}",
+            "position": {
+              "x": 0.5,
+              "y": 0.45
+            },
+            "size": "xl"
+          },
+          {
+            "id": "out",
+            "text": "결과물 (output)",
+            "position": {
+              "x": 0.5,
+              "y": 0.76
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "in",
+            "out"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 함수의 정의에 대해서 알아보겠습니다. 함수는 일종의 공장이라고 생각하면 됩니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 함수의 정의에 대해서 알아보겠습니다. 함수는, 일종의 공장이라고 생각하면 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:box",
+                "at": "@공장이라고"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "재료를 넣으면 함수라는 장치를 거쳐 결과물이 나옵니다. 재료를 input, 결과물을 output이라고도 합니다.",
+          "tts": "재료를 넣으면, 함수라는 장치를 거쳐, 결과물이 나옵니다. 재료를 인풋, 결과물을 아웃풋이라고도 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "in",
+                "at": "@재료를 넣으면"
+              },
+              {
+                "type": "arrow",
+                "from": "item:in",
+                "to": "item:box",
+                "at": "@함수라는 장치를",
+                "until": "scene"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "out",
+                "at": "@결과물이 나옵니다"
+              },
+              {
+                "type": "arrow",
+                "from": "item:box",
+                "to": "item:out",
+                "at": "@결과물이 나옵니다",
+                "until": "scene"
+              },
+              {
+                "type": "underline",
+                "target": "item:in",
+                "at": "@인풋"
+              },
+              {
+                "type": "underline",
+                "target": "item:out",
+                "at": "@아웃풋이라고도"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "공장을 지을 때 무엇을 넣고 무엇을 만들지 미리 정해 두듯, 함수도 재료와 결과물을 미리 정해 두어야 이야기할 수 있습니다.",
+          "tts": "공장을 지을 때, 무엇을 넣고 무엇을 만들지 미리 정해 두듯, 함수도, 재료와 결과물을 미리 정해 두어야 이야기할 수 있습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:in",
+                "at": "@무엇을 넣고"
+              },
+              {
+                "type": "circle",
+                "target": "item:out",
+                "at": "@무엇을 만들지"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "정의역·공역·치역",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "정의역 · 공역 · 치역",
+        "accent": "치역",
+        "subtitle": "재료의 집합, 예상한 결과의 집합, 실제 결과의 집합",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "d1",
+            "text": "**정의역** 재료로 사용되는 요소들의 집합",
+            "position": {
+              "x": 0.5,
+              "y": 0.28
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "d2",
+            "text": "**공역** 결과물로 예상되는 요소들의 집합",
+            "position": {
+              "x": 0.5,
+              "y": 0.48
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "d3",
+            "text": "**치역** 결과물로 실제로 얻는 요소들의 집합",
+            "position": {
+              "x": 0.5,
+              "y": 0.68
+            },
+            "size": "lg",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "d1",
+            "d2",
+            "d3"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "함수를 정의하려면 용어가 몇 가지 필요합니다. 재료로 사용되는 요소들을 모은 집합을 정의역이라고 합니다.",
+          "tts": "함수를 정의하려면, 용어가 몇 가지 필요합니다. 재료로 사용되는 요소들을 모은 집합을, 정의역이라고 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d1",
+                "at": "@재료로 사용되는"
+              },
+              {
+                "type": "underline",
+                "target": "item:d1",
+                "at": "@정의역이라고"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "결과물로 나올 것으로 예상되는 요소들의 집합은 공역이라고 합니다.",
+          "tts": "결과물로 나올 것으로 예상되는 요소들의 집합은, 공역이라고 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d2",
+                "at": "@결과물로 나올"
+              },
+              {
+                "type": "underline",
+                "target": "item:d2",
+                "at": "@공역이라고"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "그리고 결과물로 실제로 얻는 요소들의 집합은 치역입니다. 공역과 치역이 헷갈리기 쉬운데, 그림으로 보면 차이가 바로 보입니다.",
+          "tts": "그리고 결과물로 실제로 얻는 요소들의 집합은, 치역입니다. 공역과 치역이 헷갈리기 쉬운데, 그림으로 보면 차이가 바로 보입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d3",
+                "at": "@그리고 결과물로"
+              },
+              {
+                "type": "underline",
+                "target": "item:d3",
+                "at": "@치역입니다"
+              },
+              {
+                "type": "circle",
+                "target": "item:d2",
+                "at": "@공역과 치역이"
+              },
+              {
+                "type": "circle",
+                "target": "item:d3",
+                "at": "@치역이 헷갈리기"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "대응과 치역",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "화살표가 가리키는 것이\n대응",
+        "accent": "대응",
+        "subtitle": "실제로 화살표를 받은 원소만 모으면 치역",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "tx",
+            "tex": "X",
+            "position": {
+              "x": 0.3,
+              "y": 0.31000000000000005
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ty",
+            "tex": "Y",
+            "position": {
+              "x": 0.6,
+              "y": 0.31000000000000005
+            },
+            "size": "lg"
+          },
+          {
+            "id": "xs",
+            "tex": "\\begin{array}{c}\\p{x1}{1}\\\\[0.9em]\\p{x2}{2}\\\\[0.9em]\\p{x3}{3}\\\\[0.9em]\\p{x4}{4}\\end{array}",
+            "position": {
+              "x": 0.3,
+              "y": 0.52
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ys",
+            "tex": "\\begin{array}{c}\\p{ya}{a}\\\\[0.9em]\\p{yb}{b}\\\\[0.9em]\\p{yc}{c}\\\\[0.9em]\\p{yd}{d}\\end{array}",
+            "position": {
+              "x": 0.6,
+              "y": 0.52
+            },
+            "size": "lg"
+          },
+          {
+            "id": "lx",
+            "text": "정의역",
+            "position": {
+              "x": 0.3,
+              "y": 0.9
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "ly",
+            "text": "공역",
+            "position": {
+              "x": 0.6,
+              "y": 0.9
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "rng",
+            "tex": "\\text{치역}\\ \\{a,b,c\\}",
+            "position": {
+              "x": 0.82,
+              "y": 0.52
+            },
+            "size": "md"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "tx",
+            "ty",
+            "xs",
+            "ys",
+            "lx",
+            "ly",
+            "rng"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "용어를 그림으로 정리해 보겠습니다. 수학에서는 보통 재료 쪽을 $X$, 결과물 쪽을 $Y$로 나타냅니다. $X$에는 1, 2, 3, 4를, $Y$에는 a, b, c, d를 두었습니다.",
+          "tts": "용어를 그림으로 정리해 보겠습니다. 수학에서는 보통, 재료 쪽을 대문자 엑스, 결과물 쪽을 대문자 와이로 나타냅니다. 엑스에는 일, 이, 삼, 사를, 와이에는 에이, 비, 씨, 디를 두었습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "tx",
+                "at": "@재료 쪽을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "xs",
+                "at": "@재료 쪽을"
+              },
+              {
+                "type": "circle",
+                "target": "item:xs",
+                "at": "@재료 쪽을",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ty",
+                "at": "@결과물 쪽을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ys",
+                "at": "@결과물 쪽을"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys",
+                "at": "@결과물 쪽을",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "underline",
+                "target": "item:xs",
+                "at": "@엑스에는 일"
+              },
+              {
+                "type": "underline",
+                "target": "item:ys",
+                "at": "@와이에는 에이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "화살표는 $X$의 원소가 정해지면 $Y$의 원소가 하나 정해진다는 뜻으로, 이것을 대응이라고 합니다. 1은 b, 2는 c, 3과 4는 a에 대응됩니다.",
+          "tts": "화살표는, 엑스의 원소가 정해지면, 와이의 원소가 하나 정해진다는 뜻으로, 이것을 대응이라고 합니다. 일은 비, 이는 씨, 삼과 사는 에이에 대응됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "arrow",
+                "from": "item:xs/x1",
+                "to": "item:ys/yb",
+                "at": "@일은 비",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x2",
+                "to": "item:ys/yc",
+                "at": "@이는 씨",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x3",
+                "to": "item:ys/ya",
+                "at": "@삼과 사는",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x4",
+                "to": "item:ys/ya",
+                "at": "@삼과 사는+300",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "handwrite",
+                "text": "대응: X의 원소 → Y의 원소 하나",
+                "position": {
+                  "x": 0.45,
+                  "y": 0.1
+                },
+                "align": "middle",
+                "at": "@대응이라고",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "여기서 재료로 쓰인 1, 2, 3, 4의 집합 $X$가 정의역이고, 결과물로 예상해 둔 $Y$ 전체가 공역입니다.",
+          "tts": "여기서 재료로 쓰인 일, 이, 삼, 사의 집합 엑스가 정의역이고, 결과물로 예상해 둔 와이 전체가, 공역입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "lx",
+                "at": "@정의역이고"
+              },
+              {
+                "type": "underline",
+                "target": "item:lx",
+                "at": "@정의역이고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ly",
+                "at": "@공역입니다"
+              },
+              {
+                "type": "underline",
+                "target": "item:ly",
+                "at": "@공역입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "실제로 화살표를 받은 a, b, c만 모은 집합이 치역입니다. d는 공역에는 있지만 결과물로 나오지 않았으니 치역이 아닙니다.",
+          "tts": "실제로 화살표를 받은 에이, 비, 씨만 모은 집합이 치역입니다. 디는 공역에는 있지만, 결과물로 나오지 않았으니, 치역이 아닙니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "tint",
+                "target": "item:ys/ya",
+                "color": "mint",
+                "at": "@에이, 비, 씨만"
+              },
+              {
+                "type": "tint",
+                "target": "item:ys/yb",
+                "color": "mint",
+                "at": "@에이, 비, 씨만"
+              },
+              {
+                "type": "tint",
+                "target": "item:ys/yc",
+                "color": "mint",
+                "at": "@에이, 비, 씨만"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "rng",
+                "at": "@치역입니다"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys/yd",
+                "at": "@디는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-5",
+          "role": "say",
+          "text": "공역과 치역은 함수를 정의할 때 쓰는 말이고, 문제를 풀 때는 주로 치역만 다룹니다. 공역은 이런 것이 있다는 것만 알아 두면 됩니다.",
+          "tts": "공역과 치역은 함수를 정의할 때 쓰는 말이고, 문제를 풀 때는 주로 치역만 다룹니다. 공역은, 이런 것이 있다는 것만 알아 두면 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:rng",
+                "at": "@주로 치역만"
+              },
+              {
+                "type": "underline",
+                "target": "item:ly",
+                "at": "@공역은, 이런"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "함수가 될 조건 ①",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "함수가 될 조건 ①\n모든 원소가 참여",
+        "accent": "모든 원소",
+        "subtitle": "정의역에 대응에서 빠진 원소가 있으면 함수가 아니다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "r1",
+            "text": "① 정의역의 모든 원소는 대응에 참여해야 한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.08
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "r2",
+            "text": "② 정의역의 원소는 오직 하나의 결과값에 대응되어야 한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.17
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "tx",
+            "tex": "X",
+            "position": {
+              "x": 0.34,
+              "y": 0.39
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ty",
+            "tex": "Y",
+            "position": {
+              "x": 0.64,
+              "y": 0.39
+            },
+            "size": "lg"
+          },
+          {
+            "id": "xs",
+            "tex": "\\begin{array}{c}\\p{x1}{1}\\\\[0.9em]\\p{x2}{2}\\\\[0.9em]\\p{x3}{3}\\\\[0.9em]\\p{x4}{4}\\end{array}",
+            "position": {
+              "x": 0.34,
+              "y": 0.6
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ys",
+            "tex": "\\begin{array}{c}\\p{ya}{a}\\\\[0.9em]\\p{yb}{b}\\\\[0.9em]\\p{yc}{c}\\\\[0.9em]\\p{yd}{d}\\end{array}",
+            "position": {
+              "x": 0.64,
+              "y": 0.6
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "r1",
+            "r2",
+            "tx",
+            "ty",
+            "xs",
+            "ys"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "그런데 대응이 있다고 해서 모두 함수가 되는 것은 아닙니다. 함수가 되려면 두 가지 규칙을 지켜야 합니다.",
+          "tts": "그런데, 대응이 있다고 해서 모두 함수가 되는 것은 아닙니다. 함수가 되려면, 두 가지 규칙을 지켜야 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r1",
+                "at": "@두 가지 규칙을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r2",
+                "at": "@두 가지 규칙을+400"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "첫째, 정의역의 모든 원소는 대응에 참여해야 합니다. 이 그림을 보면 1은 b, 2는 c, 3은 a로 화살표가 나갑니다.",
+          "tts": "첫째, 정의역의 모든 원소는, 대응에 참여해야 합니다. 이 그림을 보면, 일은 비, 이는 씨, 삼은 에이로 화살표가 나갑니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:r1",
+                "at": "@첫째"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "tx",
+                "at": "@이 그림을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "xs",
+                "at": "@이 그림을"
+              },
+              {
+                "type": "circle",
+                "target": "item:xs",
+                "at": "@이 그림을",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ty",
+                "at": "@이 그림을"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ys",
+                "at": "@이 그림을"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys",
+                "at": "@이 그림을",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x1",
+                "to": "item:ys/yb",
+                "at": "@일은 비",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x2",
+                "to": "item:ys/yc",
+                "at": "@이는 씨",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x3",
+                "to": "item:ys/ya",
+                "at": "@삼은 에이로",
+                "until": "scene",
+                "color": "chalk"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-3",
+          "role": "say",
+          "text": "그런데 4에서는 나가는 화살표가 없습니다. 정의역의 원소 하나가 대응에서 빠졌으니, 이건 함수가 아닙니다.",
+          "tts": "그런데 사에서는, 나가는 화살표가 없습니다. 정의역의 원소 하나가 대응에서 빠졌으니, 이건 함수가 아닙니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:xs/x4",
+                "at": "@사에서는"
+              },
+              {
+                "type": "strike",
+                "target": "item:xs/x4",
+                "at": "@대응에서 빠졌으니"
+              },
+              {
+                "type": "handwrite",
+                "text": "4가 빠짐\n→ 함수가 아님",
+                "position": {
+                  "x": 0.86,
+                  "y": 0.55
+                },
+                "align": "middle",
+                "at": "@함수가 아닙니다",
+                "until": "sentence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "함수가 될 조건 ②",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "함수가 될 조건 ②\n결과값은 오직 하나",
+        "accent": "오직 하나",
+        "subtitle": "한 원소에서 화살표가 둘 나가면 함수가 아니다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "r1",
+            "text": "① 정의역의 모든 원소는 대응에 참여해야 한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.08
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "r2",
+            "text": "② 정의역의 원소는 오직 하나의 결과값에 대응되어야 한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.17
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "tx",
+            "tex": "X",
+            "position": {
+              "x": 0.34,
+              "y": 0.39
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ty",
+            "tex": "Y",
+            "position": {
+              "x": 0.64,
+              "y": 0.39
+            },
+            "size": "lg"
+          },
+          {
+            "id": "xs",
+            "tex": "\\begin{array}{c}\\p{x1}{1}\\\\[0.9em]\\p{x2}{2}\\\\[0.9em]\\p{x3}{3}\\\\[0.9em]\\p{x4}{4}\\end{array}",
+            "position": {
+              "x": 0.34,
+              "y": 0.6
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ys",
+            "tex": "\\begin{array}{c}\\p{ya}{a}\\\\[0.9em]\\p{yb}{b}\\\\[0.9em]\\p{yc}{c}\\\\[0.9em]\\p{yd}{d}\\end{array}",
+            "position": {
+              "x": 0.64,
+              "y": 0.6
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "tx",
+            "ty",
+            "xs",
+            "ys"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "둘째, 정의역의 원소는 오직 하나의 결과값에 대응되어야 합니다. 이번 그림에서는 1은 b, 2는 c, 4는 a로 갑니다.",
+          "tts": "둘째, 정의역의 원소는, 오직 하나의 결과값에 대응되어야 합니다. 이번 그림에서는, 일은 비, 이는 씨, 사는 에이로 갑니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:r2",
+                "at": "@둘째"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "tx",
+                "at": "@이번 그림에서는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "xs",
+                "at": "@이번 그림에서는"
+              },
+              {
+                "type": "circle",
+                "target": "item:xs",
+                "at": "@이번 그림에서는",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ty",
+                "at": "@이번 그림에서는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ys",
+                "at": "@이번 그림에서는"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys",
+                "at": "@이번 그림에서는",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x1",
+                "to": "item:ys/yb",
+                "at": "@일은 비",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x2",
+                "to": "item:ys/yc",
+                "at": "@이는 씨",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x4",
+                "to": "item:ys/ya",
+                "at": "@사는 에이로",
+                "until": "scene",
+                "color": "chalk"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "그런데 3에서는 화살표가 a와 d, 두 개 나갑니다. 3을 넣었을 때 결과가 하나로 정해지지 않으니, 이건 함수가 아닙니다.",
+          "tts": "그런데 삼에서는, 화살표가 에이와 디, 두 개 나갑니다. 삼을 넣었을 때 결과가 하나로 정해지지 않으니, 이건 함수가 아닙니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:xs/x3",
+                "at": "@삼에서는"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x3",
+                "to": "item:ys/ya",
+                "at": "@에이와 디",
+                "until": "scene",
+                "color": "mark"
+              },
+              {
+                "type": "arrow",
+                "from": "item:xs/x3",
+                "to": "item:ys/yd",
+                "at": "@에이와 디+300",
+                "until": "scene",
+                "color": "mark"
+              },
+              {
+                "type": "handwrite",
+                "text": "3의 결과가 둘\n→ 함수가 아님",
+                "position": {
+                  "x": 0.86,
+                  "y": 0.55
+                },
+                "align": "middle",
+                "at": "@함수가 아닙니다",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-3",
+          "role": "say",
+          "text": "두 규칙은 모두 정의역의 원소에만 적용됩니다. 공역의 원소는 대응에 참여하지 않아도 되고, 여기 a처럼 화살표를 두 개 받아도 괜찮습니다.",
+          "tts": "두 규칙은 모두, 정의역의 원소에만 적용됩니다. 공역의 원소는 대응에 참여하지 않아도 되고, 여기 에이처럼 화살표를 두 개 받아도 괜찮습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:xs",
+                "at": "@정의역의 원소에만"
+              },
+              {
+                "type": "underline",
+                "target": "item:ys",
+                "at": "@공역의 원소는"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys/ya",
+                "at": "@에이처럼"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-4",
+          "role": "say",
+          "text": "정리하면, 정의역의 모든 원소가 빠짐없이, 각각 하나의 결과값에만 대응되어야 함수입니다.",
+          "tts": "정리하면, 정의역의 모든 원소가 빠짐없이, 각각 하나의 결과값에만 대응되어야, 함수입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:r1",
+                "at": "@빠짐없이"
+              },
+              {
+                "type": "underline",
+                "target": "item:r2",
+                "at": "@하나의 결과값에만"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "함수의 표현 f(x)",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "f(x)는\n하나의 기호",
+        "accent": "f(x)",
+        "subtitle": "x를 미지수로 쓰는 식, x 자리에 오는 것을 대입하라는 뜻",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "fx",
+            "tex": "\\p{f}{f}(\\p{x}{x})",
+            "position": {
+              "x": 0.5,
+              "y": 0.26
+            },
+            "size": "xl"
+          },
+          {
+            "id": "m1",
+            "text": "① $x$를 미지수로 쓰는 식이다",
+            "position": {
+              "x": 0.5,
+              "y": 0.52
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "m2",
+            "text": "② $x$ 자리에 다른 것이 오면 그것을 대입한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.64
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "m3",
+            "tex": "g(x),\\ h(x),\\ f_1(x),\\ f_2(x),\\ \\cdots",
+            "position": {
+              "x": 0.5,
+              "y": 0.8
+            },
+            "size": "md"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "m1",
+            "m2",
+            "m3"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "문제 속에서 함수는 function의 첫 글자를 따서 $f(x)$로 나타냅니다. $f$와 괄호 사이에 곱하기가 생략된 것이 아니라, $f(x)$ 전체가 하나의 기호입니다.",
+          "tts": "문제 속에서 함수는, 펑션의 첫 글자를 따서, 에프 엑스로 나타냅니다. 에프와 괄호 사이에 곱하기가 생략된 것이 아니라, 에프 엑스 전체가, 하나의 기호입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:fx/f",
+                "at": "@첫 글자를"
+              },
+              {
+                "type": "underline",
+                "target": "item:fx",
+                "at": "@전체가"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-2",
+          "role": "say",
+          "text": "이 기호에는 두 가지 뜻이 있습니다. 첫째, $x$를 미지수로 쓰는 식이라는 뜻입니다.",
+          "tts": "이 기호에는 두 가지 뜻이 있습니다. 첫째, 엑스를 미지수로 쓰는 식이라는 뜻입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "m1",
+                "at": "@첫째"
+              },
+              {
+                "type": "circle",
+                "target": "item:fx/x",
+                "at": "@엑스를 미지수로"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-3",
+          "role": "say",
+          "text": "둘째, 문제 뒤쪽에서 $x$ 자리에 다른 것이 들어가 있다면, 원래 식의 $x$ 대신 그것을 대입하라는 뜻입니다.",
+          "tts": "둘째, 문제 뒤쪽에서 엑스 자리에 다른 것이 들어가 있다면, 원래 식의 엑스 대신, 그것을 대입하라는 뜻입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "m2",
+                "at": "@둘째"
+              },
+              {
+                "type": "circle",
+                "target": "item:fx/x",
+                "at": "@엑스 자리에"
+              },
+              {
+                "type": "underline",
+                "target": "item:m2",
+                "at": "@대입하라는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-4",
+          "role": "say",
+          "text": "한 문제에 함수가 여러 개 나오면 $g(x)$, $h(x)$나 $f_1(x)$, $f_2(x)$처럼 이름을 바꿔 구분합니다. 모두 같은 뜻의 기호입니다.",
+          "tts": "한 문제에 함수가 여러 개 나오면, 지 엑스, 에이치 엑스나, 에프 일 엑스, 에프 이 엑스처럼, 이름을 바꿔 구분합니다. 모두 같은 뜻의 기호입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "m3",
+                "at": "@지 엑스"
+              },
+              {
+                "type": "underline",
+                "target": "item:m3",
+                "at": "@같은 뜻의"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "title": "x 자리에 대입하기",
+      "tag": "example",
+      "headline": {
+        "eyebrow": "12강 · 함수의 정의",
+        "title": "x 자리에\n그대로 넣는다",
+        "accent": "그대로",
+        "subtitle": "숫자든 문자든 식이든 x 자리에 통째로 대입",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "def",
+            "tex": "f(\\p{x}{x})=3\\p{xx}{x}-1",
+            "position": {
+              "x": 0.5,
+              "y": 0.13
+            },
+            "size": "lg"
+          },
+          {
+            "id": "r1l",
+            "tex": "f(\\p{a}{4})",
+            "position": {
+              "x": 0.5,
+              "y": 0.36
+            },
+            "size": "lg",
+            "group": "row1",
+            "gap": "0.12em"
+          },
+          {
+            "id": "r1m",
+            "tex": "=3\\times\\p{b}{4}-1",
+            "size": "lg",
+            "group": "row1"
+          },
+          {
+            "id": "r1s",
+            "tex": "=12-1=\\p{r}{11}",
+            "size": "lg",
+            "group": "row1"
+          },
+          {
+            "id": "r2l",
+            "tex": "f(\\p{a}{a+1})",
+            "position": {
+              "x": 0.5,
+              "y": 0.57
+            },
+            "size": "lg",
+            "group": "row2",
+            "gap": "0.12em"
+          },
+          {
+            "id": "r2m",
+            "tex": "=3(\\p{b}{a+1})-1",
+            "size": "lg",
+            "group": "row2"
+          },
+          {
+            "id": "r2s",
+            "tex": "=3a+3-1=\\p{r}{3a+2}",
+            "size": "lg",
+            "group": "row2"
+          },
+          {
+            "id": "r3l",
+            "tex": "f(\\p{a}{x-3})",
+            "position": {
+              "x": 0.5,
+              "y": 0.78
+            },
+            "size": "lg",
+            "group": "row3",
+            "gap": "0.12em"
+          },
+          {
+            "id": "r3m",
+            "tex": "=3(\\p{b}{x-3})-1",
+            "size": "lg",
+            "group": "row3"
+          },
+          {
+            "id": "r3s",
+            "tex": "=3x-9-1=\\p{r}{3x-10}",
+            "size": "lg",
+            "group": "row3"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "r1l",
+            "r1m",
+            "r1s",
+            "r2l",
+            "r2m",
+            "r2s",
+            "r3l",
+            "r3m",
+            "r3s"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s7-1",
+          "role": "say",
+          "text": "예를 들어 $f(x)=3x-1$이라고 먼저 선언했는데 뒤에서 $f(4)$가 나오면, $x$ 자리에 4를 대입하라는 뜻입니다. $3\\times4-1$, 곧 11입니다.",
+          "tts": "예를 들어, 에프 엑스는 삼엑스 빼기 일이라고 먼저 선언했는데, 뒤에서 에프 사가 나오면, 엑스 자리에 사를 대입하라는 뜻입니다. 삼 곱하기 사 빼기 일, 곧 십일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:def",
+                "at": "@먼저 선언했는데"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r1l",
+                "at": "@에프 사가"
+              },
+              {
+                "type": "circle",
+                "target": "item:def/xx",
+                "at": "@엑스 자리에"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r1m",
+                "at": "@사를 대입하라는"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:r1l/a",
+                    "item:r1m/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@사를 대입하라는"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r1s",
+                "at": "@곧 십일입니다"
+              },
+              {
+                "type": "circle",
+                "target": "item:r1s/r",
+                "at": "@곧 십일입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s7-2",
+          "role": "say",
+          "text": "숫자가 아니라 문자가 와도 똑같습니다. $f(a+1)$이면 $x$ 자리에 $a+1$을 통째로 넣고, 분배법칙으로 풀면 $3a+3-1$, 곧 $3a+2$입니다.",
+          "tts": "숫자가 아니라 문자가 와도 똑같습니다. 에프 에이 더하기 일이면, 엑스 자리에 에이 더하기 일을 통째로 넣고, 분배법칙으로 풀면, 삼에이 더하기 삼 빼기 일, 곧 삼에이 더하기 이입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r2l",
+                "at": "@에프 에이 더하기 일이면"
+              },
+              {
+                "type": "circle",
+                "target": "item:def/xx",
+                "at": "@엑스 자리에"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r2m",
+                "at": "@통째로 넣고"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:r2l/a",
+                    "item:r2m/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@통째로 넣고"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r2s",
+                "at": "@분배법칙으로 풀면"
+              },
+              {
+                "type": "circle",
+                "target": "item:r2s/r",
+                "at": "@곧 삼에이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s7-3",
+          "role": "say",
+          "text": "$x$가 들어간 식이 와도 마찬가지입니다. $f(x-3)$이면 $x$ 자리에 $x-3$을 통째로 넣어, $3x-9-1$, 곧 $3x-10$입니다.",
+          "tts": "엑스가 들어간 식이 와도 마찬가지입니다. 에프 엑스 빼기 삼이면, 엑스 자리에 엑스 빼기 삼을 통째로 넣어, 삼엑스 빼기 구 빼기 일, 곧 삼엑스 빼기 십입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r3l",
+                "at": "@에프 엑스 빼기 삼이면"
+              },
+              {
+                "type": "circle",
+                "target": "item:def/xx",
+                "at": "@엑스 자리에 엑스"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r3m",
+                "at": "@통째로 넣어"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:r3l/a",
+                    "item:r3m/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@통째로 넣어"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "r3s",
+                "at": "@삼엑스 빼기 구"
+              },
+              {
+                "type": "circle",
+                "target": "item:r3s/r",
+                "at": "@곧 삼엑스"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s8",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "f(3)은\n무슨 뜻일까",
+        "accent": "f(3)",
+        "subtitle": "기호의 뜻을 먼저 떠올리면 계산은 한 줄입니다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "$f(x)=2x+5$ 일 때, $f(3)$의 값은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$11$"
+          },
+          {
+            "id": "b",
+            "text_md": "$10$"
+          },
+          {
+            "id": "c",
+            "text_md": "$8$"
+          },
+          {
+            "id": "d",
+            "text_md": "$6$"
+          }
+        ],
+        "correct": "a",
+        "explain": "$f(3)$은 $x$ 자리에 3을 대입하라는 뜻: $2\\times3+5=11$.",
+        "trace_concept_id": "c.function-notation"
+      },
+      "narration": [
+        {
+          "id": "s8-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 계산하기 전에 $f(3)$이 무슨 뜻인지부터 떠올려 보세요.",
+          "tts": "마지막으로 한 문제. 계산하기 전에, 에프 삼이 무슨 뜻인지부터 떠올려 보세요."
+        },
+        {
+          "id": "s8-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 함수의 정의와 표현을 알아봤습니다. 다음 시간에는 13강 합성함수입니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 함수의 정의와 표현을 알아봤습니다. 다음 시간에는 십삼강, 합성함수입니다."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,561 @@
+{
+  "id": "rm-16",
+  "kind": "concept",
+  "title": "방정식과 부등식의 의미",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "방정식은 두 그래프가 만나는 곳, 부등식은 한 그래프가 위에 있는 곳을 찾는 일이다.",
+  "goal": "f(x)=g(x)의 해를 교점의 x좌표로, f(x)≥g(x)의 해를 그래프의 위아래로 읽는다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "방정식과 해",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "16강 · 방정식과 부등식의 의미",
+        "title": "방정식과 해,\n다시 보기",
+        "accent": "해",
+        "subtitle": "참이 되게 하는 미지수의 값이 해(근)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "d1",
+            "text": "**방정식** 미지수의 값에 따라 참이 되기도 하고 거짓이 되기도 하는 등식",
+            "position": {
+              "x": 0.5,
+              "y": 0.36
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "d2",
+            "text": "**해(근)** 방정식이 참이 되게 하는 미지수의 값",
+            "position": {
+              "x": 0.5,
+              "y": 0.56
+            },
+            "size": "md",
+            "kind": "note"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "d1",
+            "d2"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 방정식과 부등식이 함수의 그래프에서 어떤 의미를 갖는지 알아보겠습니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는, 방정식과 부등식이 함수의 그래프에서 어떤 의미를 갖는지 알아보겠습니다.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "5강에서 방정식은 미지수의 값에 따라 참이 되기도 하고 거짓이 되기도 하는 등식이라고 했습니다.",
+          "tts": "오강에서, 방정식은 미지수의 값에 따라 참이 되기도 하고, 거짓이 되기도 하는 등식이라고 했습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d1",
+                "at": "@방정식은"
+              },
+              {
+                "type": "underline",
+                "target": "item:d1",
+                "at": "@참이 되기도"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "그리고 방정식을 참이 되게 하는 미지수의 값을 방정식의 해, 또는 근이라고 했죠.",
+          "tts": "그리고 방정식을 참이 되게 하는 미지수의 값을, 방정식의 해, 또는 근이라고 했죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "d2",
+                "at": "@그리고"
+              },
+              {
+                "type": "underline",
+                "target": "item:d2",
+                "at": "@방정식의 해"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "방정식 = 교점 찾기",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "16강 · 방정식과 부등식의 의미",
+        "title": "방정식의 해는\n교점의 x좌표",
+        "accent": "교점",
+        "subtitle": "f(x)=g(x)의 해 = 두 그래프가 만나는 점의 x좌표",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -3.5,
+          3.5
+        ],
+        "y": [
+          -1.5,
+          5
+        ],
+        "aspect": "equal",
+        "aria": "두 함수 y=f(x), y=g(x)의 그래프와 세 교점",
+        "fns": [
+          {
+            "expr": "0.5x^3+0.25x^2-2x+1.5",
+            "c": "c1"
+          },
+          {
+            "expr": "0.5x^2+0.5",
+            "c": "c2"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0,
+            1
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "이제 함수로 바꿔 봅시다. 두 함수 $y=f(x)$와 $y=g(x)$가 있습니다.",
+          "tts": "이제 함수로 바꿔 봅시다. 두 함수, 와이는 에프 엑스와, 와이는 지 엑스가 있습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "draw",
+                "target": "fn:0",
+                "at": "@와이는 에프 엑스와",
+                "duration_ms": 1500
+              },
+              {
+                "type": "draw",
+                "target": "fn:1",
+                "at": "@와이는 지 엑스가",
+                "duration_ms": 1500
+              },
+              {
+                "type": "handwrite",
+                "text": "y = f(x)",
+                "position": {
+                  "x": 1.0,
+                  "y": 4.4
+                },
+                "align": "middle",
+                "at": "@와이는 에프 엑스와",
+                "until": "scene",
+                "arrow_to": {
+                  "x": 2.25,
+                  "y": 4.0
+                }
+              },
+              {
+                "type": "handwrite",
+                "text": "y = g(x)",
+                "position": {
+                  "x": -1.4,
+                  "y": 4.5
+                },
+                "align": "middle",
+                "at": "@와이는 에프 엑스와+400",
+                "until": "scene",
+                "arrow_to": {
+                  "x": -2.55,
+                  "y": 3.8
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "방정식 $f(x)=g(x)$는 두 함수의 함숫값이 같아지는 $x$가 어디냐고 묻는 것입니다. $x$에 관한 식만 등호로 이었으니 $y$는 사라지고, $x$에 대한 방정식이 됩니다.",
+          "tts": "방정식, 에프 엑스는 지 엑스는, 두 함수의 함숫값이 같아지는 엑스가 어디냐고 묻는 것입니다. 엑스에 관한 식만 등호로 이었으니 와이는 사라지고, 엑스에 대한 방정식이 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "f(x) = g(x)",
+                "position": {
+                  "x": -2.3,
+                  "y": -0.9
+                },
+                "align": "middle",
+                "at": "@방정식, 에프 엑스는",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "함숫값이 같다는 것은 두 그래프가 만난다는 뜻입니다. 여기서는 교점이 세 개 보이네요.",
+          "tts": "함숫값이 같다는 것은, 두 그래프가 만난다는 뜻입니다. 여기서는 교점이 세 개 보이네요.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": -2,
+                "y": 2.5,
+                "guides": false,
+                "at": "@교점이 세 개",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 0.5,
+                "y": 0.625,
+                "guides": false,
+                "at": "@교점이 세 개+300",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 2,
+                "y": 2.5,
+                "guides": false,
+                "at": "@교점이 세 개+600",
+                "c": "c1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-4",
+          "role": "say",
+          "text": "교점의 $x$좌표를 $\\alpha$, $\\beta$, $\\gamma$라고 하면, 방정식의 해는 $x=\\alpha$ 또는 $x=\\beta$ 또는 $x=\\gamma$입니다.",
+          "tts": "교점의 엑스좌표를 알파, 베타, 감마라고 하면, 방정식의 해는, 엑스는 알파, 또는 베타, 또는 감마입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": -2,
+                "y": 2.5,
+                "guides": true,
+                "at": "@알파, 베타",
+                "c": "c1",
+                "label": "α",
+                "label_pos": "s"
+              },
+              {
+                "type": "point",
+                "x": 0.5,
+                "y": 0.625,
+                "guides": true,
+                "at": "@알파, 베타+300",
+                "c": "c1",
+                "label": "β",
+                "label_pos": "se"
+              },
+              {
+                "type": "point",
+                "x": 2,
+                "y": 2.5,
+                "guides": true,
+                "at": "@알파, 베타+600",
+                "c": "c1",
+                "label": "γ",
+                "label_pos": "s"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-5",
+          "role": "say",
+          "text": "정리하면 방정식 $f(x)=g(x)$의 해는 두 그래프의 교점의 $x$좌표와 같습니다. $g(x)$가 0이면 상대 그래프가 $x$축이 되니, 11강에서 본 $x$축과의 교점이 바로 이 경우입니다.",
+          "tts": "정리하면, 방정식 에프 엑스는 지 엑스의 해는, 두 그래프의 교점의 엑스좌표와 같습니다. 지 엑스가 영이면, 상대 그래프가 엑스축이 되니, 십일강에서 본 엑스축과의 교점이, 바로 이 경우입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "해 = 교점의 x좌표",
+                "position": {
+                  "x": 2.0,
+                  "y": -0.9
+                },
+                "align": "middle",
+                "at": "@정리하면",
+                "until": "sentence"
+              },
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@상대 그래프가 엑스축이"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "부등식 = 위아래 비교",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "16강 · 방정식과 부등식의 의미",
+        "title": "부등식의 해는\n위에 있는 구간",
+        "accent": "위에",
+        "subtitle": "f(x) ≥ g(x) → f의 그래프가 g의 그래프 위(또는 만나는 곳)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -3.5,
+          3.5
+        ],
+        "y": [
+          -1.5,
+          5
+        ],
+        "aspect": "equal",
+        "aria": "두 함수 y=f(x), y=g(x)의 그래프와 세 교점",
+        "fns": [
+          {
+            "expr": "0.5x^3+0.25x^2-2x+1.5",
+            "c": "c1"
+          },
+          {
+            "expr": "0.5x^2+0.5",
+            "c": "c2"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "부등식은 함숫값의 크기를 비교합니다. 같아지는 곳을 기준으로 크고 작음이 나뉘니, 방정식을 먼저 풀고 부등식을 해석하는 것이 기본 순서입니다.",
+          "tts": "부등식은, 함숫값의 크기를 비교합니다. 같아지는 곳을 기준으로 크고 작음이 나뉘니, 방정식을 먼저 풀고, 부등식을 해석하는 것이 기본 순서입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "y = f(x)",
+                "position": {
+                  "x": 1.0,
+                  "y": 4.4
+                },
+                "align": "middle",
+                "at": "@부등식은",
+                "until": "scene",
+                "arrow_to": {
+                  "x": 2.25,
+                  "y": 4.0
+                }
+              },
+              {
+                "type": "handwrite",
+                "text": "y = g(x)",
+                "position": {
+                  "x": -1.4,
+                  "y": 4.5
+                },
+                "align": "middle",
+                "at": "@부등식은+400",
+                "until": "scene",
+                "arrow_to": {
+                  "x": -2.55,
+                  "y": 3.8
+                }
+              },
+              {
+                "type": "point",
+                "x": -2,
+                "y": 2.5,
+                "guides": true,
+                "at": "@같아지는 곳을",
+                "c": "c1",
+                "label": "α",
+                "label_pos": "s"
+              },
+              {
+                "type": "point",
+                "x": 0.5,
+                "y": 0.625,
+                "guides": true,
+                "at": "@같아지는 곳을+200",
+                "c": "c1",
+                "label": "β",
+                "label_pos": "se"
+              },
+              {
+                "type": "point",
+                "x": 2,
+                "y": 2.5,
+                "guides": true,
+                "at": "@같아지는 곳을+400",
+                "c": "c1",
+                "label": "γ",
+                "label_pos": "s"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "$f(x)\\ge g(x)$를 만족하는 $x$를 찾아 봅시다. $y$축은 위로 갈수록 크니, $f$의 그래프가 $g$의 그래프보다 위에 있는 곳을 찾으면 됩니다.",
+          "tts": "에프 엑스가 지 엑스보다 크거나 같은 엑스를 찾아 봅시다. 와이축은 위로 갈수록 크니, 에프의 그래프가, 지의 그래프보다 위에 있는 곳을 찾으면 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "f(x)\\ge g(x)",
+                "position": {
+                  "x": -2.3,
+                  "y": -0.9
+                },
+                "align": "middle",
+                "at": "@에프 엑스가",
+                "until": "scene"
+              },
+              {
+                "type": "pointer",
+                "target": "axis:y",
+                "position": {
+                  "x": 0,
+                  "y": 4.6
+                },
+                "at": "@위로 갈수록"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "$\\alpha$와 $\\beta$ 사이, 그리고 $\\gamma$보다 큰 곳에서 $f$의 그래프가 위에 있습니다.",
+          "tts": "알파와 베타 사이, 그리고 감마보다 큰 곳에서, 에프의 그래프가 위에 있습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "shade",
+                "region": "between:fn:0,fn:1",
+                "x": [
+                  -2,
+                  0.5
+                ],
+                "at": "@알파와 베타 사이",
+                "until": "scene"
+              },
+              {
+                "type": "shade",
+                "region": "between:fn:0,fn:1",
+                "x": [
+                  2,
+                  3.5
+                ],
+                "at": "@감마보다 큰",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "같아지는 것까지 허용했으니 $\\alpha$, $\\beta$, $\\gamma$도 포함해서, 해는 $\\alpha\\le x\\le\\beta$ 또는 $x\\ge\\gamma$입니다. 부등호에 등호가 없었다면 답에서도 등호를 빼면 됩니다.",
+          "tts": "같아지는 것까지 허용했으니, 알파, 베타, 감마도 포함해서, 해는, 엑스가 알파 이상 베타 이하, 또는 감마 이상입니다. 부등호에 등호가 없었다면, 답에서도 등호를 빼면 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "\\alpha\\le x\\le\\beta\\ \\ \\text{또는}\\ \\ x\\ge\\gamma",
+                "position": {
+                  "x": 1.6,
+                  "y": -0.9
+                },
+                "align": "middle",
+                "at": "@해는, 엑스가",
+                "until": "sentence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "위아래와\n등호를 확인",
+        "accent": "등호",
+        "subtitle": "교점을 기준으로 나누고, 등호가 있는지 봅니다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "두 그래프 $y=f(x)$, $y=g(x)$의 교점의 $x$좌표가 $-1$, $3$이고, $-1<x<3$에서 $f$의 그래프가 $g$의 그래프보다 아래에 있다. 부등식 $f(x)<g(x)$의 해는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-1<x<3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$x<-1$ 또는 $x>3$"
+          },
+          {
+            "id": "c",
+            "text_md": "$-1\\le x\\le3$"
+          },
+          {
+            "id": "d",
+            "text_md": "$x=-1$ 또는 $x=3$"
+          }
+        ],
+        "correct": "a",
+        "explain": "$f(x)<g(x)$는 $f$의 그래프가 $g$의 그래프보다 아래에 있는 곳. 등호가 없으니 교점은 빼서 $-1<x<3$.",
+        "trace_concept_id": "c.ineq-graph"
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 어느 그래프가 아래에 있어야 하는지, 그리고 등호가 있는지 확인해 보세요.",
+          "tts": "마지막으로 한 문제. 어느 그래프가 아래에 있어야 하는지, 그리고 등호가 있는지 확인해 보세요."
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 방정식과 부등식의 의미를 알아봤습니다. 다음 시간에는 17강 그래프의 평행이동입니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 방정식과 부등식의 의미를 알아봤습니다. 다음 시간에는 십칠강, 그래프의 평행이동입니다."
+        }
+      ]
+    }
+  ]
+}

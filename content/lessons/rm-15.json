@@ -1,0 +1,941 @@
+{
+  "id": "rm-15",
+  "kind": "concept",
+  "title": "함수의 관계식과 그래프",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "좌표평면 위의 점 하나가 대응 하나. 점이 모여 그래프가 되고, 그래프 위의 점은 관계식을 만족한다.",
+  "goal": "좌표평면에서 점이 대응을 나타내는 방식을 이해하고, '점을 지난다'를 대입한 등식으로 바꾼다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "실수 전체의 함수",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "재료가 끝없이 많은\n함수",
+        "accent": "끝없이",
+        "subtitle": "정의역과 공역이 실수 전체이면 화살표로는 그릴 수 없다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "hx",
+            "tex": "X",
+            "position": {
+              "x": 0.36,
+              "y": 0.2
+            },
+            "size": "lg"
+          },
+          {
+            "id": "hy",
+            "tex": "Y",
+            "position": {
+              "x": 0.64,
+              "y": 0.2
+            },
+            "size": "lg"
+          },
+          {
+            "id": "lf",
+            "tex": "f",
+            "position": {
+              "x": 0.5,
+              "y": 0.2
+            },
+            "size": "lg"
+          },
+          {
+            "id": "xs",
+            "text": "실수\n전체",
+            "position": {
+              "x": 0.36,
+              "y": 0.52
+            },
+            "size": "lg"
+          },
+          {
+            "id": "ys",
+            "text": "실수\n전체",
+            "position": {
+              "x": 0.64,
+              "y": 0.52
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "xs",
+            "ys"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 함수의 관계식과 그래프를 알아보겠습니다. 함수를 배운다는 것은 그 함수의 관계식과 그래프가 어떤 관계인지 알아 가는 과정이라고 생각해도 좋습니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 함수의 관계식과 그래프를 알아보겠습니다. 함수를 배운다는 것은, 그 함수의 관계식과 그래프가 어떤 관계인지 알아 가는 과정이라고 생각해도 좋습니다.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "지금까지는 원소가 1, 2, 3, 4처럼 몇 개 안 되는 집합으로 함수를 설명했습니다. 하지만 수학에서 다루는 함수는 보통 정의역도 공역도 실수 전체입니다.",
+          "tts": "지금까지는, 원소가 일, 이, 삼, 사처럼 몇 개 안 되는 집합으로 함수를 설명했습니다. 하지만 수학에서 다루는 함수는, 보통 정의역도 공역도 실수 전체입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "xs",
+                "at": "@정의역도"
+              },
+              {
+                "type": "circle",
+                "target": "item:xs",
+                "at": "@정의역도",
+                "until": "scene",
+                "color": "chalk"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ys",
+                "at": "@공역도"
+              },
+              {
+                "type": "circle",
+                "target": "item:ys",
+                "at": "@공역도",
+                "until": "scene",
+                "color": "chalk"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "실수는 끝없이 많으니, 원소를 하나하나 적고 화살표를 긋는 방식으로는 함수를 한눈에 나타낼 수 없습니다. 다른 그림이 필요합니다.",
+          "tts": "실수는 끝없이 많으니, 원소를 하나하나 적고 화살표를 긋는 방식으로는, 함수를 한눈에 나타낼 수 없습니다. 다른 그림이 필요합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:xs",
+                "at": "@끝없이 많으니"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "좌표평면",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "수직선 두 개를\n직각으로 놓으면",
+        "accent": "직각",
+        "subtitle": "가로 x축은 재료, 세로 y축은 결과물",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -3,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "좌표평면",
+        "fns": [
+          {
+            "expr": "x",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "실수를 그림으로 나타낸 것이 바로 수직선이었죠. 그래서 집합 대신 수직선 두 개를 씁니다.",
+          "tts": "실수를 그림으로 나타낸 것이, 바로 수직선이었죠. 그래서, 집합 대신 수직선 두 개를 씁니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@수직선이었죠"
+              },
+              {
+                "type": "underline",
+                "target": "axis:y",
+                "at": "@수직선 두 개를"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "두 수직선을 90도로 만나게 놓으면 평면이 하나 생기는데, 이것을 좌표평면이라고 합니다. 가로축이 $x$축, 세로축이 $y$축입니다.",
+          "tts": "두 수직선을, 구십 도로 만나게 놓으면, 평면이 하나 생기는데, 이것을 좌표평면이라고 합니다. 가로축이 엑스축, 세로축이 와이축입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "좌표평면",
+                "position": {
+                  "x": -2.6,
+                  "y": 3.2
+                },
+                "align": "middle",
+                "at": "@좌표평면이라고",
+                "until": "sentence"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 3.5,
+                  "y": 0
+                },
+                "at": "@가로축이"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0,
+                  "y": 3.5
+                },
+                "at": "@세로축이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$x$축의 수는 정의역의 원소, 곧 재료이고, $y$축의 수는 공역의 원소, 곧 결과물입니다.",
+          "tts": "엑스축의 수는, 정의역의 원소, 곧 재료이고, 와이축의 수는, 공역의 원소, 곧 결과물입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "x축: 재료",
+                "position": {
+                  "x": 2.6,
+                  "y": -0.8
+                },
+                "align": "middle",
+                "at": "@엑스축의 수는",
+                "until": "sentence"
+              },
+              {
+                "type": "handwrite",
+                "text": "y축: 결과물",
+                "position": {
+                  "x": 1.6,
+                  "y": 3.4
+                },
+                "align": "middle",
+                "at": "@와이축의 수는",
+                "until": "sentence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "점 하나가 대응 하나",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "화살표 대신\n점 하나",
+        "accent": "점 하나",
+        "subtitle": "점 (2, 3)은 2를 넣으면 3이 나온다는 대응",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -3,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "좌표평면 위의 점 (2, 3)",
+        "fns": [
+          {
+            "expr": "x",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "그럼 화살표는 어떻게 나타낼까요? 이 평면에서는 점 하나만 찍으면 대응이 설명됩니다.",
+          "tts": "그럼 화살표는 어떻게 나타낼까요? 이 평면에서는, 점 하나만 찍으면, 대응이 설명됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": 2,
+                "y": 3,
+                "guides": false,
+                "at": "@점 하나만",
+                "c": "c1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "이 점에서 $x$축으로 수선을 내리면 2, $y$축 쪽으로 보면 3입니다. 재료 2를 넣으면 결과물 3이 나온다는 대응이죠.",
+          "tts": "이 점에서 엑스축으로 수선을 내리면 이, 와이축 쪽으로 보면 삼입니다. 재료 이를 넣으면, 결과물 삼이 나온다는 대응이죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": 2,
+                "y": 3,
+                "guides": true,
+                "at": "@수선을 내리면",
+                "c": "c1"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 2,
+                  "y": 0
+                },
+                "at": "@수선을 내리면"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0,
+                  "y": 3
+                },
+                "at": "@와이축 쪽으로"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "점은 재료를 앞에, 결과물을 뒤에 써서 $(2, 3)$으로 나타냅니다. 앞이 $x$ 정보, 뒤가 $y$ 정보입니다.",
+          "tts": "점은, 재료를 앞에, 결과물을 뒤에 써서, 괄호 안에 이 콤마 삼으로 나타냅니다. 앞이 엑스 정보, 뒤가 와이 정보입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "(2,\\ 3)",
+                "position": {
+                  "x": 2.7,
+                  "y": 3.5
+                },
+                "align": "middle",
+                "at": "@이 콤마 삼으로",
+                "until": "scene"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 2,
+                  "y": 0
+                },
+                "at": "@앞이 엑스"
+              },
+              {
+                "type": "pointer",
+                "position": {
+                  "x": 0,
+                  "y": 3
+                },
+                "at": "@뒤가 와이"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "점이 모여 그래프",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "점이 모이면\n선이 된다",
+        "accent": "선",
+        "subtitle": "대응을 나타내는 점들이 모인 선이 함수의 그래프",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -3,
+          3
+        ],
+        "y": [
+          -2,
+          5
+        ],
+        "aspect": "equal",
+        "aria": "점들이 모여 이룬 함수의 그래프",
+        "fns": [
+          {
+            "expr": "0.5x^3-1.5x+1.5",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "재료가 끝없이 많으니, 대응을 나타내는 점도 끝없이 많이 찍힙니다.",
+          "tts": "재료가 끝없이 많으니, 대응을 나타내는 점도, 끝없이 많이 찍힙니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": -2.2,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+0",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": -1.6,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+250",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": -1.0,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+500",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": -0.4,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+750",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 0.2,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+1000",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 0.8,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+1250",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 1.4,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+1500",
+                "c": "c1"
+              },
+              {
+                "type": "point",
+                "x": 2.0,
+                "on": "fn:0",
+                "guides": false,
+                "at": "@점도+1750",
+                "c": "c1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "점이 모이면 무엇이 될까요? 선이 됩니다. 이 선이 바로 함수의 그래프입니다.",
+          "tts": "점이 모이면 무엇이 될까요? 선이 됩니다. 이 선이 바로, 함수의 그래프입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "draw",
+                "target": "fn:0",
+                "at": "@선이 됩니다",
+                "duration_ms": 1800
+              },
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@함수의 그래프입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-3",
+          "role": "say",
+          "text": "곧 함수의 그래프는, 함수를 좌표평면에 나타냈을 때 대응을 나타내는 점들이 모여 이룬 선입니다.",
+          "tts": "곧 함수의 그래프는, 함수를 좌표평면에 나타냈을 때, 대응을 나타내는 점들이 모여 이룬 선입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "text": "함수의 그래프\n= 대응하는 점들의 모임",
+                "position": {
+                  "x": -1.6,
+                  "y": 4.2
+                },
+                "align": "middle",
+                "at": "@곧 함수의 그래프는",
+                "until": "sentence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "그래프 위의 점",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "그래프 위의 점은\n관계식을 만족한다",
+        "accent": "관계식",
+        "subtitle": "(x₁, y₁)이 그래프 위에 있으면 y₁=f(x₁)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -3,
+          3
+        ],
+        "y": [
+          -2,
+          5
+        ],
+        "aspect": "equal",
+        "aria": "그래프 위의 세 점",
+        "fns": [
+          {
+            "expr": "0.5x^3-1.5x+1.5",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "eq"
+          ]
+        },
+        "items": [
+          {
+            "id": "eq",
+            "tex": "y=f(x)",
+            "position": {
+              "x": -2.8,
+              "y": 4.4
+            },
+            "size": "lg",
+            "align": "start"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "이 그래프의 관계식을 $y=f(x)$라고 합시다. 그래프 위에 점 $(x_1, y_1)$이 있다는 것은, $x$ 자리에 $x_1$을 넣으면 $y_1$이 나온다는 뜻입니다. 곧 $y_1=f(x_1)$이죠.",
+          "tts": "이 그래프의 관계식을, 와이는 에프 엑스라고 합시다. 그래프 위에 점 엑스 일, 와이 일이 있다는 것은, 엑스 자리에 엑스 일을 넣으면 와이 일이 나온다는 뜻입니다. 곧, 와이 일은 에프 엑스 일이죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "eq",
+                "at": "@관계식을"
+              },
+              {
+                "type": "point",
+                "x": -2.0,
+                "on": "fn:0",
+                "guides": true,
+                "at": "@그래프 위에 점",
+                "c": "c1",
+                "label": "(x₁, y₁)",
+                "label_pos": "nw"
+              },
+              {
+                "type": "handwrite",
+                "tex": "y_1=f(x_1)",
+                "position": {
+                  "x": 1.6,
+                  "y": -1.2
+                },
+                "align": "middle",
+                "at": "@곧, 와이 일은",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "다른 점도 마찬가지입니다. 점 $(x_2, y_2)$에서는 $y_2=f(x_2)$, 점 $(x_3, y_3)$에서는 $y_3=f(x_3)$입니다.",
+          "tts": "다른 점도 마찬가지입니다. 점 엑스 이, 와이 이에서는, 와이 이는 에프 엑스 이. 점 엑스 삼, 와이 삼에서는, 와이 삼은 에프 엑스 삼입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": 0.6,
+                "on": "fn:0",
+                "guides": true,
+                "at": "@점 엑스 이",
+                "c": "c1",
+                "label": "(x₂, y₂)",
+                "label_pos": "n"
+              },
+              {
+                "type": "point",
+                "x": 1.9,
+                "on": "fn:0",
+                "guides": true,
+                "at": "@점 엑스 삼",
+                "c": "c1",
+                "label": "(x₃, y₃)",
+                "label_pos": "nw"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "관계식과 그래프의 관계",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "15강 · 함수의 관계식과 그래프",
+        "title": "지난다 =\n대입하면 성립한다",
+        "accent": "대입",
+        "subtitle": "y=f(x)가 점 (a, b)를 지나면 b=f(a)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "c1",
+            "text": "점 $(a,b)$가 그래프 위의 점이다",
+            "position": {
+              "x": 0.5,
+              "y": 0.12
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "c2",
+            "text": "그래프가 점 $(a,b)$를 지난다",
+            "position": {
+              "x": 0.5,
+              "y": 0.24
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "iff",
+            "tex": "\\Updownarrow",
+            "position": {
+              "x": 0.5,
+              "y": 0.36
+            },
+            "size": "lg"
+          },
+          {
+            "id": "c3",
+            "text": "관계식에 $x=a$, $y=b$를 대입하면 등식이 성립한다",
+            "position": {
+              "x": 0.5,
+              "y": 0.48
+            },
+            "size": "md",
+            "kind": "note"
+          },
+          {
+            "id": "pt",
+            "tex": "(\\p{a}{a},\\ \\p{b}{b})",
+            "position": {
+              "x": 0.3,
+              "y": 0.7
+            },
+            "size": "xl"
+          },
+          {
+            "id": "eq",
+            "tex": "y=f(x)",
+            "position": {
+              "x": 0.62,
+              "y": 0.7
+            },
+            "size": "xl",
+            "group": "g",
+            "gap": "0.6em"
+          },
+          {
+            "id": "to",
+            "tex": "\\to",
+            "size": "xl",
+            "group": "g"
+          },
+          {
+            "id": "res",
+            "tex": "\\p{b}{b}=f(\\p{a}{a})",
+            "size": "xl",
+            "group": "g"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "c2",
+            "iff",
+            "c3",
+            "pt",
+            "eq",
+            "to",
+            "res"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "문제에서는 '점 $(a, b)$가 그래프 위의 점이다', '그래프가 점 $(a, b)$를 지난다'라는 말이 아주 자주 나옵니다. 두 말은 같은 뜻입니다.",
+          "tts": "문제에서는, 점 에이 비가 그래프 위의 점이다, 그래프가 점 에이 비를 지난다, 라는 말이 아주 자주 나옵니다. 두 말은 같은 뜻입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:c1",
+                "at": "@그래프 위의 점이다"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "c2",
+                "at": "@그래프가 점"
+              },
+              {
+                "type": "underline",
+                "target": "item:c2",
+                "at": "@지난다, 라는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-2",
+          "role": "say",
+          "text": "이 말을 만나면 바로 수식으로 바꿉니다. 관계식의 $x$ 자리에 $a$를, $y$ 자리에 $b$를 넣으면 등식이 성립한다는 뜻이죠.",
+          "tts": "이 말을 만나면, 바로 수식으로 바꿉니다. 관계식의 엑스 자리에 에이를, 와이 자리에 비를 넣으면, 등식이 성립한다는 뜻이죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "iff",
+                "at": "@바로 수식으로"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "c3",
+                "at": "@관계식의"
+              },
+              {
+                "type": "underline",
+                "target": "item:c3",
+                "at": "@등식이 성립한다는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-3",
+          "role": "say",
+          "text": "관계식이 $y=f(x)$이고 점이 $(a, b)$라면, $a$는 $x$ 자리로, $b$는 $y$ 자리로 들어가서 $b=f(a)$가 됩니다.",
+          "tts": "관계식이 와이는 에프 엑스이고, 점이 에이 비라면, 에이는 엑스 자리로, 비는 와이 자리로 들어가서, 비는 에프 에이가 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "pt",
+                "at": "@점이 에이 비라면"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "eq",
+                "at": "@관계식이"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "to",
+                "at": "@에이는 엑스"
+              },
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "res",
+                "at": "@에이는 엑스"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:pt/a",
+                    "item:res/a"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@에이는 엑스"
+              },
+              {
+                "type": "move",
+                "pairs": [
+                  [
+                    "item:pt/b",
+                    "item:res/b"
+                  ]
+                ],
+                "color": "mint",
+                "at": "@비는 와이"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s6-4",
+          "role": "say",
+          "text": "함수에는 늘 관계식과 그래프가 함께 있습니다. 앞으로 함수를 하나씩 배울 때마다 이 둘의 관계를 확인해 가면 됩니다.",
+          "tts": "함수에는 늘, 관계식과 그래프가 함께 있습니다. 앞으로 함수를 하나씩 배울 때마다, 이 둘의 관계를 확인해 가면 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@관계식과 그래프가"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "'지난다'를\n수식으로",
+        "accent": "수식으로",
+        "subtitle": "x와 y 자리에 점의 좌표를 넣으면 됩니다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "함수 $y=2x+k$ 의 그래프가 점 $(1,\\ 5)$를 지날 때, $k$의 값은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$3$"
+          },
+          {
+            "id": "b",
+            "text_md": "$5$"
+          },
+          {
+            "id": "c",
+            "text_md": "$7$"
+          },
+          {
+            "id": "d",
+            "text_md": "$1$"
+          }
+        ],
+        "correct": "a",
+        "explain": "점 $(1, 5)$를 지나므로 $x=1$, $y=5$를 대입: $5=2\\times1+k$, $k=3$.",
+        "trace_concept_id": "c.point-on-graph"
+      },
+      "narration": [
+        {
+          "id": "s7-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. '점을 지난다'는 말을 수식으로 바꾸는 것이 첫 줄입니다.",
+          "tts": "마지막으로 한 문제. 점을 지난다는 말을, 수식으로 바꾸는 것이 첫 줄입니다."
+        },
+        {
+          "id": "s7-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 함수의 관계식과 그래프를 알아봤습니다. 다음 시간에는 16강 방정식과 부등식의 의미입니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 함수의 관계식과 그래프를 알아봤습니다. 다음 시간에는 십육강, 방정식과 부등식의 의미입니다."
+        }
+      ]
+    }
+  ]
+}
