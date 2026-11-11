@@ -26,3 +26,13 @@
 .panel button { display:grid; place-items:center; border:0; background:transparent; }
 .panel button svg { width:18px; height:18px; }
 .panel button:hover:not(:disabled) { background:var(--studio-bg); color:var(--studio-accent); }
+
+/* 값이 분수(\frac)로 바뀌어도 패널 크기가 변하지 않게 — 값 줄·판정 줄 높이를 고정하고 넘치는 높이는 겹쳐 그린다. */
+.value { display:flex; align-items:center; justify-content:center; height:30px; overflow:visible; white-space:nowrap; }
+.verdict { height:24px; display:flex; align-items:center; justify-content:center; gap:2px; overflow:visible; }
+.panel label { overflow:visible; }
+@media(max-width:1023px) {
+ .value { height:24px; }
+ .panel:has(input[type="range"]) label { width:96px; }
+ .panel:has(input[type="range"]) .value { justify-content:flex-start; }
+}
