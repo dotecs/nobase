@@ -208,7 +208,7 @@
                 "text": "f(x) = g(x)",
                 "position": {
                   "x": -2.3,
-                  "y": -0.9
+                  "y": -1.2
                 },
                 "align": "middle",
                 "at": "@방정식, 에프 엑스는",
@@ -303,7 +303,7 @@
                 "text": "해 = 교점의 x좌표",
                 "position": {
                   "x": 2.0,
-                  "y": -0.9
+                  "y": -1.2
                 },
                 "align": "middle",
                 "at": "@정리하면",
@@ -436,7 +436,7 @@
                 "tex": "f(x)\\ge g(x)",
                 "position": {
                   "x": -2.3,
-                  "y": -0.9
+                  "y": -1.2
                 },
                 "align": "middle",
                 "at": "@에프 엑스가",
@@ -496,7 +496,7 @@
                 "tex": "\\alpha\\le x\\le\\beta\\ \\ \\text{또는}\\ \\ x\\ge\\gamma",
                 "position": {
                   "x": 1.6,
-                  "y": -0.9
+                  "y": -1.2
                 },
                 "align": "middle",
                 "at": "@해는, 엑스가",
