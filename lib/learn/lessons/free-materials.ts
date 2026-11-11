@@ -20,3 +20,15 @@ export async function originalMaterials(): Promise<OriginalMaterials> {
     return { videos, textbook: pdf ? { title: pdf.title || '뿌리깊은수학 교재.pdf', storage_path: pdf.storage_path! } : null };
   } catch { return { videos: {}, textbook: null }; }
 }
+
+/** 같은 제목의 원본 강의 영상(대표 영상) URL. 없거나 실패하면 null. */
+export async function originalVideoUrl(title: string): Promise<string | null> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 조인 결과 타입이 생성 타입에 없다
+    const db = createAdminSupabaseClient() as any;
+    const lesson = await db.from('lessons').select('id, subject:subjects!inner(title,is_published)').eq('title', title.trim()).eq('is_published', true).eq('subject.title', ORIGINAL_SUBJECT_TITLE).eq('subject.is_published', true).limit(1).maybeSingle();
+    if (lesson.error || !lesson.data) return null;
+    const video = await db.from('lesson_videos').select('video_url').eq('lesson_id', lesson.data.id).eq('is_main', true).order('sort_order').limit(1).maybeSingle();
+    return video.error ? null : (video.data?.video_url as string | undefined) ?? null;
+  } catch { return null; }
+}

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FiVideo } from 'react-icons/fi';
 import root from '@/content/curricula/root-math.json';
 import Header from '@/components/Header/Header';
 import { getUser, getProfile } from '@/lib/supabase-server';
@@ -28,7 +29,7 @@ export default async function FreeLessonsPage({ searchParams }: { searchParams: 
           <Link className={styles.primary} href={lessonHref(FREE_GUEST_LESSON_ID)}>1강 바로 보기</Link>
           {!user && <Link className={styles.secondary} href={loginHref}>카카오 로그인하고 전체 보기</Link>}
         </div>
-        <p className={styles.note}>{user ? '로그인되어 있어 20강과 원본 영상·교재를 모두 볼 수 있어요. 본 강의는 자동으로 기록돼요.' : `1~${FREE_GUEST_COUNT}강은 로그인 없이, ${FREE_GUEST_COUNT + 1}강부터와 원본 영상·교재는 카카오 로그인 후 무료로 볼 수 있어요.`}</p>
+        <p className={styles.note}>{user ? '로그인되어 있어 20강과 동영상 강의·교재를 모두 볼 수 있어요. 본 강의는 자동으로 기록돼요.' : `1~${FREE_GUEST_COUNT}강은 로그인 없이, ${FREE_GUEST_COUNT + 1}강부터와 동영상 강의·교재는 카카오 로그인 후 무료로 볼 수 있어요.`}</p>
       </section>
       {materials.textbook && <section className={styles.textbook}>
         <div><h2>교재</h2><p>강의와 같은 순서로 정리된 「뿌리깊은수학」 통합본 PDF{user ? '' : ' · 카카오 로그인 후 받기'}</p>
@@ -40,7 +41,7 @@ export default async function FreeLessonsPage({ searchParams }: { searchParams: 
           <h2>{String(chapter.no).padStart(2, '0')} {chapter.title}</h2>
           <ol>{chapter.items.map(item => { const video = materials.videos[item.title.trim()]; return <li key={item.lesson_id} className={styles.row}>
             <Link className={styles.lesson} href={lessonHref(item.lesson_id)}><span className={styles.no}>{item.no}강</span><span className={styles.name}>{item.title}</span>{!user && isGuestLesson(item.lesson_id) && <span className={styles.badge}>로그인 없이</span>}</Link>
-            {video && <Link className={styles.video} href={video} aria-label={`${item.title} 원본 영상`}>원본 영상</Link>}
+            {video && <Link className={styles.video} href={lessonHref(item.lesson_id) + '?video=1'} aria-label={`${item.title} 동영상 강의`}><FiVideo aria-hidden="true" />동영상 강의</Link>}
           </li>; })}</ol>
         </div>)}
       </section>

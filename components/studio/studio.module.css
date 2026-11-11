@@ -151,3 +151,8 @@
 
 .studio[data-continuous="true"][data-focus="true"] .stage[data-layout="portrait"] { margin-top:88px; }
 .studio[data-continuous="true"][data-focus="true"] .stage[data-layout="landscape"] { padding-top:88px; }
+
+.topActions .videoButton { height:44px; padding:0 14px; gap:6px; color:var(--studio-text); font-weight:600; white-space:nowrap; }
+.videoButton svg { width:18px; height:18px; }
+.topActions .videoButton:hover { color:var(--studio-accent); }
+@media(max-width:600px) { .topActions .videoButton { width:44px; padding:0; justify-content:center; } .videoButton span { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } }

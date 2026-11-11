@@ -12,6 +12,7 @@ import type {Lesson} from '@/lib/learn/lessons/schema';
 import type {ConceptNode,ConceptEdge,LessonEvent} from '@/lib/learn/lessons/types';
 import type {ConceptLoader} from '@/components/learn/lesson/ConceptDialog';
 import {ConceptDialog} from '@/components/learn/lesson/ConceptDialog';
+import {StudioVideoDialog} from './StudioVideoDialog';
 import {ConceptTrace} from '@/components/learn/lesson/ConceptTrace';
 import {exploredState} from '@/lib/learn/lessons/stage-controls';
 import {ChalkSurface} from './ChalkSurface';
@@ -27,11 +28,12 @@ import {StudioStage} from './stages/StudioStage';
 import {StageControls} from './stages/StageControls';
 import {TraceDrawer} from './TraceDrawer';
 const EMPTY_AUDIO:Record<string,string>={},EMPTY_DURATIONS:Record<string,number|null>={},EMPTY_GRAPH={nodes:[] as ConceptNode[],edges:[] as ConceptEdge[]};
-export type StudioViewerProps={initialTheme?:'dark'|'light';saveTheme?:(theme:'dark'|'light')=>Promise<unknown>;autoplayFirst?:boolean;admin?:boolean;referenceLessonId?:string;course?:CurriculumView;alignments?:Record<string,Alignment|null>;frame?:boolean;chrome?:boolean;lesson:Lesson;graph?:typeof EMPTY_GRAPH;audio?:Record<string,string>;durations?:Record<string,number|null>;record?:(events:LessonEvent[])=>Promise<{error?:string}>;loadConcept?:ConceptLoader;recordDuration?:(id:string,ms:number)=>Promise<unknown>;refreshAudio?:()=>Promise<Record<string,string>>;startPractice?:()=>Promise<{id?:string;error?:string;empty_reason?:string|null}>;/** 무료 시청자에게 '연습 문제로' 대신 보여 줄 상담 버튼 */cta?:{label:string;href:string};/** 비로그인 시청자 — 다음 강의는 카카오 로그인 후 */guest?:boolean};
+export type StudioViewerProps={initialTheme?:'dark'|'light';saveTheme?:(theme:'dark'|'light')=>Promise<unknown>;autoplayFirst?:boolean;admin?:boolean;referenceLessonId?:string;course?:CurriculumView;alignments?:Record<string,Alignment|null>;frame?:boolean;chrome?:boolean;lesson:Lesson;graph?:typeof EMPTY_GRAPH;audio?:Record<string,string>;durations?:Record<string,number|null>;record?:(events:LessonEvent[])=>Promise<{error?:string}>;loadConcept?:ConceptLoader;recordDuration?:(id:string,ms:number)=>Promise<unknown>;refreshAudio?:()=>Promise<Record<string,string>>;startPractice?:()=>Promise<{id?:string;error?:string;empty_reason?:string|null}>;/** 무료 시청자에게 '연습 문제로' 대신 보여 줄 상담 버튼 */cta?:{label:string;href:string};/** 비로그인 시청자 — 다음 강의는 카카오 로그인 후 */guest?:boolean;/** 같은 강의의 원본 동영상(embed URL) */video?:{title:string;src:string;open?:boolean}};
 
 export function StudioViewer(props:StudioViewerProps){return <LessonViewer key={props.lesson.id} {...props}/>;}
 
-function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AUDIO,durations=EMPTY_DURATIONS,record,loadConcept,recordDuration,startPractice,refreshAudio,frame=false,chrome=true,admin=false,referenceLessonId=lesson.id,autoplayFirst=false,initialTheme,saveTheme,cta,guest=false}:StudioViewerProps){
+function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AUDIO,durations=EMPTY_DURATIONS,record,loadConcept,recordDuration,startPractice,refreshAudio,frame=false,chrome=true,admin=false,referenceLessonId=lesson.id,autoplayFirst=false,initialTheme,saveTheme,cta,guest=false,video}:StudioViewerProps){
+  const [videoOpen,setVideoOpen]=useState(Boolean(video?.open));
   const [measured,setMeasured]=useState<Record<string,number>>({});
   const known=useMemo(()=>({...durations,...measured}),[durations,measured]);
   const clock=useMemo(()=>lessonClock(lesson,known),[lesson,known]);
@@ -68,7 +70,7 @@ function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AU
       const value=scene.stage.type==='slider'?display.params[scene.stage.param.name]:0;
       const explore=(value:number)=>{pause();seek(sentenceStart);setManual(value);};
       const player=<>{bar}{events.notice&&<p role="status">{events.notice}</p>}</>;
-      return <StudioShell lessonTitle={lesson.title} contents={<LessonContents scenes={lesson.scenes} index={index} completed={nav.completed} onSelect={target=>{pause();move(target);}}/>} transition={nav.phase}
+      return <StudioShell onOpenVideo={video?()=>{pause();setVideoOpen(true);}:undefined} lessonTitle={lesson.title} contents={<LessonContents scenes={lesson.scenes} index={index} completed={nav.completed} onSelect={target=>{pause();move(target);}}/>} transition={nav.phase}
         adminMode={adminMode} onAdminModeChange={admin&&chrome?toggleAdminMode:undefined} frame={frame} chrome={chrome} focusMode={focused} onFocusChange={setFocused} theme={theme} onThemeChange={changeTheme} scene={scene}
         reference={adminOn&&chrome?<ReferenceChip key={referenceLessonId+'#'+scene.id} lessonId={referenceLessonId} id={scene.id}/>:undefined}
         sidebar={<CourseSidebar lesson={lesson} course={shownCourse} time={nav.time} total={clock.total}/>}
@@ -78,7 +80,7 @@ function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AU
           onQuiz={(option_id,correct)=>{emit({type:'quiz',payload:{scene_id:scene.id,option_id,correct}});if(correct){setAnswered(true);if(waiting||ended)continueLesson();}}}/></ChalkStage>}
         caption={caption} player={player}
         navigation={<LessonNavigation admin={adminOn} sceneBar={sceneBar} onScope={()=>setSceneBar(value=>!value)} autoAdvance={autoAdvance} onToggleAutoAdvance={toggleAutoAdvance} completionLabel={next.label} player={player} scenes={lesson.scenes} index={index} ended={ended} waiting={waiting||(ended&&sceneNeedsContinue(scene))} waitingHint={scene.stage.type==='slider'?'직접 움직여 본 뒤 계속을 누르세요':undefined} onContinue={continueLesson} onMove={target=>{pause();move(target);}} onComplete={()=>{pause();completion.show();}}/>}
-        overlay={<><StudioComplete lessonProgress={adminOn?undefined:nav.time/clock.total} autoNext={autoAdvance} open={completion.open} seen={nav.completed.length} total={lesson.scenes.length} elapsed={nav.elapsed} gaps={gaps.map(id=>({id,name:names[id]??id}))} next={next} onClose={completion.close} onProceed={proceed} onPractice={startPractice?()=>void practice():undefined} cta={cta} notice={notice||events.notice}/>{concept&&loadConcept&&<ConceptDialog key={concept} id={concept} load={loadConcept} onClose={()=>setConcept(null)}/>}{trace&&<TraceDrawer onClose={()=>setTrace(null)}><ConceptTrace key={trace} start={trace} nodes={graph.nodes} edges={graph.edges} onEvent={emit} onClose={()=>setTrace(null)}/></TraceDrawer>}</>}/>;
+        overlay={<><StudioComplete lessonProgress={adminOn?undefined:nav.time/clock.total} autoNext={autoAdvance} open={completion.open} seen={nav.completed.length} total={lesson.scenes.length} elapsed={nav.elapsed} gaps={gaps.map(id=>({id,name:names[id]??id}))} next={next} onClose={completion.close} onProceed={proceed} onPractice={startPractice?()=>void practice():undefined} cta={cta} notice={notice||events.notice}/>{concept&&loadConcept&&<ConceptDialog key={concept} id={concept} load={loadConcept} onClose={()=>setConcept(null)}/>}{videoOpen&&video&&<StudioVideoDialog title={video.title} src={video.src} onClose={()=>setVideoOpen(false)}/>}{trace&&<TraceDrawer onClose={()=>setTrace(null)}><ConceptTrace key={trace} start={trace} nodes={graph.nodes} edges={graph.edges} onEvent={emit} onClose={()=>setTrace(null)}/></TraceDrawer>}</>}/>;
     }}
   </StudioPlayer></StudioFrame>;
 }
