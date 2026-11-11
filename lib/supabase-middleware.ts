@@ -93,8 +93,8 @@ export async function updateSession(request: NextRequest) {
   const protectedPrefixes = ['/dashboard', '/lessons', '/announcements', '/start/confirm', '/start/done', '/workbook', '/booking', '/learn']
   const protectedCoursePattern = /^\/courses\/[^/]+\/(enroll|cohorts)(\/|$)/
   const pathname = request.nextUrl.pathname
-  // 무료 공개 첫 강의는 비로그인 재생(lib/learn/lessons/free-access.ts FREE_GUEST_LESSON_ID와 같아야 함)
-  const publicPaths = ['/learn/lesson/rm-01']
+  // 무료 공개 앞 5강은 비로그인 재생(lib/learn/lessons/free-access.ts FREE_GUEST_LESSON_IDS와 같아야 함)
+  const publicPaths = ['/learn/lesson/rm-01', '/learn/lesson/rm-02', '/learn/lesson/rm-03', '/learn/lesson/rm-04', '/learn/lesson/rm-05']
   const isProtectedPath =
     (protectedPrefixes.some(path => pathname.startsWith(path)) && !publicPaths.includes(pathname)) ||
     protectedCoursePattern.test(pathname)

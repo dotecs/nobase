@@ -36,7 +36,7 @@ function LessonViewer({lesson,course,alignments,graph=EMPTY_GRAPH,audio=EMPTY_AU
   const known=useMemo(()=>({...durations,...measured}),[durations,measured]);
   const clock=useMemo(()=>lessonClock(lesson,known),[lesson,known]);
   const nav=useLessonNavigation(lesson,clock,autoplayFirst),index=nav.cursor.index,scene=lesson.scenes[index],events=useLessonEvents(record);
-  const [theme,setThemeState]=useState<'dark'|'light'>(initialTheme??'dark'),[focused,setFocused]=useState(false),[captions,setCaptions]=useState(true),[manual,setManual]=useState<number|null>(null),[concept,setConcept]=useState<string|null>(null),[trace,setTrace]=useState<string|null>(null),[gaps,setGaps]=useState<string[]>([]),[notice,setNotice]=useState('');
+  const [theme,setThemeState]=useState<'dark'|'light'>(initialTheme??'light'),[focused,setFocused]=useState(false),[captions,setCaptions]=useState(true),[manual,setManual]=useState<number|null>(null),[concept,setConcept]=useState<string|null>(null),[trace,setTrace]=useState<string|null>(null),[gaps,setGaps]=useState<string[]>([]),[notice,setNotice]=useState('');
   const changeTheme=(next:'dark'|'light')=>{setThemeState(next);void saveTheme?.(next);};
   const [waiting,setWaiting]=useState(false),[answered,setAnswered]=useState(false),[sceneBar,setSceneBar]=useState(false);
   useEffect(()=>{setTrace(null);setConcept(null);setManual(null);setWaiting(false);setAnswered(false);},[scene.id]);

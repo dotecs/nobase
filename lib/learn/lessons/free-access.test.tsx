@@ -2,18 +2,22 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 vi.mock('@/lib/supabase-server', () => ({ createServerSupabaseClient: vi.fn() }));
 vi.mock('@/lib/learn/access', () => ({ hasLearnAccess: vi.fn() }));
-import { FREE_LESSON_IDS, FREE_GUEST_LESSON_ID, isFreeLesson, isGuestLesson, lessonLoginHref } from './free-access';
+import { FREE_LESSON_IDS, FREE_GUEST_LESSON_ID, FREE_GUEST_LESSON_IDS, isFreeLesson, isGuestLesson, nextNeedsLogin, lessonLoginHref } from './free-access';
 import { StudioComplete } from '@/components/studio/StudioComplete';
 
 describe('free lesson access', () => {
-  it('opens all root-math lessons, first one without login', () => {
+  it('opens all root-math lessons, first five without login', () => {
     expect(FREE_LESSON_IDS).toHaveLength(20);
     expect(FREE_GUEST_LESSON_ID).toBe('rm-01');
     expect(isGuestLesson('rm-01')).toBe(true);
-    expect(isGuestLesson('rm-02')).toBe(false);
+    expect(isGuestLesson('rm-05')).toBe(true);
+    expect(isGuestLesson('rm-06')).toBe(false);
+    expect(nextNeedsLogin('rm-04')).toBe(false);
+    expect(nextNeedsLogin('rm-05')).toBe(true);
+    expect(nextNeedsLogin('rm-20')).toBe(false);
     expect(isFreeLesson('rm-20')).toBe(true);
     expect(isFreeLesson('other-01')).toBe(false);
-    expect(lessonLoginHref('rm-02')).toBe('/login?returnTo=%2Flearn%2Flesson%2Frm-02');
+    expect(lessonLoginHref('rm-06')).toBe('/login?returnTo=%2Flearn%2Flesson%2Frm-06');
   });
   it('completion dialog shows coaching CTA instead of practice for free viewers', () => {
     const props = { open: true, seen: 1, total: 1, elapsed: 0, gaps: [], next: { href: '/x', label: '다음 강의' }, onClose: () => {}, onProceed: async () => {} };
@@ -22,6 +26,8 @@ describe('free lesson access', () => {
 });
 
 import { readFileSync } from 'node:fs';
-it('middleware lets guests open the first free lesson', () => {
-  expect(readFileSync('lib/supabase-middleware.ts', 'utf8')).toContain(`'/learn/lesson/${FREE_GUEST_LESSON_ID}'`);
+it('middleware lets guests open exactly the guest lessons', () => {
+  const src = readFileSync('lib/supabase-middleware.ts', 'utf8');
+  for (const id of FREE_GUEST_LESSON_IDS) expect(src).toContain(`'/learn/lesson/${id}'`);
+  expect(src).not.toContain(`'/learn/lesson/${FREE_LESSON_IDS[FREE_GUEST_LESSON_IDS.length]}'`);
 });

@@ -17,7 +17,7 @@ export default function StudioShell({lessonTitle,contents,transition,adminMode,o
  useEffect(()=>{const element=playerRef.current;if(!element)return;const measure=()=>setPlayerHeight(element.offsetHeight);const observer=new ResizeObserver(measure);observer.observe(element);measure();return()=>observer.disconnect();},[]);
  const captionRef=useRef<HTMLDivElement>(null),[captionHeight,setCaptionHeight]=useState(0);
  useEffect(()=>{const el=captionRef.current;if(!el)return;const measure=()=>setCaptionHeight(h=>Math.max(h,el.offsetHeight));const observer=new ResizeObserver(measure);observer.observe(el);measure();return()=>observer.disconnect();},[]);
- const root=useRef<HTMLElement>(null),[localFocused,setLocalFocused]=useState(false),[localTheme,setLocalTheme]=useState<'dark'|'light'>(theme??'dark');
+ const root=useRef<HTMLElement>(null),[localFocused,setLocalFocused]=useState(false),[localTheme,setLocalTheme]=useState<'dark'|'light'>(theme??'light');
  const focused=focusMode??localFocused;
  const [transportVisible,setTransportVisible]=useState(true),idle=useRef<ReturnType<typeof setTimeout>|null>(null);
  const activity=useCallback(()=>{setTransportVisible(true);if(idle.current)clearTimeout(idle.current);if(shouldAutoHideTransport(focused,window.matchMedia('(pointer: coarse)').matches))idle.current=setTimeout(()=>setTransportVisible(false),2000);},[focused]);
