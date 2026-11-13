@@ -1,24 +1,61 @@
-.page { padding: var(--space-6); max-width: 1100px; display: grid; gap: var(--space-3); }
-.page h2 { margin-top: var(--space-4); }
-.lead { color: var(--color-text-secondary, inherit); }
-.totals { font-weight: 600; }
-.meta { font-size: 13px; opacity: .7; font-weight: 400; }
-.warn { font-size: 13px; color: #b45309; }
-.packList { display: grid; gap: var(--space-2); padding-left: 0; list-style: none; }
-.packList li { border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); padding: var(--space-3); background: var(--color-bg-elevated); }
-.subject { border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated); padding: 0 var(--space-4); }
-.subject > summary { cursor: pointer; padding: var(--space-3) 0; display: flex; align-items: baseline; gap: var(--space-2); min-height: 44px; }
-.count { margin-left: auto; font-size: 13px; opacity: .7; }
-.unit { border-top: 1px solid var(--color-border-brand); padding: var(--space-3) 0; }
-.unit h3 { font-size: 15px; margin-bottom: var(--space-2); }
-.topics { list-style: none; padding-left: 0; display: grid; gap: 2px; }
-.topics > li { padding: 6px var(--space-2); border-radius: 6px; }
-.topics > li[data-covered="false"] { opacity: .6; }
-.topic { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-.lessons { list-style: none; padding-left: 0; margin-top: 6px; display: grid; gap: 6px; }
-.lesson { display: grid; gap: 2px; padding: var(--space-2) var(--space-3); border-left: 3px solid #94a3b8; background: var(--color-bg-secondary); border-radius: 0 6px 6px 0; }
-.lesson[data-status="reviewed"], .lesson[data-status="live"] { border-left-color: #16a34a; }
-.lesson[data-status="draft"] { border-left-color: #d97706; }
-.lesson a { font-weight: 600; text-decoration: underline; }
-.packs { font-size: 13px; }
-.lesson[data-in-pack="false"] .packs { color: #b45309; }
+.page { padding: var(--space-6); max-width: 860px; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); font-size: 14px; }
+.tree li { min-width: 0; }
+.header h1 { margin-bottom: 4px; }
+.summary, .legend, .result { font-size: 13px; opacity: .75; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* 보기 전환·찾기 */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); position: sticky; top: 0; z-index: 1; padding: var(--space-2) 0; background: var(--color-bg, #fff); }
+.filters { display: inline-flex; border: 1px solid var(--color-border-brand); border-radius: 999px; overflow: hidden; }
+.filters button, .fold button { min-height: 36px; padding: 0 14px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--color-text, #0f172a); color: var(--color-bg, #fff); }
+.search { flex: 1 1 160px; min-height: 36px; padding: 0 12px; border: 1px solid var(--color-border-brand); border-radius: 999px; background: transparent; color: inherit; font: inherit; }
+.fold { display: inline-flex; margin-left: auto; }
+.fold button { padding: 0 8px; opacity: .7; text-decoration: underline; }
+.filters button:focus-visible, .fold button:focus-visible, .search:focus-visible, .row:focus-visible, .lesson a:focus-visible { outline: none; box-shadow: var(--focus-ring, 0 0 0 2px #2563eb); }
+
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.legend .badge { margin-left: 8px; }
+.legend .dot:not(:first-child) { margin-left: 8px; }
+
+/* 트리 */
+.tree, .branch, .lessons { list-style: none; margin: 0; padding: 0; }
+.subject { border-top: 1px solid var(--color-border-brand); }
+.subject:last-child { border-bottom: 1px solid var(--color-border-brand); }
+.branch { margin-left: 11px; padding-left: 14px; border-left: 1px solid var(--color-border-brand); }
+.row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; padding: 4px 6px; border: 0; border-radius: 6px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.row:hover:not(:disabled) { background: var(--color-bg-secondary, #f1f5f9); }
+.row:disabled { cursor: default; }
+.subject > .row { min-height: 44px; font-size: 15px; }
+.caret { flex: none; width: 0; height: 0; border-style: solid; border-width: 4px 0 4px 6px; border-color: transparent transparent transparent currentColor; opacity: .55; transition: transform .12s; }
+.row[aria-expanded="true"] > .caret { transform: rotate(90deg); }
+.tag { font-size: 11px; padding: 1px 6px; border: 1px solid currentColor; border-radius: 999px; opacity: .6; }
+.progress { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
+.progress progress { width: 72px; height: 6px; }
+.count { margin-left: auto; font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
+.count[data-none="true"] { opacity: .35; }
+.count[data-done="true"] { color: #16a34a; opacity: 1; }
+
+.topic { padding: 5px 6px; }
+.topic[data-empty="true"] .topicTitle { opacity: .45; }
+.nested { margin: 2px 0 0 5px; padding-left: 12px; border-left: 1px solid var(--color-border-brand); }
+.topic { min-height: 30px; }
+.lesson a { display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 2px 6px; margin-left: -6px; border-radius: 6px; color: inherit; text-decoration: none; }
+.lesson a:hover { background: var(--color-bg-secondary, #f1f5f9); }
+.name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.kind { margin-right: 6px; font-size: 11px; font-weight: 400; opacity: .6; }
+.dot { flex: none; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+.dot[data-status="reviewed"], .dot[data-status="live"] { background: #16a34a; }
+.dot[data-status="draft"] { background: transparent; box-shadow: inset 0 0 0 2px #d97706; }
+.badge { flex: none; font-size: 11px; line-height: 18px; padding: 0 7px; border-radius: 999px; background: var(--color-bg-secondary, #e2e8f0); font-variant-numeric: tabular-nums; }
+.badge[data-none="true"] { background: transparent; color: #b45309; box-shadow: inset 0 0 0 1px currentColor; }
+.unplaced { padding: var(--space-2) var(--space-3); border: 1px dashed #d97706; border-radius: 8px; }
+
+@media (max-width: 600px) {
+  .page { padding: var(--space-3); }
+  .fold { margin-left: 0; }
+  .branch { margin-left: 7px; padding-left: 8px; }
+  .nested { margin-left: 2px; padding-left: 8px; }
+  .filters button { padding: 0 10px; }
+  .progress progress { display: none; }
+}
