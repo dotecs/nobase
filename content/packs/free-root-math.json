@@ -1,6 +1,10 @@
 {
- "id": "root-math",
+ "id": "free-root-math",
  "title": "뿌리깊은수학",
+ "access": {
+  "kind": "free",
+  "guest_count": 5
+ },
  "chapters": [
   {
    "no": 1,

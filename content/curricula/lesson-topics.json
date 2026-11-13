@@ -1,0 +1,28 @@
+{
+ "note": "강의가 마스터 목록(master.json)의 어느 소단원을 다루는지. 새 강의를 만들면 여기에 한 줄을 더한다.",
+ "lessons": {
+  "rm-01": ["basic.number"],
+  "rm-02": ["basic.expr"],
+  "rm-03": ["basic.expr"],
+  "rm-04": ["basic.fraction"],
+  "rm-05": ["basic.equality"],
+  "rm-06": ["basic.ineq"],
+  "rm-07": ["basic.exp"],
+  "rm-08": ["basic.root"],
+  "rm-09": ["basic.poly.factor"],
+  "rm-10": ["basic.eq.solve"],
+  "rm-11": ["basic.eq.disc"],
+  "rm-11-w1": ["basic.eq.disc"],
+  "rm-12": ["basic.func.def"],
+  "rm-13": ["basic.func.comp"],
+  "rm-14": ["basic.func.comp"],
+  "rm-15": ["basic.func.graph"],
+  "rm-16": ["basic.func.eq"],
+  "rm-17": ["basic.func.move"],
+  "rm-18": ["basic.func.move"],
+  "rm-19": ["basic.func.frame"],
+  "rm-20": ["const"],
+  "rm-22-1": ["quad.graph"],
+  "rm-22-w1": ["quad.disc"]
+ }
+}

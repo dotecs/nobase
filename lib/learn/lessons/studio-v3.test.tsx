@@ -4,7 +4,7 @@ it('loads Poor Story only through studio route layouts without preload',()=>{con
 
 import {renderToStaticMarkup} from 'react-dom/server';
 import {CourseSidebar} from '@/components/studio/CourseSidebar';
-import rootBase from '@/content/curricula/root-math.json';
+import rootBase from '@/content/packs/free-root-math.json';
 // Worked lessons are not in the published curriculum right now; keep the sidebar contract covered with a fixture.
 const root={...rootBase,chapters:rootBase.chapters.map(chapter=>({...chapter,items:chapter.items.map(item=>item.lesson_id==='rm-11'?{...item,worked:[{title:'문제풀이 1 · 실근을 갖지 않을 조건',lesson_id:'rm-11-w1'}]}:item)}))};
 import {studioDemo} from './studio-demo';

@@ -8,10 +8,12 @@ import { audioDurationSchema } from '@/lib/learn/lessons/audio-duration';
 import { audioHash,LESSON_VOICE } from '@/lib/learn/lessons/audio';
 import type { LessonEvent } from '@/lib/learn/lessons/types';
 import { isStudioTheme,saveStudioTheme } from '@/lib/learn/user-settings';
-import { lessonUserId,isGuestLesson } from '@/lib/learn/lessons/free-access';
+import { lessonUserId,isGuestLesson,lessonViewer } from '@/lib/learn/lessons/free-access';
 // 무료 강의 보기: 수강생이 아니어도 무료 강의는 로그인 사용자 기록을 남기고, 첫 강의는 비로그인도 재생한다.
 async function requireLessonUser(id:string){const userId=await lessonUserId(id);if(!userId)throw new LearnUserError('로그인 후 이용할 수 있습니다.');return userId;}
 const canPlay=async(id:string)=>isGuestLesson(id)||Boolean(await lessonUserId(id));
+// 관리자 초안 미리보기: 공개본이 없을 때만 관리자인지 확인해 초안의 음성 주소를 다시 내준다. 초안 시청은 기록하지 않는다.
+const isAdminViewer=async(id:string)=>{const viewer=await lessonViewer(id);return viewer.kind==='full'&&viewer.admin;};
 export async function loadConceptCard(id:string){try{const data=await conceptCardData(id);return data?{data}:{error:'개념을 찾을 수 없습니다.'};}catch(error){return {error:runtimeError(error,'lesson.conceptCard')};}}
 export async function recordLessonEvents(id:string,version:number,input:LessonEvent[]):Promise<{error?:string}>{
  try{const userId=await requireLessonUser(id);const events=lessonEventsSchema.parse(input),lesson=await publishedLesson(id,version);if(!lesson)throw new Error('Published lesson missing');
@@ -20,7 +22,7 @@ export async function recordLessonEvents(id:string,version:number,input:LessonEv
  const result=await lessonDb().from('learn_lesson_events').insert(events.map(event=>({...event,user_id:userId,lesson_id:id,lesson_version:version})));if(result.error)throw result.error;return {};
  }catch(error){return {error:runtimeError(error,'lesson.recordEvents')};}
 }
-export async function refreshLessonAudio(id:string,version:number):Promise<Record<string,string>>{if(!await canPlay(id)||!await publishedLesson(id,version))return {};return audioUrls(id,version);}
+export async function refreshLessonAudio(id:string,version:number):Promise<Record<string,string>>{if(!await canPlay(id))return {};if(await publishedLesson(id,version))return audioUrls(id,version);return await isAdminViewer(id)&&await publishedLesson(id,version,true)?audioUrls(id,version,true):{};}
 
 // Playback metadata only; never used for grading or learner state decisions.
 export async function recordLessonAudioDuration(id:string,version:number,sentenceId:string,durationMs:number):Promise<{error?:string}>{

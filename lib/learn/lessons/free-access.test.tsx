@@ -31,3 +31,21 @@ it('middleware lets guests open exactly the guest lessons', () => {
   for (const id of FREE_GUEST_LESSON_IDS) expect(src).toContain(`'/learn/lesson/${id}'`);
   expect(src).not.toContain(`'/learn/lesson/${FREE_LESSON_IDS[FREE_GUEST_LESSON_IDS.length]}'`);
 });
+
+import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { hasLearnAccess } from '@/lib/learn/access';
+import { lessonViewer } from './free-access';
+describe('who sees a lesson', () => {
+  const as = (user: { id: string } | null, access?: { granted: boolean; reason: string }) => {
+    vi.mocked(createServerSupabaseClient).mockResolvedValue({ auth: { getUser: async () => ({ data: { user } }) } } as never);
+    vi.mocked(hasLearnAccess).mockResolvedValue((access ?? { granted: false, reason: 'not_enrolled' }) as never);
+  };
+  it('learners only see lessons that are in a pack', async () => {
+    as(null); expect(await lessonViewer('rm-01')).toEqual({ kind: 'guest' }); expect(await lessonViewer('rm-06')).toEqual({ kind: 'login' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'denied' });
+    as({ id: 'u' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'free', userId: 'u' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'denied' });
+    as({ id: 'u' }, { granted: true, reason: 'enrolled' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'full', userId: 'u', admin: false }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'hidden' });
+  });
+  it('admins see every lesson, including ones outside all packs', async () => {
+    as({ id: 'a' }, { granted: true, reason: 'admin' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'full', userId: 'a', admin: true });
+  });
+});

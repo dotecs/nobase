@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import root from '@/content/curricula/root-math.json';
 import Header from '@/components/Header/Header';
 import { getUser, getProfile } from '@/lib/supabase-server';
 import type { Profile } from '@/lib/database.types';
-import type { Curriculum } from '@/lib/learn/lessons/curriculum';
+import { freePacks } from '@/lib/learn/lessons/packs';
 import { FREE_GUEST_LESSON_ID, FREE_GUEST_COUNT, COACHING_CTA, isGuestLesson } from '@/lib/learn/lessons/free-access';
 import { originalMaterials } from '@/lib/learn/lessons/free-materials';
 import styles from './free.module.css';
@@ -16,7 +15,7 @@ const loginHref = '/login?returnTo=' + encodeURIComponent('/free');
 export default async function FreeLessonsPage({ searchParams }: { searchParams: Promise<{ textbook?: string }> }) {
   const [user, profileData, materials, query] = await Promise.all([getUser(), getProfile(), originalMaterials(), searchParams]);
   const profile = profileData as Profile | null;
-  const curriculum = root as Curriculum;
+  const curriculum = freePacks()[0];
   return <div className={styles.page}>
     <Header glassHeader userName={profile?.name || user?.email} isLoggedIn={!!user} userRole={profile?.role} />
     <main className={styles.main}>

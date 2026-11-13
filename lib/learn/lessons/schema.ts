@@ -43,6 +43,8 @@ export const lessonSchema=z.object({id,kind:z.enum(['concept','worked']),title:t
   const scenes=new Set<string>(),sentences=new Set<string>();
   for(const scene of lesson.scenes){
     for(const match of (scene.headline?.formula??'').matchAll(/\{\{([^}]+)\}\}/g)){if(scene.stage.type!=='slider'||match[1]!==scene.stage.param.name)ctx.addIssue({code:'custom',message:'없는 수식 파라미터: '+match[1]});}
+    // 강 번호 참조({{강:…}})는 화면 전용이다. 음성은 미리 녹음되므로 대본에서는 단원명만 말한다(lesson-refs.ts).
+    for(const sentence of scene.narration)if(/\{\{강:/.test(sentence.text+(sentence.tts??'')))ctx.addIssue({code:'custom',message:scene.id+'/'+sentence.id+': 음성 대본에는 강 번호 참조를 쓸 수 없습니다. 단원명만 말하세요.'});
     for(const message of actionErrors(scene))ctx.addIssue({code:'custom',message:scene.id+': '+message});
     if(scenes.has(scene.id))ctx.addIssue({code:'custom',message:'장면 ID 중복: '+scene.id}); scenes.add(scene.id);
     for(const sentence of scene.narration){
