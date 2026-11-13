@@ -40,9 +40,12 @@ export function styleWarnings(scene: Scene): string[] {
   const roles = scene.narration.map(sentence => sentence.role);
   if (scene.stage.type === 'steps' && roles.includes('write')) {
     if (!scene.stage.problem) out.push(`${scene.id} [worked-problem] 풀이 장면에는 문제를 위에 고정한다 — steps.problem (문제풀이 매뉴얼 §1)`);
-    const before = roles.slice(0, roles.indexOf('write')).filter(role => role === 'think').length;
-    if (before * 3 < roles.length) out.push(`${scene.id} [worked-scan] 첫 줄을 적기 전의 생각이 ${before}/${roles.length}문장 — 3분의 1 이상이어야 한다 (문제풀이 매뉴얼 §2)`);
-    for (const sentence of scene.narration) if (/유형입니다|이용해야 합니다|번역할 (?:곳|말)/.test(sentence.text)) out.push(`${sentence.id} [worked-tone] 해설자 말투 — 푸는 사람의 추측하는 말투로 (문제풀이 매뉴얼 §2)`);
+    if (!roles.slice(0, roles.indexOf('write')).includes('think')) out.push(`${scene.id} [worked-scan] 첫 줄을 적기 전에 문제에 들어가며 하는 생각(무엇부터 적는지)이 없다 (문제풀이 매뉴얼 §2)`);
+    roles.forEach((role, i) => { if (role === 'write' && roles[i - 1] === 'write') out.push(`${scene.narration[i].id} [worked-reason] 줄과 줄 사이에 다음 줄로 넘어가는 근거 문장이 없다 (문제풀이 매뉴얼 §2)`); });
+    for (const sentence of scene.narration) {
+      if (/유형입니다|번역할 (?:곳|말)/.test(sentence.text)) out.push(`${sentence.id} [worked-tone] 풀이 해설이 아니라 줄을 적는 이유를 말한다 (문제풀이 매뉴얼 §2)`);
+      if (/thinking aloud|pondering|hesitant/i.test(sentence.tts ?? '') || /것 같(?:네요|습니다|아요)|겠네요|[가-힣]네요[.,]/.test(sentence.text)) out.push(`${sentence.id} [worked-acting] 생각하는 척하는 연기 금지 — [thinking aloud] 같은 지시어와 "~네요", "~것 같습니다" 없이 담담하게 (문제풀이 매뉴얼 §2)`);
+    }
     if (scene.stage.problem && scene.narration.some(sentence => sentence.cue?.actions?.some(action => action.type === 'highlight'))) out.push(`${scene.id} [worked-highlight] 시험지 지면에서는 highlight를 쓰지 않는다 — 앞에 적은 줄이 흐려진다. 밑줄·동그라미로 (문제풀이 매뉴얼 §1)`);
     const last = [...scene.narration].reverse().find(sentence => sentence.role === 'write');
     if (last && !scene.narration.slice(scene.narration.indexOf(last) + 1).some(sentence => /문제를 다시|구하라는/.test(sentence.text))) out.push(`${scene.id} [worked-lookback] 답을 적은 뒤 문제를 다시 보는 문장이 없다 (문제풀이 매뉴얼 §2)`);

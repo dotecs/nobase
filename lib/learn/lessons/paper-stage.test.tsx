@@ -58,6 +58,8 @@ describe('문제풀이 매뉴얼 검사', () => {
     expect(codes({ ...scene({}), stage: stageSchema.parse({ type: 'steps', steps: [{ tex: 'x' }] }) } as Scene)).toContain('worked-problem');
     const hasty = scene({}); hasty.narration = [hasty.narration[1], hasty.narration[0], hasty.narration[0], hasty.narration[0]];
     expect(codes(hasty)).toContain('worked-scan');
+    const acting = scene({}); acting.narration = [{ ...acting.narration[0], tts: '[thinking aloud] 식부터 봅니다.' }, acting.narration[1], { ...acting.narration[1], id: 'n3' }];
+    expect(codes(acting)).toEqual(expect.arrayContaining(['worked-acting', 'worked-reason']));
   });
   it('시범 강의 rm-22-w1은 매뉴얼 검사를 모두 통과한다', () => {
     const lesson = lessonSchema.parse(JSON.parse(readFileSync('content/lessons/rm-22-w1.json', 'utf8')));
