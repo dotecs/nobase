@@ -1,6 +1,7 @@
 import master from '@/content/curricula/master.json';
 import lessonTopics from '@/content/curricula/lesson-topics.json';
-import { PACKS, lessonEntry } from './packs';
+import { PACKS, lessonEntry, packLessonIds } from './packs';
+import type { Curriculum } from './curriculum';
 
 /** 전 과목 마스터 목록: 과목 → 대단원 → 소단원. 강 번호가 없다(번호는 팩이 정한다). */
 export type MasterTopic = { key: string; title: string; planned: boolean; concepts: number; problems: number };
@@ -42,4 +43,29 @@ export function buildCatalog(lessons: LessonState[]): Catalog {
     subjects, unplaced: all.filter(lesson => !(LESSON_TOPICS[lesson.id] ?? []).some(key => known.has(key))),
     totals: { subjects: subjects.length, units: subjects.reduce((n, s) => n + s.units.length, 0), topics: subjects.reduce((n, s) => n + s.topics, 0), covered: subjects.reduce((n, s) => n + s.covered, 0), lessons: all.length, inPack: all.filter(lesson => lesson.packs.length).length },
   };
+}
+
+/**
+ * 관리자용 목차: 팩의 목차 뒤에, 어느 팩에도 없는 강의를 마스터 목록의 대단원별로 붙인다.
+ * 팩 밖 강의는 강 번호가 없다(no 0). 문제풀이 강의는 같은 대단원의 개념 강의 아래에 둔다.
+ */
+export function adminCurriculum(lessons: LessonState[]): Curriculum {
+  const packed = new Set(PACKS.flatMap(pack => packLessonIds(pack)));
+  const label = (lesson: LessonState) => lesson.title + (lesson.status === 'draft' ? ' (초안)' : '');
+  const chapters: Curriculum['chapters'] = PACKS.flatMap(pack => pack.chapters.map(chapter => ({ ...chapter, title: PACKS.length > 1 ? pack.title + ' · ' + chapter.title : chapter.title })));
+  const group = (title: string, list: LessonState[]) => {
+    if (!list.length) return;
+    const items: Curriculum['chapters'][number]['items'] = [];
+    for (const lesson of list.filter(entry => entry.kind !== 'worked')) items.push({ no: 0, title: label(lesson), lesson_id: lesson.id });
+    for (const lesson of list.filter(entry => entry.kind === 'worked')) {
+      const parent = [...items].reverse().find(item => lesson.id.startsWith(item.lesson_id.replace(/-\d+$/, '') + '-')) ?? items.at(-1);
+      if (parent) parent.worked = [...(parent.worked ?? []), { title: label(lesson), lesson_id: lesson.id }];
+      else items.push({ no: 0, title: label(lesson), lesson_id: lesson.id });
+    }
+    chapters.push({ no: 0, title, items });
+  };
+  const catalog = buildCatalog(lessons.filter(lesson => !packed.has(lesson.id)));
+  for (const subject of catalog.subjects) for (const unit of subject.units) group(subject.title + ' · ' + unit.title, [...new Map(unit.topics.flatMap(topic => topic.lessons).map(lesson => [lesson.id, lesson])).values()]);
+  group('소단원 미지정', catalog.unplaced);
+  return { id: 'admin-all', title: '전체 강의 (관리자)', chapters: chapters.map((chapter, index) => ({ ...chapter, no: index + 1 })) };
 }

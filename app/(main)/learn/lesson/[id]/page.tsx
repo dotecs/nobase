@@ -1,4 +1,4 @@
-import {loadCurriculum} from '@/lib/learn/lessons/curriculum-server';
+import {loadCurriculum,loadAdminCurriculum} from '@/lib/learn/lessons/curriculum-server';
 import { notFound, redirect } from 'next/navigation';
 import { requireLearnerAccess } from '@/lib/learn/runtime';import { publishedLesson,audioPlayback,conceptGraph } from '@/lib/learn/lessons/data';import { StudioViewer } from '@/components/studio/StudioViewer';import { loadStudioTheme } from '@/lib/learn/user-settings';import { saveLessonTheme,recordLessonEvents,refreshLessonAudio,recordLessonAudioDuration,loadConceptCard } from '../actions';import { startSession } from '../../actions';
 import { packForLesson } from '@/lib/learn/lessons/packs';
@@ -18,7 +18,9 @@ export default async function LessonPage({params,searchParams}:{params:Promise<{
   // 강 번호와 목차는 보는 팩이 정한다. ?pack= 으로 고르고, 없으면 이 강의가 든 첫 팩.
   const pack=packForLesson(id,query.pack);
   const userId=viewer.kind==='full'||viewer.kind==='free'?viewer.userId:null,full=viewer.kind==='full';
+  // 관리자가 미리보기 중이거나 팩에 없는 강의를 보면, 목차에 팩 밖 강의와 초안까지 모두 보여 준다.
+  const adminAll=full&&viewer.admin&&(draft||!pack);
   const title=pack?.chapters.flatMap(ch=>ch.items).find(item=>item.lesson_id===id)?.title;
-  const [audio,graph,course,theme,videoUrl]=await Promise.all([audioPlayback(id,row.version,draft),conceptGraph(row.pack_id),pack?loadCurriculum(pack.id,userId):undefined,userId?loadStudioTheme(userId):null,title?originalVideoUrl(title):null]);
+  const [audio,graph,course,theme,videoUrl]=await Promise.all([audioPlayback(id,row.version,draft),conceptGraph(row.pack_id),adminAll?loadAdminCurriculum(userId):pack?loadCurriculum(pack.id,userId):undefined,userId?loadStudioTheme(userId):null,title?originalVideoUrl(title):null]);
   return <StudioViewer key={row.id+':'+row.version} initialTheme={theme??undefined} saveTheme={userId?saveLessonTheme:undefined} autoplayFirst={query.autoplay==='1'} admin={full&&viewer.admin} course={course} lesson={resolveLessonRefs(row.body,pack)} graph={graph} audio={audio.urls} alignments={audio.alignments} durations={audio.durations} record={userId&&!draft?recordLessonEvents.bind(null,id,row.version):undefined} refreshAudio={refreshLessonAudio.bind(null,id,row.version)} recordDuration={recordLessonAudioDuration.bind(null,id,row.version)} loadConcept={loadConceptCard} startPractice={full?startSession:undefined} cta={full?undefined:COACHING_CTA} guest={viewer.kind==='guest'&&nextNeedsLogin(id)} video={title&&videoUrl?{title,src:vimeoEmbedUrl(videoUrl),open:query.video==='1'}:undefined} frame={query.frame==='16x9'} chrome={query.chrome!=='0'}/>;
 }

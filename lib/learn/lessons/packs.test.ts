@@ -94,3 +94,28 @@ describe('master curriculum', () => {
     expect(catalog.totals).toMatchObject({ subjects: 9, units: 61, topics: 239, lessons: 3, inPack: 1 });
   });
 });
+
+import { adminCurriculum as adminList, lessonStates as statesOf } from './master';
+import { nextLessonAction as nextAction } from './curriculum';
+describe('관리자용 목차', () => {
+  const states = statesOf([
+    { id: 'rm-01', version: 1, title: '수의 체계', kind: 'concept', status: 'live' },
+    { id: 'rm-22-1', version: 1, title: '이차함수의 그래프', kind: 'concept', status: 'reviewed' },
+    { id: 'rm-22-w1', version: 3, title: '문제풀이: 접할 조건', kind: 'worked', status: 'draft' },
+    { id: 'zz-1', version: 1, title: '어디에도 없는 강의', kind: 'concept', status: 'draft' },
+  ]);
+  it('팩의 목차 뒤에 팩 밖 강의를 대단원별로 붙이고, 문제풀이는 개념 강의 아래에 둔다', () => {
+    const list = adminList(states), pack = PACKS[0];
+    expect(list.chapters.slice(0, pack.chapters.length).map(chapter => chapter.title)).toEqual(pack.chapters.map(chapter => chapter.title));
+    expect(list.chapters.map(chapter => chapter.no)).toEqual(list.chapters.map((_, index) => index + 1));
+    const extra = list.chapters.slice(pack.chapters.length);
+    const quad = extra.find(chapter => chapter.items.some(item => item.lesson_id === 'rm-22-1'))!;
+    expect(quad.items).toEqual([{ no: 0, title: '이차함수의 그래프', lesson_id: 'rm-22-1', worked: [{ title: '문제풀이: 접할 조건 (초안)', lesson_id: 'rm-22-w1' }] }]);
+    expect(extra.at(-1)).toMatchObject({ title: '소단원 미지정', items: [{ lesson_id: 'zz-1', no: 0 }] });
+    expect(extra.flatMap(chapter => chapter.items).some(item => item.lesson_id === 'rm-01')).toBe(false);
+  });
+  it('미리보기 목차의 다음 강의 링크는 미리보기로 이어진다', () => {
+    const list = adminList(states);
+    expect(nextAction({ curriculum: list, available: states.map(state => state.id), query: 'draft=1' }, 'rm-22-1').href).toBe('/learn/lesson/rm-22-w1?autoplay=1&draft=1');
+  });
+});
