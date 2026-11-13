@@ -1,0 +1,22 @@
+/* 음성 생성 대기열: 관리자 화면 오른쪽 아래에 떠 있다 */
+.dock { position: fixed; right: var(--space-4); bottom: var(--space-4); z-index: 40; width: min(360px, calc(100vw - 2 * var(--space-4))); display: grid; gap: 6px; padding: var(--space-3); border: 1px solid var(--color-border-brand); border-radius: var(--radius-card); background: var(--color-bg-elevated, #fff); color: var(--color-text, #0f172a); box-shadow: var(--shadow-card, 0 8px 24px rgba(15, 23, 42, .16)); font-size: 13px; }
+.head { display: flex; align-items: center; gap: var(--space-2); }
+.toggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.head > button:not(.toggle), .list button { flex: none; min-height: 32px; padding: 0 12px; border: 1px solid var(--color-border-brand); border-radius: var(--radius-button); background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.dock button:focus-visible, .link:focus-visible { outline: none; box-shadow: var(--focus-ring, 0 0 0 2px #2563eb); }
+.dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+.dot[data-active="true"] { background: #16a34a; animation: pulse 1.2s ease-in-out infinite; }
+.count { margin-left: auto; opacity: .7; font-variant-numeric: tabular-nums; }
+.current, .hint { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hint { opacity: .65; font-size: 12px; }
+.list { list-style: none; margin: 0; padding: 0; max-height: 40vh; overflow-y: auto; display: grid; gap: 4px; border-top: 1px solid var(--color-border-brand); padding-top: 6px; }
+.list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; }
+.list li button { grid-column: 1 / -1; justify-self: start; }
+.name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.name small { margin-left: 6px; opacity: .6; }
+.state { opacity: .75; font-variant-numeric: tabular-nums; }
+.list li[data-state="error"] .state { color: #b45309; opacity: 1; }
+.list li[data-state="done"] .state { color: #16a34a; opacity: 1; }
+.link { justify-self: start; color: inherit; opacity: .7; }
+@keyframes pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .dot[data-active="true"] { animation: none; } }

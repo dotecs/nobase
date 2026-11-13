@@ -3,6 +3,7 @@ import { getUser, getProfile } from '@/lib/supabase-server';
 import { Header } from '@/components';
 import { Profile } from '@/lib/database.types';
 import AdminSidebar from './AdminSidebar';
+import { AudioQueueProvider } from './AudioQueue';
 import { getAdminBadgeCounts } from './admin-counts';
 import styles from './admin-shell.module.css';
 
@@ -27,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <Header userName={profile?.name || user?.email} isLoggedIn={true} userRole={profile?.role} />
       <div className={styles.shell}>
         <AdminSidebar counts={counts} />
-        <div className={styles.content}>{children}</div>
+        <div className={styles.content}><AudioQueueProvider>{children}</AudioQueueProvider></div>
       </div>
     </div>
   );
