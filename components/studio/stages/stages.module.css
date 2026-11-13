@@ -63,3 +63,19 @@
 /* 확인 문제에 상황 그래프를 붙일 때(quiz.graph) */
 .quizGraph { width:min(100%,520px); margin:0 auto 12px; }
 .quizGraph svg { width:100%; height:auto; max-height:36vh; }
+
+/* 시험지 지면: 문제풀이 무대(steps.problem). 문제는 위에 고정, 풀이는 그 아래로 한 줄씩 */
+.paper { width:min(100%,780px); margin:0 auto; color:var(--studio-text); }
+.problem { display:flex; align-items:baseline; gap:14px; padding:4px 18px 40px; margin-bottom:16px; border-bottom:1px solid var(--studio-grid); }
+.problem p { margin:0; font-size:clamp(17px,1.6vw,22px); line-height:2; word-break:keep-all; }
+.problemLabel { flex:none; padding:1px 10px; border:1px solid var(--studio-grid); border-radius:999px; color:var(--studio-muted); font-size:12px; line-height:1.6; }
+.phrase { display:inline-block; white-space:nowrap; }
+.steps[data-paper] li { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
+.steps[data-paper] .tools { margin:0 0 0 auto; }
+.steps[data-paper] .explanation { flex-basis:100%; margin-top:4px; }
+.steps li[data-reserved] { visibility:hidden; animation:none; }
+:global([data-frame="true"]) .problem p { font-size:22px; }
+:global([data-layout="portrait"]) .paper { width:100%; }
+:global([data-layout="portrait"]) .problem { position:sticky; top:0; z-index:1; gap:8px; padding:10px 12px 12px; margin-bottom:4px; background:var(--studio-bg); }
+:global([data-layout="portrait"]) .problem p { font-size:16px; line-height:1.9; }
+:global([data-layout="portrait"]) .steps[data-paper] .tools { margin-left:0; }

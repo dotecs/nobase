@@ -8,6 +8,7 @@ import type { TargetBox, ChalkMark } from '@/lib/learn/lessons/chalk';
 import type { Scene } from '@/lib/learn/lessons/schema';
 import type { StageState } from '@/lib/learn/lessons/stage-state';
 import { itemsOf, itemParameters } from '@/lib/learn/lessons/items';
+import { paperStage } from '@/lib/learn/lessons/stage-targets';
 import { CalloutLayer } from './CalloutLayer';
 import { ChalkLayer } from './ChalkLayer';
 import { BoardItems } from './BoardItems';
@@ -22,7 +23,7 @@ export function ChalkSurface({ marks, revision, children, scene, state }: {
   const svg = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
   const items = itemsOf(scene.stage);
-  const canvas = scene.stage.type === 'board' || scene.stage.type === 'figure' || items.length > 0 || scene.narration.some(sentence => sentence.cue?.actions?.some(action => action.type === 'callout'));
+  const canvas = scene.stage.type === 'board' || scene.stage.type === 'figure' || items.length > 0 || paperStage(scene.stage) || scene.narration.some(sentence => sentence.cue?.actions?.some(action => action.type === 'callout'));
   const targets = useTargetBoxes(root, svg, revision + JSON.stringify(size));
   useEffect(() => {
     const element = root.current;

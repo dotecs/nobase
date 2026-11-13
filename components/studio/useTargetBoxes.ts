@@ -57,10 +57,10 @@ export function useTargetBoxes(root: RefObject<HTMLElement>, svg: RefObject<SVGS
     element.addEventListener('animationcancel', followAnimation);
     element.addEventListener('transitionrun', followAnimation);
     element.addEventListener('transitionend', followAnimation);
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', measure); window.addEventListener('scroll', measure, true); // 스크롤에 붙어 있는(sticky) 대상의 위치를 다시 잰다
     return () => {
       cancelAnimationFrame(frame);
-      observer.disconnect(); mutation.disconnect(); window.removeEventListener('resize', measure);
+      observer.disconnect(); mutation.disconnect(); window.removeEventListener('resize', measure); window.removeEventListener('scroll', measure, true);
       element.removeEventListener('animationstart', followAnimation);
       element.removeEventListener('animationend', followAnimation);
       element.removeEventListener('animationcancel', followAnimation);

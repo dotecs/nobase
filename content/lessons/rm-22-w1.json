@@ -1,0 +1,517 @@
+{
+  "id": "rm-22-w1",
+  "kind": "worked",
+  "title": "문제풀이: 평행이동한 포물선이 x축에 접할 조건",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "잘 푸는 사람이 첫 줄을 적기 전에 머릿속으로 해 보는 암산을 따라가 봅니다.",
+  "goal": "이차식을 보면 완전제곱식으로 고쳐지는지 암산해 보고, 접하는 조건을 꼭짓점의 높이로 읽는다.",
+  "scenes": [
+    {
+      "id": "p1",
+      "title": "풀이",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "문제풀이",
+        "title": "평행이동한 포물선이\nx축에 접할 조건",
+        "accent": "접할 조건",
+        "subtitle": "적기 전에 머릿속으로 먼저 해 봅니다.",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "steps",
+        "problem": "이차함수 $y=\\p{q}{x^2-2x}+\\p{a}{a}$ 의 그래프를 [[move|$y$축 방향으로 $-4$만큼 평행이동]]했더니 [[touch|$x$축에 접한다]]. [[ask|상수 $a$의 값]]을 구하시오.",
+        "steps": [
+          {
+            "tex": "y=\\p{sq}{(x-1)^2}+\\p{h}{a-1}",
+            "concept_id": "c.perfect-square",
+            "why": "$x^2-2x$에 1을 더하고 빼면 $(x-1)^2-1$. 꼭짓점은 $(1,\\ a-1)$."
+          },
+          {
+            "tex": "y=(x-1)^2+\\p{h}{a-5}",
+            "concept_id": "c.translation",
+            "why": "$y$축 방향으로 $-4$만큼 → 그래프 전체가 아래로 4. 꼭짓점의 높이 $a-1$이 $a-5$가 된다. ($y$ 자리에 $y+4$를 넣고 4를 넘긴 것과 같다.)"
+          },
+          {
+            "tex": "\\p{h}{a-5}=\\p{z}{0}",
+            "concept_id": "c.vertex-form",
+            "why": "아래로 볼록인 포물선에서 가장 낮은 점이 꼭짓점. $x$축에 접한다 ⇔ 꼭짓점이 $x$축 위 ⇔ 꼭짓점의 $y$좌표가 0."
+          },
+          {
+            "tex": "\\therefore\\ \\p{ans}{a=5}",
+            "concept_id": "c.linear-eq-solve",
+            "why": "$-5$를 이항한다."
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "p1-1",
+          "role": "say",
+          "text": "문제를 읽겠습니다. 이차함수 $y=x^2-2x+a$의 그래프를 ⏎$y$축 방향으로 $-4$만큼 평행이동했더니 ⏎$x$축에 접한다고 합니다. 이때 상수 $a$의 값을 구하라는 문제입니다.",
+          "tts": "[warm, steady lecture tone] 문제를 읽겠습니다. 이차함수, 와이는 엑스 제곱 마이너스 이 엑스 플러스 에이의 그래프를, 와이축 방향으로 마이너스 사만큼 평행이동했더니, 엑스축에 접한다고 합니다. 이때 상수 에이의 값을 구하라는 문제입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "problem/move",
+                "at": "@와이축 방향으로",
+                "until": "scene"
+              },
+              {
+                "type": "underline",
+                "target": "problem/touch",
+                "at": "@엑스축에 접한다고",
+                "until": "scene"
+              },
+              {
+                "type": "circle",
+                "target": "problem/ask",
+                "at": "@상수 에이의 값"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-2",
+          "role": "think",
+          "text": "식부터 봅니다. $x^2-2x$, 일차항의 계수가 $-2$네요. 이건 $(x-1)^2$에서 1만 빼면 되는 모양입니다.",
+          "tts": "[thinking aloud] 식부터 봅니다. 엑스 제곱 마이너스 이 엑스, 일차항의 계수가 마이너스 이네요. 이건, 엑스 빼기 일의 제곱에서, 일만 빼면 되는 모양입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "problem/q",
+                "at": "@엑스 제곱 마이너스 이 엑스"
+              },
+              {
+                "type": "handwrite",
+                "tex": "x^2-2x=(x-1)^2-1",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@엑스 빼기 일의 제곱에서",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-3",
+          "role": "think",
+          "text": "그러면 머릿속으로 $y=(x-1)^2+a-1$. 꼭짓점이 $x=1$에 있고, 높이는 $a-1$입니다.",
+          "tts": "[thinking aloud] 그러면 머릿속으로, 와이는 엑스 빼기 일의 제곱, 플러스 에이 마이너스 일. 꼭짓점이 엑스는 일에 있고, 높이는 에이 마이너스 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "y=(x-1)^2+a-1",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@와이는 엑스 빼기 일의 제곱",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-4",
+          "role": "think",
+          "text": "$a$는 그래프의 높이만 정하는 수네요. 좌우 위치와는 상관이 없습니다.",
+          "tts": "[thinking aloud] 에이는, 그래프의 높이만 정하는 수네요. 좌우 위치와는 상관이 없습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "problem/a",
+                "at": "@에이는, 그래프의"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\text{꼭짓점 }(1,\\ a-1)",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@높이만 정하는",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-5",
+          "role": "think",
+          "text": "이걸 아래로 4만큼 내리면, 꼭짓점의 높이가 $a-5$가 되겠죠.",
+          "tts": "[thinking aloud] 이걸 아래로 사만큼 내리면, 꼭짓점의 높이가 에이 마이너스 오가 되겠죠.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/move",
+                "at": "@아래로 사만큼"
+              },
+              {
+                "type": "handwrite",
+                "tex": "a-1-4=a-5",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@꼭짓점의 높이가",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-6",
+          "role": "think",
+          "text": "그리고 $x$축에 접한다. 아래로 볼록인 포물선이니까 가장 낮은 곳이 꼭짓점이고, 접하려면 꼭짓점이 정확히 $x$축 위에 놓여야 합니다.",
+          "tts": "[thinking aloud] 그리고, 엑스축에 접한다. 아래로 볼록인 포물선이니까, 가장 낮은 곳이 꼭짓점이고, 접하려면, 꼭짓점이 정확히 엑스축 위에 놓여야 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/touch",
+                "at": "@엑스축에 접한다"
+              },
+              {
+                "type": "handwrite",
+                "text": "→ 꼭짓점 높이 = 0",
+                "position": {
+                  "near": "problem/touch",
+                  "side": "below",
+                  "gap": 4
+                },
+                "at": "@꼭짓점이 정확히",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-7",
+          "role": "think",
+          "text": "그러면 $a-5$가 0. 답은 5가 나올 것 같네요.",
+          "tts": "[thinking aloud] 그러면, 에이 마이너스 오가 영. 답은 오가 나올 것 같네요.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "a-5=0\\ \\Rightarrow\\ a=5\\ ?",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@에이 마이너스 오가 영",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-8",
+          "role": "think",
+          "text": "판별식으로도 풀 수 있지만, 옮긴 식을 한 번 더 세우고 계산해야 합니다. 꼭짓점으로 가는 쪽이 짧겠네요. 완전제곱식으로 고친 식부터 적겠습니다.",
+          "tts": "[thinking aloud] 판별식으로도 풀 수 있지만, 옮긴 식을 한 번 더 세우고 계산해야 합니다. 꼭짓점으로 가는 쪽이 짧겠네요. [short pause] 완전제곱식으로 고친 식부터 적겠습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "problem/q",
+                "at": "@완전제곱식으로 고친"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-9",
+          "role": "write",
+          "text": "$y=(x-1)^2+a-1$.",
+          "tts": "[normal pace] 와이는, 엑스 빼기 일의 제곱, 플러스 에이 마이너스 일.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-10",
+          "role": "think",
+          "text": "이제 4만큼 내립니다. 접한다는 것은 옮긴 뒤의 그래프 이야기니까, 옮긴 식이 있어야 합니다. 바뀌는 것은 꼭짓점의 높이뿐입니다.",
+          "tts": "[thinking aloud] 이제 사만큼 내립니다. 접한다는 것은, 옮긴 뒤의 그래프 이야기니까, 옮긴 식이 있어야 합니다. 바뀌는 것은, 꼭짓점의 높이뿐입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/move",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/h",
+                "at": "@꼭짓점의 높이뿐"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-11",
+          "role": "write",
+          "text": "$y=(x-1)^2+a-5$.",
+          "tts": "[normal pace] 와이는, 엑스 빼기 일의 제곱, 플러스 에이 마이너스 오.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/h",
+                "at": "@에이 마이너스 오"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-12",
+          "role": "think",
+          "text": "부호만 한 번 봅니다. $-4$만큼이니 아래로, 높이가 줄어드는 쪽이 맞습니다.",
+          "tts": "[thinking aloud] 부호만 한 번 봅니다. 마이너스 사만큼이니 아래로, 높이가 줄어드는 쪽이 맞습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/move",
+                "at": "@마이너스 사만큼이니"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/h",
+                "at": "@높이가 줄어드는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-13",
+          "role": "think",
+          "text": "남은 조건은 접한다는 것 하나입니다. 꼭짓점의 높이를 0으로 놓으면 $a$에 대한 식이 됩니다.",
+          "tts": "[thinking aloud] 남은 조건은, 접한다는 것 하나입니다. 꼭짓점의 높이를 영으로 놓으면, 에이에 대한 식이 됩니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/touch",
+                "at": "@접한다는 것"
+              },
+              {
+                "type": "circle",
+                "target": "step:1/h",
+                "at": "@꼭짓점의 높이를"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-14",
+          "role": "write",
+          "text": "$a-5=0$.",
+          "tts": "[normal pace] 에이 마이너스 오는, 영.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-15",
+          "role": "think",
+          "text": "5만 넘기면 끝입니다.",
+          "tts": "[thinking aloud] 오만 넘기면 끝입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "step:2/h",
+                "at": "@start"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-16",
+          "role": "write",
+          "text": "따라서 $a=5$.",
+          "tts": "[normal pace] 따라서, 에이는 오.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/ans",
+                "at": "@에이는 오",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-17",
+          "role": "think",
+          "text": "문제를 다시 봅니다. 구하라는 것은 상수 $a$의 값이었죠. $a=5$, 값 하나로 답했으니 맞습니다.",
+          "tts": "[thinking aloud] 문제를 다시 봅니다. 구하라는 것은, 상수 에이의 값이었죠. 에이는 오, 값 하나로 답했으니 맞습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "problem/ask",
+                "at": "@상수 에이의 값이었죠"
+              },
+              {
+                "type": "circle",
+                "target": "step:3/ans",
+                "at": "@에이는 오"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-18",
+          "role": "think",
+          "text": "암산으로 한 번 확인하면, $a$가 5일 때 옮긴 식은 $y=(x-1)^2$. $x$가 1일 때 0이 되고 다른 곳에서는 양수이니, $x$축에 닿기만 합니다.",
+          "tts": "[thinking aloud] 암산으로 한 번 확인하면, 에이가 오일 때 옮긴 식은, 와이는 엑스 빼기 일의 제곱. 엑스가 일일 때 영이 되고, 다른 곳에서는 양수이니, 엑스축에 닿기만 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "step:1/h",
+                "at": "@옮긴 식은"
+              },
+              {
+                "type": "handwrite",
+                "tex": "y=(x-1)^2\\ \\checkmark",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@와이는 엑스 빼기 일의 제곱",
+                "until": "sentence"
+              },
+              {
+                "type": "flash",
+                "target": "problem/touch",
+                "at": "@엑스축에 닿기만"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-19",
+          "role": "say",
+          "text": "이차식을 보면, 먼저 완전제곱식으로 고쳐지는지 암산해 보세요. 꼭짓점이 보이면, 접한다는 조건은 꼭짓점의 높이가 0이라는 말로 바뀝니다.",
+          "tts": "[concluding, relaxed] 이차식을 보면, 먼저 완전제곱식으로 고쳐지는지 암산해 보세요. 꼭짓점이 보이면, 접한다는 조건은, 꼭짓점의 높이가 영이라는 말로 바뀝니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "step:0/sq",
+                "at": "@완전제곱식으로 고쳐지는지"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/h",
+                "at": "@꼭짓점의 높이가 영"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-20",
+          "role": "say",
+          "text": "완전제곱식이 암산으로 나오지 않는 식이라면, 그때는 판별식으로 가면 됩니다.",
+          "tts": "[concluding, relaxed] 완전제곱식이 암산으로 나오지 않는 식이라면, 그때는 판별식으로 가면 됩니다."
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "변형",
+        "title": "같은 모양,\n다른 숫자",
+        "accent": "다른 숫자",
+        "subtitle": "적기 전에 꼭짓점부터 암산해 보세요.",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "이차함수 $y=x^2+4x+k$ 의 그래프를 $y$축 방향으로 $3$만큼 평행이동했더니 $x$축에 접한다. 상수 $k$의 값은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$k=7$"
+          },
+          {
+            "id": "b",
+            "text_md": "$k=1$"
+          },
+          {
+            "id": "c",
+            "text_md": "$k=4$"
+          },
+          {
+            "id": "d",
+            "text_md": "$k=-1$"
+          }
+        ],
+        "correct": "b",
+        "explain": "$x^2+4x=(x+2)^2-4$ 이므로 꼭짓점의 높이는 $k-4$. 위로 3만큼 올리면 $k-1$. 접하려면 $k-1=0$, $k=1$. (아래로 내리면 $k=7$, 평행이동을 빠뜨리면 $k=4$가 나온다.) 판별식으로도 확인: 옮긴 식 $y=x^2+4x+k+3$에서 $\\frac D4=2^2-(k+3)=0$.",
+        "trace_concept_id": "c.vertex-form"
+      },
+      "narration": [
+        {
+          "id": "p2-1",
+          "role": "say",
+          "text": "같은 모양의 문제입니다. 적기 전에, 완전제곱식으로 고치면 꼭짓점의 높이가 어떻게 되는지 먼저 암산해 보세요. 이번에는 옮기는 방향이 반대입니다.",
+          "tts": "같은 모양의 문제입니다. 적기 전에, 완전제곱식으로 고치면 꼭짓점의 높이가 어떻게 되는지, 먼저 암산해 보세요. [concluding, relaxed] 이번에는, 옮기는 방향이 반대입니다."
+        }
+      ]
+    }
+  ]
+}

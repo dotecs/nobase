@@ -29,7 +29,7 @@ export const stageSchema=z.discriminatedUnion('type',[
   graphSchema,
   treeSchema,
   z.object({type:z.literal('board'),items:itemsSchema,initial:initialStageSchema.optional(),aspect:z.literal('16:9').optional()}),
-  z.object({type:z.literal('steps'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),steps:z.array(z.object({tex:text,concept_id:id.optional(),why:text.optional(),think:text.optional()})).min(1)}),
+  z.object({type:z.literal('steps'),/** 문제 문장. 있으면 풀이 줄 위에 장면 내내 고정된다(시험지 지면). `[[이름|구절]]`은 지시 대상 `problem/이름`. */problem:text.optional(),items:itemsSchema.optional(),initial:initialStageSchema.optional(),steps:z.array(z.object({tex:text,concept_id:id.optional(),why:text.optional(),think:text.optional()})).min(1)}),
   z.object({type:z.literal('chain'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),nodes:z.array(z.object({tex:text.optional(),text})).min(1)}),
   z.object({type:z.literal('slider'),items:itemsSchema.optional(),initial:initialStageSchema.optional(),expr:text,points:z.array(graphPoint).max(100).optional(),param:z.object({name:z.string().regex(/^[a-wyz]$/),min:coordinate,max:coordinate,step:coordinate.pipe(z.number().positive()),control:z.enum(['stepper','slider']).optional(),init:coordinate}),x:range,y:graphY,aspect,number_line:z.boolean().optional(),verdict:z.enum(['discriminant','none'])}).superRefine((s,ctx)=>{
     if(!validGraphExpression(s.expr,s.param.name)||s.param.min>=s.param.max||s.param.init<s.param.min||s.param.init>s.param.max)ctx.addIssue({code:'custom',message:'슬라이더 식 또는 범위를 확인하세요.'});

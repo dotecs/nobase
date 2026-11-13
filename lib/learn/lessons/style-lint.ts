@@ -1,9 +1,9 @@
 // Style warnings collected from repeated review feedback (docs/learning-studio-lesson-production-manual.md §9).
 // Each rule maps to a correction the 대표 has had to request more than once; lesson-check prints them as WARN.
 type Action = Record<string, unknown> & { type: string };
-type Sentence = { id: string; text: string; tts?: string; cue?: { actions?: Action[] } };
+type Sentence = { id: string; role?: string; text: string; tts?: string; cue?: { actions?: Action[] } };
 type Item = { id: string; tex?: string; text?: string; position?: { x?: number; y?: number }; group?: string };
-type Scene = { id: string; stage: { type: string; items?: Item[] }; narration: Sentence[] };
+type Scene = { id: string; stage: { type: string; items?: Item[]; problem?: string }; narration: Sentence[] };
 
 const texVisible = (tex: string) => tex.replace(/\\(?:[dt]?frac|sqrt|text|mathrm|p)(?![a-zA-Z])/g, '').replace(/\\[a-zA-Z]+/g, 'X').replace(/\\./g, ' ').replace(/[{}^_]/g, '').length;
 const NUM ='(?:일|이|삼|사|오|육|칠|팔|구|십|영)';
@@ -36,6 +36,17 @@ export function styleWarnings(scene: Scene): string[] {
   // 조작 장면은 마지막 문장에서 무엇을 해 보고 언제 '계속'을 누르는지 말한다 — 말없이 멈추면 고장으로 보인다(rm-11 s4).
   const last = scene.narration.at(-1);
   if (scene.stage.type === 'slider' && last && !/계속/.test(last.text)) out.push(`${last.id} [slider-continue] 슬라이더 장면은 끝에서 멈춘다 — 마지막 문장에 "직접 움직여 … 계속을 누르세요" 안내 (§9)`);
+  // 문제풀이 풀이 장면(learning-studio-worked-lesson-manual.md): 화면은 시험지, 음성은 푸는 사람의 머릿속.
+  const roles = scene.narration.map(sentence => sentence.role);
+  if (scene.stage.type === 'steps' && roles.includes('write')) {
+    if (!scene.stage.problem) out.push(`${scene.id} [worked-problem] 풀이 장면에는 문제를 위에 고정한다 — steps.problem (문제풀이 매뉴얼 §1)`);
+    const before = roles.slice(0, roles.indexOf('write')).filter(role => role === 'think').length;
+    if (before * 3 < roles.length) out.push(`${scene.id} [worked-scan] 첫 줄을 적기 전의 생각이 ${before}/${roles.length}문장 — 3분의 1 이상이어야 한다 (문제풀이 매뉴얼 §2)`);
+    for (const sentence of scene.narration) if (/유형입니다|이용해야 합니다|번역할 (?:곳|말)/.test(sentence.text)) out.push(`${sentence.id} [worked-tone] 해설자 말투 — 푸는 사람의 추측하는 말투로 (문제풀이 매뉴얼 §2)`);
+    if (scene.stage.problem && scene.narration.some(sentence => sentence.cue?.actions?.some(action => action.type === 'highlight'))) out.push(`${scene.id} [worked-highlight] 시험지 지면에서는 highlight를 쓰지 않는다 — 앞에 적은 줄이 흐려진다. 밑줄·동그라미로 (문제풀이 매뉴얼 §1)`);
+    const last = [...scene.narration].reverse().find(sentence => sentence.role === 'write');
+    if (last && !scene.narration.slice(scene.narration.indexOf(last) + 1).some(sentence => /문제를 다시|구하라는/.test(sentence.text))) out.push(`${scene.id} [worked-lookback] 답을 적은 뒤 문제를 다시 보는 문장이 없다 (문제풀이 매뉴얼 §2)`);
+  }
   const title = (scene as Scene & { title?: string }).title;
   if (title && (title.length > 18 || title.includes(' — '))) out.push(`${scene.id} [scene-title] 장면 제목은 목차에 보인다 — 18자 이내 명사구, " — 설명" 없이 (§9)`);
   const rowItems = scene.stage.type !== 'board' ? [] : (scene.stage.items ?? []).filter(item => !item.group && item.tex && item.position?.y !== undefined);

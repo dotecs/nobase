@@ -1683,6 +1683,102 @@
         ],
         "correct": "a"
       }
+    },
+    {
+      "id": "c.quad-forms",
+      "name": "이차함수의 세 가지 꼴",
+      "one_line": "기본형 $y=ax^2$, 표준형 $y=a(x-p)^2+q$, 일반형 $y=ax^2+bx+c$. 같은 함수를 다르게 적은 것이고, 꼴마다 바로 읽히는 정보가 다르다.",
+      "lesson_id": "rm-22-1",
+      "check_question": {
+        "stem_md": "$y=2(x-3)^2+1$ 은 이차함수의 어떤 꼴인가?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "기본형"
+          },
+          {
+            "id": "b",
+            "text_md": "표준형"
+          },
+          {
+            "id": "c",
+            "text_md": "일반형"
+          }
+        ],
+        "correct": "b"
+      }
+    },
+    {
+      "id": "c.parabola-basic",
+      "name": "$y=ax^2$의 그래프",
+      "one_line": "원점을 지나고 $y$축에 대하여 대칭인 포물선.",
+      "lesson_id": "rm-22-1",
+      "check_question": {
+        "stem_md": "$y=ax^2$ $(a\\neq0)$ 의 그래프가 $a$의 값에 관계없이 항상 지나는 점은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$(0,\\ 0)$"
+          },
+          {
+            "id": "b",
+            "text_md": "$(1,\\ 1)$"
+          },
+          {
+            "id": "c",
+            "text_md": "$(0,\\ 1)$"
+          }
+        ],
+        "correct": "a"
+      }
+    },
+    {
+      "id": "c.parabola-a",
+      "name": "$a$의 부호와 크기",
+      "one_line": "$a>0$이면 아래로 볼록, $a<0$이면 위로 볼록. $a$의 절댓값이 클수록 폭이 좁다.",
+      "lesson_id": "rm-22-1",
+      "check_question": {
+        "stem_md": "다음 중 그래프의 폭이 가장 좁은 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$y=\\frac12x^2$"
+          },
+          {
+            "id": "b",
+            "text_md": "$y=x^2$"
+          },
+          {
+            "id": "c",
+            "text_md": "$y=-3x^2$"
+          }
+        ],
+        "correct": "c"
+      }
+    },
+    {
+      "id": "c.vertex-form",
+      "name": "표준형의 축과 꼭짓점",
+      "one_line": "$y=a(x-p)^2+q$의 그래프는 $y=ax^2$을 $x$축으로 $p$, $y$축으로 $q$만큼 옮긴 것. 축은 $x=p$, 꼭짓점은 $(p,q)$.",
+      "lesson_id": "rm-22-1",
+      "check_question": {
+        "stem_md": "$y=(x+2)^2-5$ 의 꼭짓점의 좌표는?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$(2,\\ -5)$"
+          },
+          {
+            "id": "b",
+            "text_md": "$(-2,\\ -5)$"
+          },
+          {
+            "id": "c",
+            "text_md": "$(-2,\\ 5)$"
+          }
+        ],
+        "correct": "b"
+      }
     }
   ],
   "edges": [
@@ -2179,6 +2275,26 @@
     {
       "source_id": "c.constant-function",
       "target_id": "c.vertical-line",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.quad-forms",
+      "target_id": "c.parabola-basic",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.parabola-basic",
+      "target_id": "c.parabola-a",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.parabola-basic",
+      "target_id": "c.vertex-form",
+      "type": "prerequisite"
+    },
+    {
+      "source_id": "c.translation",
+      "target_id": "c.vertex-form",
       "type": "prerequisite"
     }
   ]

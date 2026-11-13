@@ -20,6 +20,8 @@
 
 ## 1. 대본 구조
 
+> 이 장은 개념 강의(`kind:"concept"`)의 구조다. 문제풀이 강의(`kind:"worked"`)의 화면과 대본은 `learning-studio-worked-lesson-manual.md`를 따른다.
+
 - `kind:"concept"`, 장면 5~7개, 문장 18~28개. 첫 문장 "이번 시간에는 …"(인사 금지), 마지막 문장 "다음 시간에는 n강 ○○입니다."
 - 장면 순서: 정의 → 교재 예시 → (거꾸로·주의) → 확인 퀴즈(`tag:"check"`, `quiz`, `trace_concept_id`).
 - `headline`: eyebrow `"n강 · 제목"`, title 짧게, accent는 title의 부분 문자열. **`formula` 금지**(수식은 items).

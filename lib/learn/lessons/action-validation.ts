@@ -3,7 +3,7 @@ import {sentenceInstruction} from './action-lifetime';
 import {regionLevelWarnings} from './region-validation';
 import {tickValue} from './pointing';
 import {itemsOf} from './items';
-import {stageTargetIds,stageMathTargets,partTargetIds,duplicateParts} from './stage-targets';
+import {stageTargetIds,stageMathTargets,partTargetIds,duplicateParts,paperStage} from './stage-targets';
 import {treeNodes} from './tree';
 import {isChalk} from './chalk';
 import {resolveAnchor,type At} from './anchors';
@@ -12,7 +12,7 @@ export function actionErrors(scene:Scene):string[]{
  const {stage}=scene,graph=stage.type==='graph'||stage.type==='slider';
  const counts={fn:stage.type==='graph'?stage.fns.length:stage.type==='slider'?1:0,point:((stage.type==='graph'||stage.type==='slider')&&!stage.initial?.hidden_points?stage.points?.length??0:0)+scene.narration.flatMap(n=>n.cue?.actions??[]).filter(a=>a.type==='point').length,step:stage.type==='steps'?stage.steps.length:0,node:stage.type==='chain'?stage.nodes.length:0,row:stage.type==='table'?stage.rows.length:0};
  const treeIds=new Set(stage.type==='tree'?treeNodes(stage.root).map(n=>n.node.id):[]);
- const ratioChalk=!graph&&(stage.type==='board'||stage.type==='figure'||itemsOf(stage).length>0);
+ const ratioChalk=!graph&&(stage.type==='board'||stage.type==='figure'||itemsOf(stage).length>0||paperStage(stage));
  const callouts=scene.narration.flatMap(sentence=>sentence.cue?.actions??[]).filter(action=>action.type==='callout');
  const regions=scene.narration.flatMap(sentence=>sentence.cue?.actions??[]).filter(action=>action.type==='region');
  const regionIds=new Map(regions.filter(region=>region.id).map(region=>[region.id!,region]));
@@ -72,4 +72,4 @@ export function actionErrors(scene:Scene):string[]{
  return errors;
 }
 
-export function actionWarnings(scene:Scene){return [...scene.narration.flatMap(sentence=>(sentence.cue?.actions??[]).filter(action=>sentenceInstruction(action)&&'ttl_ms' in action&&action.ttl_ms===0&&action.until!=='scene').map(action=>sentence.id+': '+action.type+' — 장면 끝까지 남는 지시 (until:scene으로 의도를 명시하세요)')),...regionLevelWarnings(scene),...(scene.headline?.formula?[scene.id+': headline.formula는 더 이상 표시되지 않습니다. items로 옮기세요.']:[]),...(scene.narration.flatMap(s=>s.cue?.actions??[]).filter(a=>a.type==='handwrite').length>4?[scene.id+': 손글씨 메모는 4개 이하를 권장합니다.']:[]),...scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[])];}
+export function actionWarnings(scene:Scene){return [...scene.narration.flatMap(sentence=>(sentence.cue?.actions??[]).filter(action=>sentenceInstruction(action)&&'ttl_ms' in action&&action.ttl_ms===0&&action.until!=='scene').map(action=>sentence.id+': '+action.type+' — 장면 끝까지 남는 지시 (until:scene으로 의도를 명시하세요)')),...regionLevelWarnings(scene),...(scene.headline?.formula?[scene.id+': headline.formula는 더 이상 표시되지 않습니다. items로 옮기세요.']:[]),...(scene.narration.flatMap(s=>s.cue?.actions??[]).filter(a=>a.type==='handwrite'&&!(paperStage(scene.stage)&&a.until==='sentence')/* 시험지 지면의 암산 메모는 문장과 함께 사라지므로 세지 않는다 */).length>4?[scene.id+': 손글씨 메모는 4개 이하를 권장합니다.']:[]),...scene.narration.flatMap(s=>(s.cue?.actions??[]).filter(a=>a.type==='pointer'||a.type==='circle').length>2?[s.id+': pointer·circle은 한 문장에 2개 이하를 권장합니다.']:[])];}
