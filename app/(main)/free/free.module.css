@@ -17,6 +17,10 @@
 .lesson { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; color: var(--color-ink); text-decoration: none; }
 .lesson:hover { background: var(--color-surface, #f4f6fa); }
 .name { min-width: 0; }
+.lesson[aria-disabled="true"] { color: var(--color-muted); }
+.lesson[aria-disabled="true"]:hover { background: none; }
+.row[data-worked="true"] .name { font-size: 14px; color: var(--color-muted); }
+.soon { margin-left: auto; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--color-surface, #f4f6fa); color: var(--color-muted); white-space: nowrap; }
 .textbook { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; padding: 20px 24px; border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; }
 .textbook h2 { font-size: 18px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; }
 .textbook p { font-size: 14px; color: var(--color-muted); }

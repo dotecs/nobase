@@ -121,6 +121,28 @@
      "no": 20,
      "title": "상수함수",
      "lesson_id": "rm-20"
+    },
+    {
+     "no": 21,
+     "title": "일차함수",
+     "lesson_id": "rm-21",
+     "worked": [
+      {
+       "title": "문제풀이: 두 점을 지나는 직선의 방정식",
+       "lesson_id": "rm-21-w1"
+      }
+     ]
+    },
+    {
+     "no": 22,
+     "title": "이차함수의 그래프",
+     "lesson_id": "rm-22-1",
+     "worked": [
+      {
+       "title": "문제풀이: 평행이동한 포물선이 x축에 접할 조건",
+       "lesson_id": "rm-22-w1"
+      }
+     ]
     }
    ]
   }

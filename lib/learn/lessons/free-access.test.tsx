@@ -7,14 +7,16 @@ import { StudioComplete } from '@/components/studio/StudioComplete';
 
 describe('free lesson access', () => {
   it('opens all root-math lessons, first five without login', () => {
-    expect(FREE_LESSON_IDS).toHaveLength(20);
+    expect(FREE_LESSON_IDS).toHaveLength(24);
     expect(FREE_GUEST_LESSON_ID).toBe('rm-01');
     expect(isGuestLesson('rm-01')).toBe(true);
     expect(isGuestLesson('rm-05')).toBe(true);
     expect(isGuestLesson('rm-06')).toBe(false);
     expect(nextNeedsLogin('rm-04')).toBe(false);
     expect(nextNeedsLogin('rm-05')).toBe(true);
-    expect(nextNeedsLogin('rm-20')).toBe(false);
+    expect(nextNeedsLogin('rm-20')).toBe(true);
+    expect(nextNeedsLogin('rm-22-w1')).toBe(false);
+    expect(isFreeLesson('rm-22-w1')).toBe(true);
     expect(isFreeLesson('rm-20')).toBe(true);
     expect(isFreeLesson('other-01')).toBe(false);
     expect(lessonLoginHref('rm-06')).toBe('/login?returnTo=%2Flearn%2Flesson%2Frm-06');
@@ -41,11 +43,11 @@ describe('who sees a lesson', () => {
     vi.mocked(hasLearnAccess).mockResolvedValue((access ?? { granted: false, reason: 'not_enrolled' }) as never);
   };
   it('learners only see lessons that are in a pack', async () => {
-    as(null); expect(await lessonViewer('rm-01')).toEqual({ kind: 'guest' }); expect(await lessonViewer('rm-06')).toEqual({ kind: 'login' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'denied' });
-    as({ id: 'u' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'free', userId: 'u' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'denied' });
-    as({ id: 'u' }, { granted: true, reason: 'enrolled' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'full', userId: 'u', admin: false }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'hidden' });
+    as(null); expect(await lessonViewer('rm-01')).toEqual({ kind: 'guest' }); expect(await lessonViewer('rm-06')).toEqual({ kind: 'login' }); expect(await lessonViewer('rm-11-w1')).toEqual({ kind: 'denied' });
+    as({ id: 'u' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'free', userId: 'u' }); expect(await lessonViewer('rm-11-w1')).toEqual({ kind: 'denied' });
+    as({ id: 'u' }, { granted: true, reason: 'enrolled' }); expect(await lessonViewer('rm-20')).toEqual({ kind: 'full', userId: 'u', admin: false }); expect(await lessonViewer('rm-11-w1')).toEqual({ kind: 'hidden' });
   });
   it('admins see every lesson, including ones outside all packs', async () => {
-    as({ id: 'a' }, { granted: true, reason: 'admin' }); expect(await lessonViewer('rm-22-1')).toEqual({ kind: 'full', userId: 'a', admin: true });
+    as({ id: 'a' }, { granted: true, reason: 'admin' }); expect(await lessonViewer('rm-11-w1')).toEqual({ kind: 'full', userId: 'a', admin: true });
   });
 });

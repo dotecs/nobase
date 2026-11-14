@@ -12,9 +12,10 @@ const other: Curriculum = { id: 'other', title: '다른 팩', chapters: [{ no: 1
 ] }] };
 
 describe('packs', () => {
-  it('the free pack holds lessons 1 to 20 and opens the first five to guests', () => {
+  it('the free pack holds lessons 1 to 22 with two worked lessons and opens the first five to guests', () => {
     expect(free.access).toEqual({ kind: 'free', guest_count: 5 });
-    expect(packLessonIds(free)).toHaveLength(20);
+    expect(packLessonIds(free)).toHaveLength(24);
+    expect(packLessonIds(free).slice(-4)).toEqual(['rm-21', 'rm-21-w1', 'rm-22-1', 'rm-22-w1']);
     expect(guestLessonIds(free)).toEqual(['rm-01', 'rm-02', 'rm-03', 'rm-04', 'rm-05']);
   });
   it('pack ids are unique and every registered pack file is listed', () => {
@@ -22,15 +23,17 @@ describe('packs', () => {
     expect(readdirSync('content/packs').filter(name => name.endsWith('.json')).map(name => JSON.parse(readFileSync('content/packs/' + name, 'utf8')).id).sort()).toEqual(PACKS.map(pack => pack.id).sort());
   });
   it('lessons outside every pack belong to no pack', () => {
-    expect(packsWithLesson('rm-22-1')).toEqual([]);
-    expect(packForLesson('rm-22-1')).toBeUndefined();
+    expect(packsWithLesson('rm-11-w1')).toEqual([]);
+    expect(packForLesson('rm-11-w1')).toBeUndefined();
     expect(packForLesson('rm-15', 'no-such-pack')?.id).toBe('free-root-math');
   });
   it('lesson numbers come from the pack; worked lessons take their parent number', () => {
     expect(lessonEntry(free, 'rm-15')).toEqual({ no: 15, title: '함수의 관계식과 그래프' });
     expect(lessonEntry(other, 'rm-15')?.no).toBe(42);
     expect(lessonEntry(other, 'rm-15-w1')).toEqual({ no: 42, title: '문제풀이' });
-    expect(lessonEntry(free, 'rm-22-1')).toBeUndefined();
+    expect(lessonEntry(free, 'rm-22-1')).toEqual({ no: 22, title: '이차함수의 그래프' });
+    expect(lessonEntry(free, 'rm-22-w1')?.no).toBe(22);
+    expect(lessonEntry(free, 'rm-11-w1')).toBeUndefined();
   });
 });
 
@@ -46,7 +49,7 @@ describe('lesson number references', () => {
   });
   it('renumbers the headline eyebrow and leaves scene labels alone', () => {
     expect(resolveEyebrow('15강 · 함수의 관계식과 그래프', other, 'rm-15')).toBe('42강 · 함수의 관계식과 그래프');
-    expect(resolveEyebrow('22강-1 · 이차함수의 그래프', free, 'rm-22-1')).toBe('이차함수의 그래프');
+    expect(resolveEyebrow('11강 · 문제풀이', free, 'rm-11-w1')).toBe('문제풀이');
     expect(resolveEyebrow('확인', free, 'rm-15')).toBe('확인');
   });
   it('resolves stage, headline and cue text but never ids or narration', () => {
@@ -83,13 +86,13 @@ describe('master curriculum', () => {
   it('shows the latest version, the version learners see, and pack placement', () => {
     const states = lessonStates([
       { id: 'rm-02', version: 8, title: '문자와 식', kind: 'concept', status: 'reviewed' }, { id: 'rm-02', version: 9, title: '문자와 식', kind: 'concept', status: 'draft' },
-      { id: 'rm-22-1', version: 1, title: '이차함수의 그래프', kind: 'concept', status: 'reviewed' }, { id: 'x-1', version: 1, title: '미분류', kind: 'concept', status: 'retired' },
+      { id: 'rm-11-w1', version: 1, title: '문제풀이', kind: 'worked', status: 'reviewed' }, { id: 'x-1', version: 1, title: '미분류', kind: 'concept', status: 'retired' },
       { id: 'x-2', version: 1, title: '소단원 없음', kind: 'concept', status: 'draft' },
     ]);
-    expect(states.map(s => [s.id, s.version, s.status, s.published])).toEqual([['rm-02', 9, 'draft', 8], ['rm-22-1', 1, 'reviewed', 1], ['x-2', 1, 'draft', null]]);
+    expect(states.map(s => [s.id, s.version, s.status, s.published])).toEqual([['rm-02', 9, 'draft', 8], ['rm-11-w1', 1, 'reviewed', 1], ['x-2', 1, 'draft', null]]);
     const catalog = buildCatalog(states), topic = (key: string) => catalog.subjects.flatMap(s => s.units.flatMap(u => u.topics)).find(t => t.key === key)!;
     expect(topic('basic.expr').lessons[0].packs).toEqual([{ id: 'free-root-math', title: '뿌리깊은수학', no: 2 }]);
-    expect(topic('quad.graph').lessons[0].packs).toEqual([]);
+    expect(topic('basic.eq.disc').lessons[0].packs).toEqual([]);
     expect(catalog.unplaced.map(l => l.id)).toEqual(['x-2']);
     expect(catalog.totals).toMatchObject({ subjects: 9, units: 61, topics: 239, lessons: 3, inPack: 1 });
   });
@@ -100,8 +103,7 @@ import { nextLessonAction as nextAction } from './curriculum';
 describe('관리자용 목차', () => {
   const states = statesOf([
     { id: 'rm-01', version: 1, title: '수의 체계', kind: 'concept', status: 'live' },
-    { id: 'rm-22-1', version: 1, title: '이차함수의 그래프', kind: 'concept', status: 'reviewed' },
-    { id: 'rm-22-w1', version: 3, title: '문제풀이: 접할 조건', kind: 'worked', status: 'draft' },
+    { id: 'rm-11-w1', version: 2, title: '문제풀이: 실근 조건', kind: 'worked', status: 'draft' },
     { id: 'zz-1', version: 1, title: '어디에도 없는 강의', kind: 'concept', status: 'draft' },
   ]);
   it('팩의 목차 뒤에 팩 밖 강의를 대단원별로 붙이고, 문제풀이는 개념 강의 아래에 둔다', () => {
@@ -109,13 +111,14 @@ describe('관리자용 목차', () => {
     expect(list.chapters.slice(0, pack.chapters.length).map(chapter => chapter.title)).toEqual(pack.chapters.map(chapter => chapter.title));
     expect(list.chapters.map(chapter => chapter.no)).toEqual(list.chapters.map((_, index) => index + 1));
     const extra = list.chapters.slice(pack.chapters.length);
-    const quad = extra.find(chapter => chapter.items.some(item => item.lesson_id === 'rm-22-1'))!;
-    expect(quad.items).toEqual([{ no: 0, title: '이차함수의 그래프', lesson_id: 'rm-22-1', worked: [{ title: '문제풀이: 접할 조건 (초안)', lesson_id: 'rm-22-w1' }] }]);
+    const disc = extra.find(chapter => chapter.items.some(item => item.lesson_id === 'rm-11-w1'))!;
+    expect(disc.items).toEqual([{ no: 0, title: '문제풀이: 실근 조건 (초안)', lesson_id: 'rm-11-w1' }]);
     expect(extra.at(-1)).toMatchObject({ title: '소단원 미지정', items: [{ lesson_id: 'zz-1', no: 0 }] });
     expect(extra.flatMap(chapter => chapter.items).some(item => item.lesson_id === 'rm-01')).toBe(false);
   });
   it('미리보기 목차의 다음 강의 링크는 미리보기로 이어진다', () => {
     const list = adminList(states);
-    expect(nextAction({ curriculum: list, available: states.map(state => state.id), query: 'draft=1' }, 'rm-22-1').href).toBe('/learn/lesson/rm-22-w1?autoplay=1&draft=1');
+    expect(nextAction({ curriculum: list, available: ['rm-22-w1'], query: 'draft=1' }, 'rm-22-1').href).toBe('/learn/lesson/rm-22-w1?autoplay=1&draft=1');
+    expect(nextAction({ curriculum: list, available: ['rm-21'], query: 'draft=1' }, 'rm-20').label).toBe('다음 강의');
   });
 });
