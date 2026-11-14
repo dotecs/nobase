@@ -1,0 +1,434 @@
+{
+  "id": "rm-21-w1",
+  "kind": "worked",
+  "title": "문제풀이: 두 점을 지나는 직선의 방정식",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "기울기부터 구하고, 한 점과 기울기를 직선의 방정식에 넣는 문제.",
+  "goal": "두 점에서 기울기를 구하고, 한 점과 기울기로 직선의 방정식을 세운다.",
+  "scenes": [
+    {
+      "id": "p1",
+      "title": "풀이",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "문제풀이",
+        "title": "두 점을 지나는\n직선의 방정식",
+        "accent": "직선의 방정식",
+        "subtitle": "줄마다 다음 줄로 넘어가는 이유를 봅니다.",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "steps",
+        "problem": "두 점 [[p1|$(1,\\ 3)$]], [[p2|$(4,\\ 2)$]]를 지나는 [[ask|직선의 방정식]]을 구하시오.",
+        "steps": [
+          {
+            "tex": "m=\\dfrac{\\p{dy}{2-3}}{\\p{dx}{4-1}}=\\p{m}{-\\dfrac13}",
+            "concept_id": "c.slope",
+            "why": "기울기는 $\\frac{(y\\text{의 변화량})}{(x\\text{의 변화량})}$. $(1,3)$에서 $(4,2)$로 가면 $x$는 $+3$, $y$는 $-1$."
+          },
+          {
+            "tex": "y-\\p{b}{3}=-\\dfrac13(x-\\p{a}{1})",
+            "concept_id": "c.point-slope",
+            "why": "기울기 $m$, 점 $(a,b)$를 지나는 직선: $y-b=m(x-a)$. $m=-\\frac13$, $(a,b)=(1,3)$."
+          },
+          {
+            "tex": "y=-\\dfrac13x\\p{c}{+\\dfrac13+3}",
+            "concept_id": "c.distributive",
+            "why": "괄호를 풀면 $-\\frac13\\times(-1)=+\\frac13$. $-3$을 우변으로 넘기면 $+3$."
+          },
+          {
+            "tex": "\\therefore\\ \\p{ans}{y=-\\dfrac13x+\\dfrac{10}{3}}",
+            "concept_id": "c.fraction-add",
+            "why": "$3=\\frac93$ 이므로 $\\frac13+\\frac93=\\frac{10}{3}$."
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "p1-1",
+          "role": "say",
+          "text": "문제를 읽겠습니다. 두 점 $(1, 3)$, $(4, 2)$를 지나는 직선의 방정식을 구하라는 문제입니다.",
+          "tts": "[warm, steady lecture tone] 문제를 읽겠습니다. 두 점, 일 콤마 삼, 사 콤마 이를 지나는, 직선의 방정식을 구하라는 문제입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "problem/p1",
+                "at": "@일 콤마 삼",
+                "until": "scene"
+              },
+              {
+                "type": "underline",
+                "target": "problem/p2",
+                "at": "@사 콤마 이를",
+                "until": "scene"
+              },
+              {
+                "type": "circle",
+                "target": "problem/ask",
+                "at": "@직선의 방정식을"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-2",
+          "role": "think",
+          "text": "직선은 기울기와 지나는 점 하나를 알면 정해집니다. 기울기가 $m$이고 점 $(a, b)$를 지나는 직선의 방정식은 $y-b=m(x-a)$입니다.",
+          "tts": "직선은, 기울기와 지나는 점 하나를 알면 정해집니다. 기울기가 엠이고, 점, 에이 콤마 비를 지나는 직선의 방정식은, 와이 빼기 비는, 엠 곱하기 엑스 빼기 에이입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "y-b=m(x-a)",
+                "position": {
+                  "near": "problem/ask",
+                  "side": "below",
+                  "gap": 4
+                },
+                "at": "@와이 빼기 비는",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-3",
+          "role": "think",
+          "text": "이 식은 원점을 지나는 직선 $y=mx$를, 점 $(a, b)$를 지나도록 평행이동한 것입니다.",
+          "tts": "이 식은, 원점을 지나는 직선, 와이는 엠 엑스를, 점, 에이 콤마 비를 지나도록 평행이동한 것입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "tex": "y=mx\\ \\to\\ y-b=m(x-a)",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@와이는 엠 엑스를",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-4",
+          "role": "think",
+          "text": "지나는 점은 두 개나 주어졌습니다. 모르는 것은 기울기뿐이므로, 기울기부터 구합니다.",
+          "tts": "지나는 점은 두 개나 주어졌습니다. 모르는 것은 기울기뿐이므로, 기울기부터 구합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/p1",
+                "at": "@start"
+              },
+              {
+                "type": "flash",
+                "target": "problem/p2",
+                "at": "@start+300"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-5",
+          "role": "think",
+          "text": "기울기는 $x$가 변한 양에 대한 $y$가 변한 양의 비율입니다. $(1, 3)$에서 $(4, 2)$로 가면 $x$는 3만큼 늘고, $y$는 1만큼 줄어듭니다.",
+          "tts": "기울기는, 엑스가 변한 양에 대한, 와이가 변한 양의 비율입니다. 점, 일 콤마 삼에서, 사 콤마 이로 가면, 엑스는 삼만큼 늘고, 와이는 일만큼 줄어듭니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "problem/p1",
+                "at": "@점, 일 콤마 삼에서"
+              },
+              {
+                "type": "flash",
+                "target": "problem/p2",
+                "at": "@사 콤마 이로"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\Delta x=+3,\\ \\Delta y=-1",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@엑스는 삼만큼",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-6",
+          "role": "write",
+          "text": "$m=\\frac{2-3}{4-1}=-\\frac{1}{3}$.",
+          "tts": "엠은, 사 빼기 일 분의, 이 빼기 삼. 곧 마이너스 삼분의 일.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 0,
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "step:0/m",
+                "at": "@마이너스 삼분의 일"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-7",
+          "role": "think",
+          "text": "기울기를 구했으니 공식에 넣습니다. 지나는 점은 둘 중 어느 것을 써도 됩니다. 여기서는 $(1, 3)$을 써서, $a$ 자리에 1, $b$ 자리에 3을 넣습니다.",
+          "tts": "기울기를 구했으니, 공식에 넣습니다. 지나는 점은, 둘 중 어느 것을 써도 됩니다. 여기서는 점, 일 콤마 삼을 써서, 에이 자리에 일, 비 자리에 삼을 넣습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:0/m",
+                "at": "@start"
+              },
+              {
+                "type": "circle",
+                "target": "problem/p1",
+                "at": "@점, 일 콤마 삼을"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-8",
+          "role": "write",
+          "text": "$y-3=-\\frac{1}{3}(x-1)$.",
+          "tts": "와이 빼기 삼은, 마이너스 삼분의 일 곱하기, 엑스 빼기 일.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 1,
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/b",
+                "at": "@와이 빼기 삼"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/a",
+                "at": "@엑스 빼기 일"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-9",
+          "role": "think",
+          "text": "답은 $y$가 혼자 남는 꼴로 정리합니다. 괄호를 풀고, 3을 우변으로 넘깁니다. $-\\frac{1}{3}$에 $-1$을 곱하면 $+\\frac{1}{3}$입니다.",
+          "tts": "답은, 와이가 혼자 남는 꼴로 정리합니다. 괄호를 풀고, 삼을 우변으로 넘깁니다. 마이너스 삼분의 일에 마이너스 일을 곱하면, 플러스 삼분의 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:1/b",
+                "at": "@삼을 우변으로"
+              },
+              {
+                "type": "handwrite",
+                "tex": "-\\dfrac13\\times(-1)=+\\dfrac13",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@마이너스 삼분의 일에",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-10",
+          "role": "write",
+          "text": "$y=-\\frac{1}{3}x+\\frac{1}{3}+3$.",
+          "tts": "와이는, 마이너스 삼분의 일 엑스, 플러스 삼분의 일, 플러스 삼.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 2,
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:2/c",
+                "at": "@플러스 삼분의 일, 플러스 삼"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-11",
+          "role": "think",
+          "text": "상수항끼리 더합니다. 3은 $\\frac{9}{3}$이므로, $\\frac{1}{3}$과 더하면 $\\frac{10}{3}$입니다.",
+          "tts": "상수항끼리 더합니다. 삼은 삼분의 구이므로, 삼분의 일과 더하면 삼분의 십입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "step:2/c",
+                "at": "@start"
+              },
+              {
+                "type": "handwrite",
+                "tex": "\\dfrac13+\\dfrac93=\\dfrac{10}{3}",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@삼분의 일과 더하면",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-12",
+          "role": "write",
+          "text": "따라서 $y=-\\frac{1}{3}x+\\frac{10}{3}$.",
+          "tts": "따라서, 와이는 마이너스 삼분의 일 엑스, 플러스 삼분의 십.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "step",
+                "index": 3,
+                "at": "@start"
+              },
+              {
+                "type": "underline",
+                "target": "step:3/ans",
+                "at": "@와이는 마이너스 삼분의 일 엑스",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-13",
+          "role": "think",
+          "text": "구하라는 것은 직선의 방정식이었습니다. 쓰지 않은 점 $(4, 2)$를 넣어 확인하면, $-\\frac{4}{3}+\\frac{10}{3}$은 2로 맞습니다.",
+          "tts": "구하라는 것은, 직선의 방정식이었습니다. 쓰지 않은 점, 사 콤마 이를 넣어 확인하면, 마이너스 삼분의 사 더하기 삼분의 십은, 이로 맞습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "problem/ask",
+                "at": "@직선의 방정식이었습니다"
+              },
+              {
+                "type": "circle",
+                "target": "problem/p2",
+                "at": "@쓰지 않은 점"
+              },
+              {
+                "type": "handwrite",
+                "tex": "-\\dfrac43+\\dfrac{10}{3}=2\\ \\checkmark",
+                "position": {
+                  "near": "problem",
+                  "side": "right",
+                  "gap": 28
+                },
+                "align": "start",
+                "at": "@마이너스 삼분의 사",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "p1-14",
+          "role": "say",
+          "text": "두 점이 주어지면 기울기부터 구합니다. 그다음 한 점과 기울기를 $y-b=m(x-a)$에 넣고, $y$가 혼자 남게 정리합니다.",
+          "tts": "[concluding, relaxed] 두 점이 주어지면, 기울기부터 구합니다. 그다음, 한 점과 기울기를 공식에 넣고, 와이가 혼자 남게 정리합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "step:0/m",
+                "at": "@기울기부터"
+              },
+              {
+                "type": "underline",
+                "target": "step:1/a",
+                "at": "@한 점과 기울기를"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "변형",
+        "title": "같은 모양,\n다른 숫자",
+        "accent": "다른 숫자",
+        "subtitle": "기울기부터 구하고, 한 점과 함께 공식에 넣습니다.",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "두 점 $(2,\\ 5)$, $(4,\\ -1)$ 을 지나는 직선의 방정식은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$y=-3x+11$"
+          },
+          {
+            "id": "b",
+            "text_md": "$y=-3x-1$"
+          },
+          {
+            "id": "c",
+            "text_md": "$y=3x-1$"
+          },
+          {
+            "id": "d",
+            "text_md": "$y=-\\dfrac13x+\\dfrac{17}{3}$"
+          }
+        ],
+        "correct": "a",
+        "explain": "기울기 $m=\\frac{-1-5}{4-2}=-3$. 점 $(2,5)$를 써서 $y-5=-3(x-2)$, $y=-3x+6+5=-3x+11$. ($-3\\times(-2)$를 $-6$으로 쓰면 $-3x-1$, 기울기의 부호를 틀리면 $3x-1$, 분자와 분모를 바꾸면 $-\\frac13$이 나온다.)",
+        "trace_concept_id": "c.point-slope"
+      },
+      "narration": [
+        {
+          "id": "p2-1",
+          "role": "say",
+          "text": "같은 모양의 문제입니다. 기울기부터 구하고, 한 점과 함께 공식에 넣으세요. 괄호를 풀 때 부호를 확인하세요.",
+          "tts": "같은 모양의 문제입니다. 기울기부터 구하고, 한 점과 함께 공식에 넣으세요. [concluding, relaxed] 괄호를 풀 때, 부호를 확인하세요."
+        }
+      ]
+    }
+  ]
+}

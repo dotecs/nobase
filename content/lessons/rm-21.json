@@ -1,0 +1,847 @@
+{
+  "id": "rm-21",
+  "kind": "concept",
+  "title": "일차함수",
+  "pack_id": "root-math",
+  "ability_ids": [],
+  "intro": "관계식이 y=ax+b인 함수. 그래프는 직선이고, a는 기울기, b는 y절편이다.",
+  "goal": "일차함수 y=ax+b의 그래프가 직선임을 알고, 기울기와 x절편·y절편을 구하고 관계식에서 읽는다.",
+  "scenes": [
+    {
+      "id": "s1",
+      "title": "일차함수의 관계식",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "21강 · 일차함수",
+        "title": "x가 한 번\n곱해진 함수",
+        "accent": "한 번",
+        "subtitle": "기본형 관계식 y=ax+b (a≠0)",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "deg",
+            "text": "**차수** : 문자가 곱해진 횟수",
+            "position": {
+              "x": 0.5,
+              "y": 0.18
+            },
+            "size": "lg",
+            "kind": "note"
+          },
+          {
+            "id": "eq",
+            "tex": "y=\\p{a}{a}\\p{x}{x}+\\p{b}{b}",
+            "position": {
+              "x": 0.5,
+              "y": 0.44
+            },
+            "size": "xl"
+          },
+          {
+            "id": "cond",
+            "tex": "(\\p{a}{a}\\neq 0)",
+            "position": {
+              "x": 0.5,
+              "y": 0.62
+            },
+            "size": "lg"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "deg",
+            "eq",
+            "cond"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s1-1",
+          "role": "say",
+          "text": "이번 시간에는 일차함수를 알아보겠습니다. 함수 지식의 틀로 보면, 정의와 관계식, 그리고 그래프를 다루는 시간입니다.",
+          "tts": "[warm, steady lecture tone] 이번 시간에는 일차함수를 알아보겠습니다. 함수 지식의 틀로 보면, 정의와 관계식, 그리고 그래프를 다루는 시간입니다.",
+          "cue": {
+            "actions": []
+          }
+        },
+        {
+          "id": "s1-2",
+          "role": "say",
+          "text": "이름부터 봅니다. 차수는 문자가 곱해진 횟수입니다. $x$가 한 번 곱해져 있으면 일차, 두 번 곱해져 있으면 이차입니다.",
+          "tts": "이름부터 봅니다. 차수는, 문자가 곱해진 횟수입니다. 엑스가 한 번 곱해져 있으면 일차, 두 번 곱해져 있으면 이차입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "deg",
+                "at": "@차수는"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "x\\ \\to\\ \\text{일차}",
+                "position": {
+                  "x": 0.3,
+                  "y": 0.82
+                },
+                "at": "@한 번 곱해져",
+                "until": "sentence"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "x\\times x=x^2\\ \\to\\ \\text{이차}",
+                "position": {
+                  "x": 0.68,
+                  "y": 0.82
+                },
+                "at": "@두 번 곱해져",
+                "until": "sentence"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-3",
+          "role": "say",
+          "text": "일차함수는 관계식이 $x$에 대한 일차식인 함수입니다. 기본형 관계식은 $y=ax+b$입니다.",
+          "tts": "일차함수는, 관계식이 엑스에 대한 일차식인 함수입니다. 기본형 관계식은, 와이는 에이 엑스 플러스 비입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "eq",
+                "at": "@기본형 관계식은"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq/x",
+                "at": "@와이는 에이 엑스"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s1-4",
+          "role": "say",
+          "text": "단, $a$는 0이 아니어야 합니다. $a$가 0이면 $x$가 사라져서, 지난 시간에 본 상수함수 $y=b$가 되기 때문입니다.",
+          "tts": "단, 에이는 영이 아니어야 합니다. 에이가 영이면 엑스가 사라져서, 지난 시간에 본 상수함수, 와이는 비가 되기 때문입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "cond",
+                "at": "@에이는 영이 아니어야"
+              },
+              {
+                "type": "circle",
+                "target": "item:eq/a",
+                "at": "@에이가 영이면"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "a=0\\ \\Rightarrow\\ y=b\\ \\text{(상수함수)}",
+                "position": {
+                  "x": 0.5,
+                  "y": 0.82
+                },
+                "at": "@엑스가 사라져서",
+                "until": "sentence"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "일차함수의 그래프",
+      "tag": "example",
+      "headline": {
+        "eyebrow": "21강 · 일차함수",
+        "title": "점을 찍어\n이으면 직선",
+        "accent": "직선",
+        "subtitle": "y=2x+1의 그래프",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -4,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "일차함수 y=2x+1의 그래프와 그 위의 네 점",
+        "fns": [
+          {
+            "expr": "2x+1",
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            0
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s2-1",
+          "role": "say",
+          "text": "$y=2x+1$의 그래프를 그려 봅시다. 함수의 관계식과 그래프에서 배운 대로, $x$에 값을 넣어 나온 점을 찍습니다.",
+          "tts": "와이는 이 엑스 플러스 일의 그래프를 그려 봅시다. 함수의 관계식과 그래프에서 배운 대로, 엑스에 값을 넣어 나온 점을 찍습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "y=2x+1",
+                "position": {
+                  "x": -2.6,
+                  "y": 3.3
+                },
+                "at": "@와이는 이 엑스 플러스 일",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-2",
+          "role": "say",
+          "text": "$x$가 0이면 $y$는 1이고, $x$가 1이면 $y$는 3입니다.",
+          "tts": "엑스가 영이면 와이는 일이고, 엑스가 일이면 와이는 삼입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "2\\times 0+1=1",
+                "position": {
+                  "x": -2.6,
+                  "y": 2.3
+                },
+                "at": "@엑스가 영이면",
+                "until": "sentence"
+              },
+              {
+                "type": "point",
+                "x": 0,
+                "y": 1,
+                "guides": false,
+                "c": "c1",
+                "at": "@와이는 일이고",
+                "label": "(0, 1)",
+                "label_pos": "nw"
+              },
+              {
+                "type": "point",
+                "x": 1,
+                "y": 3,
+                "guides": false,
+                "c": "c1",
+                "at": "@와이는 삼입니다",
+                "label": "(1, 3)",
+                "label_pos": "se"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-3",
+          "role": "say",
+          "text": "$x$가 $-1$이면 $y$는 $-1$, $x$가 $-2$이면 $y$는 $-3$입니다.",
+          "tts": "엑스가 마이너스 일이면 와이는 마이너스 일, 엑스가 마이너스 이이면 와이는 마이너스 삼입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "point",
+                "x": -1,
+                "y": -1,
+                "guides": false,
+                "c": "c1",
+                "at": "@와이는 마이너스 일",
+                "label": "(-1, -1)",
+                "label_pos": "se"
+              },
+              {
+                "type": "point",
+                "x": -2,
+                "y": -3,
+                "guides": false,
+                "c": "c1",
+                "at": "@와이는 마이너스 삼",
+                "label": "(-2, -3)",
+                "label_pos": "se"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s2-4",
+          "role": "say",
+          "text": "점들을 이으면 곧은 선이 됩니다. 일차함수의 그래프는 언제나 직선입니다.",
+          "tts": "점들을 이으면, 곧은 선이 됩니다. 일차함수의 그래프는, 언제나 직선입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "draw",
+                "target": "fn:0",
+                "at": "@점들을 이으면",
+                "duration_ms": 1500
+              },
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@언제나 직선"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "기울기",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "21강 · 일차함수",
+        "title": "x가 변한 만큼\ny는 얼마나",
+        "accent": "얼마나",
+        "subtitle": "기울기 = y의 변화량 ÷ x의 변화량",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -4,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "y=2x+1 위의 두 점 (0,1), (1,3) 사이의 x 변화량 1과 y 변화량 2",
+        "fns": [
+          {
+            "expr": "2x+1",
+            "c": "c1"
+          },
+          {
+            "expr": "-x-1",
+            "c": "c2"
+          }
+        ],
+        "points": [
+          {
+            "x": 0,
+            "y": 1,
+            "c": "c1"
+          },
+          {
+            "x": 1,
+            "y": 3,
+            "c": "c1"
+          }
+        ],
+        "initial": {
+          "hidden_fns": [
+            1
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s3-1",
+          "role": "say",
+          "text": "직선이 얼마나 가파른지를 나타내는 수가 기울기입니다. 기울기는, $x$가 변한 양에 대한 $y$가 변한 양의 비율입니다.",
+          "tts": "직선이 얼마나 가파른지를 나타내는 수가, 기울기입니다. 기울기는, 엑스가 변한 양에 대한, 와이가 변한 양의 비율입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@얼마나 가파른지"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "(\\text{기울기})=\\dfrac{\\Delta y}{\\Delta x}",
+                "position": {
+                  "x": 2.9,
+                  "y": 3.3
+                },
+                "at": "@기울기는, 엑스가",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-2",
+          "role": "say",
+          "text": "점 $(0, 1)$에서 점 $(1, 3)$으로 가 봅시다. $x$는 1만큼, $y$는 2만큼 변했습니다.",
+          "tts": "점, 영 콤마 일에서, 점, 일 콤마 삼으로 가 봅시다. 엑스는 일만큼, 와이는 이만큼 변했습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "point:0",
+                "at": "@점, 영 콤마 일"
+              },
+              {
+                "type": "circle",
+                "target": "point:1",
+                "at": "@점, 일 콤마 삼"
+              },
+              {
+                "type": "arrow",
+                "from": {
+                  "x": 0,
+                  "y": 1
+                },
+                "to": {
+                  "x": 1,
+                  "y": 1
+                },
+                "label": "+1",
+                "at": "@엑스는 일만큼",
+                "until": "scene"
+              },
+              {
+                "type": "arrow",
+                "from": {
+                  "x": 1,
+                  "y": 1
+                },
+                "to": {
+                  "x": 1,
+                  "y": 3
+                },
+                "label": "+2",
+                "at": "@와이는 이만큼",
+                "until": "scene"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-3",
+          "role": "say",
+          "text": "그래서 기울기는 $\\frac{2}{1}$, 곧 2입니다. 직선 위의 어느 두 점을 골라도 이 비율은 같습니다.",
+          "tts": "그래서 기울기는 일분의 이, 곧 이입니다. 직선 위의 어느 두 점을 골라도, 이 비율은 같습니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "\\dfrac{+2}{+1}=2",
+                "position": {
+                  "x": 2.9,
+                  "y": 2
+                },
+                "at": "@일분의 이",
+                "until": "scene"
+              },
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@어느 두 점을"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s3-4",
+          "role": "say",
+          "text": "기울기가 양수이면 오른쪽 위로 올라가는 직선이고, $y=-x-1$처럼 음수이면 오른쪽 아래로 내려가는 직선입니다.",
+          "tts": "기울기가 양수이면, 오른쪽 위로 올라가는 직선이고, 와이는 마이너스 엑스 마이너스 일처럼 음수이면, 오른쪽 아래로 내려가는 직선입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "flash",
+                "target": "fn:0",
+                "at": "@오른쪽 위로"
+              },
+              {
+                "type": "draw",
+                "target": "fn:1",
+                "at": "@와이는 마이너스 엑스",
+                "duration_ms": 1200
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "y=-x-1",
+                "position": {
+                  "x": 3,
+                  "y": -1.5
+                },
+                "arrow_to": {
+                  "x": 1.3,
+                  "y": -2.2
+                },
+                "at": "@와이는 마이너스 엑스",
+                "until": "scene"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "x절편과 y절편",
+      "tag": "define",
+      "headline": {
+        "eyebrow": "21강 · 일차함수",
+        "title": "축과 만나는\n자리의 좌표",
+        "accent": "좌표",
+        "subtitle": "x절편은 y에 0, y절편은 x에 0",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "graph",
+        "x": [
+          -4,
+          4
+        ],
+        "y": [
+          -4,
+          4
+        ],
+        "aspect": "equal",
+        "aria": "y=2x+1이 x축과 만나는 점 (-1/2, 0)과 y축과 만나는 점 (0, 1)",
+        "fns": [
+          {
+            "expr": "2x+1",
+            "c": "c1"
+          }
+        ],
+        "points": [
+          {
+            "x": "-1/2",
+            "y": 0,
+            "c": "c2"
+          },
+          {
+            "x": 0,
+            "y": 1,
+            "c": "c2"
+          }
+        ]
+      },
+      "narration": [
+        {
+          "id": "s4-1",
+          "role": "say",
+          "text": "그래프가 축과 만나는 자리에도 이름이 있습니다. $x$축과 만나는 점의 $x$좌표를 $x$절편, $y$축과 만나는 점의 $y$좌표를 $y$절편이라고 합니다.",
+          "tts": "그래프가 축과 만나는 자리에도 이름이 있습니다. 엑스축과 만나는 점의 엑스좌표를 엑스절편, 와이축과 만나는 점의 와이좌표를 와이절편이라고 합니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "point:0",
+                "at": "@엑스축과 만나는 점"
+              },
+              {
+                "type": "circle",
+                "target": "point:1",
+                "at": "@와이축과 만나는 점"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-2",
+          "role": "say",
+          "text": "$y$축 위의 점은 $x$좌표가 0입니다. 그래서 $y$절편은 관계식의 $x$ 자리에 0을 넣어 구합니다. $y=2x+1$에서는 1입니다.",
+          "tts": "와이축 위의 점은, 엑스좌표가 영입니다. 그래서 와이절편은, 관계식의 엑스 자리에 영을 넣어 구합니다. 와이는 이 엑스 플러스 일에서는, 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "axis:y",
+                "at": "@와이축 위의 점은"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "y=2\\times 0+1=1",
+                "position": {
+                  "x": -2.5,
+                  "y": 3
+                },
+                "at": "@엑스 자리에 영을",
+                "until": "sentence"
+              },
+              {
+                "type": "circle",
+                "target": "point:1",
+                "at": "@일입니다"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-3",
+          "role": "say",
+          "text": "$x$축 위의 점은 $y$좌표가 0입니다. 그래서 $x$절편은 $y$ 자리에 0을 넣어 구합니다. $0=2x+1$을 풀면 $x$는 $-\\frac{1}{2}$입니다.",
+          "tts": "엑스축 위의 점은, 와이좌표가 영입니다. 그래서 엑스절편은, 와이 자리에 영을 넣어 구합니다. 영은 이 엑스 플러스 일을 풀면, 엑스는 마이너스 이분의 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "axis:x",
+                "at": "@엑스축 위의 점은"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "0=2x+1\\ \\Rightarrow\\ x=-\\dfrac12",
+                "position": {
+                  "x": -2.3,
+                  "y": -2.2
+                },
+                "at": "@영은 이 엑스 플러스 일을",
+                "until": "sentence"
+              },
+              {
+                "type": "circle",
+                "target": "point:0",
+                "at": "@마이너스 이분의 일"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s4-4",
+          "role": "say",
+          "text": "절편은 점이 아니라 수입니다. $y$절편은 1이고, $x$절편은 $-\\frac{1}{2}$입니다.",
+          "tts": "절편은, 점이 아니라 수입니다. 와이절편은 일이고, 엑스절편은 마이너스 이분의 일입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "text": "y절편 1",
+                "position": {
+                  "x": 1.6,
+                  "y": 0.9
+                },
+                "arrow_to": {
+                  "target": "point:1",
+                  "anchor": "right"
+                },
+                "at": "@와이절편은 일",
+                "until": "scene"
+              },
+              {
+                "type": "handwrite",
+                "align": "middle",
+                "tex": "x\\text{절편 }-\\dfrac12",
+                "position": {
+                  "x": -2.6,
+                  "y": -2
+                },
+                "arrow_to": {
+                  "target": "point:0",
+                  "anchor": "left"
+                },
+                "at": "@엑스절편은",
+                "until": "scene"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "관계식에서 읽기",
+      "tag": "derive",
+      "headline": {
+        "eyebrow": "21강 · 일차함수",
+        "title": "a는 기울기,\nb는 y절편",
+        "accent": "기울기",
+        "subtitle": "관계식만 보고 그래프를 그린다",
+        "accent_bar": true
+      },
+      "stage": {
+        "type": "board",
+        "items": [
+          {
+            "id": "eq",
+            "tex": "y=\\p{a}{a}x+\\p{b}{b}",
+            "position": {
+              "x": 0.5,
+              "y": 0.26
+            },
+            "size": "xl"
+          },
+          {
+            "id": "ex",
+            "tex": "y=\\p{a}{2}x+\\p{b}{1}",
+            "position": {
+              "x": 0.5,
+              "y": 0.78
+            },
+            "size": "xl"
+          }
+        ],
+        "initial": {
+          "hidden_items": [
+            "ex"
+          ]
+        }
+      },
+      "narration": [
+        {
+          "id": "s5-1",
+          "role": "say",
+          "text": "이제 관계식 $y=ax+b$를 다시 봅니다. $x$ 자리에 0을 넣으면 $y$는 $b$입니다. 그래서 $b$는 $y$절편입니다.",
+          "tts": "이제 관계식, 와이는 에이 엑스 플러스 비를 다시 봅니다. 엑스 자리에 영을 넣으면, 와이는 비입니다. 그래서 비는, 와이절편입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "underline",
+                "target": "item:eq",
+                "at": "@와이는 에이 엑스 플러스 비"
+              },
+              {
+                "type": "callout",
+                "id": "cb",
+                "target": "item:eq/b",
+                "anchor": "bottom",
+                "text": "$y$절편",
+                "color": "mint",
+                "position": {
+                  "x": 0.68,
+                  "y": 0.46
+                },
+                "at": "@그래서 비는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-2",
+          "role": "say",
+          "text": "$x$가 1만큼 늘어나면 $ax$는 $a$만큼 늘어나고, $y$도 $a$만큼 변합니다. 그래서 $a$는 기울기입니다.",
+          "tts": "엑스가 일만큼 늘어나면, 에이 엑스는 에이만큼 늘어나고, 와이도 에이만큼 변합니다. 그래서 에이는, 기울기입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "circle",
+                "target": "item:eq/a",
+                "at": "@에이 엑스는 에이만큼"
+              },
+              {
+                "type": "callout",
+                "id": "ca",
+                "target": "item:eq/a",
+                "anchor": "bottom",
+                "text": "기울기",
+                "color": "accent",
+                "position": {
+                  "x": 0.36,
+                  "y": 0.46
+                },
+                "at": "@그래서 에이는"
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5-3",
+          "role": "say",
+          "text": "$y=2x+1$이라면 기울기는 2, $y$절편은 1입니다. $y$축 위의 1에서 출발해, 오른쪽으로 1 갈 때마다 위로 2씩 올라가는 직선입니다.",
+          "tts": "와이는 이 엑스 플러스 일이라면, 기울기는 이, 와이절편은 일입니다. 와이축 위의 일에서 출발해, 오른쪽으로 일 갈 때마다, 위로 이씩 올라가는 직선입니다.",
+          "cue": {
+            "actions": [
+              {
+                "type": "reveal",
+                "target": "item",
+                "id": "ex",
+                "at": "@와이는 이 엑스 플러스 일이라면"
+              },
+              {
+                "type": "circle",
+                "target": "item:ex/a",
+                "at": "@기울기는 이"
+              },
+              {
+                "type": "circle",
+                "target": "item:ex/b",
+                "at": "@와이절편은 일"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "확인 문제",
+      "tag": "check",
+      "headline": {
+        "eyebrow": "확인",
+        "title": "관계식에서\n읽어 내기",
+        "accent": "읽어 내기",
+        "subtitle": "기울기와 y절편은 읽고, x절편은 y에 0을 넣는다."
+      },
+      "stage": {
+        "type": "quiz",
+        "stem_md": "일차함수 $y=-3x+6$ 의 기울기, $x$절편, $y$절편을 차례로 적은 것은?",
+        "options": [
+          {
+            "id": "a",
+            "text_md": "$-3,\\ 2,\\ 6$"
+          },
+          {
+            "id": "b",
+            "text_md": "$-3,\\ 6,\\ 2$"
+          },
+          {
+            "id": "c",
+            "text_md": "$3,\\ 2,\\ 6$"
+          },
+          {
+            "id": "d",
+            "text_md": "$6,\\ -2,\\ -3$"
+          }
+        ],
+        "correct": "a",
+        "explain": "$y=ax+b$에서 $a$가 기울기, $b$가 $y$절편이므로 기울기 $-3$, $y$절편 $6$. $x$절편은 $y$ 자리에 0을 넣어 $0=-3x+6$, $x=2$.",
+        "trace_concept_id": "c.slope-intercept"
+      },
+      "narration": [
+        {
+          "id": "s6-1",
+          "role": "say",
+          "text": "마지막으로 한 문제. 기울기와 $y$절편은 관계식에서 읽고, $x$절편은 $y$ 자리에 0을 넣어 구해 보세요.",
+          "tts": "마지막으로 한 문제. 기울기와 와이절편은 관계식에서 읽고, 엑스절편은, 와이 자리에 영을 넣어 구해 보세요."
+        },
+        {
+          "id": "s6-2",
+          "role": "say",
+          "text": "모르겠으면 \"모르겠어요\"를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. 오늘은 일차함수를 알아봤습니다. 다음 시간에는 이차함수로 이어집니다.",
+          "tts": "모르겠으면, 모르겠어요를 누르세요. 어느 개념에서 막혔는지 한 단계씩 되짚어 찾아 드립니다. [concluding, relaxed] 오늘은 일차함수를 알아봤습니다. 다음 시간에는, 이차함수로 이어집니다."
+        }
+      ]
+    }
+  ]
+}

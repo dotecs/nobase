@@ -22,6 +22,8 @@
   "rm-18": ["basic.func.move"],
   "rm-19": ["basic.func.frame"],
   "rm-20": ["const"],
+  "rm-21": ["linear"],
+  "rm-21-w1": ["linear"],
   "rm-22-1": ["quad.graph"],
   "rm-22-w1": ["quad.disc"]
  }
